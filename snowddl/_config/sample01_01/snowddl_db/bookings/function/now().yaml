@@ -1,0 +1,6 @@
+returns: TIMESTAMP_TZ(3)
+
+body: |-
+  '2017-08-15 18:00:00 +03:00'::timestamp_tz(3)
+
+is_immutable: true

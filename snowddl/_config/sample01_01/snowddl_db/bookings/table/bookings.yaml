@@ -1,0 +1,19 @@
+columns:
+  book_ref:
+    type: VARCHAR(6) NOT NULL
+    comment: "Booking number"
+
+  book_date:
+    type: TIMESTAMP_TZ(3) NOT NULL
+    comment: "Booking date"
+
+  total_amount:
+    type: NUMBER(10,2) NOT NULL
+    comment: "Total booking cost"
+
+primary_key: [book_ref]
+
+comment: >-
+  Passengers book tickets for themselves, and, possibly, for several other passengers, in advance (book_date, not earlier than one month before the flight).
+  The booking is identified by its number (book_ref, a six-position combination of letters and digits).
+  The total_amount field stores the total cost of all tickets included into the booking, for all passengers.

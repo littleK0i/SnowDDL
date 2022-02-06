@@ -1,0 +1,16 @@
+columns:
+  address_id: NUMBER(10,0) NOT NULL
+  address: VARCHAR(50) NOT NULL
+  address2: VARCHAR(50)
+  district: VARCHAR(20) NOT NULL
+  city_id: NUMBER(10,0) NOT NULL
+  postal_code: VARCHAR(10)
+  phone: VARCHAR(20) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [address_id]
+
+foreign_keys:
+  - columns: [city_id]
+    ref_table: city
+    ref_columns: [city_id]

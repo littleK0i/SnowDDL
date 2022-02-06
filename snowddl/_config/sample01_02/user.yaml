@@ -1,0 +1,67 @@
+amalia_hicks:
+  password: "BTeSgyaq9QcHnpwf"
+  first_name: "Amalia"
+  last_name: "Hicks"
+  email: "amalia.hicks@example.com"
+  business_roles:
+    - sakila_analyst
+  comment: "Analyst with read access to Sakila data only"
+
+
+damian_edwards:
+  password: "mPQtUb3H7nAFwAfu"
+  first_name: "Damian"
+  last_name: "Edwards"
+  email: "damian.edwards@example.com"
+  session_params:
+    query_tag: "Queries from Damian"
+    error_on_nondeterministic_merge: true
+    statement_timeout_in_seconds: 600
+  business_roles:
+    - bookings_analyst
+  comment: "Analyst with read access to Bookings data"
+
+
+john_doe:
+  password: "ZbQPE53wEJdBgsuP"
+  first_name: "John"
+  last_name: "Doe"
+  disabled: true
+  business_roles:
+    - restricted_sakila_analyst
+  comment: "Analyst with restricted access to Sakila and no access to sandbox schema (disabled)"
+
+
+hugo_first:
+  password: "3CuT49vm3uyw5KZx"
+  first_name: "Hugo"
+  last_name: "First"
+  email: "hugo.first@example.com"
+  business_roles:
+    - bookings_analyst
+    - sakila_analyst
+  comment: "Analyst with access to both Bookings and Sakila datasets"
+
+etl_script:
+  rsa_public_key: >-
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0r/NvyaqZ4f9dHmIYg7R
+    hWRSnrAngWF+dihTB0xt7ii4Gn9BX1hBPYwu6JrRd/ye/jFM6dROI9cPVWS2Or0Z
+    ZCDZ52QVh3xQX2RErJck36ir9Hr+8Zp4I762EpdJ91xHGHtyPgitNFvk9tWvNbeL
+    x5xVHmsK3HChO9i32AaKH3ap2T3Q8E80HLpa6kxJuCAJaMxEhCM93GuhoI3Vr2Ha
+    kxIgsrDvbskT+6KqICvc5qhFkOStbGwjXn6dxYsZagy0tNVfKB1tCkRIEDVvACHq
+    pisuSYXWq2mi/vnCLAdbf7xwS9OT6InPMrJkS7NKfJpAfevDfr+UMmvjre6aF21v
+    SwIDAQAB
+  business_roles:
+    - etl_script
+
+monitor_script:
+  rsa_public_key: >-
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx4INStnNQshPamlDe5te
+    +sF/J3zbY9BCMgcl/B11NndFRuXZjKBAyVJyJdjm2XpHGyJZrpIf1kBVJbfxpNSi
+    qN/VLMm1nsqtEnLJsvHWT4AyJ8GG1ahYY34ody9SjLTCisSRpjzh7ZLajbyNtwbH
+    ukOCAhy1R7RzyEmuqz3rRmnx0MUb+1wdSYfMAnVwxT11otmClhXVe3Hj9hdNmljk
+    pw2rezWlKyeywkDpvh00/tuIFdCJD2gWcb3rAUC3e9iR6RJ4o/LFIEBlyktUPOqF
+    d4A3+Wp/pkTiYUh2GvjHTZrGViZXBPRjciP+6ktLMuXP4bW2DeS1xEYIUeYhxaNI
+    IwIDAQAB
+  business_roles:
+    - monitor_script

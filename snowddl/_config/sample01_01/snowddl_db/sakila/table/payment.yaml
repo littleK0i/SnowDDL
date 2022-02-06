@@ -1,0 +1,23 @@
+columns:
+  payment_id: NUMBER(10,0) NOT NULL
+  customer_id: NUMBER(10,0) NOT NULL
+  staff_id: NUMBER(5,0) NOT NULL
+  rental_id: NUMBER(10,0)
+  amount: NUMBER(5,2) NOT NULL
+  payment_date: TIMESTAMP_NTZ(3) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [payment_id]
+
+foreign_keys:
+  - columns: [customer_id]
+    ref_table: customer
+    ref_columns: [customer_id]
+
+  - columns: [rental_id]
+    ref_table: rental
+    ref_columns: [rental_id]
+
+  - columns: [staff_id]
+    ref_table: staff
+    ref_columns: [staff_id]

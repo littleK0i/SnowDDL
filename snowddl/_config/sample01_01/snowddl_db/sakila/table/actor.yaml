@@ -1,0 +1,7 @@
+columns:
+  actor_id: NUMBER(10,0) NOT NULL
+  first_name: VARCHAR(45) NOT NULL
+  last_name: VARCHAR(45) NOT NULL
+  last_update: TIMESTAMP_NTZ(3)
+
+primary_key: [actor_id]

@@ -1,0 +1,44 @@
+text: |-
+  WITH f3 AS (
+      SELECT f2.flight_no,
+          f2.departure_airport,
+          f2.arrival_airport,
+          f2.aircraft_code,
+          f2.duration,
+          ARRAY_AGG(f2.days_of_week) AS days_of_week
+      FROM (
+          SELECT f1.flight_no,
+              f1.departure_airport,
+              f1.arrival_airport,
+              f1.aircraft_code,
+              f1.duration,
+              f1.days_of_week
+          FROM (
+              SELECT flights.flight_no,
+                  flights.departure_airport,
+                  flights.arrival_airport,
+                  flights.aircraft_code,
+                  DATEDIFF(seconds, flights.scheduled_departure, flights.scheduled_arrival) AS duration,
+                  TO_CHAR(flights.scheduled_departure, 'DY') AS days_of_week
+              FROM flights
+          ) f1
+          GROUP BY 1,2,3,4,5,6
+      ) f2
+    GROUP BY 1,2,3,4,5
+  )
+  SELECT f3.flight_no,
+      f3.departure_airport,
+      dep.airport_name AS departure_airport_name,
+      dep.city AS departure_city,
+      f3.arrival_airport,
+      arr.airport_name AS arrival_airport_name,
+      arr.city AS arrival_city,
+      f3.aircraft_code,
+      f3.duration,
+      f3.days_of_week
+  FROM f3
+      JOIN airports dep ON (f3.departure_airport = dep.airport_code)
+      JOIN airports arr ON (f3.arrival_airport = arr.airport_code)
+
+depends_on:
+  - airports

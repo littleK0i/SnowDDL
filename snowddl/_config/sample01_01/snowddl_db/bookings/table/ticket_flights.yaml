@@ -1,0 +1,31 @@
+columns:
+  ticket_no:
+    type: VARCHAR(13) NOT NULL
+    comment: "Ticket number"
+
+  flight_id:
+    type: NUMBER(10,0) NOT NULL
+    comment: "Flight ID"
+
+  fare_conditions:
+    type: VARCHAR(10) NOT NULL
+    comment: "Travel class"
+
+  amount:
+    type: NUMBER(10,2) NOT NULL
+    comment: "Travel cost"
+
+primary_key: [ticket_no, flight_id]
+
+foreign_keys:
+  - columns: [flight_id]
+    ref_table: flights
+    ref_columns: [flight_id]
+
+  - columns: [ticket_no]
+    ref_table: tickets
+    ref_columns: [ticket_no]
+
+comment: >-
+  A flight segment connects a ticket with a flight and is identified by their numbers.
+  Each flight has its cost (amount) and travel class (fare_conditions).

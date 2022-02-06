@@ -1,0 +1,16 @@
+arguments:
+  ticket_no: VARCHAR(13)
+  flight_id: NUMBER(10,0)
+  boarding_no: NUMBER(10,0)
+
+returns: BOOLEAN
+
+body: |-
+  BEGIN
+    INSERT INTO boarding_passes (ticket_no, flight_id, boarding_no)
+    VALUES (:TICKET_NO, :FLIGHT_ID, :BOARDING_NO, 'A1');
+
+    RETURN TRUE;
+  END;
+
+is_strict: true

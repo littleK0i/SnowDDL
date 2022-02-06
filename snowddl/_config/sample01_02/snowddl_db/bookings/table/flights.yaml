@@ -1,0 +1,69 @@
+columns:
+  flight_id:
+    type: NUMBER(20,0) NOT NULL
+    default_sequence: flights_id_seq
+    comment: "Flight ID"
+
+  flight_no:
+    type: VARCHAR(6) NOT NULL
+    comment: "Flight number"
+
+  scheduled_departure:
+    type: TIMESTAMP_TZ(3) NOT NULL
+    comment: "Scheduled departure time"
+
+  scheduled_arrival:
+    type: TIMESTAMP_TZ(3) NOT NULL
+    comment: "Scheduled arrival time"
+
+  departure_airport:
+    type: VARCHAR(3) NOT NULL
+    comment: "Airport of departure"
+
+  arrival_airport:
+    type: VARCHAR(3) NOT NULL
+    comment: "Airport of arrival"
+
+  status:
+    type: VARCHAR(20) NOT NULL
+    comment: "Flight status"
+
+  aircraft_code:
+    type: VARCHAR(3) NOT NULL
+    comment: "Aircraft code, IATA"
+
+  actual_departure:
+    type: TIMESTAMP_TZ(3)
+    comment: "Actual departure time"
+
+  actual_arrival:
+    type: TIMESTAMP_TZ(3)
+    comment: "Actual arrival time"
+
+primary_key: [flight_id]
+
+unique_keys:
+  - [flight_no, scheduled_departure]
+
+foreign_keys:
+  - columns: [aircraft_code]
+    ref_table: aircrafts_data
+    ref_columns: [aircraft_code]
+
+  - columns: [arrival_airport]
+    ref_table: airports_data
+    ref_columns: [airport_code]
+
+  - columns: [departure_airport]
+    ref_table: airports_data
+    ref_columns: [airport_code]
+
+comment: >-
+  The natural key of the bookings.flights table consists of two fields — flight_no and scheduled_departure.
+  To make foreign keys for this table more compact, a surrogate key is used as the primary key (flight_id).
+
+  A flight always connects two points — the airport of departure (departure_airport) and arrival (arrival_airport).
+  There is no such entity as a “connecting flight”: if there are no non-stop flights from one airport to another, the ticket simply includes several required flight segments.
+
+  Each flight has a scheduled date and time of departure (scheduled_departure) and arrival (scheduled_arrival).
+  The actual departure time (actual_departure) and arrival time (actual_arrival) can differ: the difference is usually not very big, but sometimes can be up to several hours if the flight is delayed.

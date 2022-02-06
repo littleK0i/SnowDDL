@@ -1,0 +1,16 @@
+columns:
+  store_id: NUMBER(10,0) NOT NULL
+  manager_staff_id: NUMBER(5,0) NOT NULL
+  address_id: NUMBER(10,0) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [store_id]
+
+foreign_keys:
+  - columns: [manager_staff_id]
+    ref_table: staff
+    ref_columns: [staff_id]
+
+  - columns: [address_id]
+    ref_table: address
+    ref_columns: [address_id]

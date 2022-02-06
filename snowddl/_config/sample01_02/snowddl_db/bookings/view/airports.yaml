@@ -1,0 +1,21 @@
+columns:
+  airport_code: "Airport code"
+  airport_name: "Airport name"
+  city: "City"
+  coordinates: "Airport coordinates (longitude and latitude)"
+  timezone: "Airport time zone"
+  airport_frequency: "Frequency of airport tower"
+
+text: |-
+  SELECT ml.airport_code,
+      lang(ml.airport_name) AS airport_name,
+      lang(ml.city) AS city,
+      ml.coordinates,
+      ml.timezone,
+      ml.airport_frequency
+  FROM airports_data ml
+
+comment: >-
+  An airport is identified by a three-letter code (airport_code) and has a name (airport_name).
+  There is no separate entity for the city, but there is a city name (city) to identify the airports of the same city.
+  The view also includes coordinates (coordinates) and the time zone (timezone).

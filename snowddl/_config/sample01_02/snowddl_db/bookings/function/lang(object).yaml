@@ -1,0 +1,11 @@
+arguments:
+  input_val: OBJECT
+
+returns: VARCHAR(1000)
+
+body: |-
+  GET(input_val, COALESCE('BOOKINGS_LANG', 'en'))::varchar(1000)
+
+comment: >-
+  Returns localized string from OBJECT containing strings in multiple languages.
+  Session variable 'BOOKINGS_LANG' is being used as language name (default: en).

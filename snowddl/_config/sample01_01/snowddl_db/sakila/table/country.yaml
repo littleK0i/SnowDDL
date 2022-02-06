@@ -1,0 +1,6 @@
+columns:
+  country_id: NUMBER(5,0) NOT NULL
+  country: VARCHAR(50) NOT NULL
+  last_update: TIMESTAMP_NTZ(3)
+
+primary_key: [country_id]

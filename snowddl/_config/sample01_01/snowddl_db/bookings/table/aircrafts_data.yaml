@@ -1,0 +1,19 @@
+columns:
+  aircraft_code:
+    type: VARCHAR(3) NOT NULL
+    comment: "Aircraft code, IATA"
+
+  model:
+    type: OBJECT NOT NULL
+    comment: "Aircraft model"
+
+  range:
+    type: NUMBER(10,0) NOT NULL
+    comment: "Maximal flying distance, km"
+
+primary_key: [aircraft_code]
+
+comment: >-
+  This is the base table for the aircrafts view.
+  The model field of this table contains translations of aircraft models to different languages.
+  In most cases, this table is not supposed to be used directly.

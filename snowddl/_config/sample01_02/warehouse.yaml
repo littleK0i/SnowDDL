@@ -1,0 +1,19 @@
+bookings_analyst_wh:
+  size: SMALL
+  auto_suspend: 60
+  comment: "Warehouse for analysts working with Bookings"
+
+sakila_analyst_wh:
+  size: XSMALL
+  auto_suspend: 120
+  comment: "Warehouse for analysts working with Sakila"
+
+etl_script_wh:
+  size: SMALL
+  auto_suspend: 60
+  comment: "Warehouse for ETL jobs"
+
+monitor_script_wh:
+  size: SMALL
+  auto_suspend: 60
+  comment: "Warehouse for monitoring jobs"

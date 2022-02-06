@@ -1,0 +1,23 @@
+columns:
+  customer_id: NUMBER(10,0) NOT NULL
+  store_id: NUMBER(10,0) NOT NULL
+  first_name: VARCHAR(45) NOT NULL
+  last_name: VARCHAR(45) NOT NULL
+  email: VARCHAR(50)
+  address_id: NUMBER(10,0) NOT NULL
+  active:
+    type: VARCHAR(1) NOT NULL
+    default: "'Y'"
+  create_date: TIMESTAMP_NTZ(3) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [customer_id]
+
+foreign_keys:
+  - columns: [address_id]
+    ref_table: address
+    ref_columns: [address_id]
+
+  - columns: [store_id]
+    ref_table: store
+    ref_columns: [store_id]

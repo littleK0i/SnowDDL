@@ -1,0 +1,15 @@
+columns:
+  film_id: NUMBER(10,0) NOT NULL
+  category_id: NUMBER(5,0) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [film_id, category_id]
+
+foreign_keys:
+  - columns: [film_id]
+    ref_table: film
+    ref_columns: [film_id]
+
+  - columns: [category_id]
+    ref_table: category
+    ref_columns: [category_id]

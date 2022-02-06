@@ -1,0 +1,2 @@
+recursive-include snowddl/_config *.yaml
+include LICENSE.txt

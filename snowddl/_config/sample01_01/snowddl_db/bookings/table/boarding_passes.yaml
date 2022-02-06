@@ -1,0 +1,33 @@
+columns:
+  ticket_no:
+    type: VARCHAR(13) NOT NULL
+    comment: "Ticket number"
+
+  flight_id:
+    type: NUMBER(10,0) NOT NULL
+    comment: "Flight ID"
+
+  boarding_no:
+    type: NUMBER(10,0) NOT NULL
+    comment: "Boarding pass number"
+
+  seat_no:
+    type: VARCHAR(4) NOT NULL
+    comment: "Seat number"
+
+primary_key: [ticket_no, flight_id]
+
+unique_keys:
+  - [flight_id, boarding_no]
+  - [flight_id, seat_no]
+
+foreign_keys:
+  - columns: [ticket_no, flight_id]
+    ref_table: ticket_flights
+    ref_columns: [ticket_no, flight_id]
+
+comment: >-
+  At the time of check-in, which opens twenty-four hours before the scheduled departure, the passenger is issued a boarding pass.
+  Like the flight segment, the boarding pass is identified by the ticket number and the flight number.
+  Boarding passes are assigned sequential numbers (boarding_no), in the order of check-ins for the flight (this number is unique only within the context of a particular flight).
+  The boarding pass specifies the seat number (seat_no).

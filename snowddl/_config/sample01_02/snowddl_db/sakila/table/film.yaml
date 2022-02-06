@@ -1,0 +1,33 @@
+columns:
+  film_id: NUMBER(10,0) NOT NULL
+  title: VARCHAR(255) NOT NULL
+  description: VARCHAR(2000000)
+  release_year: VARCHAR(4)
+  language_id: NUMBER(5,0) NOT NULL
+  original_language_id: NUMBER(5,0)
+  rental_duration:
+    type: NUMBER(5,0) NOT NULL
+    default: "3"
+  rental_rate:
+    type: NUMBER(4,2) NOT NULL
+    default: "4.99"
+  length: NUMBER(5,0)
+  replacement_cost:
+    type: NUMBER(5,2) NOT NULL
+    default: "19.99"
+  rating:
+    type: VARCHAR(10)
+    default: "'G'"
+  special_features: VARCHAR(100)
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [film_id]
+
+foreign_keys:
+  - columns: [language_id]
+    ref_table: language
+    ref_columns: [language_id]
+
+  - columns: [original_language_id]
+    ref_table: language
+    ref_columns: [language_id]

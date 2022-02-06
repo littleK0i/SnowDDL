@@ -1,0 +1,16 @@
+columns:
+  inventory_id: NUMBER(10,0) NOT NULL
+  film_id: NUMBER(10,0) NOT NULL
+  store_id: NUMBER(10,0) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [inventory_id]
+
+foreign_keys:
+  - columns: [film_id]
+    ref_table: film
+    ref_columns: [film_id]
+
+  - columns: [store_id]
+    ref_table: store
+    ref_columns: [store_id]

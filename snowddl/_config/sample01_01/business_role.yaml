@@ -1,0 +1,51 @@
+bookings_analyst:
+  schema_read:
+    - snowddl_db.bookings
+  warehouse_usage:
+    - bookings_analyst_wh
+
+  comment: "Business analyst working on data in Bookings schema"
+
+
+sakila_analyst:
+  schema_read:
+    - snowddl_db.sakila
+  schema_owner:
+    - snowddl_db.sakila_sandbox
+  warehouse_usage:
+    - sakila_analyst_wh
+
+  comment: "Business analyst working on data in Sakila schema"
+
+
+restricted_sakila_analyst:
+  tech_roles:
+    - restricted_sakila
+  warehouse_usage:
+    - sakila_analyst_wh
+
+  comment: "Business analyst with restricted access to Sakila schema"
+
+
+etl_script:
+  schema_read:
+    - snowddl_db.bookings
+    - snowddl_db.sakila
+  schema_write:
+    - snowddl_db.bookings
+    - snowddl_db.sakila
+  warehouse_usage:
+    - etl_script_wh
+
+  comment: "ETL script ingesting data into all schemas"
+
+
+monitor_script:
+  warehouse_usage:
+    - monitor_script_wh
+  warehouse_monitor:
+    - bookings_analyst_wh
+    - sakila_analyst_wh
+    - etl_script_wh
+
+  comment: "Monitoring script checking on queries running by business users and ETL scripts"

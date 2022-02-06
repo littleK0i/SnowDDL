@@ -1,0 +1,23 @@
+columns:
+  aircraft_code:
+    type: VARCHAR(3) NOT NULL
+    comment: "Aircraft code, IATA"
+
+  seat_no:
+    type: VARCHAR(4) NOT NULL
+    comment: "Seat number"
+
+  fare_conditions:
+    type: VARCHAR(10)
+    comment: "Travel class (optional)"
+
+primary_key: [aircraft_code, seat_no]
+
+foreign_keys:
+  - columns: [aircraft_code]
+    ref_table: aircrafts_data
+    ref_columns: [aircraft_code]
+
+comment: >-
+  Seats define the cabin configuration of each aircraft model.
+  Each seat is defined by its number (seat_no) and has an assigned travel class (fare_conditions): Economy, Comfort or Business.

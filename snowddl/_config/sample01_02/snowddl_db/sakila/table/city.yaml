@@ -1,0 +1,12 @@
+columns:
+  city_id: NUMBER(10,0) NOT NULL
+  city: VARCHAR(50) NOT NULL
+  country_id: NUMBER(5,0) NOT NULL
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [city_id]
+
+foreign_keys:
+  - columns: [country_id]
+    ref_table: country
+    ref_columns: [country_id]

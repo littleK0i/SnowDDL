@@ -1,0 +1,32 @@
+columns:
+  ticket_no:
+    type: VARCHAR(13) NOT NULL
+    comment: "Ticket number"
+
+  book_ref:
+    type: VARCHAR(6) NOT NULL
+    comment: "Booking number"
+
+  passenger_id:
+    type: VARCHAR(20) NOT NULL
+    comment: "Passenger ID"
+
+  passenger_name:
+    type: VARCHAR(1000) NOT NULL
+    comment: "Passenger name"
+
+  contact_data:
+    type: VARIANT
+    comment: "Passenger contact information"
+
+primary_key: [ticket_no]
+
+foreign_keys:
+  - columns: [book_ref]
+    ref_table: bookings
+    ref_columns: [book_ref]
+
+comment: >-
+  A ticket has a unique number (ticket_no) that consists of 13 digits.
+  The ticket includes a passenger ID (passenger_id) — the identity document number, — their first and last names (passenger_name), and contact information (contact_data).
+  Neither the passenger ID, nor the name is permanent (for example, one can change the last name or passport), so it is impossible to uniquely identify all tickets of a particular passenger.

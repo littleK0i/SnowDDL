@@ -1,0 +1,26 @@
+restricted_bookings:
+  grants:
+    DATABASE:USAGE:
+      - snowddl_db
+    SCHEMA:USAGE:
+      - snowddl_db.bookings
+    VIEW:SELECT:
+      - snowddl_db.bookings.aircrafts
+      - snowddl_db.bookings.airports
+    FUNCTION:USAGE:
+      - snowddl_db.bookings.lang(object)
+
+  comment: "Access to some specific views and functions in Bookings schema"
+
+
+restricted_sakila:
+  grants:
+    DATABASE:USAGE:
+      - snowddl_db
+    SCHEMA:USAGE:
+      - snowddl_db.sakila
+    VIEW:SELECT:
+      - snowddl_db.sakila.customer_list
+      - snowddl_db.sakila.film_list
+
+  comment: "Access to some views in Sakila schema"

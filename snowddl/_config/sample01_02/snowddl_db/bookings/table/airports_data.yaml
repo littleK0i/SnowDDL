@@ -1,0 +1,31 @@
+columns:
+  airport_code:
+    type: VARCHAR(3) NOT NULL
+    comment: "Airport code"
+
+  airport_name:
+    type: OBJECT NOT NULL
+    comment: "Airport name"
+
+  city:
+    type: OBJECT NOT NULL
+    comment: "City"
+
+  coordinates:
+    type: GEOGRAPHY NOT NULL
+    comment: "Airport coordinates (longitude and latitude)"
+
+  timezone:
+    type: VARCHAR(50) NOT NULL
+    comment: "Airport time zone"
+
+  airport_frequency:
+    type: NUMBER(10,2)
+    comment: "Frequency of airport tower"
+
+primary_key: [airport_code]
+
+comment: >-
+  This is the base table for the airports view.
+  This table contains translations of airport_name and city values to different languages.
+  In most cases, this table is not supposed to be used directly.

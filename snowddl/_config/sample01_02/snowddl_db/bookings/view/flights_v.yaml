@@ -1,0 +1,28 @@
+text: |-
+  SELECT f.flight_id,
+      f.flight_no,
+      f.scheduled_departure,
+      CONVERT_TIMEZONE(dep.timezone, f.scheduled_departure) AS scheduled_departure_local,
+      f.scheduled_arrival,
+      CONVERT_TIMEZONE(arr.timezone, f.scheduled_arrival) AS scheduled_arrival_local,
+      DATEDIFF('second', f.scheduled_departure, f.scheduled_arrival) AS scheduled_duration,
+      f.departure_airport,
+      dep.airport_name AS departure_airport_name,
+      dep.city AS departure_city,
+      f.arrival_airport,
+      arr.airport_name AS arrival_airport_name,
+      arr.city AS arrival_city,
+      f.status,
+      f.aircraft_code,
+      f.actual_departure,
+      CONVERT_TIMEZONE(dep.timezone, f.actual_departure) AS actual_departure_local,
+      f.actual_arrival,
+      CONVERT_TIMEZONE(arr.timezone, f.actual_arrival) AS actual_arrival_local,
+      DATEDIFF('second', f.actual_departure, f.actual_arrival) AS actual_duration
+  FROM flights f
+      JOIN airports dep ON (f.departure_airport = dep.airport_code)
+      JOIN airports arr ON (f.arrival_airport = arr.airport_code)
+
+
+depends_on:
+  - airports

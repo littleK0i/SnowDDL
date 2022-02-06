@@ -1,0 +1,25 @@
+columns:
+  staff_id: NUMBER(5,0) NOT NULL
+  first_name: VARCHAR(45) NOT NULL
+  last_name: VARCHAR(45) NOT NULL
+  address_id: NUMBER(10,0) NOT NULL
+  picture: VARCHAR(2000000)
+  email: VARCHAR(50)
+  store_id: NUMBER(10,0) NOT NULL
+  active:
+    type: NUMBER(5,0) NOT NULL
+    default: "1"
+  username: VARCHAR(16) NOT NULL
+  password: VARCHAR(40)
+  last_update: TIMESTAMP_NTZ(3) NOT NULL
+
+primary_key: [staff_id]
+
+foreign_keys:
+  - columns: [address_id]
+    ref_table: address
+    ref_columns: [address_id]
+
+  - columns: [store_id]
+    ref_table: store
+    ref_columns: [store_id]

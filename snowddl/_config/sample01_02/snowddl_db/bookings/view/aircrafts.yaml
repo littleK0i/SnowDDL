@@ -1,0 +1,14 @@
+columns:
+  aircraft_code: "Aircraft code, IATA"
+  model: "Aircraft model"
+  range: "Maximal flying distance, km"
+
+text: |-
+  SELECT ml.aircraft_code,
+      lang(ml.model) AS model,
+      ml.range
+  FROM aircrafts_data ml
+
+comment: >-
+  Each aircraft model is identified by its three-digit code (aircraft_code).
+  The view also includes the name of the aircraft model (model) and the maximal flying distance, in kilometers (range).

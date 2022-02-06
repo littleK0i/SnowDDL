@@ -1,0 +1,5 @@
+text: |-
+  SELECT *
+  FROM actor
+
+comment: "This view will be re-created every time the structure of underlying table changes"
