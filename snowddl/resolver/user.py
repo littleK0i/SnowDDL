@@ -2,6 +2,7 @@ from base64 import b64encode, b64decode
 from hashlib import sha256
 
 from snowddl.blueprint import UserBlueprint
+from snowddl.error import SnowDDLExecuteError
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 from snowddl.resolver._utils import compare_dynamic_param_value
 
@@ -214,10 +215,18 @@ class UserResolver(AbstractResolver):
 
     def _refresh_password(self, bp: UserBlueprint, row: dict):
         if bp.password:
-            self.engine.execute_safe_ddl("ALTER USER {name:i} SET PASSWORD = {password}", {
-                "name": bp.full_name,
-                "password": bp.password,
-            })
+            try:
+                self.engine.execute_safe_ddl("ALTER USER {name:i} SET PASSWORD = {password}", {
+                    "name": bp.full_name,
+                    "password": bp.password,
+                })
+            except SnowDDLExecuteError as e:
+                # Password rejected due to 'PRIOR_USE'
+                # Not a error, skip such user
+                if e.snow_exc.errno == 3002:
+                    return False
+                else:
+                    raise
 
             return True
 

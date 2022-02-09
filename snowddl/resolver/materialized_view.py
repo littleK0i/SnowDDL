@@ -44,7 +44,7 @@ class MaterializedViewResolver(AbstractSchemaObjectResolver):
         if row['text'] == str(query) and not row['invalid']:
             return ResolveResult.NOCHANGE
 
-        self.engine.execute_safe_ddl(query)
+        self.engine.execute_unsafe_ddl(query)
 
         return ResolveResult.REPLACE
 

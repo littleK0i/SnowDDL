@@ -195,6 +195,10 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
     def refresh_future_grant(self, role_name, grant: FutureGrant):
+        # Bulk grant on objects of type PIPE to ROLE is restricted (by Snowflake)
+        if grant.on == ObjectType.PIPE:
+            return
+
         self.engine.execute_safe_ddl("GRANT {privilege:r} ON ALL {on_plural:r} IN SCHEMA {name:i} TO ROLE {role_name:i}", {
             "privilege": grant.privilege,
             "on_plural": grant.on.plural,

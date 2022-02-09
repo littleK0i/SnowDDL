@@ -50,7 +50,7 @@ class WarehouseResolver(AbstractResolver):
             self.engine.execute_safe_ddl("ALTER WAREHOUSE {full_name:i} SET RESOURCE_MONITOR = {resource_monitor:i}", {
                 "full_name": bp.full_name,
                 "resource_monitor": bp.resource_monitor,
-            }, condition=self.engine.settings.execute_account_admin)
+            }, condition=self.engine.settings.execute_resource_monitor)
 
         return ResolveResult.CREATE
 
@@ -96,7 +96,7 @@ class WarehouseResolver(AbstractResolver):
         if bp.resource_monitor is None and row['resource_monitor']:
             self.engine.execute_safe_ddl("ALTER WAREHOUSE {full_name:i} UNSET RESOURCE_MONITOR", {
                 "full_name": bp.full_name,
-            }, condition=self.engine.context.is_sys_admin)
+            }, condition=self.engine.settings.execute_resource_monitor)
 
             return True
 
@@ -104,7 +104,7 @@ class WarehouseResolver(AbstractResolver):
             self.engine.execute_safe_ddl("ALTER WAREHOUSE {full_name:i} SET RESOURCE_MONITOR = {resource_monitor:i}", {
                 "full_name": bp.full_name,
                 "resource_monitor": bp.resource_monitor,
-            }, condition=self.engine.context.is_sys_admin)
+            }, condition=self.engine.settings.execute_resource_monitor)
 
             return True
 

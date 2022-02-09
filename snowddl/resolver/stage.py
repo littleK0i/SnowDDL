@@ -44,7 +44,7 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl("COMMENT ON STAGE {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": common_query.append_comment_short_hash(bp.comment),
+            "comment": common_query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
@@ -52,7 +52,7 @@ class StageResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: StageBlueprint, row: dict):
         common_query = self._build_common_stage_sql(bp)
 
-        if not common_query.compare_comment_short_hash(row['comment']):
+        if not common_query.compare_short_hash(row['comment']):
             alter_query = self.engine.query_builder()
 
             alter_query.append("ALTER STAGE {full_name:i} SET", {
@@ -65,7 +65,7 @@ class StageResolver(AbstractSchemaObjectResolver):
 
             self.engine.execute_safe_ddl("COMMENT ON STAGE {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": common_query.append_comment_short_hash(bp.comment),
+                "comment": common_query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.ALTER

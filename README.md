@@ -6,17 +6,32 @@ It is not intended to replace other tools entirely, but to provide an alternativ
 
 You may find SnowDDL useful if:
 
-- business requirements and complexity of data schema grows exponentially;
-- your organization has multiple accounts for different environments (dev, stage, prod);
+- complexity of data schema grows exponentially, and it becomes hard to manage;
+- your organization has multiple Snowflake accounts for different environments (dev, stage, prod);
 - your organization has multiple developers sharing the same Snowflake account;
-- you want to generate some objects dynamically using Python ([Data Vault](https://en.wikipedia.org/wiki/Data_vault_modeling), [Star Schema](https://en.wikipedia.org/wiki/Star_schema), etc.)
+- it is necessary to generate some objects dynamically using Python ([Data Vault](https://en.wikipedia.org/wiki/Data_vault_modeling), [Star Schema](https://en.wikipedia.org/wiki/Star_schema), etc.)
+
+## Main features
+
+1. SnowDDL is "stateless".
+2. SnowDDL provides built-in "Role hierarchy" model.
+3. SnowDDL supports ALTER TABLE ... ALTER COLUMN.
+4. SnowDDL re-creates invalid views automatically.
+5. SnowDDL assists your team in code review.
+6. SnowDDL supports "env prefix".
+7. SnowDDL strikes a good balance between dependency management and parallelism.
+8. SnowDDL costs very little.
+9. SnowDDL configuration can be generated dynamically in Python code.
 
 ## Quick links
 
-- [Documentation](https://docs.snowddl.com)
 - [Getting started](https://docs.snowddl.com/getting-started)
 - [Main features](https://docs.snowddl.com/features)
-- [System requirements](https://docs.snowddl.com/system-requirements)
+- [Object types](https://docs.snowddl.com/object-types)
+- [Role hierarchy](https://docs.snowddl.com/role-hierarchy)
+- [CLI interface](https://docs.snowddl.com/basic/cli)
+- [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
+- [Changelog](/CHANGELOG.md)
 
 ## Created by
 [Vitaly Markov](https://www.linkedin.com/in/markov-vitaly/), 2022

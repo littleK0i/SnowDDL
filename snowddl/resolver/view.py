@@ -62,7 +62,7 @@ class ViewResolver(AbstractSchemaObjectResolver):
         return ResolveResult.ALTER
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP VIEW {database:i}.{schema:i}.{view_name:i}", {
+        self.engine.execute_safe_ddl("DROP VIEW {database:i}.{schema:i}.{view_name:i}", {
             "database": row['database'],
             "schema": row['schema'],
             "view_name": row['name'],

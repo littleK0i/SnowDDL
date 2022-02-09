@@ -36,7 +36,7 @@ class TaskResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl("COMMENT ON TASK {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": query.append_comment_short_hash(bp.comment),
+            "comment": query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
@@ -44,12 +44,12 @@ class TaskResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: TaskBlueprint, row: dict):
         query = self._build_create_task(bp)
 
-        if not query.compare_comment_short_hash(row['comment']):
+        if not query.compare_short_hash(row['comment']):
             self.engine.execute_safe_ddl(query)
 
             self.engine.execute_safe_ddl("COMMENT ON TASK {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": query.append_comment_short_hash(bp.comment),
+                "comment": query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.REPLACE
@@ -66,7 +66,7 @@ class TaskResolver(AbstractSchemaObjectResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP TASK {database:i}.{schema:i}.{name:i}", {
+        self.engine.execute_safe_ddl("DROP TASK {database:i}.{schema:i}.{name:i}", {
             "database": row['database'],
             "schema": row['schema'],
             "name": row['name'],

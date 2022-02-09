@@ -16,7 +16,7 @@ setup(
         Main features: [https://docs.snowddl.com/features](https://docs.snowddl.com/features)
 
         1. SnowDDL is "stateless".
-        2. SnowDDL provides built-in "role hierarchy" model.
+        2. SnowDDL provides built-in "Role hierarchy" model.
         3. SnowDDL supports ALTER TABLE ... ALTER COLUMN.
         4. SnowDDL re-creates invalid views automatically.
         5. SnowDDL assists your team in code review.

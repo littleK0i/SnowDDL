@@ -38,7 +38,7 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl("COMMENT ON PROCEDURE {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": query.append_comment_short_hash(bp.comment),
+            "comment": query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
@@ -46,12 +46,12 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: ProcedureBlueprint, row: dict):
         query = self._build_create_procedure(bp)
 
-        if not query.compare_comment_short_hash(row['comment']):
+        if not query.compare_short_hash(row['comment']):
             self.engine.execute_safe_ddl(query)
 
             self.engine.execute_safe_ddl("COMMENT ON PROCEDURE {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": query.append_comment_short_hash(bp.comment),
+                "comment": query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.ALTER

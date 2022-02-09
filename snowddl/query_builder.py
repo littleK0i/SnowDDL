@@ -1,3 +1,4 @@
+from base64 import urlsafe_b64encode
 from hashlib import sha1
 from typing import List, TYPE_CHECKING
 
@@ -22,23 +23,21 @@ class SnowDDLQueryBuilder:
     def fragment_count(self):
         return sum([len(f) for f in self.fragments])
 
-    def short_hash(self):
-        full_hash = sha1(str(self).encode('UTF-8')).hexdigest()
-        short_hash = full_hash[:8]
-
-        return f"#{short_hash}"
-
-    def append_comment_short_hash(self, comment):
+    def add_short_hash(self, comment):
         if comment:
-            return f"{comment} {self.short_hash()}"
+            return f"{comment} {self._short_hash()}"
 
-        return self.short_hash()
+        return self._short_hash()
 
-    def compare_comment_short_hash(self, comment: str):
+    def compare_short_hash(self, comment):
         if comment is None:
             return False
 
-        return str(comment)[-9:] == self.short_hash()
+        return str(comment).endswith(self._short_hash())
+
+    def _short_hash(self):
+        sha1_digest = sha1(str(self).encode('UTF-8')).digest()
+        return f"#{urlsafe_b64encode(sha1_digest[:12])}"
 
     def __str__(self):
         return '\n'.join([' '.join(line) for line in self.fragments])

@@ -30,6 +30,7 @@ procedure_json_schema = {
             "type": "string"
         }
     },
+    "required": ["body", "returns"],
     "additionalProperties": False
 }
 

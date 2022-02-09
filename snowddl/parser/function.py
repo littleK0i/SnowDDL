@@ -43,7 +43,7 @@ function_json_schema = {
             "type": "string"
         }
     },
-    "required": ["arguments", "returns", "body"],
+    "required": ["returns", "body"],
     "additionalProperties": False
 }
 

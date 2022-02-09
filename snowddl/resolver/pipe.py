@@ -45,7 +45,7 @@ class PipeResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl("COMMENT ON PIPE {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": common_query.append_comment_short_hash(bp.comment),
+            "comment": common_query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
@@ -53,7 +53,7 @@ class PipeResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: PipeBlueprint, row: dict):
         common_query = self._build_common_pipe_sql(bp)
 
-        if not common_query.compare_comment_short_hash(row['comment']):
+        if not common_query.compare_short_hash(row['comment']):
             replace_query = self.engine.query_builder()
 
             replace_query.append("CREATE OR REPLACE PIPE {full_name:i}", {
@@ -66,7 +66,7 @@ class PipeResolver(AbstractSchemaObjectResolver):
 
             self.engine.execute_unsafe_ddl("COMMENT ON PIPE {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": common_query.append_comment_short_hash(bp.comment),
+                "comment": common_query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.REPLACE

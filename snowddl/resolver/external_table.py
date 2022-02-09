@@ -44,7 +44,7 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl("COMMENT ON TABLE {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": query.append_comment_short_hash(bp.comment),
+            "comment": query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
@@ -52,12 +52,12 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: ExternalTableBlueprint, row: dict):
         query = self._build_create_external_table(bp)
 
-        if not query.compare_comment_short_hash(row['comment']):
+        if not query.compare_short_hash(row['comment']):
             self.engine.execute_safe_ddl(query)
 
             self.engine.execute_safe_ddl("COMMENT ON TABLE {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": query.append_comment_short_hash(bp.comment),
+                "comment": query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.ALTER
@@ -65,7 +65,7 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP EXTERNAL TABLE {database:i}.{schema:i}.{table_name:i}", {
+        self.engine.execute_safe_ddl("DROP EXTERNAL TABLE {database:i}.{schema:i}.{table_name:i}", {
             "database": row['database'],
             "schema": row['schema'],
             "table_name": row['name'],
