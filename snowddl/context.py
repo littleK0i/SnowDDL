@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from snowddl.blueprint import IdentWithPrefix
+from snowddl.blueprint import IdentWithPrefix, Edition
 
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
@@ -33,11 +33,23 @@ class SnowDDLContext:
         self.is_security_admin = r['IS_SECURITY_ADMIN']
 
         self.version = r['VERSION']
+        self.edition = self._get_edition()
 
         self._validate()
         self._init_role_with_prefix()
 
         self.engine.flush_thread_buffers()
+
+    def _get_edition(self):
+        # TODO: discover a secret method to detect edition easier
+        # Pattern is empty on purpose, we only need a structure of response
+        description = self.engine.describe_meta("SHOW WAREHOUSES LIKE ''")
+
+        for col in description:
+            if col.name == 'min_cluster_count':
+                return Edition.ENTERPRISE
+
+        return Edition.STANDARD
 
     def _validate(self):
         if not self.current_warehouse:

@@ -34,6 +34,7 @@ from .blueprint import (
 
 from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
 from .data_type import BaseDataType, DataType
+from .edition import Edition
 from .grant import Grant, FutureGrant
 from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
 from .object_type import ObjectType

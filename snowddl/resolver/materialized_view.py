@@ -1,8 +1,10 @@
-from snowddl.blueprint import MaterializedViewBlueprint
+from snowddl.blueprint import MaterializedViewBlueprint, Edition
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 
 class MaterializedViewResolver(AbstractSchemaObjectResolver):
+    skip_min_edition = Edition.ENTERPRISE
+
     def get_object_type(self) -> ObjectType:
         return ObjectType.MATERIALIZED_VIEW
 

@@ -6,7 +6,7 @@ from concurrent.futures import as_completed
 from typing import Dict, List, TYPE_CHECKING
 
 from snowddl.error import SnowDDLExecuteError, SnowDDLUnsupportedError
-from snowddl.blueprint import AbstractBlueprint, DependsOnMixin, ObjectType
+from snowddl.blueprint import AbstractBlueprint, DependsOnMixin, Edition, ObjectType
 
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
@@ -26,6 +26,7 @@ class ResolveResult(Enum):
 
 class AbstractResolver(ABC):
     skip_on_empty_blueprints = False
+    skip_min_edition = Edition.STANDARD
 
     def __init__(self, engine: "SnowDDLEngine"):
         self.engine = engine
@@ -167,6 +168,9 @@ class AbstractResolver(ABC):
         return all_batches
 
     def _is_skipped(self):
+        if self.engine.context.edition < self.skip_min_edition:
+            return True
+
         if self.object_type in self.engine.settings.exclude_object_types:
             return True
 

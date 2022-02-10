@@ -1,11 +1,12 @@
 from json import loads
 
-from snowddl.blueprint import RowAccessPolicyBlueprint, ObjectType
+from snowddl.blueprint import RowAccessPolicyBlueprint, ObjectType, Edition
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
 class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
     skip_on_empty_blueprints = True
+    skip_min_edition = Edition.ENTERPRISE
 
     def get_object_type(self) -> ObjectType:
         return ObjectType.ROW_ACCESS_POLICY

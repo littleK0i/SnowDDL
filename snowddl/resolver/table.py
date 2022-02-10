@@ -33,7 +33,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 "is_transient": r['kind'] == 'TRANSIENT',
                 "cluster_by": r['cluster_by'] if r['cluster_by'] else None,
                 "change_tracking": bool(r['change_tracking'] == 'ON'),
-                "search_optimization": bool(r['search_optimization'] == 'ON'),
+                "search_optimization": bool(r.get('search_optimization') == 'ON'),
                 "comment": r['comment'] if r['comment'] else None,
             }
 

@@ -1,9 +1,10 @@
-from snowddl.blueprint import MaskingPolicyBlueprint, ObjectType
+from snowddl.blueprint import MaskingPolicyBlueprint, ObjectType, Edition
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
 class MaskingPolicyResolver(AbstractSchemaObjectResolver):
     skip_on_empty_blueprints = True
+    skip_min_edition = Edition.ENTERPRISE
 
     def get_object_type(self) -> ObjectType:
         return ObjectType.MASKING_POLICY
