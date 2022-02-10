@@ -52,7 +52,7 @@ pipe_json_schema = {
             "type": "string"
         }
     },
-    "required": ["copy"],
+    "required": ["copy", "auto_ingest"],
     "additionalProperties": False
 }
 

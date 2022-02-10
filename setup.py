@@ -21,7 +21,7 @@ setup(
         4. SnowDDL re-creates invalid views automatically.
         5. SnowDDL assists your team in code review.
         6. SnowDDL supports "env prefix".
-        7. SnowDDL strikes a good balance between dependency management and parallelism.
+        7. SnowDDL strikes a good balance between dependency management overhead and parallelism.
         8. SnowDDL costs very little.
         9. SnowDDL configuration can be generated dynamically in Python code.
 
@@ -58,6 +58,7 @@ setup(
     install_requires=[
         'snowflake-connector-python',
         'pyyaml',
+        'jsonschema',
     ],
 
     python_requires='>=3.7',

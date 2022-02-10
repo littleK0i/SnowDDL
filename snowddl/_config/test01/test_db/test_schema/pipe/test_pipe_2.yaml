@@ -1,0 +1,8 @@
+copy:
+  table: test_table_2
+  stage: test_external_stage
+  transform:
+    id: "GET($1, 'id')"
+    name: "GET($1, 'name')"
+
+auto_ingest: false

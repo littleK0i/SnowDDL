@@ -1,0 +1,13 @@
+arguments:
+  name: VARCHAR(255)
+  status: VARCHAR(255)
+
+returns: VARCHAR(255)
+
+body: |-
+  CASE WHEN status = 'Active' THEN REPLACE(name, 'A', '*') END
+
+references:
+  - object_type: TABLE
+    object_name: test_table_2
+    columns: [name, status]

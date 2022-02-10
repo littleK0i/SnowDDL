@@ -1,0 +1,4 @@
+object_type: TABLE
+object_name: test_table_1
+append_only: true
+show_initial_rows: true

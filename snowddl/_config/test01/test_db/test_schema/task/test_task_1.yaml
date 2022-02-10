@@ -1,0 +1,5 @@
+body: |-
+  CALL test_procedure_1(1)
+
+schedule: 5 MINUTE
+warehouse: task_wh

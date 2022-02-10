@@ -1,0 +1,9 @@
+arguments:
+  step_id: NUMBER(38,0)
+
+returns: BOOLEAN
+
+body: |-
+  BEGIN
+    RETURN CASE WHEN step_id > 2 THEN TRUE ELSE FALSE END;
+  END;

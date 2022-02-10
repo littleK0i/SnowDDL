@@ -43,10 +43,10 @@ external_table_json_schema = table_json_schema = {
                 },
                 "file_format": {
                     "type": "string"
-                },
-                "required": ["stage"],
-                "additionalProperties": False
-            }
+                }
+            },
+            "required": ["stage"],
+            "additionalProperties": False
         },
         "partition_by": {
             "type": "array",
@@ -150,9 +150,9 @@ class ExternalTableParser(AbstractParser):
                 location_stage=self.config.build_complex_ident(f.params['location']['stage'], f.database, f.schema),
                 location_path=f.params['location'].get('path'),
                 location_pattern=f.params['location'].get('pattern'),
-                file_format=self.config.build_complex_ident(f.params['location'].get('file_format'), f.database, f.schema),
-                refresh_on_create=f.params.get('refresh_on_create'),
-                auto_refresh=f.params.get('auto_refresh'),
+                file_format=self.config.build_complex_ident(f.params['location'].get('file_format'), f.database, f.schema) if f.params['location'].get('file_format') else None,
+                refresh_on_create=f.params.get('refresh_on_create', False),
+                auto_refresh=f.params.get('auto_refresh', False),
                 aws_sns_topic=f.params.get('aws_sns_topic'),
                 integration=Ident(f.params['integration']) if f.params.get('integration') else None,
                 comment=f.params.get('comment'),

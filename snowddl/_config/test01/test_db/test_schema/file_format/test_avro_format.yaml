@@ -1,0 +1,4 @@
+type: AVRO
+format_options:
+  compression: DEFLATE
+  null_if: ["NULL", "NIL"]

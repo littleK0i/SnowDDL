@@ -1,0 +1,7 @@
+type: CSV
+format_options:
+  compression: GZIP
+  record_delimiter: "\n"
+  field_delimiter: ","
+  skip_header: 1
+  trim_space: true

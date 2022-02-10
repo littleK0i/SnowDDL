@@ -1,0 +1,5 @@
+body: |-
+  CALL test_procedure_1(2)
+
+after: test_task_1
+warehouse: task_wh

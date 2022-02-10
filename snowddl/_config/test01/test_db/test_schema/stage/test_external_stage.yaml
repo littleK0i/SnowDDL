@@ -1,0 +1,3 @@
+url: "gcs://test-bucket"
+storage_integration: test_storage_integration
+file_format: test_avro_format

@@ -1,0 +1,18 @@
+columns:
+  dt:
+    type: DATE
+    expr: "to_date(split_part(metadata$filename, '/', 2))::date"
+
+  id:
+    type: NUMBER(38,0) NOT NULL
+    expr: "$1:id::number(38,0)"
+
+  name:
+    type: VARCHAR(255) NOT NULL
+    expr: "$1:name::varchar(255)"
+
+location:
+  stage: test_external_stage
+  file_format: test_parquet_format
+
+partition_by: [dt]

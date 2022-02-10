@@ -1,0 +1,3 @@
+text: |-
+  SELECT id, name
+  FROM test_ext_table_1

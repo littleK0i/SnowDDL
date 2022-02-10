@@ -19,7 +19,7 @@ You may find SnowDDL useful if:
 4. SnowDDL re-creates invalid views automatically.
 5. SnowDDL assists your team in code review.
 6. SnowDDL supports "env prefix".
-7. SnowDDL strikes a good balance between dependency management and parallelism.
+7. SnowDDL strikes a good balance between dependency management overhead and parallelism.
 8. SnowDDL costs very little.
 9. SnowDDL configuration can be generated dynamically in Python code.
 
@@ -32,6 +32,12 @@ You may find SnowDDL useful if:
 - [CLI interface](https://docs.snowddl.com/basic/cli)
 - [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
 - [Changelog](/CHANGELOG.md)
+
+## Issues? Questions? Feedback?
+
+Please use GitHub "Issues" to report bugs and technical problems.
+
+Please use GitHub "Discussions" to ask questions and provide feedback.
 
 ## Created by
 [Vitaly Markov](https://www.linkedin.com/in/markov-vitaly/), 2022

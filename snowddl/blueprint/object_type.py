@@ -21,6 +21,7 @@ class ObjectType(Enum):
     EXTERNAL_TABLE = {
         "singular": "EXTERNAL TABLE",
         "plural": "EXTERNAL TABLES",
+        "simplified": "TABLE",
         "is_future_grant_supported": True,
     }
 
@@ -44,6 +45,7 @@ class ObjectType(Enum):
     MATERIALIZED_VIEW = {
         "singular": "MATERIALIZED VIEW",
         "plural": "MATERIALIZED VIEWS",
+        "simplified": "VIEW",
         "is_future_grant_supported": True,
     }
 
@@ -155,6 +157,10 @@ class ObjectType(Enum):
     @property
     def plural(self):
         return self.value.get('plural')
+
+    @property
+    def simplified(self):
+        return self.value.get('simplified', self.value.get('singular'))
 
     @property
     def is_future_grant_supported(self) -> bool:

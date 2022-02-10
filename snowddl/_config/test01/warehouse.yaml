@@ -1,0 +1,3 @@
+task_wh:
+  size: XSMALL
+  auto_suspend: 60

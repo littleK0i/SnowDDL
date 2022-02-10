@@ -1,0 +1,10 @@
+arguments:
+  status: VARCHAR(255)
+
+body: |-
+  status = 'Active'
+
+references:
+  - object_type: TABLE
+    object_name: test_table_2
+    columns: [status]
