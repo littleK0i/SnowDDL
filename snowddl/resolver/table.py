@@ -227,7 +227,7 @@ class TableResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.DROP
 
-    def _get_existing_columns(self, bp: TableBlueprint) -> dict[str, TableColumn]:
+    def _get_existing_columns(self, bp: TableBlueprint):
         existing_columns = {}
 
         cur = self.engine.execute_meta("DESC TABLE {full_name:i}", {

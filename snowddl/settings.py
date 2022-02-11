@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import List
 
 from snowddl.blueprint import ObjectType
 
@@ -14,6 +15,6 @@ class SnowDDLSettings:
     execute_resource_monitor: bool = False
     refresh_user_passwords: bool = False
     refresh_future_grants: bool = False
-    exclude_object_types: list[ObjectType] = field(default_factory=list)
-    include_object_types: list[ObjectType] = field(default_factory=list)
+    exclude_object_types: List[ObjectType] = field(default_factory=list)
+    include_object_types: List[ObjectType] = field(default_factory=list)
     max_workers: int = 8

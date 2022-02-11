@@ -1,4 +1,5 @@
 from string import ascii_letters, digits
+from typing import List
 
 from .data_type import BaseDataType
 
@@ -67,7 +68,7 @@ class ComplexIdentWithPrefix(IdentWithPrefix):
 
 
 class ComplexIdentWithPrefixAndArgs(ComplexIdentWithPrefix):
-    def __init__(self, env_prefix, *parts, data_types: list[BaseDataType]):
+    def __init__(self, env_prefix, *parts, data_types: List[BaseDataType]):
         self.env_prefix = env_prefix
         self.parts = tuple(self.validate_ident(part) for part in parts)
         self.data_types = data_types

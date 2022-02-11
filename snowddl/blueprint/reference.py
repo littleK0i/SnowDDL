@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import List, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from .ident import Ident, ComplexIdentWithPrefix
@@ -10,14 +10,14 @@ if TYPE_CHECKING:
 class MaskingPolicyReference:
     object_type: "ObjectType"
     object_name: "ComplexIdentWithPrefix"
-    columns: list["Ident"]
+    columns: List["Ident"]
 
 
 @dataclass
 class RowAccessPolicyReference:
     object_type: "ObjectType"
     object_name: "ComplexIdentWithPrefix"
-    columns: list["Ident"]
+    columns: List["Ident"]
 
 
 @dataclass

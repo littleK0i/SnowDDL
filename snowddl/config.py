@@ -16,7 +16,7 @@ class SnowDDLConfig:
         self.env_prefix = self._init_env_prefix(env_prefix)
 
         self.blueprints: Dict[Type[T_Blueprint], Dict[str,T_Blueprint]] = defaultdict(dict)
-        self.errors: list[dict] = []
+        self.errors: List[dict] = []
 
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str,T_Blueprint]:
         return self.blueprints.get(cls, {})
