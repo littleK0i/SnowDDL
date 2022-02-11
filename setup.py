@@ -13,6 +13,7 @@ setup(
         SnowDDL is an advanced tool for object management automation in Snowflake.
 
         Getting started: [https://docs.snowddl.com/getting-started](https://docs.snowddl.com/getting-started)
+
         Main features: [https://docs.snowddl.com/features](https://docs.snowddl.com/features)
 
         1. SnowDDL is "stateless".
