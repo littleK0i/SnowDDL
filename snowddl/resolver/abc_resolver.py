@@ -30,7 +30,6 @@ class AbstractResolver(ABC):
 
     def __init__(self, engine: "SnowDDLEngine"):
         self.engine = engine
-        self.executor = engine.executor
         self.config = engine.config
 
         self.object_type = self.get_object_type()
@@ -107,7 +106,7 @@ class AbstractResolver(ABC):
         futures = {}
 
         for full_name, args in tasks.items():
-            futures[self.executor.submit(*args)] = full_name
+            futures[self.engine.executor.submit(*args)] = full_name
 
         for f in as_completed(futures):
             full_name = futures[f]

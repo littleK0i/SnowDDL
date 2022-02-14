@@ -86,9 +86,18 @@ class AbstractRoleResolver(AbstractResolver):
         return ComplexIdentWithPrefix('', *parts)
 
     def create_object(self, bp: RoleBlueprint):
-        self.engine.execute_safe_ddl("CREATE ROLE {role_name:i}", {
+        query = self.engine.query_builder()
+
+        query.append("CREATE ROLE {role_name:i}", {
             "role_name": bp.full_name,
         })
+
+        if bp.comment:
+            query.append_nl("COMMENT = {comment}", {
+                "comment": bp.comment,
+            })
+
+        self.engine.execute_safe_ddl(query)
 
         self.engine.execute_safe_ddl("GRANT ROLE {role_name:i} TO ROLE {current_role:i}", {
             "role_name": bp.full_name,

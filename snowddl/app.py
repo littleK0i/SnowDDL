@@ -4,6 +4,7 @@ from snowflake.connector import SnowflakeConnection
 from typing import Optional
 
 from snowddl.config import SnowDDLConfig
+from snowddl.converter import default_converter_sequence
 from snowddl.engine import SnowDDLEngine
 from snowddl.parser import default_parser_sequence
 from snowddl.resolver import default_resolver_sequence
@@ -47,6 +48,12 @@ class SnowDDLApp:
             for resolver_cls in default_resolver_sequence:
                 resolver = resolver_cls(engine)
                 resolver.destroy()
+
+    def convert_objects(self, base_path: Path):
+        with self.engine as engine:
+            for converter_cls in default_converter_sequence:
+                converter = converter_cls(engine, base_path)
+                converter.convert()
 
     def output_context(self):
         roles = []

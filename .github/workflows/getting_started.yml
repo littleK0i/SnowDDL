@@ -43,10 +43,16 @@ jobs:
       - name: "Cleanup"
         run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe destroy
 
-      - name: "Apply v1"
+      - name: "Apply v1, run 1"
         run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
 
-      - name: "Apply v2"
+      - name: "Apply v1, run 2"
+        run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+
+      - name: "Apply v2, run 1"
+        run: snowddl -c sample01_02 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+
+      - name: "Apply v2, run 2"
         run: snowddl -c sample01_02 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
 
       - name: "Apply test"

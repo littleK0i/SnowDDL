@@ -1,4 +1,6 @@
-from snowddl.resolver.abc_resolver import AbstractResolver
+from .abc_resolver import AbstractResolver, ResolveResult
+from .abc_role_resolver import AbstractRoleResolver
+from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
 from .business_role import BusinessRoleResolver
 from .database import DatabaseResolver

@@ -26,7 +26,8 @@ class ViewResolver(AbstractSchemaObjectResolver):
                 "name": r['name'],
                 "owner": r['owner'],
                 "text": r['text'],
-                "is_secure": r['is_secure'] == "true"
+                "is_secure": r['is_secure'] == "true",
+                "comment": r['comment'] if r['comment'] else None,
             }
 
         return existing_objects
@@ -37,6 +38,13 @@ class ViewResolver(AbstractSchemaObjectResolver):
     def create_object(self, bp: ViewBlueprint):
         self.engine.execute_safe_ddl(self._build_create_view(bp))
 
+        # Comments on views are broken and must be applied separately
+        if bp.comment:
+            self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
+                "full_name": bp.full_name,
+                "comment": bp.comment,
+            })
+
         return ResolveResult.CREATE
 
     def compare_object(self, bp: ViewBlueprint, row: dict):
@@ -46,20 +54,35 @@ class ViewResolver(AbstractSchemaObjectResolver):
         if row['text'] == str(query):
             try:
                 # ... and it is possible to query view (underlying objects were not changed)
-                self.engine.describe_meta("SELECT * FROM {full_view_name:i}", {
-                    "full_view_name": bp.full_name,
+                self.engine.describe_meta("SELECT * FROM {full_name:i}", {
+                    "full_name": bp.full_name,
                 })
-
-                # ... do nothing
-                return ResolveResult.NOCHANGE
             except SnowDDLExecuteError as e:
                 # TODO: add checks for specific errors?
                 pass
+            else:
+                # Comments on views are broken and must be applied separately
+                if bp.comment != row['comment']:
+                    self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
+                        "full_name": bp.full_name,
+                        "comment": bp.comment if bp.comment else '',
+                    })
 
-        # Re-create view if we got here
+                    return ResolveResult.ALTER
+                else:
+                    return ResolveResult.NOCHANGE
+
+        # Replace view if we got here
         self.engine.execute_safe_ddl(query)
 
-        return ResolveResult.ALTER
+        # Comments on views are broken and must be applied separately
+        if bp.comment:
+            self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
+                "full_name": bp.full_name,
+                "comment": bp.comment,
+            })
+
+        return ResolveResult.REPLACE
 
     def drop_object(self, row: dict):
         self.engine.execute_safe_ddl("DROP VIEW {database:i}.{schema:i}.{view_name:i}", {

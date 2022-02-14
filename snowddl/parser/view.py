@@ -8,7 +8,7 @@ view_json_schema = {
         "columns": {
             "type": "object",
             "additionalProperties": {
-                "type": "string"
+                "type": ["string", "null"]
             }
         },
         "text": {

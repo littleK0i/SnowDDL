@@ -1,3 +1,5 @@
+# SnowDDL
+
 [![PyPI](https://badge.fury.io/py/snowddl.svg)](https://badge.fury.io/py/snowddl)
 [![Getting Started Test](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml)
 

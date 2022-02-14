@@ -70,6 +70,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 }))
 
                 remaining_col_names.remove(col_name)
+                continue
 
             bp_c = bp_cols[col_name]
 
@@ -158,6 +159,11 @@ class TableResolver(AbstractSchemaObjectResolver):
 
                 if bp_c.not_null:
                     query.append("NOT NULL")
+
+                if bp_c.comment:
+                    query.append("COMMENT {comment}", {
+                        "comment": bp_c.comment,
+                    })
 
                 alters.append(query)
         else:

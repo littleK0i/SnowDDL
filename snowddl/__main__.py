@@ -3,6 +3,7 @@ from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
 from pathlib import Path
 from snowflake.connector import connect
+from shutil import rmtree
 
 from snowddl import SnowDDLApp, SnowDDLSettings, ObjectType
 
@@ -19,9 +20,13 @@ def default_entry_point():
     parser.add_argument('-u', help='Snowflake user name (default: SNOWFLAKE_USER env variable)', metavar='USER', default=environ.get('SNOWFLAKE_USER'))
     parser.add_argument('-p', help='Snowflake user password (default: SNOWFLAKE_PASSWORD env variable)', metavar='PASSWORD', default=environ.get('SNOWFLAKE_PASSWORD'))
     parser.add_argument('-k', help='Path to private key file (default: SNOWFLAKE_PRIVATE_KEY_PATH env variable)', metavar='PRIVATE_KEY', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PATH'))
-    parser.add_argument('--passphrase', help='Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE'))
+
+    # Role & warehouse
+    parser.add_argument('-r', help='Snowflake active role (default: SNOWFLAKE_ROLE env variable)', metavar='ROLE', default=environ.get('SNOWFlAKE_ROLE'))
+    parser.add_argument('-w', help='Snowflake active warehouse (default: SNOWFLAKE_WAREHOUSE env variable)', metavar='WAREHOUSE', default=environ.get('SNOWFLAKE_WAREHOUSE'))
 
     # Options
+    parser.add_argument('--passphrase', help='Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE'))
     parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=None)
     parser.add_argument('--max-workers', help='Maximum number of workers to resolve objects in parallel', default=None, type=int)
 
@@ -93,6 +98,53 @@ def default_entry_point():
     app.output_suggested_ddl()
 
 
+def convert_entry_point():
+    formatter = lambda prog: HelpFormatter(prog, max_help_position=32)
+    parser = ArgumentParser(prog='snowddlconv', description='Convert existing objects in Snowflake account to SnowDDL config', formatter_class=formatter)
+
+    # Config
+    parser.add_argument('-c', help='Path to output config directory (default: current directory)', metavar='CONFIG_PATH', default=getcwd())
+
+    # Auth
+    parser.add_argument('-a', help='Snowflake account identifier (default: SNOWFLAKE_ACCOUNT env variable)', metavar='ACCOUNT', default=environ.get('SNOWFLAKE_ACCOUNT'))
+    parser.add_argument('-u', help='Snowflake user name (default: SNOWFLAKE_USER env variable)', metavar='USER', default=environ.get('SNOWFLAKE_USER'))
+    parser.add_argument('-p', help='Snowflake user password (default: SNOWFLAKE_PASSWORD env variable)', metavar='PASSWORD', default=environ.get('SNOWFLAKE_PASSWORD'))
+    parser.add_argument('-k', help='Path to private key file (default: SNOWFLAKE_PRIVATE_KEY_PATH env variable)', metavar='PRIVATE_KEY', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PATH'))
+
+    # Role & warehouse
+    parser.add_argument('-r', help='Snowflake active role (default: SNOWFLAKE_ROLE env variable)', metavar='ROLE', default=environ.get('SNOWFlAKE_ROLE'))
+    parser.add_argument('-w', help='Snowflake active warehouse (default: SNOWFLAKE_WAREHOUSE env variable)', metavar='WAREHOUSE', default=environ.get('SNOWFLAKE_WAREHOUSE'))
+
+    # Options
+    parser.add_argument('--passphrase', help='Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE'))
+    parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=None)
+    parser.add_argument('--max-workers', help='Maximum number of workers to resolve objects in parallel', default=None, type=int)
+    parser.add_argument('--clean', help='Delete existing config files before conversion', default=False, action='store_true')
+
+    # Logging
+    parser.add_argument('--log-level', help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO")
+
+    # Object types
+    parser.add_argument('--exclude-object-types', help="Comma-separated list of object types NOT to convert", default=None, metavar='')
+    parser.add_argument('--include-object-types', help="Comma-separated list of object types TO convert, all other types are excluded", default=None, metavar='')
+
+    args = parser.parse_args()
+
+    if not args.a or not args.u or (not args.p and not args.k):
+        parser.print_help()
+        exit(1)
+
+    logger = get_logger(args)
+    config_path = get_convert_config_path(args)
+
+    app = SnowDDLApp()
+    app.init_config(args.env_prefix)
+    app.init_engine(get_connection(args), get_convert_engine_settings(args))
+
+    app.output_context()
+    app.convert_objects(config_path)
+
+
 def get_config_path(args):
     config_path = Path(args.c)
 
@@ -101,6 +153,21 @@ def get_config_path(args):
 
     if not config_path.exists():
         raise ValueError(f"Config path [{args.c}] does not exist")
+
+    if not config_path.is_dir():
+        raise ValueError(f"Config path [{args.c}] is not a directory")
+
+    return config_path
+
+
+def get_convert_config_path(args):
+    config_path = Path(args.c)
+
+    if config_path.is_dir() and args.clean:
+        rmtree(config_path)
+
+    if not config_path.exists():
+        config_path.mkdir(mode=0o755, parents=True)
 
     if not config_path.is_dir():
         raise ValueError(f"Config path [{args.c}] is not a directory")
@@ -127,6 +194,8 @@ def get_connection(args):
     options = {
         "account": args.a,
         "user": args.u,
+        "role": args.r,
+        "warehouse": args.w,
     }
 
     if args.k:
@@ -180,6 +249,27 @@ def get_engine_settings(args):
 
     if args.refresh_future_grants:
         settings.refresh_future_grants = True
+
+    if args.exclude_object_types:
+        try:
+            settings.exclude_object_types = [ObjectType[t.strip().upper()] for t in str(args.exclude_object_types).split(',')]
+        except KeyError as e:
+            raise ValueError(f"Invalid object type [{str(e)}]")
+
+    if args.include_object_types:
+        try:
+            settings.include_object_types = [ObjectType[t.strip().upper()] for t in str(args.include_object_types).split(',')]
+        except KeyError as e:
+            raise ValueError(f"Invalid object type [{str(e)}]")
+
+    if args.max_workers:
+        settings.max_workers = args.max_workers
+
+    return settings
+
+
+def get_convert_engine_settings(args):
+    settings = SnowDDLSettings()
 
     if args.exclude_object_types:
         try:

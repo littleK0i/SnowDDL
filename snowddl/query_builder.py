@@ -37,7 +37,7 @@ class SnowDDLQueryBuilder:
 
     def _short_hash(self):
         sha1_digest = sha1(str(self).encode('UTF-8')).digest()
-        return f"#{urlsafe_b64encode(sha1_digest[:12])}"
+        return f"#{urlsafe_b64encode(sha1_digest[:12]).decode('ascii')}"
 
     def __str__(self):
         return '\n'.join([' '.join(line) for line in self.fragments])

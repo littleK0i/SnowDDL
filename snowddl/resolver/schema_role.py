@@ -142,7 +142,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             ObjectType.STAGE: ['READ', 'WRITE'],
             ObjectType.SEQUENCE: ['USAGE'],
             ObjectType.TABLE: ['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE'],
-            ObjectType.VIEW: ['SELECT', 'REFERENCES'],
         }
 
         for object_type, privileges in privileges_map.items():

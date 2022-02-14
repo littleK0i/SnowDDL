@@ -146,11 +146,6 @@ class TableParser(AbstractParser):
                 if not m:
                     raise ValueError(f"Incorrect short syntax for column [{col_name}] in table [{f.database}.{f.schema}.{f.name}]: {col['type']}")
 
-                col = {
-                    "type": m.group('type'),
-                    "not_null": bool(m.group('not_null')),
-                }
-
                 # Default for sequence
                 if col.get('default_sequence'):
                     col_default = f"{self.config.build_complex_ident(col['default_sequence'], f.database, f.schema)}.NEXTVAL"
@@ -160,8 +155,8 @@ class TableParser(AbstractParser):
                 column_blueprints.append(
                     TableColumn(
                         name=Ident(col_name),
-                        type=DataType(col['type']),
-                        not_null=col.get('not_null', False),
+                        type=DataType(m.group('type')),
+                        not_null=bool(m.group('not_null')),
                         default=col_default,
                         comment=col.get('comment'),
                     )
