@@ -55,6 +55,7 @@ class DatabaseBlueprint(AbstractBlueprint):
     database: IdentWithPrefix
     is_transient: Optional[bool]
     retention_time: Optional[int]
+    is_sandbox: Optional[bool]
 
 
 @dataclass

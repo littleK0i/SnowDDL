@@ -22,8 +22,5 @@ class SchemaConverter(AbstractConverter):
         object_path = self.base_path / self._normalise_name_with_prefix(row['database']) / self._normalise_name(row['schema'])
         object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
-        if data:
-            self._dump_file(object_path / 'params.yaml', data, schema_json_schema)
-            return ConvertResult.DUMP
-
-        return ConvertResult.EMPTY
+        self._dump_file(object_path / 'params.yaml', data, schema_json_schema)
+        return ConvertResult.DUMP

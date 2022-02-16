@@ -11,6 +11,9 @@ database_json_schema = {
         "retention_time": {
             "type": "integer"
         },
+        "is_sandbox": {
+            "type": "boolean"
+        },
         "comment": {
             "type": "string"
         }
@@ -32,6 +35,7 @@ class DatabaseParser(AbstractParser):
                 database = IdentWithPrefix(self.env_prefix, database_path.name),
                 is_transient=params.get('is_transient', False),
                 retention_time=params.get('retention_time', None),
+                is_sandbox=params.get('is_sandbox', False),
                 comment=params.get('comment', None),
             )
 

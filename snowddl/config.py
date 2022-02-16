@@ -64,6 +64,14 @@ class SnowDDLConfig:
 
     def _init_env_prefix(self, env_prefix):
         if env_prefix:
-            return f"{str(env_prefix).upper()}__"
+            env_prefix = str(env_prefix).upper()
+
+            if '__' in env_prefix:
+                raise ValueError(f"Env prefix [{env_prefix}] cannot contain [__] double underscore")
+
+            if env_prefix.endswith('_'):
+                raise ValueError(f"Env prefix [{env_prefix}] cannot end with [_] underscore")
+
+            return f"{env_prefix}__"
 
         return ''

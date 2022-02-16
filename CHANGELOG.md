@@ -1,6 +1,12 @@
 # Changelog
 
-## [0.2.0]
+## [0.2.1] - 2022-02-16
+
+- Added `is_sandbox` for `DATABASE` object type, in addition to `SCHEMA` object type.
+- Dump empty `params.yaml` files for `DATABASE` and `SCHEMA` during conversion to preserve empty schemas. Empty directories cannot be pushed to Git.
+- Added basic safety checks for `env_prefix`. It cannot contain double underscore `__` and it cannot end with underscore `_`.
+
+## [0.2.0] - 2022-02-15
 
 - Added optional `-r` (ROLE) and `-w` (WAREHOUSE) arguments for SnowDDL CLI interface.
 - Added basic converters from existing `DATABASE`, `SCHEMA`, `TABLE`, `SEQUENCE` objects to SnowDDL YAML configs.

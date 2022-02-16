@@ -1,4 +1,4 @@
-from snowddl.blueprint import SchemaBlueprint
+from snowddl.blueprint import SchemaBlueprint, DatabaseBlueprint
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType, SnowDDLUnsupportedError
 
 
@@ -86,3 +86,23 @@ class SchemaResolver(AbstractResolver):
             # Reload cache if at least one object was changed
             self.engine.schema_cache.reload()
             return
+
+    def _resolve_drop(self):
+        # Drop existing schemas without blueprints
+        # with additional check for "sandbox" database
+        tasks = {}
+
+        for full_name in sorted(self.existing_objects):
+            if full_name not in self.blueprints and not self._is_sandbox_database(full_name):
+                tasks[full_name] = (self.drop_object, self.existing_objects[full_name])
+
+        self._process_tasks(tasks)
+
+    def _is_sandbox_database(self, schema_full_name):
+        database_full_name = '.'.join(schema_full_name.split('.')[:1])
+        database_bp = self.config.get_blueprints_by_type(DatabaseBlueprint).get(database_full_name)
+
+        if database_bp and database_bp.is_sandbox:
+            return True
+
+        return False

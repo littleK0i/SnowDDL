@@ -40,6 +40,7 @@ class SchemaParser(AbstractParser):
                 combined_params = {
                     "is_transient": database_params.get('is_transient', False) or schema_params.get('is_transient', False),
                     "retention_time": schema_params.get("retention_time"),
+                    "is_sandbox": database_params.get('is_sandbox', False) or schema_params.get('is_sandbox', False),
                 }
 
                 bp = SchemaBlueprint(
@@ -48,7 +49,7 @@ class SchemaParser(AbstractParser):
                     schema=Ident(schema_path.name),
                     is_transient=combined_params.get('is_transient', False),
                     retention_time=combined_params.get('retention_time', None),
-                    is_sandbox=schema_params.get('is_sandbox', False),
+                    is_sandbox=combined_params.get('is_sandbox', False),
                     comment=schema_params.get('comment', None),
                 )
 
