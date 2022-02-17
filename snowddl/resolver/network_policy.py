@@ -11,7 +11,6 @@ class NetworkPolicyResolver(AbstractResolver):
     def get_existing_objects(self):
         existing_objects = {}
 
-        # LIKE is not supported for this command
         cur = self.engine.execute_meta("SHOW NETWORK POLICIES")
 
         for r in cur:
@@ -19,6 +18,7 @@ class NetworkPolicyResolver(AbstractResolver):
                 "name": r['name'],
                 "entries_in_allowed_ip_list": r['entries_in_allowed_ip_list'],
                 "entries_in_blocked_ip_list": r['entries_in_blocked_ip_list'],
+                "comment": r['comment'] if r['comment'] else None,
             }
 
         return existing_objects
@@ -42,11 +42,18 @@ class NetworkPolicyResolver(AbstractResolver):
                 "blocked_ip_list": bp.blocked_ip_list,
             })
 
+        if bp.comment:
+            query.append_nl("COMMENT = {comment}", {
+                "comment": bp.comment,
+            })
+
         self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_network_policy)
 
         return ResolveResult.CREATE
 
     def compare_object(self, bp: NetworkPolicyBlueprint, row: dict):
+        result = ResolveResult.NOCHANGE
+
         cur = self.engine.execute_meta("DESC NETWORK POLICY {name:i}", {
             "name": bp.full_name,
         })
@@ -60,28 +67,36 @@ class NetworkPolicyResolver(AbstractResolver):
             elif r['name'] == 'BLOCKED_IP_LIST':
                 existing_blocked_ip_list = str(r['value']).split(',')
 
-        if sorted(bp.allowed_ip_list) != sorted(existing_allowed_ip_list) \
-        or sorted(bp.blocked_ip_list) != sorted(existing_blocked_ip_list):
-            query = self.engine.query_builder()
-
-            query.append("ALTER NETWORK POLICY {name:i}", {
+        if sorted(bp.allowed_ip_list) != sorted(existing_allowed_ip_list):
+            self.engine.execute_unsafe_ddl("ALTER NETWORK POLICY {name:i} SET ALLOWED_IP_LIST = ({allowed_ip_list})", {
                 "name": bp.full_name,
-            })
-
-            query.append_nl("ALLOWED_IP_LIST = ({allowed_ip_list})", {
                 "allowed_ip_list": bp.allowed_ip_list,
-            })
+            }, condition=self.engine.settings.execute_network_policy)
 
+            result = ResolveResult.ALTER
+
+        if sorted(bp.blocked_ip_list) != sorted(existing_blocked_ip_list):
             if bp.blocked_ip_list:
-                query.append_nl("BLOCKED_IP_LIST = ({blocked_ip_list})", {
-                    "blocked_ip_list": bp.allowed_ip_list,
-                })
+                self.engine.execute_unsafe_ddl("ALTER NETWORK POLICY {name:i} SET BLOCKED_IP_LIST = ({blocked_ip_list})", {
+                    "name": bp.full_name,
+                    "blocked_ip_list": bp.blocked_ip_list,
+                }, condition=self.engine.settings.execute_network_policy)
+            else:
+                self.engine.execute_unsafe_ddl("ALTER NETWORK POLICY {name:i} SET BLOCKED_IP_LIST = ()", {
+                    "name": bp.full_name,
+                }, condition=self.engine.settings.execute_network_policy)
 
-            self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_network_policy)
+            result = ResolveResult.ALTER
 
-            return ResolveResult.ALTER
+        if bp.comment != row['comment']:
+            self.engine.execute_unsafe_ddl("ALTER NETWORK POLICY {name:i} SET COMMENT = {comment}", {
+                "name": bp.full_name,
+                "comment": bp.comment if bp.comment else None,
+            }, condition=self.engine.settings.execute_network_policy)
 
-        return ResolveResult.NOCHANGE
+            result = ResolveResult.ALTER
+
+        return result
 
     def drop_object(self, row: dict):
         self.engine.execute_unsafe_ddl("DROP NETWORK POLICY {name:i}", {

@@ -1,0 +1,14 @@
+test_res_monitor_1:
+  credit_quota: 125
+  frequency: monthly
+  triggers:
+    50: notify
+    75: notify
+    100: suspend
+    110: suspend_immediate
+
+test_res_monitor_2:
+  credit_quota: 50
+  frequency: daily
+  triggers:
+    100: suspend_immediate

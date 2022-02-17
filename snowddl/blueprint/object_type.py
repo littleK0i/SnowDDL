@@ -66,6 +66,11 @@ class ObjectType(Enum):
         "is_future_grant_supported": True,
     }
 
+    RESOURCE_MONITOR = {
+        "singular": "RESOURCE MONITOR",
+        "plural": "RESOURCE MONITORS",
+    }
+
     ROLE = {
         "singular": "ROLE",
         "plural": "ROLES",

@@ -9,6 +9,7 @@ from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
 from .pipe import PipeParser
 from .procedure import ProcedureParser
+from .resource_monitor import ResourceMonitorParser
 from .row_access_policy import RowAccessPolicyParser
 from .schema import SchemaParser
 from .sequence import SequenceParser
@@ -23,8 +24,9 @@ from .warehouse import WarehouseParser
 
 
 default_parser_sequence = [
-    # NetworkPolicyParser,
     AccountParameterParser,
+    NetworkPolicyParser,
+    ResourceMonitorParser,
     WarehouseParser,
     DatabaseParser,
     SchemaParser,

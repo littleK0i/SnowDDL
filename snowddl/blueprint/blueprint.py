@@ -155,6 +155,14 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
 
 
 @dataclass
+class ResourceMonitorBlueprint(AbstractBlueprint):
+    full_name: Ident
+    credit_quota: int
+    frequency: str
+    triggers: Dict[int,str]
+
+
+@dataclass
 class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
     full_name: ComplexIdentWithPrefix
     arguments: List[NameWithType]

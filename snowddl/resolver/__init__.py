@@ -14,6 +14,7 @@ from .network_policy import NetworkPolicyResolver
 from .pipe import PipeResolver
 from .primary_key import PrimaryKeyResolver
 from .procedure import ProcedureResolver
+from .resource_monitor import ResourceMonitorResolver
 from .row_access_policy import RowAccessPolicyResolver
 from .sequence import SequenceResolver
 from .schema import SchemaResolver
@@ -32,8 +33,9 @@ from .warehouse_role import WarehouseRoleResolver
 
 
 default_resolver_sequence = [
-    # NetworkPolicyResolver,
     AccountParameterResolver,
+    NetworkPolicyResolver,
+    ResourceMonitorResolver,
     WarehouseResolver,
     WarehouseRoleResolver,
     DatabaseResolver,
@@ -61,4 +63,3 @@ default_resolver_sequence = [
     UserRoleResolver,
     UserResolver,
 ]
-

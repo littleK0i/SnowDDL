@@ -1,0 +1,12 @@
+test_network_policy_1:
+  allowed_ip_list:
+    - 0.0.0.0/0
+  blocked_ip_list:
+    - 1.1.1.1
+    - 8.8.8.8
+
+test_network_policy_2:
+  allowed_ip_list:
+    - 192.168.1.1
+    - 192.168.1.2
+  comment: test

@@ -16,6 +16,7 @@ from .blueprint import (
     PipeBlueprint,
     PrimaryKeyBlueprint,
     ProcedureBlueprint,
+    ResourceMonitorBlueprint,
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
     StageBlueprint,

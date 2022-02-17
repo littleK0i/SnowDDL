@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.0] - 2022-02-17
+
+- Added `NETWORK_POLICY` and `RESOURCE_MONITOR` to list of supported object types.
+
 ## [0.2.1] - 2022-02-16
 
 - Added `is_sandbox` for `DATABASE` object type, in addition to `SCHEMA` object type.
