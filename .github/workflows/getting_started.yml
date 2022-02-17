@@ -56,4 +56,4 @@ jobs:
         run: snowddl -c sample01_02 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
 
       - name: "Apply test"
-        run: snowddl -c test01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe --apply-masking-policy --apply-row-access-policy --apply-network-policy apply
+        run: snowddl -c test01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
