@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.1] - 2022-02-18
+
+- Use `SYSTEM$BOOTSTRAP_DATA_REQUEST` to detect edition of Snowflake account.
+- Drop admin role with prefix when calling `destroy` action with `--env-prefix`. Current role of connection reverts to original role without prefix.
+
 ## [0.3.0] - 2022-02-17
 
 - Added `NETWORK_POLICY` and `RESOURCE_MONITOR` to list of supported object types.

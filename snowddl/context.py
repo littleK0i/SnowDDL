@@ -1,3 +1,4 @@
+from json import loads
 from typing import TYPE_CHECKING
 
 from snowddl.blueprint import IdentWithPrefix, Edition
@@ -18,7 +19,7 @@ class SnowDDLContext:
                 , IS_ROLE_IN_SESSION('ACCOUNTADMIN') AS is_account_admin
                 , IS_ROLE_IN_SESSION('SYSADMIN') AS is_sys_admin
                 , IS_ROLE_IN_SESSION('SECURITYADMIN') AS is_security_admin
-                , CURRENT_VERSION() AS version
+                , SYSTEM$BOOTSTRAP_DATA_REQUEST('ACCOUNT') AS bootstrap_account
         """)
 
         r = cur.fetchone()
@@ -28,28 +29,18 @@ class SnowDDLContext:
         self.current_role = r['CURRENT_ROLE']
         self.current_warehouse = r['CURRENT_WAREHOUSE']
 
+        self.original_role = self.current_role
+
         self.is_account_admin = r['IS_ACCOUNT_ADMIN']
         self.is_sys_admin = r['IS_SYS_ADMIN']
         self.is_security_admin = r['IS_SECURITY_ADMIN']
 
-        self.version = r['VERSION']
-        self.edition = self._get_edition()
+        bootstrap_account = loads(r['BOOTSTRAP_ACCOUNT'])
+
+        self.version = bootstrap_account['serverVersion']
+        self.edition = Edition[bootstrap_account['accountInfo']['serviceLevelName']]
 
         self._validate()
-        self._init_role_with_prefix()
-
-        self.engine.flush_thread_buffers()
-
-    def _get_edition(self):
-        # TODO: discover a secret method to detect edition easier
-        # Pattern is empty on purpose, we only need a structure of response
-        description = self.engine.describe_meta("SHOW WAREHOUSES LIKE ''")
-
-        for col in description:
-            if col.name == 'min_cluster_count':
-                return Edition.ENTERPRISE
-
-        return Edition.STANDARD
 
     def _validate(self):
         if not self.current_warehouse:
@@ -63,7 +54,7 @@ class SnowDDLContext:
             if self.engine.settings.execute_resource_monitor:
                 raise ValueError("Context error: missing ACCOUNTADMIN role in session to apply RESOURCE MONITORS")
 
-    def _init_role_with_prefix(self):
+    def activate_role_with_prefix(self):
         if not self.engine.config.env_prefix:
             return
 
@@ -98,3 +89,19 @@ class SnowDDLContext:
         })
 
         self.current_role = str(role_with_prefix)
+        self.engine.flush_thread_buffers()
+
+    def destroy_role_with_prefix(self):
+        if not self.engine.config.env_prefix:
+            return
+
+        self.engine.execute_meta("USE ROLE {original_role:i}", {
+            "original_role": self.original_role,
+        })
+
+        self.engine.execute_context_ddl("DROP ROLE {role_with_prefix:i}", {
+            "role_with_prefix": self.current_role,
+        })
+
+        self.current_role = self.original_role
+        self.engine.flush_thread_buffers()

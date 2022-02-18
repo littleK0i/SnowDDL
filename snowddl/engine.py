@@ -36,6 +36,8 @@ class SnowDDLEngine:
         self._suggested_ddl_buffer = defaultdict(list)
 
         self.context = SnowDDLContext(self)
+        self.context.activate_role_with_prefix()
+
         self.schema_cache = SnowDDLSchemaCache(self)
 
     def __enter__(self):

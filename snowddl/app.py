@@ -49,6 +49,8 @@ class SnowDDLApp:
                 resolver = resolver_cls(engine)
                 resolver.destroy()
 
+            self.engine.context.destroy_role_with_prefix()
+
     def convert_objects(self, base_path: Path):
         with self.engine as engine:
             for converter_cls in default_converter_sequence:
