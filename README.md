@@ -31,7 +31,7 @@ You may find SnowDDL useful if:
 - [Getting started](https://docs.snowddl.com/getting-started)
 - [Main features](https://docs.snowddl.com/features)
 - [Object types](https://docs.snowddl.com/object-types)
-- [Role hierarchy](https://docs.snowddl.com/role-hierarchy)
+- [Role hierarchy](https://docs.snowddl.com/guides/role-hierarchy)
 - [CLI interface](https://docs.snowddl.com/basic/cli)
 - [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
 - [Changelog](/CHANGELOG.md)
