@@ -1,4 +1,4 @@
-name: Getting Started Test
+name: Getting Started
 
 on:
   push:

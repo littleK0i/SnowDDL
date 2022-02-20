@@ -1,0 +1,40 @@
+name: Pytest
+
+on:
+  push:
+    paths:
+      - "**.py"
+      - "**.yml"
+      - "**.yaml"
+  workflow_dispatch:
+
+jobs:
+  getting_started:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - account-ident: dd99123.europe-west4.gcp
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ matrix.account-ident }}
+      SNOWFLAKE_USER: snowddl
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install
+        run: pip install -e .[test]
+
+      - name: "Run pytest"
+        run: pytest -n auto --tb=short test/*/*

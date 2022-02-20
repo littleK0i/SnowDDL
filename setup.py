@@ -63,5 +63,9 @@ setup(
         'jsonschema',
     ],
 
+    extras_require={
+        'test': ['pytest', 'pytest-xdist'],
+    },
+
     python_requires='>=3.7',
 )

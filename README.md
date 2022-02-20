@@ -1,7 +1,8 @@
 # SnowDDL
 
 [![PyPI](https://badge.fury.io/py/snowddl.svg)](https://badge.fury.io/py/snowddl)
-[![Getting Started Test](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml)
+[![Getting Started](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml)
+[![Pytest](https://github.com/littleK0i/SnowDDL/actions/workflows/pytest.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/pytest.yml)
 
 SnowDDL is an advanced tool for object management automation in [Snowflake](http://snowflake.com).
 
@@ -35,6 +36,13 @@ You may find SnowDDL useful if:
 - [CLI interface](https://docs.snowddl.com/basic/cli)
 - [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
 - [Changelog](/CHANGELOG.md)
+
+## Mini-roadmap
+
+- full test coverage for all object types and transformations
+- placeholders in YAML configs
+- documentation for dynamic config generation in Python ("advanced mode")
+- video tutorials
 
 ## Issues? Questions? Feedback?
 
