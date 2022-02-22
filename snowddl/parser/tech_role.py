@@ -1,5 +1,5 @@
-from snowddl.blueprint import Grant, TechRoleBlueprint, ComplexIdentWithPrefix, ObjectType
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 tech_role_json_schema = {
@@ -32,9 +32,10 @@ tech_role_json_schema = {
 
 class TechRoleParser(AbstractParser):
     def load_blueprints(self):
-        tech_roles_config = self.parse_single_file(self.base_path / 'tech_role.yaml', tech_role_json_schema)
+        self.parse_single_file(self.base_path / 'tech_role.yaml', tech_role_json_schema, self.process_tech_role)
 
-        for tech_role_name, tech_role in tech_roles_config.items():
+    def process_tech_role(self, f: ParsedFile):
+        for tech_role_name, tech_role in f.params.items():
             tech_role_ident = self.config.build_role_ident(tech_role_name, self.config.TECH_ROLE_SUFFIX)
 
             grants = []

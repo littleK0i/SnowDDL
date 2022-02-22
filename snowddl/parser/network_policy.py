@@ -1,5 +1,5 @@
 from snowddl.blueprint import NetworkPolicyBlueprint, Ident
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 network_policy_json_schema = {
@@ -33,9 +33,10 @@ network_policy_json_schema = {
 
 class NetworkPolicyParser(AbstractParser):
     def load_blueprints(self):
-        network_policy_config = self.parse_single_file(self.base_path / 'network_policy.yaml', network_policy_json_schema)
+        self.parse_single_file(self.base_path / 'network_policy.yaml', network_policy_json_schema, self.process_network_policy)
 
-        for policy_name, policy in network_policy_config.items():
+    def process_network_policy(self, file: ParsedFile):
+        for policy_name, policy in file.params.items():
             bp = NetworkPolicyBlueprint(
                 full_name=Ident(policy_name),
                 allowed_ip_list=policy['allowed_ip_list'],

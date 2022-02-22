@@ -1,5 +1,5 @@
 from snowddl.blueprint import RowAccessPolicyBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, NameWithType, DataType, ObjectType, RowAccessPolicyReference
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 row_access_policy_json_schema = {
@@ -49,28 +49,30 @@ row_access_policy_json_schema = {
 
 class RowAccessPolicyParser(AbstractParser):
     def load_blueprints(self):
-        for f in self.parse_schema_object_files("row_access_policy", row_access_policy_json_schema):
-            arguments = [NameWithType(name=Ident(k), type=DataType(t)) for k, t in f.params.get('arguments', {}).items()]
-            references = []
+        self.parse_schema_object_files("row_access_policy", row_access_policy_json_schema, self.process_row_access_policy)
 
-            for a in f.params.get('references', []):
-                ref = RowAccessPolicyReference(
-                    object_type=ObjectType[a['object_type'].upper()],
-                    object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
-                    columns=[Ident(c) for c in a['columns']],
-                )
+    def process_row_access_policy(self, f: ParsedFile):
+        arguments = [NameWithType(name=Ident(k), type=DataType(t)) for k, t in f.params.get('arguments', {}).items()]
+        references = []
 
-                references.append(ref)
-
-            bp = RowAccessPolicyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                database=IdentWithPrefix(self.env_prefix, f.database),
-                schema=Ident(f.schema),
-                name=Ident(f.name),
-                body=f.params['body'],
-                arguments=arguments,
-                references=references,
-                comment=f.params.get('comment'),
+        for a in f.params.get('references', []):
+            ref = RowAccessPolicyReference(
+                object_type=ObjectType[a['object_type'].upper()],
+                object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
+                columns=[Ident(c) for c in a['columns']],
             )
 
-            self.config.add_blueprint(bp)
+            references.append(ref)
+
+        bp = RowAccessPolicyBlueprint(
+            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+            database=IdentWithPrefix(self.env_prefix, f.database),
+            schema=Ident(f.schema),
+            name=Ident(f.name),
+            body=f.params['body'],
+            arguments=arguments,
+            references=references,
+            comment=f.params.get('comment'),
+        )
+
+        self.config.add_blueprint(bp)

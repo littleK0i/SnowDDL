@@ -5,11 +5,11 @@ from jsonschema import validate
 from pathlib import Path
 from traceback import format_exc
 from typing import Dict, List, TYPE_CHECKING
-from yaml import dump
+from yaml import dump_all
 
 from snowddl.error import SnowDDLExecuteError
 from snowddl.blueprint import ObjectType, Edition
-from snowddl.converter._utils import FoldedStr, LiteralStr
+from snowddl.converter._yaml import SnowDDLDumper, YamlFoldedStr, YamlLiteralStr
 
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
@@ -101,7 +101,7 @@ class AbstractConverter(ABC):
 
         # (Over)write file
         with file_path.open('w') as f:
-            dump(data, f, sort_keys=False)
+            dump_all([data], f, Dumper=SnowDDLDumper, sort_keys=False)
 
     def _normalise_name(self, name: str):
         return name.lower()

@@ -6,7 +6,7 @@ from typing import Optional
 from snowddl.config import SnowDDLConfig
 from snowddl.converter import default_converter_sequence
 from snowddl.engine import SnowDDLEngine
-from snowddl.parser import default_parser_sequence
+from snowddl.parser import default_parser_sequence, PlaceholderParser
 from snowddl.resolver import default_resolver_sequence
 from snowddl.settings import SnowDDLSettings
 from snowddl.version import __version__
@@ -28,6 +28,13 @@ class SnowDDLApp:
 
     def init_engine(self, connection: SnowflakeConnection, settings: SnowDDLSettings):
         self.engine = SnowDDLEngine(connection, self.config, settings)
+
+    def load_placeholders_with_parsers(self, base_path: Path, placeholder_path: Path = None):
+        if placeholder_path and not placeholder_path.is_file():
+            raise ValueError(f"Invalid placeholders path [{placeholder_path}]")
+
+        parser = PlaceholderParser(self.config, base_path, placeholder_path)
+        parser.load_blueprints()
 
     def load_blueprints_with_parsers(self, base_path: Path):
         if not base_path.is_dir():
@@ -77,7 +84,7 @@ class SnowDDLApp:
 
     def output_config_errors(self):
         for e in self.config.errors:
-            self.logger.warning(f"[{e['path']}]: {e['error']}")
+            self.logger.warning(f"[{e['path']}]: {e['format_exc']}")
 
     def output_engine_stats(self):
         self.logger.info(f"Executed {len(self.engine.executed_ddl)} DDL queries, Suggested {len(self.engine.suggested_ddl)} DDL queries")

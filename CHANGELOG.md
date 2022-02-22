@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0] - 2022-02-22
+
+- Reworked parsers. Now most exceptions raised in parsers will no longer interrupt the program, but will be stored and reported later. Each reported exception now has a proper traceback and pointer to file which most likely caused the problem.
+- Implemented [placeholders](https://docs.snowddl.com/basic/yaml-placeholders) in YAML configs.
+- Config path is now fully resolved prior to execution, which should help to produce consistent logs regardless of symlinks or cwd.
+
 ## [0.3.1] - 2022-02-18
 
 - Use `SYSTEM$BOOTSTRAP_DATA_REQUEST` to detect edition of Snowflake account.

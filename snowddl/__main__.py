@@ -29,6 +29,7 @@ def default_entry_point():
     parser.add_argument('--passphrase', help='Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE'))
     parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=None)
     parser.add_argument('--max-workers', help='Maximum number of workers to resolve objects in parallel', default=None, type=int)
+    parser.add_argument('--placeholder-path', help='Path to config file with environment-specific placeholders', default=None)
 
     # Logging
     parser.add_argument('--log-level', help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO")
@@ -70,12 +71,20 @@ def default_entry_point():
 
     logger = get_logger(args)
     config_path = get_config_path(args)
+    placeholder_path = get_placeholder_path(args)
 
     app = SnowDDLApp()
     app.init_config(args.env_prefix)
     app.init_engine(get_connection(args), get_engine_settings(args))
 
     app.output_context()
+
+    app.load_placeholders_with_parsers(config_path, placeholder_path)
+
+    if app.config.errors:
+        app.output_config_errors()
+        exit(1)
+
     app.load_blueprints_with_parsers(config_path)
 
     if app.config.errors:
@@ -157,8 +166,19 @@ def get_config_path(args):
     if not config_path.is_dir():
         raise ValueError(f"Config path [{args.c}] is not a directory")
 
-    return config_path
+    return config_path.resolve()
 
+
+def get_placeholder_path(args):
+    if args.placeholder_path:
+        placeholder_path = Path(args.placeholder_path)
+
+        if not placeholder_path.is_file():
+            raise ValueError(f"Placeholder path [{args.placeholder_path}] does not exist or not a file")
+
+        return placeholder_path.resolve()
+
+    return None
 
 def get_convert_config_path(args):
     config_path = Path(args.c)

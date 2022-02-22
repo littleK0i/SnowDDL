@@ -1,3 +1,4 @@
+from ._parsed_file import ParsedFile
 from .account_params import AccountParameterParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
@@ -8,6 +9,7 @@ from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
 from .pipe import PipeParser
+from .placeholder import PlaceholderParser
 from .procedure import ProcedureParser
 from .resource_monitor import ResourceMonitorParser
 from .row_access_policy import RowAccessPolicyParser

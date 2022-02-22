@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from snowddl.converter.abc_converter import AbstractConverter, ConvertResult, LiteralStr, FoldedStr
+from snowddl.converter.abc_converter import AbstractConverter, ConvertResult, YamlLiteralStr, YamlFoldedStr
 
 
 class AbstractSchemaObjectConverter(AbstractConverter):

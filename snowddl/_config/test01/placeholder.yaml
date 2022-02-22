@@ -1,0 +1,7 @@
+# Warehouses
+default_wh_size: XSMALL
+default_wh_suspend: 60
+
+# Stages
+external_bucket_path: gcs://test-bucket
+default_enforce_length: true

@@ -1,5 +1,5 @@
 from snowddl.blueprint import Grant, BusinessRoleBlueprint, IdentWithPrefix, Ident, ObjectType
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 business_role_json_schema = {
@@ -59,9 +59,10 @@ business_role_json_schema = {
 
 class BusinessRoleParser(AbstractParser):
     def load_blueprints(self):
-        business_role_config = self.parse_single_file(self.base_path / 'business_role.yaml', business_role_json_schema)
+        self.parse_single_file(self.base_path / 'business_role.yaml', business_role_json_schema, self.process_business_role)
 
-        for business_role_name, business_role in business_role_config.items():
+    def process_business_role(self, file: ParsedFile):
+        for business_role_name, business_role in file.params.items():
             business_role_ident = self.config.build_role_ident(business_role_name, self.config.BUSINESS_ROLE_SUFFIX)
 
             grants = []

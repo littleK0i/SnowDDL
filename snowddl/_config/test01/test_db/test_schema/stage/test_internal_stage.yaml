@@ -1,4 +1,4 @@
 file_format: test_csv_format
 copy_options:
   on_error: ABORT_STATEMENT
-  enforce_length: true
+  enforce_length: ${{ default_enforce_length }}

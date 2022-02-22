@@ -1,5 +1,5 @@
 from snowddl.blueprint import DatabaseBlueprint, IdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 database_json_schema = {

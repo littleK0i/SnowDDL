@@ -1,5 +1,5 @@
 from snowddl.blueprint import SchemaBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.database import database_json_schema
 
 

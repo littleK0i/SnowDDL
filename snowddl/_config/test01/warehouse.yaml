@@ -3,6 +3,6 @@ task_wh:
   auto_suspend: 60
 
 with_monitor_wh:
-  size: XSMALL
-  auto_suspend: 60
+  size: ${{ default_wh_size }}
+  auto_suspend: ${{ default_wh_suspend }}
   resource_monitor: test_res_monitor_2

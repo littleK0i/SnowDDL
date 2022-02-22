@@ -18,17 +18,29 @@ class SnowDDLConfig:
         self.blueprints: Dict[Type[T_Blueprint], Dict[str,T_Blueprint]] = defaultdict(dict)
         self.errors: List[dict] = []
 
+        self.placeholders: Dict[str,Union[bool,float,int,str]] = {}
+
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str,T_Blueprint]:
         return self.blueprints.get(cls, {})
+
+    def get_placeholder(self, name: str) -> Union[bool,float,int,str]:
+        if name not in self.placeholders:
+            raise ValueError(f"Unknown placeholder [{name}]")
+
+        return self.placeholders[name]
 
     def add_blueprint(self, bp: AbstractBlueprint):
         self.blueprints[bp.__class__][str(bp.full_name)] = bp
 
-    def add_error(self, path: Path, e: Exception):
+    def add_error(self, path: Path, e: Exception, format_exc):
         self.errors.append({
             "path": path,
             "error": e,
+            "format_exc": format_exc,
         })
+
+    def add_placeholder(self, name: str, value: Union[bool,float,int,str]):
+        self.placeholders[name] = value
 
     def build_complex_ident(self, object_name, context_database_name=None, context_schema_name=None) -> ComplexIdentWithPrefix:
         # Function or procedure identifier with arguments

@@ -1,5 +1,5 @@
 from snowddl.blueprint import ResourceMonitorBlueprint, Ident
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 resource_monitor_json_schema = {
@@ -28,9 +28,10 @@ resource_monitor_json_schema = {
 
 class ResourceMonitorParser(AbstractParser):
     def load_blueprints(self):
-        resource_monitor_config = self.parse_single_file(self.base_path / 'resource_monitor.yaml', resource_monitor_json_schema)
+        self.parse_single_file(self.base_path / 'resource_monitor.yaml', resource_monitor_json_schema, self.process_resource_monitor)
 
-        for name, monitor in resource_monitor_config.items():
+    def process_resource_monitor(self, f: ParsedFile):
+        for name, monitor in f.params.items():
             bp = ResourceMonitorBlueprint(
                 full_name=Ident(name),
                 credit_quota=int(monitor.get('credit_quota')),

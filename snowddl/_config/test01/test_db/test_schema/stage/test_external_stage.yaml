@@ -1,3 +1,3 @@
-url: "gcs://test-bucket"
+url: ${{ external_bucket_path }}
 storage_integration: test_storage_integration
 file_format: test_avro_format

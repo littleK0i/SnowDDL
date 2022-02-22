@@ -1,7 +1,7 @@
 from re import compile, IGNORECASE
 
 from snowddl.blueprint import ExternalTableBlueprint, ExternalTableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, IdentWithPrefix, ComplexIdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 col_type_re = compile(r'^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)'
                       r'(?P<not_null> NOT NULL)?$'
@@ -121,79 +121,81 @@ external_table_json_schema = table_json_schema = {
 
 class ExternalTableParser(AbstractParser):
     def load_blueprints(self):
-        for f in self.parse_schema_object_files('external_table', external_table_json_schema):
-            column_blueprints = []
+        self.parse_schema_object_files('external_table', external_table_json_schema, self.process_external_table)
 
-            for col_name, col in f.params['columns'].items():
-                m = col_type_re.match(col['type'])
+    def process_external_table(self, f: ParsedFile):
+        column_blueprints = []
 
-                if not m:
-                    raise ValueError(f"Incorrect short syntax for column [{col_name}] in table [{f.database}.{f.schema}.{f.name}]: {col['type']}")
+        for col_name, col in f.params['columns'].items():
+            m = col_type_re.match(col['type'])
 
-                column_blueprints.append(
-                    ExternalTableColumn(
-                        name=Ident(col_name),
-                        type=DataType(m.group('type')),
-                        expr=col['expr'],
-                        not_null=bool(m.group('not_null')),
-                        comment=col.get('comment'),
-                    )
+            if not m:
+                raise ValueError(f"Incorrect short syntax for column [{col_name}] in table [{f.database}.{f.schema}.{f.name}]: {col['type']}")
+
+            column_blueprints.append(
+                ExternalTableColumn(
+                    name=Ident(col_name),
+                    type=DataType(m.group('type')),
+                    expr=col['expr'],
+                    not_null=bool(m.group('not_null')),
+                    comment=col.get('comment'),
                 )
+            )
 
-            bp = ExternalTableBlueprint(
+        bp = ExternalTableBlueprint(
+            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+            database=IdentWithPrefix(self.env_prefix, f.database),
+            schema=Ident(f.schema),
+            name=Ident(f.name),
+            columns=column_blueprints if column_blueprints else None,
+            partition_by=[Ident(col_name) for col_name in f.params['partition_by']] if f.params.get('partition_by') else None,
+            location_stage=self.config.build_complex_ident(f.params['location']['stage'], f.database, f.schema),
+            location_path=f.params['location'].get('path'),
+            location_pattern=f.params['location'].get('pattern'),
+            file_format=self.config.build_complex_ident(f.params['location'].get('file_format'), f.database, f.schema) if f.params['location'].get('file_format') else None,
+            refresh_on_create=f.params.get('refresh_on_create', False),
+            auto_refresh=f.params.get('auto_refresh', False),
+            aws_sns_topic=f.params.get('aws_sns_topic'),
+            integration=Ident(f.params['integration']) if f.params.get('integration') else None,
+            comment=f.params.get('comment'),
+        )
+
+        self.config.add_blueprint(bp)
+
+        # Constraints
+
+        if f.params.get('primary_key'):
+            bp = PrimaryKeyBlueprint(
                 full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                database=IdentWithPrefix(self.env_prefix, f.database),
-                schema=Ident(f.schema),
-                name=Ident(f.name),
-                columns=column_blueprints if column_blueprints else None,
-                partition_by=[Ident(col_name) for col_name in f.params['partition_by']] if f.params.get('partition_by') else None,
-                location_stage=self.config.build_complex_ident(f.params['location']['stage'], f.database, f.schema),
-                location_path=f.params['location'].get('path'),
-                location_pattern=f.params['location'].get('pattern'),
-                file_format=self.config.build_complex_ident(f.params['location'].get('file_format'), f.database, f.schema) if f.params['location'].get('file_format') else None,
-                refresh_on_create=f.params.get('refresh_on_create', False),
-                auto_refresh=f.params.get('auto_refresh', False),
-                aws_sns_topic=f.params.get('aws_sns_topic'),
-                integration=Ident(f.params['integration']) if f.params.get('integration') else None,
-                comment=f.params.get('comment'),
+                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                columns=[Ident(c) for c in f.params['primary_key']],
+                comment=None,
             )
 
             self.config.add_blueprint(bp)
 
-            # Constraints
+        for columns in f.params.get('unique_keys', []):
+            uk_constraint_name = f"{f.name}({','.join(columns)})"
 
-            if f.params.get('primary_key'):
-                bp = PrimaryKeyBlueprint(
-                    full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                    table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                    columns=[Ident(c) for c in f.params['primary_key']],
-                    comment=None,
-                )
+            bp = UniqueKeyBlueprint(
+                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, uk_constraint_name),
+                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                columns=[Ident(c) for c in columns],
+                comment=None,
+            )
 
-                self.config.add_blueprint(bp)
+            self.config.add_blueprint(bp)
 
-            for columns in f.params.get('unique_keys', []):
-                uk_constraint_name = f"{f.name}({','.join(columns)})"
+        for fk in f.params.get('foreign_keys', []):
+            fk_constraint_name = f"{f.name}({','.join(fk['columns'])})"
 
-                bp = UniqueKeyBlueprint(
-                    full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, uk_constraint_name),
-                    table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                    columns=[Ident(c) for c in columns],
-                    comment=None,
-                )
+            bp = ForeignKeyBlueprint(
+                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, fk_constraint_name),
+                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                columns=[Ident(c) for c in fk['columns']],
+                ref_table_name=self.config.build_complex_ident(fk['ref_table'], f.database, f.schema),
+                ref_columns=[Ident(c) for c in fk['ref_columns']],
+                comment=None,
+            )
 
-                self.config.add_blueprint(bp)
-
-            for fk in f.params.get('foreign_keys', []):
-                fk_constraint_name = f"{f.name}({','.join(fk['columns'])})"
-
-                bp = ForeignKeyBlueprint(
-                    full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, fk_constraint_name),
-                    table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                    columns=[Ident(c) for c in fk['columns']],
-                    ref_table_name=self.config.build_complex_ident(fk['ref_table'], f.database, f.schema),
-                    ref_columns=[Ident(c) for c in fk['ref_columns']],
-                    comment=None,
-                )
-
-                self.config.add_blueprint(bp)
+            self.config.add_blueprint(bp)

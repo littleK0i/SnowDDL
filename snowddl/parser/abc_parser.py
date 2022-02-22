@@ -3,16 +3,15 @@ from dataclasses import dataclass
 from json import loads
 from jsonschema import validate
 from pathlib import Path
-from typing import Optional
-from yaml import safe_load
+from traceback import format_exc
+from typing import Callable, Dict, Optional, Union
 
 from snowddl.config import SnowDDLConfig
 from snowddl.blueprint import ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from snowddl.parser._parsed_file import ParsedFile
 
 
 class AbstractParser(ABC):
-    yaml_suffix = '.yaml'
-
     def __init__(self, config: SnowDDLConfig, base_path: Path):
         self.config = config
         self.base_path = base_path
@@ -23,30 +22,26 @@ class AbstractParser(ABC):
     def load_blueprints(self):
         pass
 
-    def parse_single_file(self, path: Path, json_schema: dict) -> dict:
+    def parse_single_file(self, path: Path, json_schema: dict, callback: Callable[[ParsedFile],Union[None,Dict]] = None):
+        if not callback:
+            callback = lambda f: f.params
+
         if path.exists():
             try:
-                return self._parse_file(path, json_schema)
+                file = ParsedFile(self, path, json_schema)
+                return callback(file)
             except Exception as e:
-                self.config.add_error(path, e)
+                self.config.add_error(path, e, format_exc())
 
         return {}
 
-    def parse_schema_object_files(self, object_type: str, json_schema: dict):
+    def parse_schema_object_files(self, object_type: str, json_schema: dict, callback: Callable[[ParsedFile],None]):
         for path in self.base_path.glob(f"*/*/{object_type}/*.yaml"):
-            database = path.parents[2].name
-            schema = path.parents[1].name
-
             try:
-                yield ParsedFile(
-                    path=path,
-                    name=path.stem,
-                    params=self._parse_file(path, json_schema),
-                    database=database,
-                    schema=schema,
-                )
+                file = ParsedFile(self, path, json_schema)
+                callback(file)
             except Exception as e:
-                self.config.add_error(path, e)
+                self.config.add_error(path, e, format_exc())
 
     def build_complex_ident_from_str(self, object_name, context_database_name=None, context_schema_name=None) -> ComplexIdentWithPrefix:
         # Function or procedure identifier with arguments
@@ -84,19 +79,3 @@ class AbstractParser(ABC):
             return {k.upper(): v for k, v in params.items()}
 
         raise ValueError(f"Value is neither None, nor dictionary [{params}]")
-
-    def _parse_file(self, file_path: Path, json_schema: dict):
-        with file_path.open('r') as f:
-            data = safe_load(f) or {}
-            validate(data, json_schema)
-
-            return data
-
-
-@dataclass
-class ParsedFile:
-    path: Path
-    name: str
-    params: dict
-    database: Optional[str]
-    schema: Optional[str]

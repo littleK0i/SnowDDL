@@ -1,5 +1,5 @@
 from snowddl.blueprint import UserBlueprint, IdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema
 
 
@@ -56,10 +56,12 @@ user_json_schema = {
 
 class UserParser(AbstractParser):
     def load_blueprints(self):
-        user_config = self.parse_single_file(self.base_path / 'user.yaml', user_json_schema)
+        self.parse_single_file(self.base_path / 'user.yaml', user_json_schema, self.process_user)
+
+    def process_user(self, f: ParsedFile):
         default_warehouse_map = self.get_default_warehouse_map()
 
-        for user_name, user in user_config.items():
+        for user_name, user in f.params.items():
             business_roles = []
             default_warehouse = user.get('default_warehouse')
 

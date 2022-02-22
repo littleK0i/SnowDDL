@@ -1,5 +1,5 @@
 from snowddl.blueprint import MaskingPolicyBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, NameWithType, DataType, MaskingPolicyReference, ObjectType
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 masking_policy_json_schema = {
@@ -52,29 +52,31 @@ masking_policy_json_schema = {
 
 class MaskingPolicyParser(AbstractParser):
     def load_blueprints(self):
-        for f in self.parse_schema_object_files("masking_policy", masking_policy_json_schema):
-            arguments = [NameWithType(name=Ident(k), type=DataType(t)) for k, t in f.params.get('arguments', {}).items()]
-            references = []
+        self.parse_schema_object_files("masking_policy", masking_policy_json_schema, self.process_masking_policy)
 
-            for a in f.params.get('references', []):
-                ref = MaskingPolicyReference(
-                    object_type=ObjectType[a['object_type'].upper()],
-                    object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
-                    columns=[Ident(c) for c in a['columns']],
-                )
+    def process_masking_policy(self, f: ParsedFile):
+        arguments = [NameWithType(name=Ident(k), type=DataType(t)) for k, t in f.params.get('arguments', {}).items()]
+        references = []
 
-                references.append(ref)
-
-            bp = MaskingPolicyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                database=IdentWithPrefix(self.env_prefix, f.database),
-                schema=Ident(f.schema),
-                name=Ident(f.name),
-                body=f.params['body'],
-                arguments=arguments,
-                returns=DataType(f.params['returns']),
-                references=references,
-                comment=f.params.get('comment'),
+        for a in f.params.get('references', []):
+            ref = MaskingPolicyReference(
+                object_type=ObjectType[a['object_type'].upper()],
+                object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
+                columns=[Ident(c) for c in a['columns']],
             )
 
-            self.config.add_blueprint(bp)
+            references.append(ref)
+
+        bp = MaskingPolicyBlueprint(
+            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+            database=IdentWithPrefix(self.env_prefix, f.database),
+            schema=Ident(f.schema),
+            name=Ident(f.name),
+            body=f.params['body'],
+            arguments=arguments,
+            returns=DataType(f.params['returns']),
+            references=references,
+            comment=f.params.get('comment'),
+        )
+
+        self.config.add_blueprint(bp)

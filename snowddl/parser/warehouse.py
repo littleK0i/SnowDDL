@@ -1,5 +1,5 @@
 from snowddl.blueprint import WarehouseBlueprint, Ident, IdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser
+from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 warehouse_json_schema = {
@@ -37,9 +37,10 @@ warehouse_json_schema = {
 
 class WarehouseParser(AbstractParser):
     def load_blueprints(self):
-        warehouse_config = self.parse_single_file(self.base_path / 'warehouse.yaml', warehouse_json_schema)
+        self.parse_single_file(self.base_path / 'warehouse.yaml', warehouse_json_schema, self.process_warehouse)
 
-        for warehouse_name, warehouse in warehouse_config.items():
+    def process_warehouse(self, f: ParsedFile):
+        for warehouse_name, warehouse in f.params.items():
             bp = WarehouseBlueprint(
                 full_name=IdentWithPrefix(self.env_prefix, warehouse_name),
                 size=warehouse['size'],

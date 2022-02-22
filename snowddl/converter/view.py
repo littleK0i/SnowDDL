@@ -1,7 +1,7 @@
 from re import compile, DOTALL
 
 from snowddl.blueprint import ObjectType
-from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter, ConvertResult, LiteralStr
+from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter, ConvertResult, YamlLiteralStr
 from snowddl.parser.view import view_json_schema
 
 
@@ -38,7 +38,7 @@ class ViewConverter(AbstractSchemaObjectConverter):
     def dump_object(self, row):
         data = {
             "columns": self._get_columns(row),
-            "text": LiteralStr(self._get_text(row)),
+            "text": YamlLiteralStr(self._get_text(row)),
             "comment": row['comment'],
         }
 
