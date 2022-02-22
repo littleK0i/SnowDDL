@@ -22,23 +22,27 @@ class ParsedFile:
         self.database = None
         self.schema = None
 
-        if self.path.is_relative_to(parser.base_path):
-            relative_path = path.relative_to(parser.base_path)
-
-            if len(relative_path.parts) > 1:
-                self.database = relative_path.parts[0]
-
-            if len(relative_path.parts) > 2:
-                self.schema = relative_path.parts[1]
-
-        self.params = self._load_params()
+        self._guess_database_schema_from_path()
+        self._load_params()
 
         self._apply_placeholders(self.params)
         self._validate_json_schema()
 
+    def _guess_database_schema_from_path(self):
+        try:
+            relative_path = self.path.relative_to(self.parser.base_path)
+        except ValueError:
+            return
+
+        if len(relative_path.parts) > 1:
+            self.database = relative_path.parts[0]
+
+        if len(relative_path.parts) > 2:
+            self.schema = relative_path.parts[1]
+
     def _load_params(self):
         with self.path.open('r') as f:
-            return safe_load(f) or {}
+            self.params = safe_load(f) or {}
 
     def _apply_placeholders(self, data: dict):
         for k, v in data.items():
