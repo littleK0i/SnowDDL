@@ -5,8 +5,9 @@ from typing import Optional, List, Dict, Union, TypeVar, TYPE_CHECKING
 from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
 from .data_type import BaseDataType, DataType
 from .grant import Grant, FutureGrant
-from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, ComplexIdentWithPrefixAndPath
 from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .stage import StageWithPath
 
 if TYPE_CHECKING:
     from .object_type import ObjectType
@@ -90,12 +91,15 @@ class ForeignKeyBlueprint(AbstractBlueprint):
 class FunctionBlueprint(SchemaObjectBlueprint):
     full_name: ComplexIdentWithPrefixAndArgs
     language: str
-    body: str
+    body: Optional[str]
     arguments: List[NameWithType]
     returns: Union[DataType,List[NameWithType]]
     is_secure: bool
     is_strict: bool
     is_immutable: bool
+    runtime_version: Optional[str]
+    imports: Optional[List[StageWithPath]]
+    handler: Optional[str]
 
 
 @dataclass
@@ -188,6 +192,15 @@ class StageBlueprint(SchemaObjectBlueprint):
     directory: Optional[Dict[str,str]]
     file_format: Optional[ComplexIdentWithPrefix]
     copy_options: Optional[Dict[str,Union[bool,float,int,str,list]]]
+    upload_stage_files: bool
+
+
+@dataclass
+class StageFileBlueprint(AbstractBlueprint):
+    full_name: ComplexIdentWithPrefixAndPath
+    local_path: str
+    stage_name: ComplexIdentWithPrefix
+    stage_path: str
 
 
 @dataclass

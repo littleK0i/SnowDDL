@@ -1,0 +1,13 @@
+arguments:
+  x: VARCHAR(10000)
+
+returns: VARCHAR(255)
+language: java
+
+imports:
+  - stage: test_internal_stage
+    path: /func/snow-hash.jar
+  - stage: test_internal_stage
+    path: /lib/zero-allocation-hashing-0.15.jar
+
+handler: SnowHash.xxHash

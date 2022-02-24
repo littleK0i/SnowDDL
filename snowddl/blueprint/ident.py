@@ -75,3 +75,13 @@ class ComplexIdentWithPrefixAndArgs(ComplexIdentWithPrefix):
 
     def __str__(self):
         return f"{super().__str__()}({','.join(data_type.name for data_type in self.data_types)})"
+
+
+class ComplexIdentWithPrefixAndPath(ComplexIdentWithPrefix):
+    def __init__(self, env_prefix, *parts, path: str):
+        self.env_prefix = env_prefix
+        self.parts = tuple(self.validate_ident(part) for part in parts)
+        self.path = path
+
+    def __str__(self):
+        return f"{super().__str__()}({self.path})"

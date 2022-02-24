@@ -1,4 +1,4 @@
-from snowddl.blueprint import StageBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import StageBlueprint, StageFileBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndPath
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -45,6 +45,12 @@ class StageParser(AbstractParser):
         self.parse_schema_object_files("stage", stage_json_schema, self.process_stage)
 
     def process_stage(self, f: ParsedFile):
+        stage_files_dir = (f.path.parent / f.name)
+
+        if stage_files_dir.is_dir() and f.params.get('url'):
+            raise ValueError("External stage cannot have managed stage files")
+
+        # Stage
         bp = StageBlueprint(
             full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
             database=IdentWithPrefix(self.env_prefix, f.database),
@@ -56,7 +62,26 @@ class StageParser(AbstractParser):
             directory=self.normalise_params_dict(f.params.get('directory')),
             file_format=self.config.build_complex_ident(f.params['file_format'], f.database, f.schema) if f.params.get('file_format') else None,
             copy_options=self.normalise_params_dict(f.params.get('copy_options')),
+            upload_stage_files=stage_files_dir.is_dir(),
             comment=f.params.get('comment'),
         )
 
         self.config.add_blueprint(bp)
+
+        # Stage files
+        if stage_files_dir.is_dir():
+            for path in stage_files_dir.glob('**/*'):
+                if not path.is_file():
+                    continue
+
+                stage_path = f"/{path.relative_to(stage_files_dir)}"
+
+                bp = StageFileBlueprint(
+                    full_name=ComplexIdentWithPrefixAndPath(self.env_prefix, f.database, f.schema, f.name, path=stage_path),
+                    local_path=str(path),
+                    stage_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                    stage_path=stage_path,
+                    comment=None
+                )
+
+                self.config.add_blueprint(bp)

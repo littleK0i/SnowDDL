@@ -20,6 +20,7 @@ from .sequence import SequenceResolver
 from .schema import SchemaResolver
 from .schema_role import SchemaRoleResolver
 from .stage import StageResolver
+from .stage_file import StageFileResolver
 from .stream import StreamResolver
 from .table import TableResolver
 from .task import TaskResolver
@@ -43,6 +44,7 @@ default_resolver_sequence = [
     SchemaRoleResolver,
     FileFormatResolver,
     StageResolver,
+    StageFileResolver,
     SequenceResolver,
     FunctionResolver,
     ProcedureResolver,

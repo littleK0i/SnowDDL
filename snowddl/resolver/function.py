@@ -42,8 +42,8 @@ class FunctionResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_safe_ddl(query)
 
-        self.engine.execute_safe_ddl("COMMENT ON FUNCTION {full_function_name:i} IS {comment}", {
-            "full_function_name": bp.full_name,
+        self.engine.execute_safe_ddl("COMMENT ON FUNCTION {full_name:i} IS {comment}", {
+            "full_name": bp.full_name,
             "comment": query.add_short_hash(bp.comment),
         })
 
@@ -55,8 +55,8 @@ class FunctionResolver(AbstractSchemaObjectResolver):
         if not query.compare_short_hash(row['comment']):
             self.engine.execute_safe_ddl(query)
 
-            self.engine.execute_safe_ddl("COMMENT ON FUNCTION {full_function_name:i} IS {comment}", {
-                "full_function_name": bp.full_name,
+            self.engine.execute_safe_ddl("COMMENT ON FUNCTION {full_name:i} IS {comment}", {
+                "full_name": bp.full_name,
                 "comment": query.add_short_hash(bp.comment),
             })
 
@@ -116,19 +116,35 @@ class FunctionResolver(AbstractSchemaObjectResolver):
             "language": bp.language,
         })
 
+        if bp.runtime_version:
+            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
+                "runtime_version": bp.runtime_version,
+            })
+
         if bp.is_strict:
             query.append_nl("STRICT")
 
         if bp.is_immutable:
             query.append_nl("IMMUTABLE")
 
+        if bp.imports:
+            query.append_nl("IMPORTS = ({imports})", {
+                "imports": [f"@{i.stage_name}{i.path}" for i in bp.imports]
+            })
+
+        if bp.handler:
+            query.append_nl("HANDLER = {handler}", {
+                "handler": bp.handler,
+            })
+
         if bp.comment:
             query.append_nl("COMMENT = {comment}", {
                 "comment": bp.comment,
             })
 
-        query.append_nl("AS {body}", {
-            "body": bp.body,
-        })
+        if bp.body:
+            query.append_nl("AS {body}", {
+                "body": bp.body,
+            })
 
         return query

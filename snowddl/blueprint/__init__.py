@@ -20,6 +20,7 @@ from .blueprint import (
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
     StageBlueprint,
+    StageFileBlueprint,
     SequenceBlueprint,
     StreamBlueprint,
     TableBlueprint,
@@ -37,6 +38,7 @@ from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
 from .data_type import BaseDataType, DataType
 from .edition import Edition
 from .grant import Grant, FutureGrant
-from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, ComplexIdentWithPrefixAndPath
 from .object_type import ObjectType
 from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .stage import StageWithPath, StageUploadFile

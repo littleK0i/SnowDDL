@@ -43,34 +43,6 @@ class AbstractParser(ABC):
             except Exception as e:
                 self.config.add_error(path, e, format_exc())
 
-    def build_complex_ident_from_str(self, object_name, context_database_name=None, context_schema_name=None) -> ComplexIdentWithPrefix:
-        # Function or procedure identifier with arguments
-        if object_name.endswith(')'):
-            object_name, data_types_str = object_name.rstrip(')').split('(')
-            data_types = [BaseDataType[dt.strip(' ')] for dt in data_types_str.split(',')] if data_types_str else []
-        else:
-            data_types = None
-
-        parts = object_name.split('.')
-        parts_len = len(parts)
-
-        if parts_len > 3:
-            raise ValueError(f"Too many delimiters in schema object identifier [{object_name}]")
-
-        # Add context db_name to "schema_name.object_name" or "object_name" identifier
-        if parts_len <= 2 and context_database_name:
-            parts.insert(0, context_database_name)
-
-        # Add context schema_name to "object_name" identifier
-        if parts_len == 1 and context_schema_name:
-            parts.insert(1, context_schema_name)
-
-        # Function or procedure identifier with arguments
-        if isinstance(data_types, list):
-            return ComplexIdentWithPrefixAndArgs(self.env_prefix, *parts, data_types=data_types)
-        else:
-            return ComplexIdentWithPrefix(self.env_prefix, *parts)
-
     def normalise_params_dict(self, params):
         if params is None:
             return None

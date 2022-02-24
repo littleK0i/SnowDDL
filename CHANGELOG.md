@@ -5,6 +5,8 @@
 - Reworked parsers. Now most exceptions raised in parsers will no longer interrupt the program, but will be stored and reported later. Each reported exception now has a proper traceback and pointer to file which most likely caused the problem.
 - Implemented [placeholders](https://docs.snowddl.com/basic/yaml-placeholders) in YAML configs.
 - Config path is now fully resolved prior to execution, which should help to produce consistent logs regardless of symlinks or cwd.
+- Added support for `STAGE FILE` object type, which is intended mainly for packages for Snowpark functions.
+- Added support for Snowpark function options: `IMPORTS`, `HANDLER`, `RUNTIME_VERSION`.
 
 ## [0.3.1] - 2022-02-18
 

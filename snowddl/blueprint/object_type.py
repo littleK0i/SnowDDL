@@ -99,6 +99,11 @@ class ObjectType(Enum):
         "is_future_grant_supported": True,
     }
 
+    STAGE_FILE = {
+        "singular": "STAGE FILE",
+        "plural": "STAGE FILES",
+    }
+
     STREAM = {
         "singular": "STREAM",
         "plural": "STREAMS",

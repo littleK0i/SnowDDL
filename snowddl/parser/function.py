@@ -1,4 +1,4 @@
-from snowddl.blueprint import FunctionBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType, DataType
+from snowddl.blueprint import FunctionBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType, DataType, StageWithPath
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -39,11 +39,41 @@ function_json_schema = {
         "is_immutable": {
             "type": "boolean"
         },
+        "runtime_version": {
+            "type": "string"
+        },
+        "imports": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "stage": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": ["stage"],
+                "additionalProperties": False
+            },
+            "minItems": 1
+        },
+        "handler": {
+            "type": "string"
+        },
         "comment": {
             "type": "string"
         }
     },
-    "required": ["returns", "body"],
+    "anyOf": [
+        {
+            "required": ["body", "returns"]
+        },
+        {
+            "required": ["handler", "returns"]
+        }
+    ],
     "additionalProperties": False
 }
 
@@ -62,6 +92,11 @@ class FunctionParser(AbstractParser):
             # Returns value
             returns = DataType(f.params['returns'])
 
+        if f.params.get('imports'):
+            imports = [StageWithPath(stage_name=self.config.build_complex_ident(i['stage'], f.database, f.schema), path=i['path']) for i in f.params.get('imports')]
+        else:
+            imports = None
+
         base_name = f.name[:f.name.index('(')]
 
         bp = FunctionBlueprint(
@@ -70,12 +105,15 @@ class FunctionParser(AbstractParser):
             schema=Ident(f.schema),
             name=Ident(base_name),
             language=f.params.get('language', 'SQL'),
-            body=f.params['body'],
+            body=f.params.get('body'),
             arguments=arguments,
             returns=returns,
             is_secure=f.params.get('is_secure', False),
             is_strict=f.params.get('is_strict', False),
             is_immutable=f.params.get('is_immutable', False),
+            runtime_version=f.params.get('runtime_version'),
+            imports=imports,
+            handler=f.params.get('handler'),
             comment=f.params.get('comment'),
         )
 
