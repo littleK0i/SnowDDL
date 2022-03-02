@@ -97,7 +97,7 @@ class FunctionParser(AbstractParser):
         else:
             imports = None
 
-        base_name = f.name[:f.name.index('(')]
+        base_name = self.validate_name_with_args(f.path, arguments)
 
         bp = FunctionBlueprint(
             full_name=ComplexIdentWithPrefixAndArgs(self.env_prefix, f.database, f.schema, base_name, data_types=[a.type.base_type for a in arguments]),

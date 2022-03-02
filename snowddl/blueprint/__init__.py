@@ -6,6 +6,7 @@ from .blueprint import (
     AccountParameterBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
+    ExternalFunctionBlueprint,
     ExternalTableBlueprint,
     FileFormatBlueprint,
     ForeignKeyBlueprint,

@@ -1,0 +1,8 @@
+arguments:
+  x: OBJECT
+
+returns: OBJECT
+language: javascript
+
+body: |-
+  return x

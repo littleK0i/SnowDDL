@@ -2,6 +2,7 @@ from ._parsed_file import ParsedFile
 from .account_params import AccountParameterParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
+from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
 from .function import FunctionParser
@@ -36,6 +37,7 @@ default_parser_sequence = [
     StageParser,
     SequenceParser,
     FunctionParser,
+    ExternalFunctionParser,
     ProcedureParser,
     TableParser,
     ExternalTableParser,

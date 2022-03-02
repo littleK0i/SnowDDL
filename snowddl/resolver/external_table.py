@@ -22,7 +22,7 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
                 "schema": r['schema_name'],
                 "name": r['name'],
                 "owner": r['owner'],
-                "invalid": r['invalid'],
+                "invalid": r['invalid'] == "true",
                 "invalid_reason": r['invalid_reason'],
                 "stage": r['stage'],
                 "location": r['location'],
@@ -52,7 +52,7 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: ExternalTableBlueprint, row: dict):
         query = self._build_create_external_table(bp)
 
-        if not query.compare_short_hash(row['comment']):
+        if not query.compare_short_hash(row['comment']) or row['invalid']:
             self.engine.execute_safe_ddl(query)
 
             self.engine.execute_safe_ddl("COMMENT ON TABLE {full_name:i} IS {comment}", {

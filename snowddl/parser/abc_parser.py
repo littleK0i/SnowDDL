@@ -4,10 +4,10 @@ from json import loads
 from jsonschema import validate
 from pathlib import Path
 from traceback import format_exc
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 from snowddl.config import SnowDDLConfig
-from snowddl.blueprint import ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from snowddl.blueprint import ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType
 from snowddl.parser._parsed_file import ParsedFile
 
 
@@ -51,3 +51,20 @@ class AbstractParser(ABC):
             return {k.upper(): v for k, v in params.items()}
 
         raise ValueError(f"Value is neither None, nor dictionary [{params}]")
+
+    def validate_name_with_args(self, path: Path, arguments: List[NameWithType]):
+        stem_name = str(path.stem)
+        args_str = ','.join([a.type.base_type.name for a in arguments]).lower()
+
+        open_pos = stem_name.find('(')
+        close_pos = stem_name.find(')')
+
+        if open_pos == -1 or close_pos == -1:
+            raise ValueError(f"File [{path}] name should have list of arguments, e.g. [{stem_name}({args_str}).yaml]")
+
+        base_name = stem_name[:open_pos]
+
+        if stem_name[open_pos+1:close_pos] != args_str:
+            raise ValueError(f"File [{path}] name does not match list of arguments, expected [{base_name}({args_str}).yaml]")
+
+        return base_name

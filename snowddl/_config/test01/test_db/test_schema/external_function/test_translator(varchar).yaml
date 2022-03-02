@@ -1,0 +1,19 @@
+arguments:
+  x: VARCHAR(255)
+
+returns: OBJECT
+
+api_integration: test_api_integration
+url: https://xyz.execute-api.us-west-2.amazonaws.com/production/something
+
+headers:
+  foo: bar
+
+context_headers:
+  - current_version
+
+max_batch_rows: 10000
+compression: GZIP
+
+request_translator: test_req_translator
+response_translator: test_res_translator

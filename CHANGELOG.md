@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1] - 2022-03-02
+
+- Implemented `EXTERNAL FUNCTION` object type.
+- Added validation for YAML config file names for object types supporting overloading.
+- Re-create "invalid" `EXTERNAL TABLES` automatically.
+- Switched test account to AWS.
+
 ## [0.4.0] - 2022-02-22
 
 - Reworked parsers. Now most exceptions raised in parsers will no longer interrupt the program, but will be stored and reported later. Each reported exception now has a proper traceback and pointer to file which most likely caused the problem.

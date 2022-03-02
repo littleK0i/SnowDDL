@@ -4,6 +4,7 @@ from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
 from .business_role import BusinessRoleResolver
 from .database import DatabaseResolver
+from .external_function import ExternalFunctionResolver
 from .external_table import ExternalTableResolver
 from .file_format import FileFormatResolver
 from .foreign_key import ForeignKeyResolver
@@ -47,6 +48,7 @@ default_resolver_sequence = [
     StageFileResolver,
     SequenceResolver,
     FunctionResolver,
+    ExternalFunctionResolver,
     ProcedureResolver,
     TableResolver,
     ExternalTableResolver,

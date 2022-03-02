@@ -1,0 +1,7 @@
+arguments:
+  string_col: VARCHAR(255)
+
+returns: VARIANT
+
+api_integration: test_api_integration
+url: https://xyz.execute-api.us-west-2.amazonaws.com/production/remote_echo

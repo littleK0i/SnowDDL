@@ -60,6 +60,24 @@ class DatabaseBlueprint(AbstractBlueprint):
 
 
 @dataclass
+class ExternalFunctionBlueprint(SchemaObjectBlueprint):
+    full_name: ComplexIdentWithPrefixAndArgs
+    arguments: List[NameWithType]
+    returns: DataType
+    api_integraton: Ident
+    url: str
+    is_secure: bool
+    is_strict: bool
+    is_immutable: bool
+    headers: Optional[Dict[str,str]]
+    context_headers: Optional[List[Ident]]
+    max_batch_rows: Optional[int]
+    compression: Optional[str]
+    request_translator: Optional[ComplexIdentWithPrefix]
+    response_translator: Optional[ComplexIdentWithPrefix]
+
+
+@dataclass
 class ExternalTableBlueprint(SchemaObjectBlueprint):
     columns: Optional[List[ExternalTableColumn]]
     partition_by: Optional[List[Ident]]

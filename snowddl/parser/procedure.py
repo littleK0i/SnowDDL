@@ -41,7 +41,7 @@ class ProcedureParser(AbstractParser):
 
     def process_procedure(self, f: ParsedFile):
         arguments = [NameWithType(name=Ident(k), type=DataType(t)) for k, t in f.params.get('arguments', {}).items()]
-        base_name = f.name[:f.name.index('(')]
+        base_name = self.validate_name_with_args(f.path, arguments)
 
         bp = ProcedureBlueprint(
             full_name=ComplexIdentWithPrefixAndArgs(self.env_prefix, f.database, f.schema, base_name, data_types=[a.type.base_type for a in arguments]),
