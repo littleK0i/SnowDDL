@@ -10,21 +10,22 @@ setup(
     version=__version__,
     description='Object management automation tool for Snowflake',
     long_description="""
-        SnowDDL is an advanced tool for object management automation in Snowflake.
+        SnowDDL is a [declarative-style](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/) tool for object management automation in Snowflake.
 
         Getting started: [https://docs.snowddl.com/getting-started](https://docs.snowddl.com/getting-started)
 
         Main features: [https://docs.snowddl.com/features](https://docs.snowddl.com/features)
 
         1. SnowDDL is "stateless".
-        2. SnowDDL provides built-in "Role hierarchy" model.
-        3. SnowDDL supports ALTER TABLE ... ALTER COLUMN.
-        4. SnowDDL re-creates invalid views automatically.
-        5. SnowDDL assists your team in code review.
-        6. SnowDDL supports "env prefix".
-        7. SnowDDL strikes a good balance between dependency management overhead and parallelism.
-        8. SnowDDL costs very little.
+        2. SnowDDL can revert any changes.
+        3. SnowDDL supports ALTER COLUMN.
+        4. SnowDDL provides built-in "Role hierarchy" model.
+        5. SnowDDL re-creates invalid views automatically.
+        6. SnowDDL simplifies code review.
+        7. SnowDDL supports creation of isolated "environments" for individual developers and CI/CD scripts.
+        8. SnowDDL strikes a good balance between dependency management overhead and parallelism.
         9. SnowDDL configuration can be generated dynamically in Python code.
+        10. SnowDDL can manage packages for Java and Python UDF scripts natively.
 
         Enjoy!
     """,

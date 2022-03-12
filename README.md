@@ -4,28 +4,29 @@
 [![Getting Started](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/getting_started.yml)
 [![Pytest](https://github.com/littleK0i/SnowDDL/actions/workflows/pytest.yml/badge.svg)](https://github.com/littleK0i/SnowDDL/actions/workflows/pytest.yml)
 
-SnowDDL is an advanced tool for object management automation in [Snowflake](http://snowflake.com).
+SnowDDL is a [declarative-style](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/) tool for object management automation in [Snowflake](http://snowflake.com).
 
 It is not intended to replace other tools entirely, but to provide an alternative approach focused on practical data engineering challenges.
 
 You may find SnowDDL useful if:
 
-- complexity of data schema grows exponentially, and it becomes hard to manage;
-- your organization has multiple Snowflake accounts for different environments (dev, stage, prod);
-- your organization has multiple developers sharing the same Snowflake account;
-- it is necessary to generate some objects dynamically using Python ([Data Vault](https://en.wikipedia.org/wiki/Data_vault_modeling), [Star Schema](https://en.wikipedia.org/wiki/Star_schema), etc.)
+- complexity of object schema grows exponentially, and it becomes hard to manage;
+- your organization maintains multiple Snowflake accounts (dev, stage, prod);
+- your organization has multiple developers sharing the same Snowflake account and suffering from conflicts;
+- it is necessary to generate some part of configuration dynamically using Python;
 
 ## Main features
 
 1. SnowDDL is "stateless".
-2. SnowDDL provides built-in "Role hierarchy" model.
-3. SnowDDL supports ALTER TABLE ... ALTER COLUMN.
-4. SnowDDL re-creates invalid views automatically.
-5. SnowDDL assists your team in code review.
-6. SnowDDL supports "env prefix".
-7. SnowDDL strikes a good balance between dependency management overhead and parallelism.
-8. SnowDDL costs very little.
+2. SnowDDL can revert any changes.
+3. SnowDDL supports ALTER COLUMN.
+4. SnowDDL provides built-in "Role hierarchy" model.
+5. SnowDDL re-creates invalid views automatically.
+6. SnowDDL simplifies code review.
+7. SnowDDL supports creation of isolated "environments" for individual developers and CI/CD scripts.
+8. SnowDDL strikes a good balance between dependency management overhead and parallelism.
 9. SnowDDL configuration can be generated dynamically in Python code.
+10. SnowDDL can manage packages for Java and Python UDF scripts natively.
 
 ## Quick links
 
@@ -39,8 +40,8 @@ You may find SnowDDL useful if:
 
 ## Mini-roadmap
 
+- ~~placeholders in YAML configs~~ (done)
 - full test coverage for all object types and transformations
-- placeholders in YAML configs
 - documentation for dynamic config generation in Python ("advanced mode")
 - video tutorials
 

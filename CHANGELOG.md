@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.2] - 2022-03-12
+
+- Added more tests for `TABLE` and `VIEW` object types.
+- Improved project description.
+
 ## [0.4.1] - 2022-03-02
 
 - Implemented `EXTERNAL FUNCTION` object type.
