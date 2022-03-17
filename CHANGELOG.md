@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3] - 2022-03-17
+
+- Replaced explicit `format_exc()` calls during config validation with modern `TracebackException.from_exception().format()` API. Pre-formatted error messages will no longer be stored in `SnowDDLConfig`, but rather be formatted on demand using `Exception` object only.
+- Fixed typos in some JSON schemas.
+- Simplified the way how `.resolved_objects` property is being stored for resolvers. Now it is a basic `dict` with object full name as key and `ResolveResult` enum as value.
+
 ## [0.4.2] - 2022-03-12
 
 - Added more tests for `TABLE` and `VIEW` object types.

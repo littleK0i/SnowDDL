@@ -80,10 +80,8 @@ class DatabaseResolver(AbstractResolver):
         return ResolveResult.DROP
 
     def _post_process(self):
-        for result, object_names in self.resolved_objects.items():
-            if len(object_names) == 0 or result == ResolveResult.NOCHANGE:
-                continue
-
-            # Reload cache if at least one object was changed
-            self.engine.schema_cache.reload()
-            return
+        for result in self.resolved_objects.values():
+            if result != ResolveResult.NOCHANGE:
+                # Reload cache if at least one object was changed
+                self.engine.schema_cache.reload()
+                break

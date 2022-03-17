@@ -5,52 +5,54 @@ from snowddl.parser.business_role import business_role_json_schema
 
 user_json_schema = {
     "type": "object",
-    "properties": {
-        "first_name": {
-            "type": "string"
-        },
-        "last_name": {
-            "type": "string"
-        },
-        "email": {
-            "type": "string"
-        },
-        "disabled": {
-            "type": "boolean"
-        },
-        "password": {
-            "type": "string"
-        },
-        "rsa_public_key": {
-            "type": "string"
-        },
-        "rsa_public_key_2": {
-            "type": "string"
-        },
-        "default_warehouse": {
-            "type": "string"
-        },
-        "default_namespace": {
-            "type": "string"
-        },
-        "session_params": {
-            "type": "object",
-            "additionalParams": {
-                "type": ["boolean", "number", "string"]
-            }
-        },
-        "business_roles": {
-            "type": "array",
-            "items": {
+    "additionalProperties": {
+        "properties": {
+            "first_name": {
                 "type": "string"
             },
-            "minItems": 1
+            "last_name": {
+                "type": "string"
+            },
+            "email": {
+                "type": "string"
+            },
+            "disabled": {
+                "type": "boolean"
+            },
+            "password": {
+                "type": "string"
+            },
+            "rsa_public_key": {
+                "type": "string"
+            },
+            "rsa_public_key_2": {
+                "type": "string"
+            },
+            "default_warehouse": {
+                "type": "string"
+            },
+            "default_namespace": {
+                "type": "string"
+            },
+            "session_params": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": ["boolean", "number", "string"]
+                }
+            },
+            "business_roles": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "comment": {
+                "type": "string"
+            }
         },
-        "comment": {
-            "type": "string"
-        }
-    },
-    "additionalParams": False
+        "additionalProperties": False
+    }
 }
 
 

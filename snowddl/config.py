@@ -1,5 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
+from traceback import TracebackException
 from typing import List, Dict, Type, Union, TYPE_CHECKING
 
 from snowddl.blueprint import AbstractBlueprint, T_Blueprint, BaseDataType, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
@@ -32,11 +33,10 @@ class SnowDDLConfig:
     def add_blueprint(self, bp: AbstractBlueprint):
         self.blueprints[bp.__class__][str(bp.full_name)] = bp
 
-    def add_error(self, path: Path, e: Exception, format_exc):
+    def add_error(self, path: Path, e: Exception):
         self.errors.append({
             "path": path,
             "error": e,
-            "format_exc": format_exc,
         })
 
     def add_placeholder(self, name: str, value: Union[bool,float,int,str]):

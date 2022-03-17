@@ -4,7 +4,7 @@ from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 account_params_json_schema = {
     "type": "object",
-    "additionalParams": {
+    "additionalProperties": {
         "type": ["boolean", "number", "string"]
     }
 }

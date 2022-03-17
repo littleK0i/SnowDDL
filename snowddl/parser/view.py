@@ -24,8 +24,11 @@ view_json_schema = {
             },
             "minItems": 1
         },
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalParams": False
+    "additionalProperties": False
 }
 
 

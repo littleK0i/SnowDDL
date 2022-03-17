@@ -34,10 +34,10 @@ class AbstractResolver(ABC):
 
         self.object_type = self.get_object_type()
         self.blueprints: Dict[str, AbstractBlueprint] = {}
-        self.existing_objects: Dict[str, Dict] = {}
+        self.existing_objects: Dict[str,Dict] = {}
 
-        self.resolved_objects: Dict[ResolveResult, List[str]] = {k: [] for k in ResolveResult}
-        self.errors: Dict[str, Exception] = {}
+        self.resolved_objects: Dict[str,ResolveResult] = {}
+        self.errors: Dict[str,Exception] = {}
 
     def resolve(self):
         if self._is_skipped():
@@ -131,7 +131,7 @@ class AbstractResolver(ABC):
                 self.engine.logger.warning(f"Resolved {self.object_type.name} [{full_name}]: {result.value}\n{error_text}")
                 self.errors[full_name] = e
 
-            self.resolved_objects[result].append(full_name)
+            self.resolved_objects[full_name] = result
 
         self.engine.flush_thread_buffers()
 

@@ -1,6 +1,7 @@
 from logging import getLogger, NullHandler
 from pathlib import Path
 from snowflake.connector import SnowflakeConnection
+from traceback import TracebackException
 from typing import Optional
 
 from snowddl.config import SnowDDLConfig
@@ -84,7 +85,7 @@ class SnowDDLApp:
 
     def output_config_errors(self):
         for e in self.config.errors:
-            self.logger.warning(f"[{e['path']}]: {e['format_exc']}")
+            self.logger.warning(f"[{e['path']}]: {''.join(TracebackException.from_exception(e['error']).format())}")
 
     def output_engine_stats(self):
         self.logger.info(f"Executed {len(self.engine.executed_ddl)} DDL queries, Suggested {len(self.engine.suggested_ddl)} DDL queries")

@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from json import loads
 from jsonschema import validate
 from pathlib import Path
-from traceback import format_exc
 from typing import Callable, Dict, List, Optional, Union
 
 from snowddl.config import SnowDDLConfig
@@ -31,7 +30,7 @@ class AbstractParser(ABC):
                 file = ParsedFile(self, path, json_schema)
                 return callback(file)
             except Exception as e:
-                self.config.add_error(path, e, format_exc())
+                self.config.add_error(path, e)
 
         return {}
 
@@ -41,7 +40,7 @@ class AbstractParser(ABC):
                 file = ParsedFile(self, path, json_schema)
                 callback(file)
             except Exception as e:
-                self.config.add_error(path, e, format_exc())
+                self.config.add_error(path, e)
 
     def normalise_params_dict(self, params):
         if params is None:

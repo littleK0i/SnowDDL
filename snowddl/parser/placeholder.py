@@ -6,7 +6,7 @@ from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 placeholder_json_schema = {
     "type": "object",
-    "additionalParams": {
+    "additionalProperties": {
         "type": ["boolean", "number", "string"]
     }
 }
