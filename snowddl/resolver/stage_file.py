@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from snowddl.blueprint import StageBlueprint, StageFileBlueprint
+from snowddl.error import SnowDDLExecuteError
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
 
@@ -17,9 +18,17 @@ class StageFileResolver(AbstractResolver):
             if not stage_bp.upload_stage_files:
                 continue
 
-            cur = self.engine.execute_meta("LIST @{stage_name:i}", {
-                "stage_name": stage_bp.full_name,
-            })
+            try:
+                cur = self.engine.execute_meta("LIST @{stage_name:i}", {
+                    "stage_name": stage_bp.full_name,
+                })
+            except SnowDDLExecuteError as e:
+                # Stage does not exist or nor authorized
+                # Skip this error during planning
+                if e.snow_exc.errno == 2003:
+                    continue
+                else:
+                    raise
 
             all_files = {}
             all_hashes = {}
@@ -101,3 +110,7 @@ class StageFileResolver(AbstractResolver):
                 hash_md5.update(chunk)
 
         return hash_md5.hexdigest()
+
+    def destroy(self):
+        # No need to delete stage files explicitly, files are destroyed automatically when stage is gone
+        pass

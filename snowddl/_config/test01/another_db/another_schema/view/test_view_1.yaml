@@ -1,0 +1,6 @@
+text: |-
+  SELECT id,
+      ${{ env_prefix }}test_db.test_schema.test1_xx_hash(name) AS hashed_name
+  FROM ${{ env_prefix }}test_db.test_schema.test_table_1
+
+comment: View accessing objects from another database

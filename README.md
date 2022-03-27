@@ -41,9 +41,9 @@ You may find SnowDDL useful if:
 ## Mini-roadmap
 
 - ~~placeholders in YAML configs~~ (done)
-- full test coverage for all object types and transformations
-- documentation for dynamic config generation in Python ("advanced mode")
+- ~~documentation for dynamic config generation in Python ("advanced mode")~~ (done)
 - video tutorials
+- full test coverage for all object types and transformations
 
 ## Issues? Questions? Feedback?
 
