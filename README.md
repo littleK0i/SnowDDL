@@ -38,11 +38,17 @@ You may find SnowDDL useful if:
 - [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
 - [Changelog](/CHANGELOG.md)
 
+## Introduction videos
+
+[![SnowDDL: Main Features](/docs/SnowDDL_Tutorial_1.png)](https://www.youtube.com/watch?v=e5K4jmlxvWc "SnowDDL: Main Features")
+
+[![SnowDDL: Getting Started](/docs/SnowDDL_Tutorial_2.png)](https://www.youtube.com/watch?v=OtMebyQizRA "SnowDDL: Getting Started")
+
 ## Mini-roadmap
 
 - ~~placeholders in YAML configs~~ (done)
 - ~~documentation for dynamic config generation in Python ("advanced mode")~~ (done)
-- video tutorials
+- ~~video tutorials~~ (done, but more tutorials are coming in future)
 - full test coverage for all object types and transformations
 
 ## Issues? Questions? Feedback?
