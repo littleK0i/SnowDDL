@@ -40,9 +40,8 @@ You may find SnowDDL useful if:
 
 ## Introduction videos
 
-[<img src="/docs/SnowDDL_Tutorial_1.png" width=400 alt="SnowDDL: Main Features">](https://www.youtube.com/watch?v=e5K4jmlxvWc "SnowDDL: Main Features")
-
-[<img src="/docs/SnowDDL_Tutorial_2.png" width=400 alt="SnowDDL: Getting Started">](https://www.youtube.com/watch?v=OtMebyQizRA "SnowDDL: Getting Started")
+- [<img src="/docs/icon_video.png" width=48>Main features](https://www.youtube.com/watch?v=e5K4jmlxvWc "SnowDDL: Main Features")
+- [<img src="/docs/icon_video.png" width=48>Getting started](https://www.youtube.com/watch?v=OtMebyQizRA "SnowDDL: Getting Started")
 
 ## Mini-roadmap
 
