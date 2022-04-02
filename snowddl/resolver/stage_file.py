@@ -1,6 +1,6 @@
+from io import BytesIO
 from hashlib import md5
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from snowddl.blueprint import StageBlueprint, StageFileBlueprint
 from snowddl.error import SnowDDLExecuteError
@@ -90,17 +90,15 @@ class StageFileResolver(AbstractResolver):
         })
 
     def _upload_md5_marker(self, bp: StageFileBlueprint):
-        with TemporaryDirectory() as temp_dir:
-            md5_hash = self._md5_file(bp.local_path)
+        # Placeholder path for PUT command, directory does not matter
+        # Actual contents of marker pseudo-file is empty and come from zero-length BytesIO in file_stream
+        md5_marker_path = Path(bp.local_path).name + f".{self._md5_file(bp.local_path)}.md5"
 
-            md5_marker_path = Path(temp_dir) / (Path(bp.local_path).name + f".{md5_hash}.md5")
-            md5_marker_path.touch()
-
-            self.engine.execute_safe_ddl("PUT {local_path} @{stage_name:i}{stage_target:r} PARALLEL=1 OVERWRITE=TRUE AUTO_COMPRESS=FALSE", {
-                "local_path": f"file://{md5_marker_path}",
-                "stage_name": bp.stage_name,
-                "stage_target": Path(bp.stage_path).parent,
-            })
+        self.engine.execute_safe_ddl("PUT {local_path} @{stage_name:i}{stage_target:r} PARALLEL=1 OVERWRITE=TRUE AUTO_COMPRESS=FALSE", {
+            "local_path": f"file://{md5_marker_path}",
+            "stage_name": bp.stage_name,
+            "stage_target": Path(bp.stage_path).parent,
+        }, file_stream=BytesIO())
 
     def _md5_file(self, local_path: str):
         hash_md5 = md5()

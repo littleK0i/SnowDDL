@@ -58,7 +58,7 @@ class SnowDDLEngine:
         return SnowDDLQueryBuilder(self)
 
     def describe_meta(self, sql, params=None):
-        return self._execute(sql, params, is_meta=True, is_describe=True)
+        return self._describe(sql, params)
 
     def execute_meta(self, sql, params=None):
         return self._execute(sql, params, is_meta=True)
@@ -66,15 +66,15 @@ class SnowDDLEngine:
     def execute_context_ddl(self, sql, params=None):
         return self._execute(sql, params)
 
-    def execute_safe_ddl(self, sql, params=None, condition=True):
+    def execute_safe_ddl(self, sql, params=None, condition=True, file_stream=None):
         if self.settings.execute_safe_ddl and condition:
-            self._execute(sql, params)
+            self._execute(sql, params, False, file_stream)
         else:
             self._suggest(sql, params)
 
-    def execute_unsafe_ddl(self, sql, params=None, condition=True):
+    def execute_unsafe_ddl(self, sql, params=None, condition=True, file_stream=None):
         if self.settings.execute_unsafe_ddl and condition:
-            self._execute(sql, params)
+            self._execute(sql, params, False, file_stream)
         else:
             self._suggest(sql, params)
 
@@ -90,19 +90,26 @@ class SnowDDLEngine:
         self._executed_ddl_buffer = defaultdict(list)
         self._suggested_ddl_buffer = defaultdict(list)
 
-    def _execute(self, sql, params, is_meta=False, is_describe=False):
+    def _execute(self, sql, params, is_meta=False, file_stream=None):
         sql = self.format(sql, params)
 
         try:
-            if is_describe:
-                result = self.connection.cursor(DictCursor).describe(sql)
-            else:
-                result = self.connection.cursor(DictCursor).execute(sql)
+            result = self.connection.cursor(DictCursor).execute(sql, file_stream=file_stream)
         except Error as e:
             raise SnowDDLExecuteError(e, sql)
 
         if not is_meta:
             self._executed_ddl_buffer[get_ident()].append(sql)
+
+        return result
+
+    def _describe(self, sql, params):
+        sql = self.format(sql, params)
+
+        try:
+            result = self.connection.cursor(DictCursor).describe(sql)
+        except Error as e:
+            raise SnowDDLExecuteError(e, sql)
 
         return result
 
