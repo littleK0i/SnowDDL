@@ -20,6 +20,7 @@ from .blueprint import (
     ResourceMonitorBlueprint,
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
+    SchemaRoleBlueprint,
     StageBlueprint,
     StageFileBlueprint,
     SequenceBlueprint,

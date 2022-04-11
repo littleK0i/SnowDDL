@@ -10,7 +10,7 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW PROCEDURES IN SCHEMA {database:i}.{schema:i}", {
+        cur = self.engine.execute_meta("SHOW USER PROCEDURES IN SCHEMA {database:i}.{schema:i}", {
             "database": schema['database'],
             "schema": schema['schema'],
         })

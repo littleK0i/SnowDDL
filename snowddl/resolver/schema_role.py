@@ -1,4 +1,4 @@
-from snowddl.blueprint import RoleBlueprint, SchemaBlueprint, Grant, FutureGrant
+from snowddl.blueprint import SchemaRoleBlueprint, SchemaBlueprint, Grant, FutureGrant
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -68,11 +68,21 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 name=schema.full_name,
             ))
 
-        bp = RoleBlueprint(
+        depends_on = []
+
+        for additional_grant in schema.owner_additional_grants:
+            # Dependency on another schema role
+            if additional_grant.on == ObjectType.ROLE and str(additional_grant.name).endswith(self.get_role_suffix()):
+                depends_on.append(additional_grant.name)
+
+            grants.append(additional_grant)
+
+        bp = SchemaRoleBlueprint(
             full_name=self.config.build_role_ident(schema.database, schema.schema, 'OWNER', self.get_role_suffix()),
             grants=grants,
             future_grants=future_grants,
             comment=None,
+            depends_on=depends_on,
         )
 
         return bp
@@ -113,11 +123,12 @@ class SchemaRoleResolver(AbstractRoleResolver):
                     name=schema.full_name,
                 ))
 
-        bp = RoleBlueprint(
+        bp = SchemaRoleBlueprint(
             full_name=self.config.build_role_ident(schema.database, schema.schema, 'READ', self.get_role_suffix()),
             grants=grants,
             future_grants=future_grants,
             comment=None,
+            depends_on=[],
         )
 
         return bp
@@ -152,11 +163,12 @@ class SchemaRoleResolver(AbstractRoleResolver):
                     name=schema.full_name,
                 ))
 
-        bp = RoleBlueprint(
+        bp = SchemaRoleBlueprint(
             full_name=self.config.build_role_ident(schema.database, schema.schema, 'WRITE', self.get_role_suffix()),
             grants=grants,
             future_grants=future_grants,
             comment=None,
+            depends_on=[],
         )
 
         return bp

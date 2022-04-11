@@ -200,6 +200,12 @@ class SchemaBlueprint(AbstractBlueprint):
     is_transient: Optional[bool]
     retention_time: Optional[int]
     is_sandbox: Optional[bool]
+    owner_additional_grants: List[Grant]
+
+
+@dataclass
+class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
+    pass
 
 
 @dataclass

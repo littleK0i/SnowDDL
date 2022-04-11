@@ -1,4 +1,4 @@
-from snowddl.blueprint import SchemaBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import SchemaBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, Grant, ObjectType
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.database import database_json_schema
 
@@ -14,6 +14,18 @@ schema_json_schema = {
         },
         "is_sandbox": {
             "type": "boolean"
+        },
+        "owner_schema_read": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "owner_schema_write": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "comment": {
             "type": "string"
@@ -43,6 +55,14 @@ class SchemaParser(AbstractParser):
                     "is_sandbox": database_params.get('is_sandbox', False) or schema_params.get('is_sandbox', False),
                 }
 
+                owner_additional_grants = []
+
+                for full_schema_name in schema_params.get('owner_schema_read', []):
+                    owner_additional_grants.append(self.build_schema_role_grant(full_schema_name, 'READ'))
+
+                for full_schema_name in schema_params.get('owner_schema_write', []):
+                    owner_additional_grants.append(self.build_schema_role_grant(full_schema_name, 'WRITE'))
+
                 bp = SchemaBlueprint(
                     full_name=ComplexIdentWithPrefix(self.env_prefix, database_path.name, schema_path.name),
                     database=IdentWithPrefix(self.env_prefix, database_path.name),
@@ -50,7 +70,17 @@ class SchemaParser(AbstractParser):
                     is_transient=combined_params.get('is_transient', False),
                     retention_time=combined_params.get('retention_time', None),
                     is_sandbox=combined_params.get('is_sandbox', False),
+                    owner_additional_grants=owner_additional_grants,
                     comment=schema_params.get('comment', None),
                 )
 
                 self.config.add_blueprint(bp)
+
+    def build_schema_role_grant(self, full_schema_name, grant_type):
+        database, schema = full_schema_name.split('.')
+
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.ROLE,
+            name=self.config.build_role_ident(database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+        )
