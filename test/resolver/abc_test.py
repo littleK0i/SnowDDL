@@ -102,6 +102,7 @@ class AbstractTest(ABC):
             is_transient=True,
             retention_time=None,
             is_sandbox=False,
+            owner_additional_grants=[],
             comment=None,
         )
 
