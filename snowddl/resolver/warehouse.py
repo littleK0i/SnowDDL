@@ -140,3 +140,16 @@ class WarehouseResolver(AbstractResolver):
 
     def _normalise_warehouse_size(self, size: str):
         return size.upper().replace('-', '')
+
+    def _post_process(self):
+        if not self.engine.context.current_warehouse:
+            return
+
+        for result in self.resolved_objects.values():
+            if result == ResolveResult.CREATE:
+                # Revert current warehouse to original state if at least one object was created
+                self.engine.execute_context_ddl("USE WAREHOUSE {full_name:i}", {
+                    "full_name": self.engine.context.current_warehouse
+                })
+
+                break

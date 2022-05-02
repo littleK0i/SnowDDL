@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.7] - 2022-05-02
+
+- Revert to session to original `WAREHOUSE` after execution of `WarehouseResolver` if necessary. Snowflake implicitly switches to newly created `WAREHOUSE` after successful CREATE statement, which is not desirable for the rest of the session.
+
 ## [0.4.6] - 2022-04-11
 
 - `SHOW PROCEDURES` was replaced with `SHOW USER PROCEDURES`, in line with Snowflake release notes.
