@@ -54,7 +54,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             ObjectType.PIPE,
             ObjectType.PROCEDURE,
             ObjectType.SEQUENCE,
-            ObjectType.STAGE,
             ObjectType.STREAM,
             ObjectType.TABLE,
             ObjectType.TASK,
@@ -67,6 +66,18 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 on=object_type,
                 name=schema.full_name,
             ))
+
+        privileges_map = {
+            ObjectType.STAGE: ['READ', 'WRITE', 'USAGE'],
+        }
+
+        for object_type, privileges in privileges_map.items():
+            for privilege in privileges:
+                future_grants.append(FutureGrant(
+                    privilege=privilege,
+                    on=object_type,
+                    name=schema.full_name,
+                ))
 
         depends_on = []
 
