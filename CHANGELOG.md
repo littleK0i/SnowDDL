@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.9] - 2022-05-09
+
+- Added parameters `partition_type` and `table_format` for `EXTERNAL TABLE` object type.
+- `location.file_format` is now required parameter for `EXTERNAL TABLE`.
+
 ## [0.4.8] - 2022-05-06
 
 - `OWNERSHIP` on `STAGE` objects are no longer granted to schema OWNER role via FUTURE GRANT. All stages will be owned directly by admin role instead. Otherwise, it is not possible to use external stages without explicit grant of `USAGE` on `STORAGE_INTEGRATION` object to the current role or schema owner role, which is not desirable.

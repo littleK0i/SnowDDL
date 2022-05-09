@@ -81,6 +81,7 @@ class ExternalFunctionBlueprint(SchemaObjectBlueprint):
 class ExternalTableBlueprint(SchemaObjectBlueprint):
     columns: Optional[List[ExternalTableColumn]]
     partition_by: Optional[List[Ident]]
+    partition_type: Optional[str]
     location_stage: ComplexIdentWithPrefix
     location_path: Optional[str]
     location_pattern: Optional[str]
@@ -88,6 +89,7 @@ class ExternalTableBlueprint(SchemaObjectBlueprint):
     refresh_on_create: Optional[bool]
     auto_refresh: Optional[bool]
     aws_sns_topic: Optional[str]
+    table_format: Optional[str]
     integration: Optional[Ident]
 
 

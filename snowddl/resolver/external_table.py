@@ -106,6 +106,11 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
                 "partition_by": bp.partition_by,
             })
 
+        if bp.partition_type:
+            query.append_nl("PARTITION_TYPE = {partition_type}", {
+                "partition_type": bp.partition_type,
+            })
+
         query.append_nl("LOCATION = @{stage_name:i}{path:r}", {
             "stage_name": bp.location_stage,
             "path": coalesce(bp.location_path, ''),
@@ -133,6 +138,11 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
         if bp.aws_sns_topic:
             query.append_nl("AWS_SNS_TOPIC = {aws_sns_topic}", {
                 "aws_sns_topic": bp.aws_sns_topic,
+            })
+
+        if bp.table_format:
+            query.append_nl("TABLE_FORMAT = {table_format}", {
+                "table_format": bp.table_format,
             })
 
         if bp.integration:

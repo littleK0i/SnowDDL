@@ -45,7 +45,7 @@ external_table_json_schema = table_json_schema = {
                     "type": "string"
                 }
             },
-            "required": ["stage"],
+            "required": ["stage", "file_format"],
             "additionalProperties": False
         },
         "partition_by": {
@@ -53,6 +53,10 @@ external_table_json_schema = table_json_schema = {
             "items": {
                 "type": "string"
             }
+        },
+        "partition_type": {
+            "type": "string",
+            "pattern": "^[A-Za-z_]+$"
         },
         "auto_refresh": {
             "type": "boolean"
@@ -62,6 +66,10 @@ external_table_json_schema = table_json_schema = {
         },
         "aws_sns_topic": {
             "type": "string"
+        },
+        "table_format": {
+            "type": "string",
+            "pattern": "^[A-Za-z_]+$"
         },
         "integration": {
             "type": "string"
@@ -149,6 +157,7 @@ class ExternalTableParser(AbstractParser):
             name=Ident(f.name),
             columns=column_blueprints if column_blueprints else None,
             partition_by=[Ident(col_name) for col_name in f.params['partition_by']] if f.params.get('partition_by') else None,
+            partition_type=f.params['partition_type'].upper() if f.params.get('partition_type') else None,
             location_stage=self.config.build_complex_ident(f.params['location']['stage'], f.database, f.schema),
             location_path=f.params['location'].get('path'),
             location_pattern=f.params['location'].get('pattern'),
@@ -156,6 +165,7 @@ class ExternalTableParser(AbstractParser):
             refresh_on_create=f.params.get('refresh_on_create', False),
             auto_refresh=f.params.get('auto_refresh', False),
             aws_sns_topic=f.params.get('aws_sns_topic'),
+            table_format=f.params['table_format'].upper() if f.params.get('table_format') else None,
             integration=Ident(f.params['integration']) if f.params.get('integration') else None,
             comment=f.params.get('comment'),
         )
