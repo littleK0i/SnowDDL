@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.10] - 2022-05-12
+
+- Fix grants not being revoked properly for object types which do not support FUTURE GRANTs.
+
 ## [0.4.9] - 2022-05-09
 
 - Added parameters `partition_type` and `table_format` for `EXTERNAL TABLE` object type.

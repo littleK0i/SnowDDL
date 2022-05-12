@@ -130,7 +130,6 @@ class AbstractRoleResolver(AbstractResolver):
 
         for existing_grant in row['grants']:
             if existing_grant not in bp.grants \
-            and existing_grant.on.is_future_grant_supported \
             and self.grant_to_future_grant(existing_grant) not in bp.future_grants:
                 self.drop_grant(bp.full_name, existing_grant)
                 result = ResolveResult.GRANT
@@ -216,6 +215,9 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
     def grant_to_future_grant(self, grant: Grant):
+        if not grant.on.is_future_grant_supported:
+            return None
+
         future_grant = FutureGrant(
             privilege=grant.privilege,
             on=grant.on,
