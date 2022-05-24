@@ -2,7 +2,7 @@ from logging import getLogger, NullHandler
 from pathlib import Path
 from snowflake.connector import SnowflakeConnection
 from traceback import TracebackException
-from typing import Optional
+from typing import Dict, Optional
 
 from snowddl.config import SnowDDLConfig
 from snowddl.converter import default_converter_sequence
@@ -30,12 +30,12 @@ class SnowDDLApp:
     def init_engine(self, connection: SnowflakeConnection, settings: SnowDDLSettings):
         self.engine = SnowDDLEngine(connection, self.config, settings)
 
-    def load_placeholders_with_parsers(self, base_path: Path, placeholder_path: Path = None):
+    def load_placeholders_with_parsers(self, base_path: Path, placeholder_path: Optional[Path] = None, placeholder_values: Optional[Dict] = None):
         if placeholder_path and not placeholder_path.is_file():
             raise ValueError(f"Invalid placeholders path [{placeholder_path}]")
 
-        parser = PlaceholderParser(self.config, base_path, placeholder_path)
-        parser.load_blueprints()
+        parser = PlaceholderParser(self.config, base_path)
+        parser.load_placeholders(placeholder_path, placeholder_values)
 
     def load_blueprints_with_parsers(self, base_path: Path):
         if not base_path.is_dir():

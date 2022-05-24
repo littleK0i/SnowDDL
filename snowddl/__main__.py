@@ -1,4 +1,6 @@
 from argparse import ArgumentParser, HelpFormatter
+from json import loads as json_loads
+from json.decoder import JSONDecodeError
 from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
 from pathlib import Path
@@ -30,6 +32,7 @@ def default_entry_point():
     parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=None)
     parser.add_argument('--max-workers', help='Maximum number of workers to resolve objects in parallel', default=None, type=int)
     parser.add_argument('--placeholder-path', help='Path to config file with environment-specific placeholders', default=None)
+    parser.add_argument('--placeholder-values', help='Environment-specific placeholder values in JSON format', default=None)
 
     # Logging
     parser.add_argument('--log-level', help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO")
@@ -71,7 +74,9 @@ def default_entry_point():
 
     logger = get_logger(args)
     config_path = get_config_path(args)
+
     placeholder_path = get_placeholder_path(args)
+    placeholder_values = get_placeholder_values(args)
 
     app = SnowDDLApp()
     app.init_config(args.env_prefix)
@@ -79,7 +84,7 @@ def default_entry_point():
 
     app.output_context()
 
-    app.load_placeholders_with_parsers(config_path, placeholder_path)
+    app.load_placeholders_with_parsers(config_path, placeholder_path, placeholder_values)
 
     if app.config.errors:
         app.output_config_errors()
@@ -177,6 +182,24 @@ def get_placeholder_path(args):
             raise ValueError(f"Placeholder path [{args.placeholder_path}] does not exist or not a file")
 
         return placeholder_path.resolve()
+
+    return None
+
+def get_placeholder_values(args):
+    if args.placeholder_values:
+        try:
+            placeholder_values = json_loads(args.placeholder_values)
+        except JSONDecodeError as e:
+            raise ValueError(f"Placeholder values [{args.placeholder_values}] are not a valid JSON")
+
+        if not isinstance(placeholder_values, dict):
+            raise ValueError(f"Placeholder values [{args.placeholder_values}] are not JSON encoded dict")
+
+        for k, v in placeholder_values.items():
+            if not isinstance(v, (bool, float, int, str)):
+                raise ValueError(f"Invalid type [{type(v)}] of placeholder [{k.upper()}] value, supported types are: bool, float, int, str")
+
+        return placeholder_values
 
     return None
 

@@ -17,7 +17,7 @@ jobs:
           - account-ident: zu88083.eu-west-2.aws
 
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     env:
       SNOWFLAKE_ACCOUNT: ${{ matrix.account-ident }}

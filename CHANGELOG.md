@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0] - 2022-05-24
+
+- Added parameters `login_name`, `display_name` for `USER` object type.
+- Added argument `--placeholder-values` for CLI interface. It allows passing custom placeholder values in JSON format without creation of temporary file for `--placeholder-path`.
+
 ## [0.4.10] - 2022-05-12
 
 - Fix grants not being revoked properly for object types which do not support FUTURE GRANTs.

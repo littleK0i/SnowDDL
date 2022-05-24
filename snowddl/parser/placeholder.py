@@ -1,7 +1,7 @@
 from pathlib import Path
+from typing import Dict, Optional
 
-from snowddl.config import SnowDDLConfig
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.parser.abc_parser import AbstractParser
 
 
 placeholder_json_schema = {
@@ -13,24 +13,26 @@ placeholder_json_schema = {
 
 
 class PlaceholderParser(AbstractParser):
-    def __init__(self, config: SnowDDLConfig, base_path: Path, placeholder_path: Path = None):
-        super().__init__(config, base_path)
-        self.placeholder_path = placeholder_path
-
     def load_blueprints(self):
-        # ENV_PREFIX placeholder is added automatically and always available
-        self.config.add_placeholder('ENV_PREFIX', self.env_prefix)
+        # This is a special parser that does not load any blueprints, but it loads placeholders instead
+        pass
 
-        # Add other placeholders from file
-        self.parse_single_file(self.base_path / 'placeholder.yaml', placeholder_json_schema, self.process_placeholder)
+    def load_placeholders(self, placeholder_path: Optional[Path] = None, placeholder_values: Optional[Dict] = None):
+        # 1) Start with standard placeholders, always available
+        placeholders = {
+            'ENV_PREFIX': self.env_prefix,
+        }
 
-    def process_placeholder(self, f: ParsedFile):
-        placeholders = f.params
+        # 2) Merge with placeholders from normal config file
+        placeholders.update(self.normalise_params_dict(self.parse_single_file(self.base_path / 'placeholder.yaml', placeholder_json_schema)))
 
-        if self.placeholder_path:
-            overloaded_placeholders = self.parse_single_file(self.placeholder_path, placeholder_json_schema)
-            placeholders.update(overloaded_placeholders)
+        # 3) Merge with placeholders from override config file
+        if placeholder_path:
+            placeholders.update(self.normalise_params_dict(self.parse_single_file(placeholder_path, placeholder_json_schema)))
+
+        # 4) Merge with explicit placeholder values
+        if placeholder_values:
+            placeholders.update(self.normalise_params_dict(placeholder_values))
 
         for name, value in placeholders.items():
-            name = str(name).upper()
             self.config.add_placeholder(name, value)
