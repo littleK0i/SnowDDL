@@ -287,6 +287,8 @@ class UniqueKeyBlueprint(AbstractBlueprint):
 @dataclass
 class UserBlueprint(AbstractBlueprint):
     full_name: IdentWithPrefix
+    login_name: str
+    display_name: str
     first_name: Optional[str]
     last_name: Optional[str]
     email: Optional[str]

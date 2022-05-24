@@ -1,6 +1,3 @@
-from base64 import b64encode, b64decode
-from hashlib import sha256
-
 from snowddl.blueprint import UserBlueprint
 from snowddl.error import SnowDDLExecuteError
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
@@ -103,6 +100,9 @@ class UserResolver(AbstractResolver):
     def _build_common_properties(self, bp: UserBlueprint):
         query = self.engine.query_builder()
 
+        query.append_nl("LOGIN_NAME = {login_name}", {"login_name": bp.login_name})
+        query.append_nl("DISPLAY_NAME = {display_name}", {"display_name": bp.display_name})
+
         query.append_nl("DISABLED = {disabled:b}", {"disabled": bp.disabled})
         query.append_nl("FIRST_NAME = {first_name}", {"first_name": bp.first_name})
         query.append_nl("LAST_NAME = {last_name}", {"last_name": bp.last_name})
@@ -127,7 +127,9 @@ class UserResolver(AbstractResolver):
         return query
 
     def _compare_properties(self, bp: UserBlueprint, row: dict):
-        if bp.first_name == row['first_name'] \
+        if bp.login_name == row['login_name'] \
+        and bp.display_name == row['display_name'] \
+        and bp.first_name == row['first_name'] \
         and bp.last_name == row['last_name'] \
         and bp.email == row['email'] \
         and bp.disabled == row['disabled'] \
@@ -152,22 +154,22 @@ class UserResolver(AbstractResolver):
         if not bp.rsa_public_key and not bp.rsa_public_key_2 and not row['has_rsa_public_key']:
             return False
 
-        existing_public_key_fp = None
-        existing_public_key_2_fp = None
+        existing_public_key = None
+        existing_public_key_2 = None
 
         cur = self.engine.execute_meta("DESC USER {name:i}", {
             "name": bp.full_name,
         })
 
         for r in cur:
-            if r['property'] == 'RSA_PUBLIC_KEY_FP' and r['value'] != 'null':
-                existing_public_key_fp = r['value']
+            if r['property'] == 'RSA_PUBLIC_KEY' and r['value'] != 'null':
+                existing_public_key = r['value']
 
-            if r['property'] == 'RSA_PUBLIC_KEY_2_FP' and r['value'] != 'null':
-                existing_public_key_2_fp = r['value']
+            if r['property'] == 'RSA_PUBLIC_KEY_2' and r['value'] != 'null':
+                existing_public_key_2 = r['value']
 
-        if self._get_public_key_fingerprint(bp.rsa_public_key) == existing_public_key_fp \
-        and self._get_public_key_fingerprint(bp.rsa_public_key_2) == existing_public_key_2_fp:
+        if bp.rsa_public_key == existing_public_key \
+        and bp.rsa_public_key_2 == existing_public_key_2:
             return False
 
         self.engine.execute_safe_ddl("ALTER USER {name:i} SET rsa_public_key = {rsa_public_key}, rsa_public_key_2={rsa_public_key_2}", {
@@ -241,15 +243,6 @@ class UserResolver(AbstractResolver):
 
     def _get_user_role_ident(self, bp: UserBlueprint):
         return self.config.build_role_ident(bp.full_name, self.config.USER_ROLE_SUFFIX)
-
-    def _get_public_key_fingerprint(self, rsa_public_key):
-        if rsa_public_key is None:
-            return None
-
-        sha256hash = sha256()
-        sha256hash.update(b64decode(rsa_public_key))
-
-        return f"SHA256:{b64encode(sha256hash.digest()).decode('utf-8')}"
 
     def _get_existing_user_parameters(self, bp: UserBlueprint):
         existing_params = {}

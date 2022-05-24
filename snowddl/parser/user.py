@@ -7,6 +7,12 @@ user_json_schema = {
     "type": "object",
     "additionalProperties": {
         "properties": {
+            "login_name": {
+                "type": "string"
+            },
+            "display_name": {
+                "type": "string"
+            },
             "first_name": {
                 "type": "string"
             },
@@ -73,8 +79,24 @@ class UserParser(AbstractParser):
                 if default_warehouse is None:
                     default_warehouse = default_warehouse_map.get(business_role_name)
 
+            full_user_name = IdentWithPrefix(self.env_prefix, user_name)
+
+            if user.get('login_name'):
+                # Login name is string, not identifier (!), special characters like '@#!' are permitted
+                # But it still requires env_prefix due to unique constraint
+                login_name = f"{self.config.env_prefix}{user.get('login_name')}".upper()
+            else:
+                login_name = str(full_user_name)
+
+            if user.get('display_name'):
+                display_name = str(user.get('display_name')).upper()
+            else:
+                display_name = str(full_user_name)
+
             bp = UserBlueprint(
-                full_name=IdentWithPrefix(self.env_prefix, user_name),
+                full_name=full_user_name,
+                login_name=login_name,
+                display_name=display_name,
                 first_name=user.get('first_name'),
                 last_name=user.get('last_name'),
                 email=user.get('email'),
