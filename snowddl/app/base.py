@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, HelpFormatter
-from importlib import import_module
 from json import loads as json_loads
 from json.decoder import JSONDecodeError
 from logging import getLogger, Formatter, StreamHandler
@@ -116,11 +115,13 @@ class BaseApp:
         config_path = Path(self.args.c)
 
         if not config_path.exists():
-            try:
-                config_module = import_module(f".{self.args.c}", "snowddl._config")
-                config_path = Path(config_module.__path__[0])
-            except ModuleNotFoundError:
-                raise ValueError(f"Config path [{self.args.c}] does not exist") from None
+            config_path = Path(__file__).parent.parent / '_config' / self.args.c
+
+        if not config_path.exists():
+            raise ValueError(f"Config path [{self.args.c}] does not exist")
+
+        if not config_path.is_dir():
+            raise ValueError(f"Config path [{self.args.c}] is not a directory")
 
         return config_path.resolve()
 
