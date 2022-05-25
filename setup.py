@@ -53,8 +53,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'snowddl = snowddl.__main__:default_entry_point',
-            'snowddlconv = snowddl.__main__:convert_entry_point'
+            'snowddl = snowddl.app.base:entry_point',
+            'snowddl-convert = snowddl.app.convert:entry_point',
         ],
     },
 

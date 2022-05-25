@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.1] - 2022-05-25
+
+- Rework internal architecture of entry-points for SnowDDL CLI interface. Now it will be much easier to add new entry-points and to partially re-use existing entry-points in your own code.
+
 ## [0.5.0] - 2022-05-24
 
 - Added parameters `login_name`, `display_name` for `USER` object type.

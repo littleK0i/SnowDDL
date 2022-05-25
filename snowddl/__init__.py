@@ -1,4 +1,4 @@
-from .app import SnowDDLApp
+from .app import *
 from .blueprint import *
 from .config import SnowDDLConfig
 from .engine import SnowDDLEngine
