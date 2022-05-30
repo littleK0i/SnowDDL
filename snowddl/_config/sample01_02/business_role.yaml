@@ -29,8 +29,7 @@ restricted_sakila_analyst:
 
 etl_script:
   schema_read:
-    - snowddl_db.bookings
-    - snowddl_db.sakila
+    - snowddl_db.*
   schema_write:
     - snowddl_db.bookings
     - snowddl_db.sakila

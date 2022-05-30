@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.3] - 2022-05-30
+
+- Added a basic wildcard option while setting `schema_owner`, `schema_write`, `schema_read` options for business roles to match "all schemas in database". For example: `snowddl_db.*`. At least one schema matching wildcard condition should exist in config.
+
+It is useful for managing generic script roles when new schemas are added and / or removed frequently.
+
 ## [0.5.2] - 2022-05-30
 
 - Identifier objects were completely reworked. Now every identifier type has its own class with every part being named.

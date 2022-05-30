@@ -1,4 +1,4 @@
-from snowddl.blueprint import Grant, BusinessRoleBlueprint, AbstractIdentWithPrefix, Ident, ObjectType, build_role_ident
+from snowddl.blueprint import Grant, BusinessRoleBlueprint, AbstractIdentWithPrefix, Ident, ObjectType, SchemaBlueprint, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -68,13 +68,13 @@ class BusinessRoleParser(AbstractParser):
             grants = []
 
             for full_schema_name in business_role.get('schema_owner', []):
-                grants.append(self.build_schema_role_grant(full_schema_name, 'OWNER'))
+                grants.extend(self.build_schema_role_grants(full_schema_name, 'OWNER'))
 
             for full_schema_name in business_role.get('schema_read', []):
-                grants.append(self.build_schema_role_grant(full_schema_name, 'READ'))
+                grants.extend(self.build_schema_role_grants(full_schema_name, 'READ'))
 
             for full_schema_name in business_role.get('schema_write', []):
-                grants.append(self.build_schema_role_grant(full_schema_name, 'WRITE'))
+                grants.extend(self.build_schema_role_grants(full_schema_name, 'WRITE'))
 
             for warehouse_name in business_role.get('warehouse_usage', []):
                 grants.append(self.build_warehouse_role_grant(warehouse_name, 'USAGE'))
@@ -105,14 +105,34 @@ class BusinessRoleParser(AbstractParser):
 
             self.config.add_blueprint(bp)
 
-    def build_schema_role_grant(self, full_schema_name, grant_type):
-        database, schema = full_schema_name.split('.')
+    def build_schema_role_grants(self, full_schema_name, grant_type):
+        grants = []
+        database, schema = full_schema_name.upper().split('.')
 
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
-        )
+        if schema == '*':
+            # Special wildcard condition, match all schemas in `<database_name>.*`
+            for schema_bp in self.config.get_blueprints_by_type(SchemaBlueprint).values():
+                if database != str(schema_bp.full_name.database):
+                    continue
+
+                grants.append(
+                    Grant(
+                        privilege="USAGE",
+                        on=ObjectType.ROLE,
+                        name=build_role_ident(self.env_prefix, database, schema_bp.full_name.schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+                    )
+                )
+
+            if not grants:
+                raise ValueError(f"No schemas matched wildcard grant [{full_schema_name}]")
+        else:
+             Grant(
+                privilege="USAGE",
+                on=ObjectType.ROLE,
+                name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+            )
+
+        return grants
 
     def build_warehouse_role_grant(self, warehouse_name, grant_type):
         return Grant(
