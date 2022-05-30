@@ -24,9 +24,8 @@ class TestTable(AbstractTest):
         engine.config.blueprints[TableBlueprint] = {}
         self.resolve_objects(engine)
 
-        cur = engine.execute_meta("SHOW TABLES IN SCHEMA {database:i}.{schema:i}", {
-            "database": table_bp.full_name.database,
-            "schema": table_bp.full_name.schema,
+        cur = engine.execute_meta("SHOW TABLES IN SCHEMA {full_name:i}", {
+            "full_name": SchemaIdent(table_bp.full_name.env_prefix, table_bp.full_name.database, table_bp.full_name.schema)
         })
 
         assert 0 == cur.rowcount
