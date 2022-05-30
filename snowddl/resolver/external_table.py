@@ -1,4 +1,4 @@
-from snowddl.blueprint import ExternalTableBlueprint, ExternalTableColumn, DataType, BaseDataType
+from snowddl.blueprint import ExternalTableBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 from snowddl.resolver._utils import coalesce
 

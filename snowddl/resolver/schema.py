@@ -19,9 +19,8 @@ class SchemaResolver(AbstractResolver):
         if bp.is_transient:
             query.append("TRANSIENT")
 
-        query.append("SCHEMA {database:i}.{schema:i}", {
-            "database": bp.database,
-            "schema": bp.schema,
+        query.append("SCHEMA {full_name:i}", {
+            "full_name": bp.full_name
         })
 
         query.append_nl("WITH MANAGED ACCESS")
@@ -49,9 +48,8 @@ class SchemaResolver(AbstractResolver):
 
         query = self.engine.query_builder()
 
-        query.append("ALTER SCHEMA {database:i}.{schema:i} SET ", {
-            "database": bp.database,
-            "schema": bp.schema,
+        query.append("ALTER SCHEMA {full_name:i} SET ", {
+            "full_name": bp.full_name,
         })
 
         if bp.retention_time is not None and bp.retention_time != row['retention_time']:

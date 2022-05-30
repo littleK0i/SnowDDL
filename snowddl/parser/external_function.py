@@ -1,4 +1,4 @@
-from snowddl.blueprint import ExternalFunctionBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType, DataType
+from snowddl.blueprint import ExternalFunctionBlueprint, Ident, SchemaObjectIdentWithArgs, NameWithType, DataType, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -74,10 +74,7 @@ class ExternalFunctionParser(AbstractParser):
         base_name = self.validate_name_with_args(f.path, arguments)
 
         bp = ExternalFunctionBlueprint(
-            full_name=ComplexIdentWithPrefixAndArgs(self.env_prefix, f.database, f.schema, base_name, data_types=[a.type.base_type for a in arguments]),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(base_name),
+            full_name=SchemaObjectIdentWithArgs(self.env_prefix, f.database, f.schema, base_name, [a.type.base_type for a in arguments]),
             arguments=arguments,
             returns=returns,
             api_integraton=Ident(f.params.get('api_integration')),
@@ -89,8 +86,8 @@ class ExternalFunctionParser(AbstractParser):
             context_headers=[Ident(h) for h in f.params.get('context_headers')] if f.params.get('context_headers') else None,
             max_batch_rows=f.params.get('max_batch_rows'),
             compression=f.params.get('compression'),
-            request_translator=self.config.build_complex_ident(f.params['request_translator'], f.database, f.schema) if f.params.get('request_translator') else None,
-            response_translator=self.config.build_complex_ident(f.params['response_translator'], f.database, f.schema) if f.params.get('response_translator') else None,
+            request_translator=build_schema_object_ident(self.env_prefix, f.params['request_translator'], f.database, f.schema) if f.params.get('request_translator') else None,
+            response_translator=build_schema_object_ident(self.env_prefix, f.params['response_translator'], f.database, f.schema) if f.params.get('response_translator') else None,
             comment=f.params.get('comment'),
         )
 

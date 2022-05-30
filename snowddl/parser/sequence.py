@@ -1,4 +1,4 @@
-from snowddl.blueprint import SequenceBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import SequenceBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -25,10 +25,7 @@ class SequenceParser(AbstractParser):
 
     def process_sequence(self, f: ParsedFile):
         bp = SequenceBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             start=f.params.get('start', 1),
             interval=f.params.get('interval', 1),
             comment=f.params.get('comment'),

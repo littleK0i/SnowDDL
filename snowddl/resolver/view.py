@@ -101,10 +101,8 @@ class ViewResolver(AbstractSchemaObjectResolver):
         if bp.is_secure:
             query.append("SECURE")
 
-        query.append("VIEW {database:i}.{schema:i}.{view_name:i}", {
-            "database": bp.database,
-            "schema": bp.schema,
-            "view_name": bp.name,
+        query.append("VIEW {full_name:i}", {
+            "full_name": bp.full_name,
         })
 
         if bp.columns:

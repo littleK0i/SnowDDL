@@ -81,10 +81,8 @@ class FunctionResolver(AbstractSchemaObjectResolver):
         if bp.is_secure:
             query.append("SECURE")
 
-        query.append("FUNCTION {database:i}.{schema:i}.{name:i} (", {
-            "database": bp.database,
-            "schema": bp.schema,
-            "name": bp.name,
+        query.append("FUNCTION {full_name:in} (", {
+            "full_name": bp.full_name,
         })
 
         for idx, arg in enumerate(bp.arguments):

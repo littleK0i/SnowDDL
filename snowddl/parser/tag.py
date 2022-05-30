@@ -1,4 +1,4 @@
-from snowddl.blueprint import TagBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ObjectType, TagReference
+from snowddl.blueprint import TagBlueprint, Ident, SchemaObjectIdent, ObjectType, TagReference, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -46,7 +46,7 @@ class TagParser(AbstractParser):
         for a in f.params.get('references', []):
             ref = TagReference(
                 object_type=ObjectType[a['object_type'].upper()],
-                object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
+                object_name=build_schema_object_ident(self.env_prefix, a['object_name'], f.database, f.schema),
                 column_name=Ident(a['column_name']) if a.get('column_name') else None,
                 tag_value=a['tag_value'],
             )
@@ -54,10 +54,7 @@ class TagParser(AbstractParser):
             references.append(ref)
 
         bp = TagBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             references=references,
             comment=f.params.get('comment'),
         )

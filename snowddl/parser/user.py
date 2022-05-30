@@ -1,4 +1,4 @@
-from snowddl.blueprint import UserBlueprint, IdentWithPrefix
+from snowddl.blueprint import UserBlueprint, AccountObjectIdent, build_role_ident, build_default_namespace_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema
 
@@ -74,12 +74,12 @@ class UserParser(AbstractParser):
             default_warehouse = user.get('default_warehouse')
 
             for business_role_name in user['business_roles']:
-                business_roles.append(self.config.build_role_ident(business_role_name, self.config.BUSINESS_ROLE_SUFFIX))
+                business_roles.append(build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX))
 
                 if default_warehouse is None:
                     default_warehouse = default_warehouse_map.get(business_role_name)
 
-            full_user_name = IdentWithPrefix(self.env_prefix, user_name)
+            full_user_name = AccountObjectIdent(self.env_prefix, user_name)
 
             if user.get('login_name'):
                 # Login name is string, not identifier (!), special characters like '@#!' are permitted
@@ -104,8 +104,8 @@ class UserParser(AbstractParser):
                 password=user.get('password'),
                 rsa_public_key=user.get('rsa_public_key').replace(' ', '') if user.get('rsa_public_key') else None,
                 rsa_public_key_2=user.get('rsa_public_key_2').replace(' ', '') if user.get('rsa_public_key_2') else None,
-                default_warehouse=self.config.build_complex_ident(default_warehouse) if default_warehouse else None,
-                default_namespace=self.config.build_complex_ident(user.get('default_namespace')) if user.get('default_namespace') else None,
+                default_warehouse=AccountObjectIdent(self.env_prefix, default_warehouse) if default_warehouse else None,
+                default_namespace=build_default_namespace_ident(self.env_prefix, user.get('default_namespace')) if user.get('default_namespace') else None,
                 session_params=self.normalise_params_dict(user.get('params', {})),
                 business_roles=business_roles,
                 comment=user.get('comment'),

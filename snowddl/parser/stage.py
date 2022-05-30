@@ -1,4 +1,4 @@
-from snowddl.blueprint import StageBlueprint, StageFileBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndPath
+from snowddl.blueprint import StageBlueprint, StageFileBlueprint, Ident, SchemaObjectIdent, StageFileIdent, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -52,15 +52,12 @@ class StageParser(AbstractParser):
 
         # Stage
         bp = StageBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             url=f.params.get('url'),
             storage_integration=Ident(f.params['storage_integration']) if f.params.get('storage_integration') else None,
             encryption=self.normalise_params_dict(f.params.get('encryption')),
             directory=self.normalise_params_dict(f.params.get('directory')),
-            file_format=self.config.build_complex_ident(f.params['file_format'], f.database, f.schema) if f.params.get('file_format') else None,
+            file_format=build_schema_object_ident(self.env_prefix, f.params['file_format'], f.database, f.schema) if f.params.get('file_format') else None,
             copy_options=self.normalise_params_dict(f.params.get('copy_options')),
             upload_stage_files=stage_files_dir.is_dir(),
             comment=f.params.get('comment'),
@@ -77,9 +74,9 @@ class StageParser(AbstractParser):
                 stage_path = f"/{path.relative_to(stage_files_dir)}"
 
                 bp = StageFileBlueprint(
-                    full_name=ComplexIdentWithPrefixAndPath(self.env_prefix, f.database, f.schema, f.name, path=stage_path),
+                    full_name=StageFileIdent(self.env_prefix, f.database, f.schema, f.name, path=stage_path),
                     local_path=str(path),
-                    stage_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                    stage_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                     stage_path=stage_path,
                     comment=None
                 )

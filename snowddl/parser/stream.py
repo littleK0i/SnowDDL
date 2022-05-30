@@ -1,4 +1,4 @@
-from snowddl.blueprint import StreamBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ObjectType
+from snowddl.blueprint import StreamBlueprint, SchemaObjectIdent, ObjectType, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -35,12 +35,9 @@ class StreamParser(AbstractParser):
 
     def process_stream(self, f: ParsedFile):
         bp = StreamBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             object_type=ObjectType[f.params['object_type']],
-            object_name=self.config.build_complex_ident(f.params['object_name'], f.database, f.schema),
+            object_name=build_schema_object_ident(self.env_prefix, f.params['object_name'], f.database, f.schema),
             append_only=f.params.get('append_only'),
             insert_only=f.params.get('insert_only'),
             show_initial_rows=f.params.get('show_initial_rows'),

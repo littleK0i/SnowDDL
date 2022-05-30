@@ -1,4 +1,4 @@
-from snowddl.blueprint import PipeBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import PipeBlueprint, Ident, SchemaObjectIdent, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -65,17 +65,14 @@ class PipeParser(AbstractParser):
         copy = f.params['copy']
 
         bp = PipeBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             auto_ingest=f.params['auto_ingest'],
-            copy_table_name=self.config.build_complex_ident(copy['table'], f.database, f.schema),
-            copy_stage_name=self.config.build_complex_ident(copy['stage'], f.database, f.schema),
+            copy_table_name=build_schema_object_ident(self.env_prefix, copy['table'], f.database, f.schema),
+            copy_stage_name=build_schema_object_ident(self.env_prefix, copy['stage'], f.database, f.schema),
             copy_path=copy.get('path'),
             copy_pattern=copy.get('pattern'),
             copy_transform=self.normalise_params_dict(copy.get('transform')),
-            copy_file_format=self.config.build_complex_ident(copy.get('file_format'), f.database, f.schema) if copy.get('file_format') else None,
+            copy_file_format=build_schema_object_ident(self.env_prefix, copy.get('file_format'), f.database, f.schema) if copy.get('file_format') else None,
             copy_options=self.normalise_params_dict(copy.get('options')),
             aws_sns_topic=f.params.get('aws_sns_topic'),
             integration=Ident(f.params['integration']) if f.params.get('integration') else None,

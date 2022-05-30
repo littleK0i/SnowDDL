@@ -3,12 +3,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .ident import ComplexIdentWithPrefix
+    from .ident import SchemaObjectIdent
 
 
 @dataclass
 class StageWithPath:
-    stage_name: "ComplexIdentWithPrefix"
+    stage_name: "SchemaObjectIdent"
     path: str
 
 

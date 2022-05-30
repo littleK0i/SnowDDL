@@ -75,10 +75,7 @@ class TestView(AbstractTest):
 
     def base_view_bp(self, config: SnowDDLConfig, database_name, schema_name, view_name):
         return ViewBlueprint(
-            full_name=ComplexIdentWithPrefix(config.env_prefix, database_name, schema_name, view_name),
-            database=IdentWithPrefix(config.env_prefix, database_name),
-            schema=Ident(schema_name),
-            name=Ident(view_name),
+            full_name=SchemaObjectIdent(config.env_prefix, database_name, schema_name, view_name),
             text='',
             columns=None,
             is_secure=False,

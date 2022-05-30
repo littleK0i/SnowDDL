@@ -1,87 +1,146 @@
+from abc import ABC, abstractmethod
 from string import ascii_letters, digits
-from typing import List
+from typing import List, Optional, Tuple
 
 from .data_type import BaseDataType
 
 
-class Ident:
+class AbstractIdent(ABC):
     allowed_chars = set(ascii_letters + digits + '_')
 
-    def __init__(self, value):
-        self.value = self.validate_ident(value)
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def parts_for_format(self) -> Tuple[List[str], Optional[List[str]]]:
+        pass
 
     def __str__(self):
-        return self.value
+        core_parts, argument_parts = self.parts_for_format()
+
+        if argument_parts is not None:
+            return f"{'.'.join(core_parts)}({','.join(argument_parts)})"
+
+        return '.'.join(core_parts)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}={str(self)}>"
 
     def __eq__(self, other):
-        if not isinstance(other, Ident):
-            raise NotImplemented
+        if not isinstance(other, AbstractIdent):
+            print(repr(self))
+            print(repr(other))
+            raise NotImplementedError
 
         return str(self) == str(other)
 
-    def validate_ident(self, value):
-        if isinstance(value, Ident):
-            value = str(value.value)
-        else:
-            value = str(value)
+    def _validate_part(self, val):
+        val = str(val)
 
-        if not value:
-            ValueError("Identifier cannot be empty")
+        if not val:
+            raise ValueError("Identifier cannot be empty")
 
-        for char in value:
+        for char in val:
             if char not in self.allowed_chars:
-                ValueError(f"Character [{char}] in not allowed in identifier [{value}], only ASCII letters, digits and single underscores are accepted")
+                raise ValueError(f"Character [{char}] in not allowed in identifier [{val}], only ASCII letters, digits and single underscores are accepted")
 
-        return value.upper()
-
-
-class IdentWithPrefix(Ident):
-    def __init__(self, env_prefix, value):
-        self.env_prefix = env_prefix
-        self.value = self.validate_ident(value)
-
-    def __str__(self):
-        return f"{self.env_prefix}{self.value}"
+        return val.upper()
 
 
-class ComplexIdentWithPrefix(IdentWithPrefix):
-    def __init__(self, env_prefix, *parts):
-        self.env_prefix = env_prefix
-        self.parts = tuple(self.validate_ident(part) for part in parts)
+class AbstractIdentWithPrefix(AbstractIdent, ABC):
+    def __init__(self, env_prefix):
+        self.env_prefix = self._validate_env_prefix(env_prefix)
+
+    def _validate_env_prefix(self, val):
+        val = str(val)
+
+        for char in val:
+            if char not in self.allowed_chars:
+                raise ValueError(f"Character [{char}] in not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted")
+
+        if val and not val.endswith('__'):
+            raise ValueError(f"Env prefix [{val}] in identifier must end with [__] double underscore")
+
+        return val.upper()
+
+
+class Ident(AbstractIdent):
+    def __init__(self, name):
+        self.name = self._validate_part(name)
 
     def parts_for_format(self):
-        parts_for_format = []
-
-        for idx, part in enumerate(self.parts):
-            if idx == 0:
-                parts_for_format.append(f"{self.env_prefix}{part}")
-            else:
-                parts_for_format.append(part)
-
-        return parts_for_format
-
-    def __str__(self):
-        return '.'.join(self.parts_for_format())
+        return [self.name], None
 
 
-class ComplexIdentWithPrefixAndArgs(ComplexIdentWithPrefix):
-    def __init__(self, env_prefix, *parts, data_types: List[BaseDataType]):
-        self.env_prefix = env_prefix
-        self.parts = tuple(self.validate_ident(part) for part in parts)
+class AccountObjectIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, name):
+        super().__init__(env_prefix)
+
+        self.name = self._validate_part(name)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.name}"], None
+
+
+class DatabaseIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, database):
+        super().__init__(env_prefix)
+
+        self.database = self._validate_part(database)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}"], None
+
+
+class SchemaIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, database, schema):
+        super().__init__(env_prefix)
+
+        self.database = self._validate_part(database)
+        self.schema = self._validate_part(schema)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.schema], None
+
+
+class SchemaObjectIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, database, schema, name):
+        super().__init__(env_prefix)
+
+        self.database = self._validate_part(database)
+        self.schema = self._validate_part(schema)
+        self.name = self._validate_part(name)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.schema, self.name], None
+
+
+class SchemaObjectIdentWithArgs(SchemaObjectIdent):
+    def __init__(self, env_prefix, database, schema, name, data_types: List[BaseDataType]):
+        super().__init__(env_prefix, database, schema, name)
+
         self.data_types = data_types
 
-    def __str__(self):
-        return f"{super().__str__()}({','.join(data_type.name for data_type in self.data_types)})"
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.schema, self.name], [data_type.name for data_type in self.data_types]
 
 
-class ComplexIdentWithPrefixAndPath(ComplexIdentWithPrefix):
-    def __init__(self, env_prefix, *parts, path: str):
-        self.env_prefix = env_prefix
-        self.parts = tuple(self.validate_ident(part) for part in parts)
+class StageFileIdent(SchemaObjectIdent):
+    def __init__(self, env_prefix, database, schema, name, path):
+        super().__init__(env_prefix, database, schema, name)
+
         self.path = path
 
-    def __str__(self):
-        return f"{super().__str__()}({self.path})"
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.schema, self.name], [self.path]
+
+
+class TableConstraintIdent(SchemaObjectIdent):
+    def __init__(self, env_prefix, database, schema, name, columns: List[Ident]):
+        super().__init__(env_prefix, database, schema, name)
+
+        self.columns = columns
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.schema, self.name], [str(c) for c in self.columns]

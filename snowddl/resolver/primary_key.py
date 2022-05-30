@@ -28,7 +28,7 @@ class PrimaryKeyResolver(AbstractSchemaObjectResolver):
 
         for c in constraints_by_name.values():
             columns_list = [c['columns'][k] for k in sorted(c['columns'])]
-            full_name = f"{c['database']}.{c['schema']}.{c['table']}"
+            full_name = f"{c['database']}.{c['schema']}.{c['table']}({','.join(columns_list)})"
 
             existing_objects[full_name] = {
                 "database": c['database'],

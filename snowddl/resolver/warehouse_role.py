@@ -1,4 +1,4 @@
-from snowddl.blueprint import RoleBlueprint, WarehouseBlueprint, Grant
+from snowddl.blueprint import RoleBlueprint, WarehouseBlueprint, Grant, build_role_ident
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -31,7 +31,7 @@ class WarehouseRoleResolver(AbstractRoleResolver):
         ))
 
         bp = RoleBlueprint(
-            full_name=self.config.build_role_ident(warehouse.full_name, 'USAGE', self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, 'USAGE', self.get_role_suffix()),
             grants=grants,
             future_grants=[],
             comment=None,
@@ -55,7 +55,7 @@ class WarehouseRoleResolver(AbstractRoleResolver):
         ))
 
         bp = RoleBlueprint(
-            full_name=self.config.build_role_ident(warehouse.full_name, 'MONITOR', self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, 'MONITOR', self.get_role_suffix()),
             grants=grants,
             future_grants=[],
             comment=None,

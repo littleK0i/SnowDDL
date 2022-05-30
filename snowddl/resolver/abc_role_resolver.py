@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from snowddl.blueprint import RoleBlueprint, Grant, FutureGrant, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, BaseDataType
+from snowddl.blueprint import RoleBlueprint, Grant, FutureGrant, SchemaIdent, SchemaObjectIdent, build_grant_name_ident_snowflake
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
 
@@ -43,7 +43,7 @@ class AbstractRoleResolver(AbstractResolver):
             grants.append(Grant(
                 privilege=r['privilege'],
                 on=ObjectType[r['granted_on']],
-                name=self.build_grant_name_ident(r['name']),
+                name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['granted_on']]),
             ))
 
         return grants
@@ -59,31 +59,10 @@ class AbstractRoleResolver(AbstractResolver):
             future_grants.append(FutureGrant(
                 privilege=r['privilege'],
                 on=ObjectType[r['grant_on']],
-                name=self.build_grant_name_ident(r['name']),
+                name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['grant_on']]),
             ))
 
         return future_grants
-
-    def build_grant_name_ident(self, grant_name):
-        parts = [p.strip('"') for p in grant_name.split('.')]
-        last_part = parts[-1]
-
-        # Remove object type component from future grant names
-        if last_part.startswith('<') and last_part.endswith('>'):
-            parts.pop()
-        # Extract data types for arguments of functions and procedures
-        elif '(' in last_part:
-            start_dtypes_idx = last_part.index('(')
-            finish_dtypes_idx = last_part.index(')')
-
-            parts[-1] = last_part[0:start_dtypes_idx]
-
-            arguments = last_part[start_dtypes_idx+1:finish_dtypes_idx]
-            data_types = [BaseDataType[arg.strip(' ').split(' ')[1]] for arg in arguments.split(',')] if arguments else []
-
-            return ComplexIdentWithPrefixAndArgs('', *parts, data_types=data_types)
-
-        return ComplexIdentWithPrefix('', *parts)
 
     def create_object(self, bp: RoleBlueprint):
         query = self.engine.query_builder()
@@ -221,7 +200,7 @@ class AbstractRoleResolver(AbstractResolver):
         future_grant = FutureGrant(
             privilege=grant.privilege,
             on=grant.on,
-            name=ComplexIdentWithPrefix(grant.name.env_prefix, *grant.name.parts[:-1]) if isinstance(grant.name, ComplexIdentWithPrefix) else grant.name
+            name=SchemaIdent(grant.name.env_prefix, grant.name.database, grant.name.schema) if isinstance(grant.name, SchemaObjectIdent) else grant.name
         )
 
         return future_grant

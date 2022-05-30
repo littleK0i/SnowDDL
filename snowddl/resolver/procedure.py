@@ -1,4 +1,4 @@
-from snowddl.blueprint import ProcedureBlueprint, ComplexIdentWithPrefixAndArgs
+from snowddl.blueprint import ProcedureBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 from snowddl.resolver._utils import dtypes_from_arguments
 
@@ -71,10 +71,8 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
     def _build_create_procedure(self, bp: ProcedureBlueprint):
         query = self.engine.query_builder()
 
-        query.append("CREATE OR REPLACE PROCEDURE {database:i}.{schema:i}.{name:i} (", {
-            "database": bp.database,
-            "schema": bp.schema,
-            "name": bp.name,
+        query.append("CREATE OR REPLACE PROCEDURE {full_name:in} (", {
+            "full_name": bp.full_name
         })
 
         for idx, arg in enumerate(bp.arguments):

@@ -1,6 +1,6 @@
 from re import compile, IGNORECASE
 
-from snowddl.blueprint import ExternalTableBlueprint, ExternalTableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import ExternalTableBlueprint, ExternalTableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, SchemaObjectIdent, TableConstraintIdent, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 col_type_re = compile(r'^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)'
@@ -151,17 +151,14 @@ class ExternalTableParser(AbstractParser):
             )
 
         bp = ExternalTableBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             columns=column_blueprints if column_blueprints else None,
             partition_by=[Ident(col_name) for col_name in f.params['partition_by']] if f.params.get('partition_by') else None,
             partition_type=f.params['partition_type'].upper() if f.params.get('partition_type') else None,
-            location_stage=self.config.build_complex_ident(f.params['location']['stage'], f.database, f.schema),
+            location_stage=build_schema_object_ident(self.env_prefix, f.params['location']['stage'], f.database, f.schema),
             location_path=f.params['location'].get('path'),
             location_pattern=f.params['location'].get('pattern'),
-            file_format=self.config.build_complex_ident(f.params['location'].get('file_format'), f.database, f.schema) if f.params['location'].get('file_format') else None,
+            file_format=build_schema_object_ident(self.env_prefix, f.params['location'].get('file_format'), f.database, f.schema) if f.params['location'].get('file_format') else None,
             refresh_on_create=f.params.get('refresh_on_create', False),
             auto_refresh=f.params.get('auto_refresh', False),
             aws_sns_topic=f.params.get('aws_sns_topic'),
@@ -176,8 +173,8 @@ class ExternalTableParser(AbstractParser):
 
         if f.params.get('primary_key'):
             bp = PrimaryKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in f.params['primary_key']]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in f.params['primary_key']],
                 comment=None,
             )
@@ -185,11 +182,9 @@ class ExternalTableParser(AbstractParser):
             self.config.add_blueprint(bp)
 
         for columns in f.params.get('unique_keys', []):
-            uk_constraint_name = f"{f.name}({','.join(columns)})"
-
             bp = UniqueKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, uk_constraint_name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in columns]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in columns],
                 comment=None,
             )
@@ -197,13 +192,11 @@ class ExternalTableParser(AbstractParser):
             self.config.add_blueprint(bp)
 
         for fk in f.params.get('foreign_keys', []):
-            fk_constraint_name = f"{f.name}({','.join(fk['columns'])})"
-
             bp = ForeignKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, fk_constraint_name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in fk['columns']]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in fk['columns']],
-                ref_table_name=self.config.build_complex_ident(fk['ref_table'], f.database, f.schema),
+                ref_table_name=build_schema_object_ident(self.env_prefix, fk['ref_table'], f.database, f.schema),
                 ref_columns=[Ident(c) for c in fk['ref_columns']],
                 comment=None,
             )

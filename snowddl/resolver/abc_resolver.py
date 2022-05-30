@@ -3,7 +3,7 @@ from enum import Enum
 from traceback import format_exc
 
 from concurrent.futures import as_completed
-from typing import Dict, List, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 
 from snowddl.error import SnowDDLExecuteError, SnowDDLUnsupportedError
 from snowddl.blueprint import AbstractBlueprint, DependsOnMixin, Edition, ObjectType

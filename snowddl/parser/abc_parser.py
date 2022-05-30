@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
 
 from snowddl.config import SnowDDLConfig
-from snowddl.blueprint import ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType
+from snowddl.blueprint import SchemaObjectIdent, SchemaObjectIdentWithArgs, NameWithType
 from snowddl.parser._parsed_file import ParsedFile
 
 

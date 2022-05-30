@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from snowddl.blueprint import ObjectType
+from snowddl.blueprint import Ident, ObjectType
 
 @dataclass
 class SnowDDLSettings:
@@ -17,4 +17,5 @@ class SnowDDLSettings:
     refresh_future_grants: bool = False
     exclude_object_types: List[ObjectType] = field(default_factory=list)
     include_object_types: List[ObjectType] = field(default_factory=list)
+    include_databases: List[Ident] = field(default_factory=list)
     max_workers: int = 8

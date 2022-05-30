@@ -1,4 +1,4 @@
-from snowddl.blueprint import TagBlueprint, ObjectType
+from snowddl.blueprint import TagBlueprint, ObjectType, SchemaObjectIdent
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
@@ -54,8 +54,8 @@ class TagResolver(AbstractSchemaObjectResolver):
         return result
 
     def drop_object(self, row: dict):
-        self._drop_tag_refs(row['database'], row['schema'], row['name'])
-        self._drop_tag(row['database'], row['schema'], row['name'])
+        self._drop_tag_refs(SchemaObjectIdent('', row['database'], row['schema'], row['name']))
+        self._drop_tag(SchemaObjectIdent('', row['database'], row['schema'], row['name']))
 
         return ResolveResult.DROP
 
@@ -73,15 +73,13 @@ class TagResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_unsafe_ddl(query)
 
-    def _drop_tag(self, database, schema, name):
-        self.engine.execute_unsafe_ddl("DROP TAG {database:i}.{schema:i}.{name:i}", {
-            "database": database,
-            "schema": schema,
-            "name": name,
+    def _drop_tag(self, tag_name: SchemaObjectIdent):
+        self.engine.execute_unsafe_ddl("DROP TAG {full_name:i}", {
+            "full_name": tag_name,
         })
 
     def _apply_tag_refs(self, bp: TagBlueprint):
-        existing_tag_refs = self._get_existing_tag_refs(bp.database, bp.schema, bp.name)
+        existing_tag_refs = self._get_existing_tag_refs(bp.full_name)
         applied_change = False
 
         for ref in bp.references:
@@ -139,32 +137,28 @@ class TagResolver(AbstractSchemaObjectResolver):
 
         return applied_change
 
-    def _drop_tag_refs(self, database, schema, name):
-        existing_policy_refs = self._get_existing_policy_refs(database, schema, name)
+    def _drop_tag_refs(self, tag_name: SchemaObjectIdent):
+        existing_policy_refs = self._get_existing_tag_refs(tag_name)
 
         for existing_ref in existing_policy_refs.values():
             if existing_ref['column_name']:
-                self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {column_name:i} UNSET TAG {tag_database:i}.{tag_schema:i}.{tag_name:i}", {
+                self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {column_name:i} UNSET TAG {tag_name:i}", {
                     "object_type": existing_ref['object_type'],
                     "database": existing_ref['database'],
                     "schema": existing_ref['schema'],
                     "name": existing_ref['name'],
                     "column_name": existing_ref['column_name'],
-                    "tag_database": database,
-                    "tag_schema": schema,
-                    "tag_name": name,
+                    "tag_name": tag_name,
                 })
             else:
-                self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} UNSET TAG {tag_database:i}.{tag_schema:i}.{tag_name:i}", {
+                self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} UNSET TAG {tag_name:i}", {
                     "object_type": existing_ref['object_type'],
                     "database": existing_ref['database'],
                     "schema": existing_ref['schema'],
-                    "tag_database": database,
-                    "tag_schema": schema,
-                    "tag_name": name,
+                    "tag_name": tag_name,
                 })
 
-    def _get_existing_tag_refs(self, database, schema, name):
+    def _get_existing_tag_refs(self, tag_name: SchemaObjectIdent):
         existing_policy_refs = {}
 
         # TODO: discover a better way to get tag references in real time

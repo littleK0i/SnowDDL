@@ -1,6 +1,6 @@
 from json import loads
 
-from snowddl.blueprint import RowAccessPolicyBlueprint, ObjectType, Edition
+from snowddl.blueprint import DatabaseIdent, RowAccessPolicyBlueprint, ObjectType, Edition, SchemaObjectIdent
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
@@ -49,8 +49,8 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
 
         # If signature was changed, policy and all references must be dropped and created again
         if r['signature'] != f"({', '.join([f'{a.name} {a.type.base_type.name}' for a in bp.arguments])})":
-            self._drop_policy_refs(bp.database, bp.schema, bp.name)
-            self._drop_policy(bp.database, bp.schema, bp.name)
+            self._drop_policy_refs(bp.full_name)
+            self._drop_policy(bp.full_name)
 
             self._create_policy(bp)
             self._apply_policy_refs(bp, skip_existing=True)
@@ -81,8 +81,8 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
         return result
 
     def drop_object(self, row: dict):
-        self._drop_policy_refs(row['database'], row['schema'], row['name'])
-        self._drop_policy(row['database'], row['schema'], row['name'])
+        self._drop_policy_refs(SchemaObjectIdent('', row['database'], row['schema'], row['name']))
+        self._drop_policy(SchemaObjectIdent('', row['database'], row['schema'], row['name']))
 
         return ResolveResult.DROP
 
@@ -115,15 +115,13 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
 
         self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_row_access_policy)
 
-    def _drop_policy(self, database, schema, name):
-        self.engine.execute_unsafe_ddl("DROP ROW ACCESS POLICY {database:i}.{schema:i}.{name:i}", {
-            "database": database,
-            "schema": schema,
-            "name": name,
+    def _drop_policy(self, policy_name: SchemaObjectIdent):
+        self.engine.execute_unsafe_ddl("DROP ROW ACCESS POLICY {full_name:i}", {
+            "full_name": policy_name,
         }, condition=self.engine.settings.execute_row_access_policy)
 
     def _apply_policy_refs(self, bp: RowAccessPolicyBlueprint, skip_existing=False):
-        existing_policy_refs = {} if skip_existing else self._get_existing_policy_refs(bp.database, bp.schema, bp.name)
+        existing_policy_refs = {} if skip_existing else self._get_existing_policy_refs(bp.full_name)
         applied_change = False
 
         for ref in bp.references:
@@ -169,26 +167,24 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
 
         return applied_change
 
-    def _drop_policy_refs(self, database, schema, name):
-        existing_policy_refs = self._get_existing_policy_refs(database, schema, name)
+    def _drop_policy_refs(self, policy_name: SchemaObjectIdent):
+        existing_policy_refs = self._get_existing_policy_refs(policy_name)
 
         for existing_ref in existing_policy_refs.values():
-            self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} DROP ROW ACCESS POLICY {policy_database:i}.{policy_schema:i}.{policy_name:i}", {
+            self.engine.execute_unsafe_ddl("ALTER {object_type:r} {database:i}.{schema:i}.{name:i} DROP ROW ACCESS POLICY {policy_name:i}", {
                 "object_type": existing_ref['object_type'],
                 "database": existing_ref['database'],
                 "schema": existing_ref['schema'],
                 "name": existing_ref['name'],
-                "policy_database": database,
-                "policy_schema": schema,
-                "policy_name": name,
+                "policy_name": policy_name,
             }, condition=self.engine.settings.execute_row_access_policy)
 
-    def _get_existing_policy_refs(self, database, schema, name):
+    def _get_existing_policy_refs(self, policy_name: SchemaObjectIdent):
         existing_policy_refs = {}
 
         cur = self.engine.execute_meta("SELECT * FROM TABLE({database:i}.information_schema.policy_references(policy_name => {policy_name}))", {
-            "database": database,
-            "policy_name": f"{database}.{schema}.{name}"
+            "database": DatabaseIdent(policy_name.env_prefix, policy_name.database),
+            "policy_name": policy_name,
         })
 
         for r in cur:

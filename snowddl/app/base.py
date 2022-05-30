@@ -17,6 +17,9 @@ from snowddl.version import __version__
 
 
 class BaseApp:
+    parser_sequence = default_parser_sequence
+    resolver_sequence = default_resolver_sequence
+
     def __init__(self):
         self.arg_parser = self.init_arguments_parser()
         self.args = self.init_arguments()
@@ -140,7 +143,7 @@ class BaseApp:
             exit(1)
 
         # Blueprints
-        for parser_cls in default_parser_sequence:
+        for parser_cls in self.parser_sequence:
             parser = parser_cls(config, self.config_path)
             parser.load_blueprints()
 
@@ -237,13 +240,13 @@ class BaseApp:
                 if not self.args.env_prefix and not self.args.destroy_without_prefix:
                     raise ValueError("Argument --env-prefix is required for [destroy] action")
 
-                for resolver_cls in default_resolver_sequence:
+                for resolver_cls in self.resolver_sequence:
                     resolver = resolver_cls(self.engine)
                     resolver.destroy()
 
                 self.engine.context.destroy_role_with_prefix()
             else:
-                for resolver_cls in default_resolver_sequence:
+                for resolver_cls in self.resolver_sequence:
                     resolver = resolver_cls(self.engine)
                     resolver.resolve()
 

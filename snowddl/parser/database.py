@@ -1,5 +1,5 @@
-from snowddl.blueprint import DatabaseBlueprint, IdentWithPrefix
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.blueprint import DatabaseBlueprint, DatabaseIdent
+from snowddl.parser.abc_parser import AbstractParser
 
 
 database_json_schema = {
@@ -31,8 +31,7 @@ class DatabaseParser(AbstractParser):
             params = self.parse_single_file(database_path / 'params.yaml', database_json_schema)
 
             bp = DatabaseBlueprint(
-                full_name=IdentWithPrefix(self.env_prefix, database_path.name),
-                database = IdentWithPrefix(self.env_prefix, database_path.name),
+                full_name=DatabaseIdent(self.env_prefix, database_path.name),
                 is_transient=params.get('is_transient', False),
                 retention_time=params.get('retention_time', None),
                 is_sandbox=params.get('is_sandbox', False),

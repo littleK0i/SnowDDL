@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from typing import Optional, List, Dict, Union, TypeVar, TYPE_CHECKING
 
 from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
-from .data_type import BaseDataType, DataType
+from .data_type import DataType
 from .grant import Grant, FutureGrant
-from .ident import Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs, ComplexIdentWithPrefixAndPath
+from .ident import AbstractIdent, Ident, AccountObjectIdent, DatabaseIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs, StageFileIdent, TableConstraintIdent
 from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 
@@ -15,33 +15,31 @@ if TYPE_CHECKING:
 
 @dataclass
 class AbstractBlueprint(ABC):
-    full_name: Ident
+    full_name: AbstractIdent
     comment: Optional[str]
 
 
 @dataclass
 class SchemaObjectBlueprint(AbstractBlueprint, ABC):
-    full_name: ComplexIdentWithPrefix
-    database: IdentWithPrefix
-    schema: Ident
-    name: Ident
+    full_name: SchemaObjectIdent
 
 
 @dataclass
 class RoleBlueprint(AbstractBlueprint):
-    full_name: IdentWithPrefix
+    full_name: AccountObjectIdent
     grants: List[Grant]
     future_grants: List[FutureGrant]
 
 
 @dataclass
 class DependsOnMixin(ABC):
-    full_name: Ident
-    depends_on: List[Ident]
+    full_name: AbstractIdent
+    depends_on: List[AbstractIdent]
 
 
 @dataclass
 class AccountParameterBlueprint(AbstractBlueprint):
+    full_name: Ident
     value: Union[bool,float,int,str]
 
 
@@ -52,8 +50,7 @@ class BusinessRoleBlueprint(RoleBlueprint):
 
 @dataclass
 class DatabaseBlueprint(AbstractBlueprint):
-    full_name: IdentWithPrefix
-    database: IdentWithPrefix
+    full_name: DatabaseIdent
     is_transient: Optional[bool]
     retention_time: Optional[int]
     is_sandbox: Optional[bool]
@@ -61,7 +58,7 @@ class DatabaseBlueprint(AbstractBlueprint):
 
 @dataclass
 class ExternalFunctionBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefixAndArgs
+    full_name: SchemaObjectIdent
     arguments: List[NameWithType]
     returns: DataType
     api_integraton: Ident
@@ -73,8 +70,8 @@ class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     context_headers: Optional[List[Ident]]
     max_batch_rows: Optional[int]
     compression: Optional[str]
-    request_translator: Optional[ComplexIdentWithPrefix]
-    response_translator: Optional[ComplexIdentWithPrefix]
+    request_translator: Optional[SchemaObjectIdent]
+    response_translator: Optional[SchemaObjectIdent]
 
 
 @dataclass
@@ -82,10 +79,10 @@ class ExternalTableBlueprint(SchemaObjectBlueprint):
     columns: Optional[List[ExternalTableColumn]]
     partition_by: Optional[List[Ident]]
     partition_type: Optional[str]
-    location_stage: ComplexIdentWithPrefix
+    location_stage: SchemaObjectIdent
     location_path: Optional[str]
     location_pattern: Optional[str]
-    file_format: ComplexIdentWithPrefix
+    file_format: SchemaObjectIdent
     refresh_on_create: Optional[bool]
     auto_refresh: Optional[bool]
     aws_sns_topic: Optional[str]
@@ -101,15 +98,16 @@ class FileFormatBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class ForeignKeyBlueprint(AbstractBlueprint):
-    table_name: ComplexIdentWithPrefix
+    full_name: TableConstraintIdent
+    table_name: SchemaObjectIdent
     columns: List[Ident]
-    ref_table_name: ComplexIdentWithPrefix
+    ref_table_name: SchemaObjectIdent
     ref_columns: List[Ident]
 
 
 @dataclass
 class FunctionBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefixAndArgs
+    full_name: SchemaObjectIdentWithArgs
     language: str
     body: Optional[str]
     arguments: List[NameWithType]
@@ -132,7 +130,7 @@ class MaterializedViewBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class MaskingPolicyBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefix
+    full_name: SchemaObjectIdent
     arguments: List[NameWithType]
     returns: DataType
     body: str
@@ -149,12 +147,12 @@ class NetworkPolicyBlueprint(AbstractBlueprint):
 @dataclass
 class PipeBlueprint(SchemaObjectBlueprint):
     auto_ingest: bool
-    copy_table_name: ComplexIdentWithPrefix
-    copy_stage_name: ComplexIdentWithPrefix
+    copy_table_name: SchemaObjectIdent
+    copy_stage_name: SchemaObjectIdent
     copy_path: Optional[str]
     copy_pattern: Optional[str]
     copy_transform: Optional[Dict[str, str]]
-    copy_file_format: Optional[ComplexIdentWithPrefix]
+    copy_file_format: Optional[SchemaObjectIdent]
     copy_options: Optional[Dict[str,Union[bool,float,int,str,list]]]
     aws_sns_topic: Optional[str]
     integration: Optional[Ident]
@@ -162,13 +160,14 @@ class PipeBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class PrimaryKeyBlueprint(AbstractBlueprint):
-    table_name: ComplexIdentWithPrefix
+    full_name: TableConstraintIdent
+    table_name: SchemaObjectIdent
     columns: List[Ident]
 
 
 @dataclass
 class ProcedureBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefixAndArgs
+    full_name: SchemaObjectIdentWithArgs
     language: str
     body: str
     arguments: List[NameWithType]
@@ -188,7 +187,7 @@ class ResourceMonitorBlueprint(AbstractBlueprint):
 
 @dataclass
 class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefix
+    full_name: SchemaObjectIdent
     arguments: List[NameWithType]
     body: str
     references: List[RowAccessPolicyReference]
@@ -196,9 +195,7 @@ class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class SchemaBlueprint(AbstractBlueprint):
-    full_name: ComplexIdentWithPrefix
-    database: IdentWithPrefix
-    schema: Ident
+    full_name: SchemaIdent
     is_transient: Optional[bool]
     retention_time: Optional[int]
     is_sandbox: Optional[bool]
@@ -216,16 +213,16 @@ class StageBlueprint(SchemaObjectBlueprint):
     storage_integration: Optional[Ident]
     encryption: Optional[Dict[str,str]]
     directory: Optional[Dict[str,str]]
-    file_format: Optional[ComplexIdentWithPrefix]
+    file_format: Optional[SchemaObjectIdent]
     copy_options: Optional[Dict[str,Union[bool,float,int,str,list]]]
     upload_stage_files: bool
 
 
 @dataclass
 class StageFileBlueprint(AbstractBlueprint):
-    full_name: ComplexIdentWithPrefixAndPath
+    full_name: StageFileIdent
     local_path: str
-    stage_name: ComplexIdentWithPrefix
+    stage_name: SchemaObjectIdent
     stage_path: str
 
 
@@ -238,7 +235,7 @@ class SequenceBlueprint(SchemaObjectBlueprint):
 @dataclass
 class StreamBlueprint(SchemaObjectBlueprint):
     object_type: "ObjectType"
-    object_name: ComplexIdentWithPrefix
+    object_name: SchemaObjectIdent
     append_only: Optional[bool]
     insert_only: Optional[bool]
     show_initial_rows: Optional[bool]
@@ -256,7 +253,7 @@ class TableBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class TagBlueprint(SchemaObjectBlueprint):
-    full_name: ComplexIdentWithPrefix
+    full_name: SchemaObjectIdent
     references: List[TagReference]
 
 
@@ -266,7 +263,7 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     schedule: Optional[str]
     after: Optional[Ident]
     when: Optional[str]
-    warehouse: Optional[IdentWithPrefix]
+    warehouse: Optional[AccountObjectIdent]
     user_task_managed_initial_warehouse_size: Optional[str]
     allow_overlapping_execution: Optional[bool]
     session_params: Optional[Dict[str,Union[bool,float,int,str]]]
@@ -280,25 +277,26 @@ class TechRoleBlueprint(RoleBlueprint):
 
 @dataclass
 class UniqueKeyBlueprint(AbstractBlueprint):
-    table_name: ComplexIdentWithPrefix
+    full_name: TableConstraintIdent
+    table_name: SchemaObjectIdent
     columns: List[Ident]
 
 
 @dataclass
 class UserBlueprint(AbstractBlueprint):
-    full_name: IdentWithPrefix
+    full_name: AccountObjectIdent
     login_name: str
     display_name: str
     first_name: Optional[str]
     last_name: Optional[str]
     email: Optional[str]
     disabled: bool
-    business_roles: List[IdentWithPrefix]
+    business_roles: List[AccountObjectIdent]
     password: Optional[str]
     rsa_public_key: Optional[str]
     rsa_public_key_2: Optional[str]
-    default_warehouse: Optional[ComplexIdentWithPrefix]
-    default_namespace: Optional[ComplexIdentWithPrefix]
+    default_warehouse: Optional[AccountObjectIdent]
+    default_namespace: Optional[Union[DatabaseIdent, SchemaIdent]]
     session_params: Optional[Dict[str,Union[bool,float,int,str]]]
 
 
@@ -311,7 +309,7 @@ class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 
 @dataclass
 class WarehouseBlueprint(AbstractBlueprint):
-    full_name: IdentWithPrefix
+    full_name: AccountObjectIdent
     size: str
     auto_suspend: int
     min_cluster_count: Optional[int]

@@ -1,7 +1,7 @@
 from pathlib import Path
 from re import compile, IGNORECASE
 
-from snowddl.blueprint import TableBlueprint, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import TableBlueprint, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, SchemaObjectIdent, TableConstraintIdent, build_schema_object_ident
 from snowddl.config import SnowDDLConfig
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.schema import database_json_schema, schema_json_schema
@@ -157,7 +157,7 @@ class TableParser(AbstractParser):
 
             # Default for sequence
             if col.get('default_sequence'):
-                col_default = f"{self.config.build_complex_ident(col['default_sequence'], f.database, f.schema)}.NEXTVAL"
+                col_default = f"{build_schema_object_ident(self.env_prefix, col['default_sequence'], f.database, f.schema)}.NEXTVAL"
             else:
                 col_default = col.get('default')
 
@@ -172,10 +172,7 @@ class TableParser(AbstractParser):
             )
 
         bp = TableBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             columns=column_blueprints,
             cluster_by=f.params.get('cluster_by', None),
             is_transient=f.params.get('is_transient', self.combined_params[f.database][f.schema].get('is_transient', False)),
@@ -191,8 +188,8 @@ class TableParser(AbstractParser):
 
         if f.params.get('primary_key'):
             bp = PrimaryKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in f.params.get('primary_key')]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in f.params.get('primary_key')],
                 comment=None,
             )
@@ -200,11 +197,9 @@ class TableParser(AbstractParser):
             self.config.add_blueprint(bp)
 
         for columns in f.params.get('unique_keys', []):
-            uk_constraint_name = f"{f.name}({','.join(columns)})"
-
             bp = UniqueKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, uk_constraint_name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in columns]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in columns],
                 comment=None,
             )
@@ -212,13 +207,11 @@ class TableParser(AbstractParser):
             self.config.add_blueprint(bp)
 
         for fk in f.params.get('foreign_keys', []):
-            fk_constraint_name = f"{f.name}({','.join(fk['columns'])})"
-
             bp = ForeignKeyBlueprint(
-                full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, fk_constraint_name),
-                table_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
+                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in fk['columns']]),
+                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in fk['columns']],
-                ref_table_name=self.config.build_complex_ident(fk['ref_table'], f.database, f.schema),
+                ref_table_name=build_schema_object_ident(self.env_prefix, fk['ref_table'], f.database, f.schema),
                 ref_columns=[Ident(c) for c in fk['ref_columns']],
                 comment=None,
             )

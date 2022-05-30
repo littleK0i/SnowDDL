@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from snowddl.converter.abc_converter import AbstractConverter, ConvertResult, YamlLiteralStr, YamlFoldedStr
 
 
-class AbstractSchemaObjectConverter(AbstractConverter):
+class AbstractSchemaObjectConverter(AbstractConverter, ABC):
     def get_existing_objects(self):
         existing_objects = {}
 

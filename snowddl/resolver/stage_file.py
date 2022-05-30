@@ -23,7 +23,7 @@ class StageFileResolver(AbstractResolver):
                     "stage_name": stage_bp.full_name,
                 })
             except SnowDDLExecuteError as e:
-                # Stage does not exist or nor authorized
+                # Stage does not exist or not authorized
                 # Skip this error during planning
                 if e.snow_exc.errno == 2003:
                     continue

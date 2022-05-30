@@ -1,13 +1,13 @@
 import re
 import string
 
-from snowddl.blueprint import ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from snowddl.blueprint import AbstractIdent
 
 
 class SnowDDLFormatter(string.Formatter):
     safe_ident_regexp = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
     safe_decimal_regexp = re.compile(r'^[+-]?[0-9]+(\.[0-9]+)?$')
-    safe_float_regexp = re.compile(r'^[+-]?[0-9]+(\.[0-9]+((e|E)[+-][0-9]+)?)?$')
+    safe_float_regexp = re.compile(r'^[+-]?[0-9]+(\.[0-9]+([e|E][+-][0-9]+)?)?$')
 
     def __init__(self):
         self.smart_transformations = {
@@ -16,7 +16,7 @@ class SnowDDLFormatter(string.Formatter):
             'f': self.safe_float,
             'b': self.safe_bool,
             'i': self.quote_ident,
-            'ia': self.quote_ident_argument,
+            'in': self.quote_ident_no_argument,
             'r': str,
             'lf': self.quote_like_full_match,
             'ls': self.quote_like_starts_with,
@@ -79,16 +79,25 @@ class SnowDDLFormatter(string.Formatter):
 
     @classmethod
     def quote_ident(cls, val):
-        if isinstance(val, ComplexIdentWithPrefixAndArgs):
-            return '.'.join([f'"{cls.escape_ident(p)}"' for p in val.parts_for_format()]) + f"({','.join(dt.name for dt in val.data_types)})"
-        elif isinstance(val, ComplexIdentWithPrefix):
-            return '.'.join([f'"{cls.escape_ident(p)}"' for p in val.parts_for_format()])
+        if not isinstance(val, AbstractIdent):
+            return f'"{cls.escape_ident(val)}"'
 
-        return f'"{cls.escape_ident(val)}"'
+        core_parts, argument_parts = val.parts_for_format()
+
+        if argument_parts is not None:
+            return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts) + \
+                   '(' + ','.join(cls.safe_ident(p) for p in argument_parts) + ')'
+
+        return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts)
 
     @classmethod
-    def quote_ident_argument(cls, val):
-        return cls.quote(cls.quote_ident(val))
+    def quote_ident_no_argument(cls, val):
+        if not isinstance(val, AbstractIdent):
+            return f'"{cls.escape_ident(val)}"'
+
+        core_parts, _ = val.parts_for_format()
+
+        return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts)
 
     @classmethod
     def quote_like_full_match(cls, val):

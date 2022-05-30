@@ -76,10 +76,8 @@ class ExternalFunctionResolver(AbstractSchemaObjectResolver):
         if bp.is_secure:
             query.append("SECURE")
 
-        query.append("EXTERNAL FUNCTION {database:i}.{schema:i}.{name:i} (", {
-            "database": bp.database,
-            "schema": bp.schema,
-            "name": bp.name,
+        query.append("EXTERNAL FUNCTION {full_name:in} (", {
+            "full_name": bp.full_name,
         })
 
         for idx, arg in enumerate(bp.arguments):

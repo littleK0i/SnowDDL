@@ -161,10 +161,7 @@ class TestTable(AbstractTest):
 
     def base_sequence_bp(self, config: SnowDDLConfig, database_name, schema_name, sequence_name):
         return SequenceBlueprint(
-            full_name=ComplexIdentWithPrefix(config.env_prefix, database_name, schema_name, sequence_name),
-            database=IdentWithPrefix(config.env_prefix, database_name),
-            schema=Ident(schema_name),
-            name=Ident(sequence_name),
+            full_name=SchemaObjectIdent(config.env_prefix, database_name, schema_name, sequence_name),
             start=1,
             interval=1,
             comment=None,

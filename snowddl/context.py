@@ -1,7 +1,7 @@
 from json import loads
 from typing import TYPE_CHECKING
 
-from snowddl.blueprint import IdentWithPrefix, Edition
+from snowddl.blueprint import AccountObjectIdent, Edition
 
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
@@ -58,7 +58,7 @@ class SnowDDLContext:
         if not self.engine.config.env_prefix:
             return
 
-        role_with_prefix = IdentWithPrefix(self.engine.config.env_prefix, self.current_role)
+        role_with_prefix = AccountObjectIdent(self.engine.config.env_prefix, self.current_role)
 
         cur = self.engine.execute_meta("SHOW ROLES LIKE {role_with_prefix:lf}", {
             "role_with_prefix": role_with_prefix

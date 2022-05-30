@@ -1,4 +1,4 @@
-from snowddl.blueprint import TaskBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import TaskBlueprint, AccountObjectIdent, SchemaObjectIdent, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -49,21 +49,18 @@ class TaskParser(AbstractParser):
 
     def process_task(self, f: ParsedFile):
         if f.params.get('after'):
-            task_after_ident = self.config.build_complex_ident(f.params['after'], f.database, f.schema)
+            task_after_ident = build_schema_object_ident(self.env_prefix, f.params['after'], f.database, f.schema)
         else:
             task_after_ident = None
 
         bp = TaskBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             body=f.params['body'],
             schedule=f.params.get('schedule'),
             after=task_after_ident,
             depends_on=[task_after_ident] if task_after_ident else [],
             when=f.params.get('when'),
-            warehouse=IdentWithPrefix(self.env_prefix, f.params['warehouse']) if f.params.get('warehouse') else None,
+            warehouse=AccountObjectIdent(self.env_prefix, f.params['warehouse']) if f.params.get('warehouse') else None,
             user_task_managed_initial_warehouse_size=f.params.get('user_task_managed_initial_warehouse_size'),
             allow_overlapping_execution=f.params.get('allow_overlapping_execution'),
             session_params=self.normalise_params_dict(f.params.get('session_params')),

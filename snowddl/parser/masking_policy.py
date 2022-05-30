@@ -1,4 +1,4 @@
-from snowddl.blueprint import MaskingPolicyBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, NameWithType, DataType, MaskingPolicyReference, ObjectType
+from snowddl.blueprint import MaskingPolicyBlueprint, Ident, SchemaObjectIdent, NameWithType, DataType, MaskingPolicyReference, ObjectType, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -61,17 +61,14 @@ class MaskingPolicyParser(AbstractParser):
         for a in f.params.get('references', []):
             ref = MaskingPolicyReference(
                 object_type=ObjectType[a['object_type'].upper()],
-                object_name=self.config.build_complex_ident(a['object_name'], f.database, f.schema),
+                object_name=build_schema_object_ident(self.env_prefix, a['object_name'], f.database, f.schema),
                 columns=[Ident(c) for c in a['columns']],
             )
 
             references.append(ref)
 
         bp = MaskingPolicyBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             body=f.params['body'],
             arguments=arguments,
             returns=DataType(f.params['returns']),

@@ -1,4 +1,4 @@
-from snowddl.blueprint import FunctionBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefixAndArgs, NameWithType, DataType, StageWithPath
+from snowddl.blueprint import FunctionBlueprint, Ident, SchemaObjectIdentWithArgs, NameWithType, DataType, StageWithPath, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -93,17 +93,14 @@ class FunctionParser(AbstractParser):
             returns = DataType(f.params['returns'])
 
         if f.params.get('imports'):
-            imports = [StageWithPath(stage_name=self.config.build_complex_ident(i['stage'], f.database, f.schema), path=i['path']) for i in f.params.get('imports')]
+            imports = [StageWithPath(stage_name=build_schema_object_ident(self.env_prefix, i['stage'], f.database, f.schema), path=i['path']) for i in f.params.get('imports')]
         else:
             imports = None
 
         base_name = self.validate_name_with_args(f.path, arguments)
 
         bp = FunctionBlueprint(
-            full_name=ComplexIdentWithPrefixAndArgs(self.env_prefix, f.database, f.schema, base_name, data_types=[a.type.base_type for a in arguments]),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(base_name),
+            full_name=SchemaObjectIdentWithArgs(self.env_prefix, f.database, f.schema, base_name, data_types=[a.type.base_type for a in arguments]),
             language=f.params.get('language', 'SQL'),
             body=f.params.get('body'),
             arguments=arguments,

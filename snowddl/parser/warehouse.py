@@ -1,4 +1,4 @@
-from snowddl.blueprint import WarehouseBlueprint, Ident, IdentWithPrefix
+from snowddl.blueprint import WarehouseBlueprint, Ident, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -42,7 +42,7 @@ class WarehouseParser(AbstractParser):
     def process_warehouse(self, f: ParsedFile):
         for warehouse_name, warehouse in f.params.items():
             bp = WarehouseBlueprint(
-                full_name=IdentWithPrefix(self.env_prefix, warehouse_name),
+                full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
                 size=warehouse['size'],
                 auto_suspend=warehouse.get('auto_suspend', 60),
                 min_cluster_count=warehouse.get('min_cluster_count'),

@@ -67,3 +67,27 @@ default_resolver_sequence = [
     UserRoleResolver,
     UserResolver,
 ]
+
+
+singledb_resolver_sequence = [
+    SchemaResolver,
+    FileFormatResolver,
+    StageResolver,
+    StageFileResolver,
+    SequenceResolver,
+    FunctionResolver,
+    ExternalFunctionResolver,
+    ProcedureResolver,
+    TableResolver,
+    ExternalTableResolver,
+    PrimaryKeyResolver,
+    UniqueKeyResolver,
+    ForeignKeyResolver,
+    StreamResolver,
+    MaterializedViewResolver,
+    ViewResolver,
+    PipeResolver,
+    TaskResolver,
+    MaskingPolicyResolver,
+    RowAccessPolicyResolver,
+]

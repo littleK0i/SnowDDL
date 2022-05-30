@@ -1,4 +1,4 @@
-from snowddl.blueprint import Grant, BusinessRoleBlueprint, IdentWithPrefix, Ident, ObjectType
+from snowddl.blueprint import Grant, BusinessRoleBlueprint, AbstractIdentWithPrefix, Ident, ObjectType, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -63,7 +63,7 @@ class BusinessRoleParser(AbstractParser):
 
     def process_business_role(self, file: ParsedFile):
         for business_role_name, business_role in file.params.items():
-            business_role_ident = self.config.build_role_ident(business_role_name, self.config.BUSINESS_ROLE_SUFFIX)
+            business_role_ident = build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX)
 
             grants = []
 
@@ -86,7 +86,7 @@ class BusinessRoleParser(AbstractParser):
                 grants.append(Grant(
                     privilege="USAGE",
                     on=ObjectType.ROLE,
-                    name=self.config.build_role_ident(tech_role_name, self.config.TECH_ROLE_SUFFIX),
+                    name=build_role_ident(self.env_prefix, tech_role_name, self.config.TECH_ROLE_SUFFIX),
                 ))
 
             for global_role_name in business_role.get('global_roles', []):
@@ -111,12 +111,12 @@ class BusinessRoleParser(AbstractParser):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=self.config.build_role_ident(database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+            name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
         )
 
     def build_warehouse_role_grant(self, warehouse_name, grant_type):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=self.config.build_role_ident(warehouse_name, grant_type, self.config.WAREHOUSE_ROLE_SUFFIX),
+            name=build_role_ident(self.env_prefix, warehouse_name, grant_type, self.config.WAREHOUSE_ROLE_SUFFIX),
         )

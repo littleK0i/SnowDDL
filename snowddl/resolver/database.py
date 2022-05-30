@@ -19,8 +19,8 @@ class DatabaseResolver(AbstractResolver):
         if bp.is_transient:
             query.append("TRANSIENT")
 
-        query.append("DATABASE {database:i}", {
-            "database": bp.database,
+        query.append("DATABASE {full_name:i}", {
+            "full_name": bp.full_name,
         })
 
         if bp.retention_time is not None:
@@ -37,7 +37,7 @@ class DatabaseResolver(AbstractResolver):
 
         # Drop schema PUBLIC which is created automatically
         self.engine.execute_safe_ddl("DROP SCHEMA {database:i}.{schema:i}", {
-            "database": bp.database,
+            "database": bp.full_name,
             "schema": "PUBLIC"
         })
 
@@ -52,8 +52,8 @@ class DatabaseResolver(AbstractResolver):
 
         query = self.engine.query_builder()
 
-        query.append("ALTER DATABASE {database:i} SET ", {
-            "database": bp.database
+        query.append("ALTER DATABASE {full_name:i} SET ", {
+            "full_name": bp.full_name
         })
 
         if bp.retention_time is not None and bp.retention_time != row['retention_time']:

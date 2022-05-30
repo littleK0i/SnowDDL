@@ -1,5 +1,5 @@
-from snowddl.blueprint import SchemaBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix, Grant, ObjectType
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.blueprint import SchemaBlueprint, SchemaIdent, Grant, ObjectType, build_role_ident
+from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
 
 
@@ -64,9 +64,7 @@ class SchemaParser(AbstractParser):
                     owner_additional_grants.append(self.build_schema_role_grant(full_schema_name, 'WRITE'))
 
                 bp = SchemaBlueprint(
-                    full_name=ComplexIdentWithPrefix(self.env_prefix, database_path.name, schema_path.name),
-                    database=IdentWithPrefix(self.env_prefix, database_path.name),
-                    schema=Ident(schema_path.name),
+                    full_name=SchemaIdent(self.env_prefix, database_path.name, schema_path.name),
                     is_transient=combined_params.get('is_transient', False),
                     retention_time=combined_params.get('retention_time', None),
                     is_sandbox=combined_params.get('is_sandbox', False),
@@ -82,5 +80,5 @@ class SchemaParser(AbstractParser):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=self.config.build_role_ident(database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+            name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
         )

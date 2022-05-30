@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2] - 2022-05-30
+
+- Identifier objects were completely reworked. Now every identifier type has its own class with every part being named.
+- Simplified blueprint objects. Removed `database`, `schema`, `name` fields from schema object blueprints. All this information is available as parts of `full_name`.
+- Moved complex logic for "building" identifiers into dedicated module `ident_builder`.
+- Performed initial preparation and testing for "singledb" entry point, which will be added in the next version.
+
 ## [0.5.1] - 2022-05-25
 
 - Rework internal architecture of entry-points for SnowDDL CLI interface. Now it will be much easier to add new entry-points and to partially re-use existing entry-points in your own code.

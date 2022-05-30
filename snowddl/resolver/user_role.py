@@ -1,4 +1,4 @@
-from snowddl.blueprint import RoleBlueprint, UserBlueprint, Grant
+from snowddl.blueprint import RoleBlueprint, UserBlueprint, Grant, build_role_ident
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -25,7 +25,7 @@ class UserRoleResolver(AbstractRoleResolver):
             ))
 
         bp = RoleBlueprint(
-            full_name=self.config.build_role_ident(user.full_name, self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, user.full_name, self.get_role_suffix()),
             grants=grants,
             future_grants=[],
             comment=None,

@@ -52,3 +52,23 @@ default_parser_sequence = [
     BusinessRoleParser,
     UserParser,
 ]
+
+
+singledb_parser_sequence = [
+    SchemaParser,
+    FileFormatParser,
+    StageParser,
+    SequenceParser,
+    FunctionParser,
+    ExternalFunctionParser,
+    ProcedureParser,
+    TableParser,
+    ExternalTableParser,
+    StreamParser,
+    MaterializedViewParser,
+    ViewParser,
+    PipeParser,
+    TaskParser,
+    MaskingPolicyParser,
+    RowAccessPolicyParser,
+]

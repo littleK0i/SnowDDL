@@ -1,4 +1,4 @@
-from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType
+from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType, build_role_ident, build_grant_name_ident_config
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -36,7 +36,7 @@ class TechRoleParser(AbstractParser):
 
     def process_tech_role(self, f: ParsedFile):
         for tech_role_name, tech_role in f.params.items():
-            tech_role_ident = self.config.build_role_ident(tech_role_name, self.config.TECH_ROLE_SUFFIX)
+            tech_role_ident = build_role_ident(self.env_prefix, tech_role_name, self.config.TECH_ROLE_SUFFIX)
 
             grants = []
 
@@ -48,7 +48,7 @@ class TechRoleParser(AbstractParser):
                         grants.append(Grant(
                             privilege=p,
                             on=ObjectType[on],
-                            name=self.config.build_complex_ident(object_name),
+                            name=build_grant_name_ident_config(self.env_prefix, object_name, ObjectType[on]),
                         ))
 
             bp = TechRoleBlueprint(

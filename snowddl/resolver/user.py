@@ -1,4 +1,4 @@
-from snowddl.blueprint import UserBlueprint
+from snowddl.blueprint import UserBlueprint, build_role_ident
 from snowddl.error import SnowDDLExecuteError
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 from snowddl.resolver._utils import compare_dynamic_param_value
@@ -242,7 +242,7 @@ class UserResolver(AbstractResolver):
         return False
 
     def _get_user_role_ident(self, bp: UserBlueprint):
-        return self.config.build_role_ident(bp.full_name, self.config.USER_ROLE_SUFFIX)
+        return build_role_ident(self.config.env_prefix, bp.full_name, self.config.USER_ROLE_SUFFIX)
 
     def _get_existing_user_parameters(self, bp: UserBlueprint):
         existing_params = {}

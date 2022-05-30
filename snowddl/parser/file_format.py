@@ -1,4 +1,4 @@
-from snowddl.blueprint import FileFormatBlueprint, Ident, IdentWithPrefix, ComplexIdentWithPrefix
+from snowddl.blueprint import FileFormatBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -29,10 +29,7 @@ class FileFormatParser(AbstractParser):
 
     def process_file_format(self, f: ParsedFile):
         bp = FileFormatBlueprint(
-            full_name=ComplexIdentWithPrefix(self.env_prefix, f.database, f.schema, f.name),
-            database=IdentWithPrefix(self.env_prefix, f.database),
-            schema=Ident(f.schema),
-            name=Ident(f.name),
+            full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             type=f.params['type'].upper(),
             format_options={option_name.upper(): option_value for option_name, option_value in f.params.get('format_options', {}).items()},
             comment=f.params.get('comment'),

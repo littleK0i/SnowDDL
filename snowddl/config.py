@@ -1,9 +1,8 @@
 from collections import defaultdict
 from pathlib import Path
-from traceback import TracebackException
-from typing import List, Dict, Type, Union, TYPE_CHECKING
+from typing import List, Dict, Type, Union
 
-from snowddl.blueprint import AbstractBlueprint, T_Blueprint, BaseDataType, Ident, IdentWithPrefix, ComplexIdentWithPrefix, ComplexIdentWithPrefixAndArgs
+from snowddl.blueprint import AbstractBlueprint, T_Blueprint
 
 
 class SnowDDLConfig:
@@ -41,38 +40,6 @@ class SnowDDLConfig:
 
     def add_placeholder(self, name: str, value: Union[bool,float,int,str]):
         self.placeholders[name] = value
-
-    def build_complex_ident(self, object_name, context_database_name=None, context_schema_name=None) -> ComplexIdentWithPrefix:
-        # Function or procedure identifier with arguments
-        if object_name.endswith(')'):
-            object_name, data_types_str = object_name.rstrip(')').split('(')
-            data_types = [BaseDataType[dt.strip(' ').upper()] for dt in data_types_str.split(',')] if data_types_str else []
-        else:
-            data_types = None
-
-        parts = object_name.split('.')
-        parts_len = len(parts)
-
-        if parts_len > 3:
-            raise ValueError(f"Too many delimiters in schema object identifier [{object_name}]")
-
-        # Add context db_name to "schema_name.object_name" or "object_name" identifier
-        if parts_len <= 2 and context_database_name:
-            parts.insert(0, context_database_name)
-
-        # Add context schema_name to "object_name" identifier
-        if parts_len == 1 and context_schema_name:
-            parts.insert(1, context_schema_name)
-
-        # Function or procedure identifier with arguments
-        if isinstance(data_types, list):
-            return ComplexIdentWithPrefixAndArgs(self.env_prefix, *parts, data_types=data_types)
-        else:
-            return ComplexIdentWithPrefix(self.env_prefix, *parts)
-
-    def build_role_ident(self, *args: Union[Ident, str]) -> IdentWithPrefix:
-        parts = [str(a.value) if isinstance(a, Ident) else str(a) for a in args]
-        return IdentWithPrefix(self.env_prefix, f"{'__'.join(parts)}")
 
     def _init_env_prefix(self, env_prefix):
         if env_prefix:

@@ -86,8 +86,7 @@ class AbstractTest(ABC):
 
     def base_database_bp(self, config: SnowDDLConfig, database_name):
         return DatabaseBlueprint(
-            full_name=IdentWithPrefix(config.env_prefix, database_name),
-            database=IdentWithPrefix(config.env_prefix, database_name),
+            full_name=DatabaseIdent(config.env_prefix, database_name),
             is_transient=True,
             retention_time=None,
             is_sandbox=False,
@@ -96,9 +95,7 @@ class AbstractTest(ABC):
 
     def base_schema_bp(self, config: SnowDDLConfig, database_name, schema_name):
         return SchemaBlueprint(
-            full_name=ComplexIdentWithPrefix(config.env_prefix, database_name, schema_name),
-            database=IdentWithPrefix(config.env_prefix, database_name),
-            schema=Ident(schema_name),
+            full_name=SchemaIdent(config.env_prefix, database_name, schema_name),
             is_transient=True,
             retention_time=None,
             is_sandbox=False,
@@ -146,10 +143,7 @@ class AbstractTest(ABC):
             )
 
         return TableBlueprint(
-            full_name=ComplexIdentWithPrefix(config.env_prefix, database_name, schema_name, table_name),
-            database=IdentWithPrefix(config.env_prefix, database_name),
-            schema=Ident(schema_name),
-            name=Ident(table_name),
+            full_name=SchemaObjectIdent(config.env_prefix, database_name, schema_name, table_name),
             columns=col_blueprints,
             cluster_by=None,
             is_transient=True,
