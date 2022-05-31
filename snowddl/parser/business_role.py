@@ -126,10 +126,12 @@ class BusinessRoleParser(AbstractParser):
             if not grants:
                 raise ValueError(f"No schemas matched wildcard grant [{full_schema_name}]")
         else:
-             Grant(
-                privilege="USAGE",
-                on=ObjectType.ROLE,
-                name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.ROLE,
+                    name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+                )
             )
 
         return grants

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.5] - 2022-05-31
+
+- Fix missing grants for `schema_owner`, `schema_write`, `schema_read` business role options without wildcards.
+
 ## [0.5.4] - 2022-05-31
 
 - Speed up SnowDDL execution by loading grants and future grants of existing roles in parallel.
