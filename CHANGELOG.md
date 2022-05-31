@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.4] - 2022-05-31
+
+- Speed up SnowDDL execution by loading grants and future grants of existing roles in parallel.
+
 ## [0.5.3] - 2022-05-30
 
 - Added a basic wildcard option while setting `schema_owner`, `schema_write`, `schema_read` options for business roles to match "all schemas in database". For example: `snowddl_db.*`. At least one schema matching wildcard condition should exist in config.

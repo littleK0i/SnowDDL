@@ -25,15 +25,19 @@ class AbstractRoleResolver(AbstractResolver):
 
             existing_roles[r['name']] = {
                 "role_name": r['name'],
-                "grants": self.get_existing_grants(r['name']),
-                "future_grants": self.get_existing_future_grants(r['name']),
                 "comment": r['comment'] if r['comment'] else None,
             }
 
+        # Process role grants in parallel
+        for role_name, grants, future_grants in self.engine.executor.map(self.get_existing_role_grants, existing_roles):
+            existing_roles[role_name]['grants'] = grants
+            existing_roles[role_name]['future_grants'] = future_grants
+
         return existing_roles
 
-    def get_existing_grants(self, role_name):
+    def get_existing_role_grants(self, role_name):
         grants = []
+        future_grants = []
 
         cur = self.engine.execute_meta("SHOW GRANTS TO ROLE {role_name:i}", {
             "role_name": role_name,
@@ -46,11 +50,6 @@ class AbstractRoleResolver(AbstractResolver):
                 name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['granted_on']]),
             ))
 
-        return grants
-
-    def get_existing_future_grants(self, role_name):
-        future_grants = []
-
         cur = self.engine.execute_meta("SHOW FUTURE GRANTS TO ROLE {role_name:i}", {
             "role_name": role_name,
         })
@@ -62,7 +61,7 @@ class AbstractRoleResolver(AbstractResolver):
                 name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['grant_on']]),
             ))
 
-        return future_grants
+        return role_name, grants, future_grants
 
     def create_object(self, bp: RoleBlueprint):
         query = self.engine.query_builder()
