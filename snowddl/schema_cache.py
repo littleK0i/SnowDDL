@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from snowddl.blueprint import Ident
+
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
 
@@ -23,11 +25,16 @@ class SnowDDLSchemaCache:
 
         for r in cur:
             # Skip databases created by other roles
-            if r['owner'] != self.engine.context.current_role:
+            if r['owner'] != self.engine.context.current_role and not self.engine.settings.ignore_ownership:
                 continue
 
             # Skip shares
             if r['origin']:
+                continue
+
+            # Skip databases not listed in settings explicitly
+            if self.engine.settings.include_databases \
+            and Ident(r['name']) not in self.engine.settings.include_databases:
                 continue
 
             self.databases[r['name']] = {
@@ -51,7 +58,7 @@ class SnowDDLSchemaCache:
 
         for r in cur:
             # Skip schemas created by other roles
-            if r['owner'] != self.engine.context.current_role:
+            if r['owner'] != self.engine.context.current_role and not self.engine.settings.ignore_ownership:
                 continue
 
             # Skip INFORMATION_SCHEMA

@@ -57,3 +57,6 @@ jobs:
 
       - name: "Apply test"
         run: snowddl -c test01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
+
+      - name: "Apply singledb"
+        run: snowddl-singledb -c test01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --config-db=TEST_DB --target-db=ANOTHER_DB --apply-unsafe --apply-masking-policy --apply-row-access-policy apply

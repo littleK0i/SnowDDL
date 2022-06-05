@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0] - 2022-06-05
+
+- Implemented first version of `snowddl-singledb` entry-point. It is a simplified version of SnowDDL to manage schemas and objects in a single database only. Account-level objects, roles and grants are NOT resolved in this mode. Please check the documentation for more details.
+- Schemas will no longer produce `DROP SCHEMA ...` SQL commands during `destroy` action without `--apply-unsafe` flag, similar to schema objects. All schemas are dropped implicitly after execution of `DROP DATABASE` anyway.
+- Added `database_full_name` property for `SchemaIdent` and `SchemaObjectIdent` objects to simplify access to corresponding `DatabaseIdent` object.
+- Replaced `argparse.Namespace` with basic `dict` for handling of CLI arguments. It helps to streamline access to specific arguments which may not be defined in other entry-points.
+
 ## [0.5.5] - 2022-05-31
 
 - Fix missing grants for `schema_owner`, `schema_write`, `schema_read` business role options without wildcards.

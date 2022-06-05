@@ -29,8 +29,6 @@ class AbstractIdent(ABC):
 
     def __eq__(self, other):
         if not isinstance(other, AbstractIdent):
-            print(repr(self))
-            print(repr(other))
             raise NotImplementedError
 
         return str(self) == str(other)
@@ -103,6 +101,10 @@ class SchemaIdent(AbstractIdentWithPrefix):
     def parts_for_format(self):
         return [f"{self.env_prefix}{self.database}", self.schema], None
 
+    @property
+    def database_full_name(self):
+        return DatabaseIdent(self.env_prefix, self.database)
+
 
 class SchemaObjectIdent(AbstractIdentWithPrefix):
     def __init__(self, env_prefix, database, schema, name):
@@ -114,6 +116,10 @@ class SchemaObjectIdent(AbstractIdentWithPrefix):
 
     def parts_for_format(self):
         return [f"{self.env_prefix}{self.database}", self.schema, self.name], None
+
+    @property
+    def database_full_name(self):
+        return DatabaseIdent(self.env_prefix, self.database)
 
 
 class SchemaObjectIdentWithArgs(SchemaObjectIdent):

@@ -92,9 +92,9 @@ class BaseApp:
         return parser
 
     def init_arguments(self):
-        args = self.arg_parser.parse_args()
+        args = vars(self.arg_parser.parse_args())
 
-        if not args.a or not args.u or (not args.p and not args.k):
+        if not args['a'] or not args['u'] or (not args['p'] and not args['k']):
             self.arg_parser.print_help()
             exit(1)
 
@@ -102,7 +102,7 @@ class BaseApp:
 
     def init_logger(self):
         logger = getLogger('snowddl')
-        logger.setLevel(self.args.log_level)
+        logger.setLevel(self.args.get('log_level', 'INFO'))
 
         formatter = Formatter('%(asctime)s - %(levelname)s - %(message)s')
         formatter.default_msec_format = '%s.%03d'
@@ -115,21 +115,21 @@ class BaseApp:
         return logger
 
     def init_config_path(self):
-        config_path = Path(self.args.c)
+        config_path = Path(self.args['c'])
 
         if not config_path.exists():
-            config_path = Path(__file__).parent.parent / '_config' / self.args.c
+            config_path = Path(__file__).parent.parent / '_config' / self.args['c']
 
         if not config_path.exists():
-            raise ValueError(f"Config path [{self.args.c}] does not exist")
+            raise ValueError(f"Config path [{self.args['c']}] does not exist")
 
         if not config_path.is_dir():
-            raise ValueError(f"Config path [{self.args.c}] is not a directory")
+            raise ValueError(f"Config path [{self.args['c']}] is not a directory")
 
         return config_path.resolve()
 
     def init_config(self):
-        config = SnowDDLConfig(self.args.env_prefix)
+        config = SnowDDLConfig(self.args.get('env_prefix'))
 
         # Placeholders
         placeholder_path = self.get_placeholder_path()
@@ -156,50 +156,50 @@ class BaseApp:
     def init_settings(self):
         settings = SnowDDLSettings()
 
-        if self.args.action == 'apply' or self.args.action == 'destroy':
+        if self.args.get('action') in ('apply', 'destroy'):
             settings.execute_safe_ddl = True
 
-            if self.args.apply_unsafe:
+            if self.args.get('apply_unsafe'):
                 settings.execute_unsafe_ddl = True
 
-            if self.args.apply_replace_table:
+            if self.args.get('apply_replace_table'):
                 settings.execute_replace_table = True
 
-            if self.args.apply_masking_policy:
+            if self.args.get('apply_masking_policy'):
                 settings.execute_masking_policy = True
 
-            if self.args.apply_row_access_policy:
+            if self.args.get('apply_row_access_policy'):
                 settings.execute_row_access_policy = True
 
-            if self.args.apply_account_params:
+            if self.args.get('apply_account_params'):
                 settings.execute_account_params = True
 
-            if self.args.apply_network_policy:
+            if self.args.get('apply_network_policy'):
                 settings.execute_network_policy = True
 
-            if self.args.apply_resource_monitor:
+            if self.args.get('apply_resource_monitor'):
                 settings.execute_resource_monitor = True
 
-        if self.args.refresh_user_passwords:
+        if self.args.get('refresh_user_passwords'):
             settings.refresh_user_passwords = True
 
-        if self.args.refresh_future_grants:
+        if self.args.get('refresh_future_grants'):
             settings.refresh_future_grants = True
 
-        if self.args.exclude_object_types:
+        if self.args.get('exclude_object_types'):
             try:
-                settings.exclude_object_types = [ObjectType[t.strip().upper()] for t in str(self.args.exclude_object_types).split(',')]
+                settings.exclude_object_types = [ObjectType[t.strip().upper()] for t in str(self.args.get('exclude_object_types')).split(',')]
             except KeyError as e:
                 raise ValueError(f"Invalid object type [{str(e)}]")
 
-        if self.args.include_object_types:
+        if self.args.get('include_object_types'):
             try:
-                settings.include_object_types = [ObjectType[t.strip().upper()] for t in str(self.args.include_object_types).split(',')]
+                settings.include_object_types = [ObjectType[t.strip().upper()] for t in str(self.args.get('include_object_types')).split(',')]
             except KeyError as e:
                 raise ValueError(f"Invalid object type [{str(e)}]")
 
-        if self.args.max_workers:
-            settings.max_workers = self.args.max_workers
+        if self.args.get('max_workers'):
+            settings.max_workers = int(self.args.get('max_workers'))
 
         return settings
 
@@ -208,17 +208,17 @@ class BaseApp:
 
     def get_connection(self):
         options = {
-            "account": self.args.a,
-            "user": self.args.u,
-            "role": self.args.r,
-            "warehouse": self.args.w,
+            "account": self.args['a'],
+            "user": self.args['u'],
+            "role": self.args['r'],
+            "warehouse": self.args['w'],
         }
 
-        if self.args.k:
+        if self.args.get('k'):
             from cryptography.hazmat.primitives import serialization
 
-            key_path = Path(self.args.k)
-            key_password = self.args.passphrase.encode() if self.args.passphrase else None
+            key_path = Path(self.args.get('k'))
+            key_password = str(self.args.get('passphrase')).encode('utf-8') if self.args.get('passphrase') else None
 
             pk = serialization.load_pem_private_key(data=key_path.read_bytes(), password=key_password)
 
@@ -228,7 +228,7 @@ class BaseApp:
                 encryption_algorithm=serialization.NoEncryption(),
             )
         else:
-            options['password'] = self.args.p
+            options['password'] = self.args['p']
 
         return connect(**options)
 
@@ -236,8 +236,8 @@ class BaseApp:
         with self.engine:
             self.output_engine_context()
 
-            if self.args.action == 'destroy':
-                if not self.args.env_prefix and not self.args.destroy_without_prefix:
+            if self.args.get('action') == 'destroy':
+                if not self.args.get('env_prefix') and not self.args.get('destroy_without_prefix'):
                     raise ValueError("Argument --env-prefix is required for [destroy] action")
 
                 for resolver_cls in self.resolver_sequence:
@@ -252,7 +252,7 @@ class BaseApp:
 
             self.output_engine_stats()
 
-            if self.args.show_sql:
+            if self.args.get('show_sql'):
                 self.output_executed_ddl()
 
             self.output_suggested_ddl()
@@ -276,25 +276,25 @@ class BaseApp:
         self.logger.info("---")
 
     def get_placeholder_path(self):
-        if self.args.placeholder_path:
-            placeholder_path = Path(self.args.placeholder_path)
+        if self.args.get('placeholder_path'):
+            placeholder_path = Path(self.args.get('placeholder_path'))
 
             if not placeholder_path.is_file():
-                raise ValueError(f"Placeholder path [{self.args.placeholder_path}] does not exist or not a file")
+                raise ValueError(f"Placeholder path [{self.args.get('placeholder_path')}] does not exist or not a file")
 
             return placeholder_path.resolve()
 
         return None
 
     def get_placeholder_values(self):
-        if self.args.placeholder_values:
+        if self.args.get('placeholder_values'):
             try:
-                placeholder_values = json_loads(self.args.placeholder_values)
+                placeholder_values = json_loads(self.args.get('placeholder_values'))
             except JSONDecodeError as e:
-                raise ValueError(f"Placeholder values [{self.args.placeholder_values}] are not a valid JSON")
+                raise ValueError(f"Placeholder values [{self.args.get('placeholder_values')}] are not a valid JSON")
 
             if not isinstance(placeholder_values, dict):
-                raise ValueError(f"Placeholder values [{self.args.placeholder_values}] are not JSON encoded dict")
+                raise ValueError(f"Placeholder values [{self.args.get('placeholder_values')}] are not JSON encoded dict")
 
             for k, v in placeholder_values.items():
                 if not isinstance(v, (bool, float, int, str)):

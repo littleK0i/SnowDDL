@@ -55,6 +55,7 @@ setup(
         'console_scripts': [
             'snowddl = snowddl.app.base:entry_point',
             'snowddl-convert = snowddl.app.convert:entry_point',
+            'snowddl-singledb = snowddl.app.singledb:entry_point',
         ],
     },
 

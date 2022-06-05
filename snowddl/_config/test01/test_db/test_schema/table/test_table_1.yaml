@@ -2,3 +2,5 @@ columns:
   id: NUMBER(38,0)
   name: VARCHAR(255)
   status: VARCHAR(255)
+
+change_tracking: true

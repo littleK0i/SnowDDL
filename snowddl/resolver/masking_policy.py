@@ -1,4 +1,4 @@
-from snowddl.blueprint import DatabaseIdent, MaskingPolicyBlueprint, ObjectType, Edition, SchemaObjectIdent
+from snowddl.blueprint import MaskingPolicyBlueprint, ObjectType, Edition, SchemaObjectIdent
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
@@ -174,7 +174,7 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
         existing_policy_refs = {}
 
         cur = self.engine.execute_meta("SELECT * FROM TABLE({database:i}.information_schema.policy_references(policy_name => {policy_name}))", {
-            "database": DatabaseIdent(policy_name.env_prefix, policy_name.database),
+            "database": policy_name.database_full_name,
             "policy_name": policy_name,
         })
 

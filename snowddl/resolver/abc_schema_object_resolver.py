@@ -14,12 +14,12 @@ class AbstractSchemaObjectResolver(AbstractResolver):
 
         return existing_objects
 
-    def destroy(self):
-        # Do nothing, all schema objects are dropped automatically on DROP DATABASE
-        pass
-
     @abstractmethod
     def get_existing_objects_in_schema(self, schema: dict):
+        pass
+
+    def destroy(self):
+        # Do nothing, all schema objects are dropped automatically on DROP DATABASE
         pass
 
     def _resolve_drop(self):

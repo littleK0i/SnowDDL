@@ -97,7 +97,7 @@ class FileFormatBlueprint(SchemaObjectBlueprint):
 
 
 @dataclass
-class ForeignKeyBlueprint(AbstractBlueprint):
+class ForeignKeyBlueprint(SchemaObjectBlueprint):
     full_name: TableConstraintIdent
     table_name: SchemaObjectIdent
     columns: List[Ident]
@@ -159,7 +159,7 @@ class PipeBlueprint(SchemaObjectBlueprint):
 
 
 @dataclass
-class PrimaryKeyBlueprint(AbstractBlueprint):
+class PrimaryKeyBlueprint(SchemaObjectBlueprint):
     full_name: TableConstraintIdent
     table_name: SchemaObjectIdent
     columns: List[Ident]
@@ -219,7 +219,7 @@ class StageBlueprint(SchemaObjectBlueprint):
 
 
 @dataclass
-class StageFileBlueprint(AbstractBlueprint):
+class StageFileBlueprint(SchemaObjectBlueprint):
     full_name: StageFileIdent
     local_path: str
     stage_name: SchemaObjectIdent
@@ -276,7 +276,7 @@ class TechRoleBlueprint(RoleBlueprint):
 
 
 @dataclass
-class UniqueKeyBlueprint(AbstractBlueprint):
+class UniqueKeyBlueprint(SchemaObjectBlueprint):
     full_name: TableConstraintIdent
     table_name: SchemaObjectIdent
     columns: List[Ident]

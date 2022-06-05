@@ -55,6 +55,7 @@ default_parser_sequence = [
 
 
 singledb_parser_sequence = [
+    DatabaseParser,
     SchemaParser,
     FileFormatParser,
     StageParser,
