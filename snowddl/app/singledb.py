@@ -51,8 +51,8 @@ class SingleDbApp(BaseApp):
         parser.add_argument('--show-sql', help="Show executed DDL queries", default=False, action='store_true')
 
         # Placeholders
-        parser.add_argument('--placeholder-path', help='Path to config file with environment-specific placeholders', default=None)
-        parser.add_argument('--placeholder-values', help='Environment-specific placeholder values in JSON format', default=None)
+        parser.add_argument('--placeholder-path', help='Path to config file with environment-specific placeholders', default=None, metavar='')
+        parser.add_argument('--placeholder-values', help='Environment-specific placeholder values in JSON format', default=None, metavar='')
 
         # Object types
         parser.add_argument('--exclude-object-types', help="Comma-separated list of object types NOT to resolve", default=None, metavar='')
