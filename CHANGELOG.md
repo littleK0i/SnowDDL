@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.6.1] - 2022-06-15
+
+- Added `packages` for `FUNCTION` object type. Now it should be possible to use fully utilize Snowpark, Python and Java UDFs.
+- `SnowDDLFormatter` is now exposed as public object, if you want to use it for something other than SnowDDL.
+
 ## [0.6.0] - 2022-06-05
 
 - Implemented first version of `snowddl-singledb` entry-point. It is a simplified version of SnowDDL to manage schemas and objects in a single database only. Account-level objects, roles and grants are NOT resolved in this mode. Please check the documentation for more details.

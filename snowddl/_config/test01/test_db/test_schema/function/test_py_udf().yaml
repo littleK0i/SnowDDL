@@ -1,0 +1,19 @@
+language: python
+runtime_version: "3.8"
+
+returns: VARIANT
+
+packages:
+  - numpy
+  - pandas
+  - xgboost==1.5.0
+
+handler: udf
+
+body: |-
+  import numpy as np
+  import pandas as pd
+  import xgboost as xgb
+
+  def udf():
+    return [np.__version__, pd.__version__, xgb.__version__]

@@ -130,6 +130,11 @@ class FunctionResolver(AbstractSchemaObjectResolver):
                 "imports": [f"@{i.stage_name}{i.path}" for i in bp.imports]
             })
 
+        if bp.packages:
+            query.append_nl("PACKAGES = ({packages})", {
+                "packages": bp.packages,
+            })
+
         if bp.handler:
             query.append_nl("HANDLER = {handler}", {
                 "handler": bp.handler,

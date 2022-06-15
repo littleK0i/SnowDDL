@@ -117,6 +117,7 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     is_immutable: bool
     runtime_version: Optional[str]
     imports: Optional[List[StageWithPath]]
+    packages: Optional[List[str]]
     handler: Optional[str]
 
 

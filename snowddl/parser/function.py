@@ -59,6 +59,13 @@ function_json_schema = {
             },
             "minItems": 1
         },
+        "packages": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
         "handler": {
             "type": "string"
         },
@@ -97,6 +104,11 @@ class FunctionParser(AbstractParser):
         else:
             imports = None
 
+        if f.params.get('packages'):
+            packages = f.params.get('packages')
+        else:
+            packages = None
+
         base_name = self.validate_name_with_args(f.path, arguments)
 
         bp = FunctionBlueprint(
@@ -110,6 +122,7 @@ class FunctionParser(AbstractParser):
             is_immutable=f.params.get('is_immutable', False),
             runtime_version=f.params.get('runtime_version'),
             imports=imports,
+            packages=packages,
             handler=f.params.get('handler'),
             comment=f.params.get('comment'),
         )
