@@ -1,0 +1,12 @@
+columns:
+  id:
+    type: NUMBER(38,0)
+  name:
+    type: VARCHAR(255)
+    collate: en-ci
+  status:
+    type: VARCHAR(255)
+    collate: en_US-ci
+  gg:
+    type: VARCHAR(255)
+    collate: fr

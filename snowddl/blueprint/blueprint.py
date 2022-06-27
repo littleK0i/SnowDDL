@@ -172,10 +172,14 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
     language: str
     body: str
     arguments: List[NameWithType]
-    returns: DataType
+    returns: Union[DataType,List[NameWithType]]
     is_strict: bool
     is_immutable: bool
     is_execute_as_caller: bool
+    runtime_version: Optional[str]
+    imports: Optional[List[StageWithPath]]
+    packages: Optional[List[str]]
+    handler: Optional[str]
 
 
 @dataclass

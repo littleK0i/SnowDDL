@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 2022-06-27
+
+- Added `runtime_version`, `imports`, `packages`, `handler` for `PROCEDURE` object type.
+- Added ability to set multiple columns for `returns` of `PROCEDURE` object type, now it is possible to define `RETURNS TABLE (...)`.
+- Added initial `collate` support for `TABLE` columns.
+
 ## [0.6.1] - 2022-06-15
 
 - Added `packages` for `FUNCTION` object type. Now it should be possible to use fully utilize Snowpark, Python and Java UDFs.

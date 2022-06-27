@@ -84,13 +84,30 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
 
         query.append_nl(")")
 
-        query.append_nl("RETURNS {ret_type:r}", {
-            "ret_type": bp.returns,
-        })
+        if isinstance(bp.returns, list):
+            query.append_nl("RETURNS TABLE (")
+
+            for idx, arg in enumerate(bp.returns):
+                query.append_nl("    {comma:r}{ret_name:i} {ret_type:r}", {
+                    "comma": "  " if idx == 0 else ", ",
+                    "ret_name": arg.name,
+                    "ret_type": arg.type,
+                })
+
+            query.append_nl(")")
+        else:
+            query.append_nl("RETURNS {ret_type:r}", {
+                "ret_type": bp.returns,
+            })
 
         query.append_nl("LANGUAGE {language:r}", {
             "language": bp.language,
         })
+
+        if bp.runtime_version:
+            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
+                "runtime_version": bp.runtime_version,
+            })
 
         if bp.is_strict:
             query.append_nl("STRICT")
@@ -101,13 +118,29 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
         if bp.is_execute_as_caller:
             query.append_nl("EXECUTE AS CALLER")
 
+        if bp.imports:
+            query.append_nl("IMPORTS = ({imports})", {
+                "imports": [f"@{i.stage_name}{i.path}" for i in bp.imports]
+            })
+
+        if bp.packages:
+            query.append_nl("PACKAGES = ({packages})", {
+                "packages": bp.packages,
+            })
+
+        if bp.handler:
+            query.append_nl("HANDLER = {handler}", {
+                "handler": bp.handler,
+            })
+
         if bp.comment:
             query.append_nl("COMMENT = {comment}", {
                 "comment": bp.comment,
             })
 
-        query.append_nl("AS {body}", {
-            "body": bp.body,
-        })
+        if bp.body:
+            query.append_nl("AS {body}", {
+                "body": bp.body,
+            })
 
         return query

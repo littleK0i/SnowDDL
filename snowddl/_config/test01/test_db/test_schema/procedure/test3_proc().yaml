@@ -1,0 +1,11 @@
+returns:
+  id: NUMBER(38,0)
+  name: VARCHAR(255)
+
+body: |-
+  DECLARE
+      res resultset;
+  BEGIN
+      res := (SELECT 1 AS id, 'test' AS name);
+      return table(res);
+  END;

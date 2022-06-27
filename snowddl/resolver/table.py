@@ -5,6 +5,7 @@ from snowddl.blueprint import TableBlueprint, TableColumn, DataType, BaseDataTyp
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
+collate_type_syntax_re = compile(r'^(.*) COLLATE \'(.*)\'$')
 
 
 class TableResolver(AbstractSchemaObjectResolver):
@@ -104,6 +105,10 @@ class TableResolver(AbstractSchemaObjectResolver):
                 else:
                     is_replace_required = True
 
+            # Collate
+            if snow_c.collate != bp_c.collate:
+                is_replace_required = True
+
             # Comments
             if snow_c.comment != bp_c.comment:
                 # UNSET COMMENT is currently not supported for columns, we can only set it to empty string
@@ -151,6 +156,11 @@ class TableResolver(AbstractSchemaObjectResolver):
                     "col_name": col_name,
                     "col_type": bp_c.type,
                 })
+
+                if bp_c.collate:
+                    query.append("COLLATE {collate}", {
+                        "collate": bp_c.collate,
+                    })
 
                 if bp_c.default is not None:
                     query.append("DEFAULT {default}", {
@@ -241,11 +251,21 @@ class TableResolver(AbstractSchemaObjectResolver):
         })
 
         for r in cur:
+            m = collate_type_syntax_re.match(r['type'])
+
+            if m:
+                dtype = m.group(1)
+                collate = m.group(2)
+            else:
+                dtype = r['type']
+                collate = None
+
             existing_columns[r['name']] = TableColumn(
                 name=r['name'],
-                type=DataType(r['type']),
+                type=DataType(dtype),
                 not_null=bool(r['null?'] == 'N'),
                 default=r['default'] if r['default'] else None,
+                collate=collate,
                 comment=r['comment'] if r['comment'] else None,
             )
 
@@ -273,6 +293,11 @@ class TableResolver(AbstractSchemaObjectResolver):
                 "col_name": c.name,
                 "col_type": c.type,
             })
+
+            if c.collate:
+                query.append("COLLATE {collate}", {
+                    "collate": c.collate,
+                })
 
             if c.default is not None:
                 query.append("DEFAULT {default:r}", {

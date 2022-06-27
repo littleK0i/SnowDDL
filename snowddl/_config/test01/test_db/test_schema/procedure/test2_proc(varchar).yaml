@@ -1,0 +1,26 @@
+arguments:
+  x: VARCHAR(10000)
+
+returns: VARCHAR(255)
+language: java
+
+imports:
+  - stage: test_internal_stage
+    path: /lib/zero-allocation-hashing-0.15.jar
+
+packages:
+  - com.snowflake:snowpark:latest
+
+handler: SnowHash.xxHash
+
+body: |-
+  import com.snowflake.snowpark_java.*;
+  import net.openhft.hashing.LongHashFunction;
+
+  class SnowHash {
+      public static LongHashFunction hash_func = LongHashFunction.xx();
+
+      public static String xxHash(Session session, String x) {
+          return Long.toHexString(hash_func.hashChars(x));
+      }
+  }
