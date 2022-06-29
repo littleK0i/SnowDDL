@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.1] - 2022-06-29
+
+- Ignore `TEMPORARY STAGES` created by another sessions. Such stages should not appear in `SHOW STAGES` output, but they do.
+
 ## [0.7.0] - 2022-06-27
 
 - Added `runtime_version`, `imports`, `packages`, `handler` for `PROCEDURE` object type.
