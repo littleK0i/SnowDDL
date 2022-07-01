@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .ident import Ident
+    from .ident import Ident, SchemaObjectIdent
     from .data_type import DataType
 
 
@@ -20,7 +20,7 @@ class TableColumn:
     name: "Ident"
     type: "DataType"
     not_null: bool
-    default: Optional[str]
+    default: Optional[Union["SchemaObjectIdent", str]]
     collate: Optional[str]
     comment: Optional[str]
 

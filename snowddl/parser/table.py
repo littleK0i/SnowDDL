@@ -160,7 +160,7 @@ class TableParser(AbstractParser):
 
             # Default for sequence
             if col.get('default_sequence'):
-                col_default = f"{build_schema_object_ident(self.env_prefix, col['default_sequence'], f.database, f.schema)}.NEXTVAL"
+                col_default = build_schema_object_ident(self.env_prefix, col['default_sequence'], f.database, f.schema)
             else:
                 col_default = col.get('default')
 

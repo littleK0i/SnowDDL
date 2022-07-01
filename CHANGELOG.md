@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2] - 2022-07-01
+
+- Fixed `default_sequence` for table columns not being converted when using `singledb` mode.
+- Fixed DEFAULT value not being applied properly when adding new columns using `ALTER TABLE ... ADD COLUMN`.
+- Switched to another Snowflake Trial account.
+
 ## [0.7.1] - 2022-06-29
 
 - Ignore `TEMPORARY STAGES` created by another sessions. Such stages should not appear in `SHOW STAGES` output, but they do.
