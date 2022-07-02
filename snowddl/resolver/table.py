@@ -1,7 +1,7 @@
 from itertools import islice
 from re import compile
 
-from snowddl.blueprint import TableBlueprint, TableColumn, DataType, BaseDataType
+from snowddl.blueprint import TableBlueprint, TableColumn, DataType, BaseDataType, SchemaObjectIdent
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
@@ -86,19 +86,21 @@ class TableResolver(AbstractSchemaObjectResolver):
                 }))
 
             # Default
-            if snow_c.default != bp_c.default:
+            bp_c_default_value = self._normalize_bp_default(bp_c.default)
+
+            if snow_c.default != bp_c_default_value:
                 # DROP DEFAULT is supported
-                if snow_c.default is not None and bp_c.default is None:
+                if snow_c.default is not None and bp_c_default_value is None:
                     alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP DEFAULT", {
                         "col_name": col_name,
                     }))
 
                 # Switch to another sequence is supported
                 elif isinstance(snow_c.default, str) and snow_c.default.upper().endswith('.NEXTVAL') \
-                and isinstance(bp_c.default, str) and bp_c.default.upper().endswith('.NEXTVAL'):
+                and isinstance(bp_c_default_value, str) and bp_c_default_value.upper().endswith('.NEXTVAL'):
                     alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET DEFAULT {default:r}", {
                         "col_name": col_name,
-                        "default": bp_c.default,
+                        "default": bp_c_default_value,
                     }))
 
                 # All other DEFAULT changes are not supported
@@ -163,8 +165,8 @@ class TableResolver(AbstractSchemaObjectResolver):
                     })
 
                 if bp_c.default is not None:
-                    query.append("DEFAULT {default}", {
-                        "default": bp_c.default,
+                    query.append("DEFAULT {default:r}", {
+                        "default": self._normalize_bp_default(bp_c.default),
                     })
 
                 if bp_c.not_null:
@@ -301,7 +303,7 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             if c.default is not None:
                 query.append("DEFAULT {default:r}", {
-                    "default": c.default,
+                    "default": self._normalize_bp_default(c.default),
                 })
 
             if c.not_null:
@@ -363,3 +365,10 @@ class TableResolver(AbstractSchemaObjectResolver):
         snow_cluster_by = cluster_by_syntax_re.sub(r'\2', row['cluster_by']) if row['cluster_by'] else None
 
         return bp_cluster_by == snow_cluster_by
+
+    def _normalize_bp_default(self, bp_default):
+        if isinstance(bp_default, SchemaObjectIdent):
+            # This cannot be formatted properly with double-quotes ("), Snowflake strips it from DEFAULT value returned by DESC TABLE
+            return f"{bp_default}.NEXTVAL"
+
+        return bp_default
