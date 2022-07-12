@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.3] - 2022-07-12
+
+- Use special exit code `8` when any errors occurred inside resolvers or converters. Previously it was returned as exit code `0`.
+- If user role was dropped manually, it will now be re-created and re-granted to corresponding user automatically.
+
 ## [0.7.2] - 2022-07-01
 
 - Fixed `default_sequence` for table columns not being converted when using `singledb` mode.
