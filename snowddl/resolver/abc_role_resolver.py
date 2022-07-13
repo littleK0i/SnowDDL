@@ -130,7 +130,7 @@ class AbstractRoleResolver(AbstractResolver):
 
     def drop_object(self, row: dict):
         # All grants and future grants are destroyed automatically
-        self.engine.execute_safe_ddl("DROP ROLE {role_name:i}", {
+        self.engine.execute_unsafe_ddl("DROP ROLE {role_name:i}", {
             "role_name": row['role_name'],
         })
 

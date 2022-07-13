@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.4] - 2022-07-13
+
+- `destroy` CLI action now adds option `--apply-unsafe` automatically. Option `--destroy-without-prefix` should still provide a sufficient protection from accidentally destroying everything on production.
+- Dropping object types `ROLE`, `EXTERNAL TABLE`, `STAGE` is now considered "unsafe". Dropping `ROLE` prior to dropping other objects cause re-assignment of OWNERSHIP. Dropping `EXTERNAL TABLE` causes loss of associated meta-data (e.g. files, partitions), which cannot be restored easily. Dropping `INTERNAL STAGE` destroys all files in that stage.
+
 ## [0.7.3] - 2022-07-12
 
 - Use special exit code `8` when any errors occurred inside resolvers or converters. Previously it was returned as exit code `0`.

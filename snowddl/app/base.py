@@ -159,7 +159,7 @@ class BaseApp:
         if self.args.get('action') in ('apply', 'destroy'):
             settings.execute_safe_ddl = True
 
-            if self.args.get('apply_unsafe'):
+            if self.args.get('apply_unsafe') or self.args.get('action') == 'destroy':
                 settings.execute_unsafe_ddl = True
 
             if self.args.get('apply_replace_table'):
