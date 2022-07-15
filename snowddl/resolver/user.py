@@ -85,6 +85,9 @@ class UserResolver(AbstractResolver):
         if self._compare_parameters(bp):
             result = ResolveResult.ALTER
 
+        if self._check_user_role_grant(bp):
+            result = ResolveResult.ALTER
+
         if self.engine.settings.refresh_user_passwords and self._refresh_password(bp, row):
             result = ResolveResult.ALTER
 
@@ -214,6 +217,24 @@ class UserResolver(AbstractResolver):
             return True
 
         return False
+
+    def _check_user_role_grant(self, bp: UserBlueprint):
+        user_role = self._get_user_role_ident(bp)
+
+        cur = self.engine.execute_meta("SHOW GRANTS TO USER {name:i}", {
+            "name": bp.full_name,
+        })
+
+        for r in cur:
+            if r['role'] == str(user_role):
+                return False
+
+        self.engine.execute_safe_ddl("GRANT ROLE {user_role:i} TO USER {user_name:i}", {
+            "user_name": bp.full_name,
+            "user_role": user_role,
+        })
+
+        return True
 
     def _refresh_password(self, bp: UserBlueprint, row: dict):
         if bp.password:

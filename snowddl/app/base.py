@@ -159,7 +159,7 @@ class BaseApp:
         if self.args.get('action') in ('apply', 'destroy'):
             settings.execute_safe_ddl = True
 
-            if self.args.get('apply_unsafe'):
+            if self.args.get('apply_unsafe') or self.args.get('action') == 'destroy':
                 settings.execute_unsafe_ddl = True
 
             if self.args.get('apply_replace_table'):
@@ -233,6 +233,8 @@ class BaseApp:
         return connect(**options)
 
     def execute(self):
+        error_count = 0
+
         with self.engine:
             self.output_engine_context()
 
@@ -244,11 +246,15 @@ class BaseApp:
                     resolver = resolver_cls(self.engine)
                     resolver.destroy()
 
+                    error_count += len(resolver.errors)
+
                 self.engine.context.destroy_role_with_prefix()
             else:
                 for resolver_cls in self.resolver_sequence:
                     resolver = resolver_cls(self.engine)
                     resolver.resolve()
+
+                    error_count += len(resolver.errors)
 
             self.output_engine_stats()
 
@@ -256,6 +262,9 @@ class BaseApp:
                 self.output_executed_ddl()
 
             self.output_suggested_ddl()
+
+            if error_count > 0:
+                exit(8)
 
     def output_engine_context(self):
         roles = []

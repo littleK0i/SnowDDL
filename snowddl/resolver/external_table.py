@@ -65,7 +65,7 @@ class ExternalTableResolver(AbstractSchemaObjectResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
-        self.engine.execute_safe_ddl("DROP EXTERNAL TABLE {database:i}.{schema:i}.{table_name:i}", {
+        self.engine.execute_unsafe_ddl("DROP EXTERNAL TABLE {database:i}.{schema:i}.{table_name:i}", {
             "database": row['database'],
             "schema": row['schema'],
             "table_name": row['name'],
