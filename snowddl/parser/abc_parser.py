@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from json import loads
-from jsonschema import validate
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Union
 
 from snowddl.config import SnowDDLConfig
-from snowddl.blueprint import SchemaObjectIdent, SchemaObjectIdentWithArgs, NameWithType
+from snowddl.blueprint import NameWithType
 from snowddl.parser._parsed_file import ParsedFile
 
 

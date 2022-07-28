@@ -1,0 +1,16 @@
+test_share_1:
+  accounts:
+    - SFSALESSHARED.SFC_SAMPLES_AWS_EU_WEST_2
+  grants:
+    DATABASE:USAGE:
+      - test_db
+    SCHEMA:USAGE:
+      - test_db.test_schema
+    TABLE:SELECT:
+      - test_db.test_schema.*
+    FUNCTION:USAGE:
+      - test_db.test_schema.test_secure_udf(varchar)
+
+  share_restrictions: false
+
+  comment: Test share

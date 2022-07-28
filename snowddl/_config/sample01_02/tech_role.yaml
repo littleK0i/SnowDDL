@@ -19,8 +19,6 @@ restricted_sakila:
     SCHEMA:USAGE:
       - snowddl_db.sakila
     VIEW:SELECT:
-      - snowddl_db.sakila.actor_list
-      - snowddl_db.sakila.customer_list
-      - snowddl_db.sakila.film_list
+      - snowddl_db.sakila.*
 
-  comment: "Access to some views in Sakila schema"
+  comment: "Access to all views in Sakila schema"

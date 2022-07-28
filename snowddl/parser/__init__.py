@@ -6,9 +6,11 @@ from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
 from .function import FunctionParser
+from .inbound_share import InboundShareParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
+from .outbound_share import OutboundShareParser
 from .pipe import PipeParser
 from .placeholder import PlaceholderParser
 from .procedure import ProcedureParser
@@ -33,6 +35,7 @@ default_parser_sequence = [
     WarehouseParser,
     DatabaseParser,
     SchemaParser,
+    # InboundShareParser,
     FileFormatParser,
     StageParser,
     SequenceParser,
@@ -48,6 +51,7 @@ default_parser_sequence = [
     TaskParser,
     MaskingPolicyParser,
     RowAccessPolicyParser,
+    OutboundShareParser,
     TechRoleParser,
     BusinessRoleParser,
     UserParser,

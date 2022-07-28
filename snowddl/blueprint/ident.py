@@ -71,6 +71,15 @@ class Ident(AbstractIdent):
         return [self.name], None
 
 
+class AccountIdent(AbstractIdent):
+    def __init__(self, organization, account):
+        self.organization = self._validate_part(organization)
+        self.account = self._validate_part(account)
+
+    def parts_for_format(self):
+        return [self.organization, self.account], None
+
+
 class AccountObjectIdent(AbstractIdentWithPrefix):
     def __init__(self, env_prefix, name):
         super().__init__(env_prefix)
@@ -89,6 +98,26 @@ class DatabaseIdent(AbstractIdentWithPrefix):
 
     def parts_for_format(self):
         return [f"{self.env_prefix}{self.database}"], None
+
+
+class InboundShareIdent(AbstractIdent):
+    def __init__(self, organization, account, share):
+        self.organization = self._validate_part(organization)
+        self.account = self._validate_part(account)
+        self.share = self._validate_part(share)
+
+    def parts_for_format(self):
+        return [self.organization, self.account, self.share], None
+
+
+class OutboundShareIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, share):
+        super().__init__(env_prefix)
+
+        self.share = self._validate_part(share)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.share}"], None
 
 
 class SchemaIdent(AbstractIdentWithPrefix):

@@ -9,9 +9,12 @@ from .external_table import ExternalTableResolver
 from .file_format import FileFormatResolver
 from .foreign_key import ForeignKeyResolver
 from .function import FunctionResolver
+from .inbound_share import InboundShareResolver
+from .inbound_share_role import InboundShareRoleResolver
 from .masking_policy import MaskingPolicyResolver
 from .materialized_view import MaterializedViewResolver
 from .network_policy import NetworkPolicyResolver
+from .outbound_share import OutboundShareResolver
 from .pipe import PipeResolver
 from .primary_key import PrimaryKeyResolver
 from .procedure import ProcedureResolver
@@ -43,6 +46,8 @@ default_resolver_sequence = [
     DatabaseResolver,
     SchemaResolver,
     SchemaRoleResolver,
+    # InboundShareResolver,
+    # InboundShareRoleResolver,
     FileFormatResolver,
     StageResolver,
     StageFileResolver,
@@ -62,6 +67,7 @@ default_resolver_sequence = [
     TaskResolver,
     MaskingPolicyResolver,
     RowAccessPolicyResolver,
+    OutboundShareResolver,
     TechRoleResolver,
     BusinessRoleResolver,
     UserRoleResolver,

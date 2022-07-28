@@ -73,6 +73,8 @@ class BaseApp:
         parser.add_argument('--apply-account-params', help="Additionally apply changes to ACCOUNT PARAMETERS", default=False, action='store_true')
         parser.add_argument('--apply-network-policy', help="Additionally apply changes to NETWORK POLICIES", default=False, action='store_true')
         parser.add_argument('--apply-resource-monitor', help="Additionally apply changes to RESOURCE MONITORS", default=False, action='store_true')
+        # parser.add_argument('--apply-inbound-share', help="Additionally apply changes to INBOUND SHARES", default=False, action='store_true')
+        parser.add_argument('--apply-outbound-share', help="Additionally apply changes to OUTBOUND SHARES", default=False, action='store_true')
 
         # Refresh state of specific objects
         parser.add_argument('--refresh-user-passwords', help="Additionally refresh passwords of users", default=False, action='store_true')
@@ -179,6 +181,12 @@ class BaseApp:
 
             if self.args.get('apply_resource_monitor'):
                 settings.execute_resource_monitor = True
+
+            if self.args.get('apply_inbound_share'):
+                settings.execute_inbound_share = True
+
+            if self.args.get('apply_outbound_share'):
+                settings.execute_outbound_share = True
 
         if self.args.get('refresh_user_passwords'):
             settings.refresh_user_passwords = True

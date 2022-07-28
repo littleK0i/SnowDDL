@@ -1,4 +1,4 @@
-from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType, build_role_ident, build_grant_name_ident_config
+from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -14,10 +14,7 @@ tech_role_json_schema = {
                     "items": {
                         "type": "string"
                     },
-                    "minItems": 1,
-                    "comment": {
-                        "type": "string"
-                    }
+                    "minItems": 1
                 }
             },
             "comment": {
@@ -40,16 +37,22 @@ class TechRoleParser(AbstractParser):
 
             grants = []
 
-            for definition, object_name_list in tech_role['grants'].items():
+            for definition, pattern_list in tech_role['grants'].items():
                 on, privileges = definition.upper().split(':')
 
                 for p in privileges.split(','):
-                    for object_name in object_name_list:
-                        grants.append(Grant(
-                            privilege=p,
-                            on=ObjectType[on],
-                            name=build_grant_name_ident_config(self.env_prefix, object_name, ObjectType[on]),
-                        ))
+                    for pattern in pattern_list:
+                        blueprints = self.config.get_blueprints_by_type_and_pattern(ObjectType[on].blueprint_cls, pattern)
+
+                        if not blueprints:
+                            raise ValueError(f"No {ObjectType[on].plural} matched wildcard grant with pattern [{pattern}]")
+
+                        for object_bp in blueprints.values():
+                            grants.append(Grant(
+                                privilege=p,
+                                on=ObjectType[on],
+                                name=object_bp.full_name,
+                            ))
 
             bp = TechRoleBlueprint(
                 full_name=tech_role_ident,

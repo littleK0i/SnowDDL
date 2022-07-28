@@ -94,7 +94,7 @@ class ExternalFunctionResolver(AbstractSchemaObjectResolver):
         })
 
         query.append_nl("API_INTEGRATION = {api_integration:i}", {
-            "api_integration": bp.api_integraton,
+            "api_integration": bp.api_integration,
         })
 
         if bp.is_strict:

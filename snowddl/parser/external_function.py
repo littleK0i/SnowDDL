@@ -77,7 +77,7 @@ class ExternalFunctionParser(AbstractParser):
             full_name=SchemaObjectIdentWithArgs(self.env_prefix, f.database, f.schema, base_name, [a.type.base_type for a in arguments]),
             arguments=arguments,
             returns=returns,
-            api_integraton=Ident(f.params.get('api_integration')),
+            api_integration=Ident(f.params.get('api_integration')),
             url=f.params['url'],
             is_secure=f.params.get('is_secure', False),
             is_strict=f.params.get('is_strict', False),

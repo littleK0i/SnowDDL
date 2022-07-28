@@ -5,7 +5,7 @@ from typing import Optional, List, Dict, Union, TypeVar, TYPE_CHECKING
 from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
 from .data_type import DataType
 from .grant import Grant, FutureGrant
-from .ident import AbstractIdent, Ident, AccountObjectIdent, DatabaseIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs, StageFileIdent, TableConstraintIdent
+from .ident import AbstractIdent, Ident, AccountObjectIdent, DatabaseIdent, AccountIdent, InboundShareIdent, OutboundShareIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs, StageFileIdent, TableConstraintIdent
 from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 
@@ -57,11 +57,17 @@ class DatabaseBlueprint(AbstractBlueprint):
 
 
 @dataclass
+class DatabaseShareBlueprint(AbstractBlueprint):
+    full_name: DatabaseIdent
+    share_name: InboundShareIdent
+
+
+@dataclass
 class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdent
     arguments: List[NameWithType]
     returns: DataType
-    api_integraton: Ident
+    api_integration: Ident
     url: str
     is_secure: bool
     is_strict: bool
@@ -122,6 +128,14 @@ class FunctionBlueprint(SchemaObjectBlueprint):
 
 
 @dataclass
+class InboundShareBlueprint(AbstractBlueprint):
+    full_name: DatabaseIdent
+    accounts: List[AccountIdent]
+    share_restrictions: bool
+    grants: List[Grant]
+
+
+@dataclass
 class MaterializedViewBlueprint(SchemaObjectBlueprint):
     text: str
     columns: Optional[List[ViewColumn]]
@@ -143,6 +157,14 @@ class NetworkPolicyBlueprint(AbstractBlueprint):
     full_name: Ident
     allowed_ip_list: List[str]
     blocked_ip_list: List[str]
+
+
+@dataclass
+class OutboundShareBlueprint(AbstractBlueprint):
+    full_name: OutboundShareIdent
+    accounts: List[AccountIdent]
+    share_restrictions: Optional[bool]
+    grants: List[Grant]
 
 
 @dataclass

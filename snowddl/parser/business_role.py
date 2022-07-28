@@ -107,32 +107,18 @@ class BusinessRoleParser(AbstractParser):
 
     def build_schema_role_grants(self, full_schema_name, grant_type):
         grants = []
-        database, schema = full_schema_name.upper().split('.')
 
-        if schema == '*':
-            # Special wildcard condition, match all schemas in `<database_name>.*`
-            for schema_bp in self.config.get_blueprints_by_type(SchemaBlueprint).values():
-                if database != str(schema_bp.full_name.database):
-                    continue
-
-                grants.append(
-                    Grant(
-                        privilege="USAGE",
-                        on=ObjectType.ROLE,
-                        name=build_role_ident(self.env_prefix, database, schema_bp.full_name.schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
-                    )
-                )
-
-            if not grants:
-                raise ValueError(f"No schemas matched wildcard grant [{full_schema_name}]")
-        else:
+        for schema_bp in self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, full_schema_name).values():
             grants.append(
                 Grant(
                     privilege="USAGE",
                     on=ObjectType.ROLE,
-                    name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+                    name=build_role_ident(self.env_prefix, schema_bp.full_name.database, schema_bp.full_name.schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
                 )
             )
+
+        if not grants:
+            raise ValueError(f"No {ObjectType.SCHEMA.plural} matched wildcard grant with pattern [{full_schema_name}]")
 
         return grants
 

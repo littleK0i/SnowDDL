@@ -1,9 +1,18 @@
 # Changelog
 
+## [0.8.0] - 2022-07-28
+
+- Implemented `OUTBOUND_SHARE` object type.
+- Implemented test version of `INBOUND_SHARE` object type, which is currently disabled during normal execution.
+- It is now possible to specify `grants` for `TECH_ROLE` and `OUTBOUND_SHARE` using [Unix-style wildcards](https://docs.python.org/3/library/fnmatch.html).
+- Fixed typo in `EXTERNAL_FUNCTION` blueprint parameter `api_integration`.
+- Fixed type in `TECH_ROLE` JSON-schema used to validate YAML config.
+- Improved patter-matching for specific `ROLE`-types. Now it should work properly with multi-letter role-suffixes.
+
 ## [0.7.4] - 2022-07-13
 
 - `destroy` CLI action now adds option `--apply-unsafe` automatically. Option `--destroy-without-prefix` should still provide a sufficient protection from accidentally destroying everything on production.
-- Dropping object types `ROLE`, `EXTERNAL TABLE`, `STAGE` is now considered "unsafe". Dropping `ROLE` prior to dropping other objects cause re-assignment of OWNERSHIP. Dropping `EXTERNAL TABLE` causes loss of associated meta-data (e.g. files, partitions), which cannot be restored easily. Dropping `INTERNAL STAGE` destroys all files in that stage.
+- Dropping object types `ROLE`, `EXTERNAL TABLE`, `STAGE` is now considered "unsafe". Dropping `ROLE` prior to dropping other objects causes re-assignment of OWNERSHIP. Dropping `EXTERNAL TABLE` causes loss of associated meta-data (e.g. files, partitions), which cannot be restored easily. Dropping `INTERNAL STAGE` destroys all files in that stage.
 
 ## [0.7.3] - 2022-07-12
 

@@ -16,7 +16,7 @@ class AbstractRoleResolver(AbstractResolver):
         existing_roles = {}
 
         cur = self.engine.execute_meta("SHOW ROLES LIKE {pattern:lse}", {
-            'pattern': (self.config.env_prefix, self.get_role_suffix()),
+            'pattern': (self.config.env_prefix, f"__{self.get_role_suffix()}"),
         })
 
         for r in cur:

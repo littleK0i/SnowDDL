@@ -13,6 +13,8 @@ class SnowDDLSettings:
     execute_account_params: bool = False
     execute_network_policy: bool = False
     execute_resource_monitor: bool = False
+    execute_inbound_share: bool = False
+    execute_outbound_share: bool = False
     refresh_user_passwords: bool = False
     refresh_future_grants: bool = False
     exclude_object_types: List[ObjectType] = field(default_factory=list)

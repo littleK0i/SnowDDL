@@ -1,7 +1,7 @@
 from typing import Union
 
 from .data_type import BaseDataType
-from .ident import AccountObjectIdent, DatabaseIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs
+from .ident import AccountObjectIdent, DatabaseIdent, OutboundShareIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs
 from .object_type import ObjectType
 
 
@@ -36,37 +36,6 @@ def build_schema_object_ident(env_prefix, object_name, context_database_name, co
 
 def build_role_ident(env_prefix, *args: Union[AccountObjectIdent, str]) -> AccountObjectIdent:
     return AccountObjectIdent(env_prefix, f"{'__'.join(str(a.name) if isinstance(a, AccountObjectIdent) else str(a) for a in args)}")
-
-
-def build_grant_name_ident_config(env_prefix, grant_name, object_type: ObjectType):
-    parts = grant_name.split('.')
-    last_part = parts[-1]
-
-    if len(parts) == 3:
-        # Extract data types for arguments of functions and procedures
-        if '(' in last_part:
-            start_dtypes_idx = last_part.index('(')
-            finish_dtypes_idx = last_part.index(')')
-
-            parts[-1] = last_part[0:start_dtypes_idx]
-
-            data_types_str = last_part[start_dtypes_idx+1:finish_dtypes_idx]
-            data_types = [BaseDataType[arg.strip(' ').upper()] for arg in data_types_str.split(',')] if data_types_str else []
-
-            return SchemaObjectIdentWithArgs(env_prefix, parts[0], parts[1], parts[2], data_types=data_types)
-
-        return SchemaObjectIdent(env_prefix, parts[0], parts[1], parts[2])
-
-    if len(parts) == 2:
-        return SchemaIdent(env_prefix, parts[0], parts[1])
-
-    if len(parts) == 1:
-        if object_type == ObjectType.DATABASE:
-            return DatabaseIdent(env_prefix, parts[0])
-
-        return AccountObjectIdent(env_prefix, parts[0])
-
-    raise ValueError(f"Unexpected grant name format [{grant_name}] in config for object type [{object_type}]")
 
 
 def build_grant_name_ident_snowflake(grant_name, object_type: ObjectType):

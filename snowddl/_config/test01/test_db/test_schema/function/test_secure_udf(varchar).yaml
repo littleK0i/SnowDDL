@@ -1,0 +1,9 @@
+arguments:
+  x: VARCHAR(8192)
+
+returns: VARCHAR(8192)
+language: javascript
+is_secure: true
+
+body: |-
+  return x
