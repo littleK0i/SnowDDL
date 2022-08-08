@@ -21,6 +21,7 @@ class TableColumn:
     type: "DataType"
     not_null: bool
     default: Optional[Union["SchemaObjectIdent", str]]
+    expression: Optional[str]
     collate: Optional[str]
     comment: Optional[str]
 

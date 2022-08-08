@@ -107,6 +107,10 @@ class TableResolver(AbstractSchemaObjectResolver):
                 else:
                     is_replace_required = True
 
+            # Expression
+            if snow_c.expression != bp_c.expression:
+                is_replace_required = True
+
             # Collate
             if snow_c.collate != bp_c.collate:
                 is_replace_required = True
@@ -267,6 +271,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 type=DataType(dtype),
                 not_null=bool(r['null?'] == 'N'),
                 default=r['default'] if r['default'] else None,
+                expression=r['expression'] if r['expression'] else None,
                 collate=collate,
                 comment=r['comment'] if r['comment'] else None,
             )
@@ -308,6 +313,11 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             if c.not_null:
                 query.append("NOT NULL")
+
+            if c.expression:
+                query.append("AS ({expression:r})", {
+                    "expression": c.expression,
+                })
 
             if c.comment:
                 query.append("COMMENT {comment}", {

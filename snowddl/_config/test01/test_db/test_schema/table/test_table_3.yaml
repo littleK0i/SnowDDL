@@ -7,6 +7,6 @@ columns:
   status:
     type: VARCHAR(255)
     collate: en_US-ci
-  gg:
+  bio:
     type: VARCHAR(255)
     collate: fr

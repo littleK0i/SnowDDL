@@ -39,6 +39,7 @@ class TestTable(AbstractTest):
                 type=DataType("NUMBER(1,0)"),
                 not_null=False,
                 default=None,
+                expression=None,
                 collate=None,
                 comment=None,
             )

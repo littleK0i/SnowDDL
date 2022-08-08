@@ -12,7 +12,11 @@ task_json_schema = {
             "type": "string"
         },
         "after": {
-            "type": "string"
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
         },
         "when": {
             "type": "string"
@@ -49,16 +53,16 @@ class TaskParser(AbstractParser):
 
     def process_task(self, f: ParsedFile):
         if f.params.get('after'):
-            task_after_ident = build_schema_object_ident(self.env_prefix, f.params['after'], f.database, f.schema)
+            tasks_after = [build_schema_object_ident(self.env_prefix, t, f.database, f.schema) for t in f.params.get('after')]
         else:
-            task_after_ident = None
+            tasks_after = None
 
         bp = TaskBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             body=f.params['body'],
             schedule=f.params.get('schedule'),
-            after=task_after_ident,
-            depends_on=[task_after_ident] if task_after_ident else [],
+            after=tasks_after,
+            depends_on=tasks_after if tasks_after else [],
             when=f.params.get('when'),
             warehouse=AccountObjectIdent(self.env_prefix, f.params['warehouse']) if f.params.get('warehouse') else None,
             user_task_managed_initial_warehouse_size=f.params.get('user_task_managed_initial_warehouse_size'),

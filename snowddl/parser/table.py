@@ -34,6 +34,9 @@ table_json_schema = {
                             "default_sequence": {
                                 "type": "string"
                             },
+                            "expression": {
+                                "type": "string"
+                            },
                             "collate": {
                                 "type": "string"
                             },
@@ -170,6 +173,7 @@ class TableParser(AbstractParser):
                     type=DataType(m.group('type')),
                     not_null=bool(m.group('not_null')),
                     default=col_default,
+                    expression=col.get('expression'),
                     collate=col.get('collate').lower() if col.get('collate') else None,
                     comment=col.get('comment'),
                 )

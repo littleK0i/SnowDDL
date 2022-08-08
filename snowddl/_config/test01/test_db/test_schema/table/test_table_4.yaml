@@ -1,0 +1,11 @@
+columns:
+  id:
+    type: NUMBER(38,0)
+  first_name:
+    type: VARCHAR(255)
+  last_name:
+    type: VARCHAR(255)
+  full_name:
+    type: VARCHAR(520)
+    expression: "FIRST_NAME || ' ' || LAST_NAME"
+    comment: "Virtual column"

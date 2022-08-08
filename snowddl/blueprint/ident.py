@@ -6,7 +6,7 @@ from .data_type import BaseDataType
 
 
 class AbstractIdent(ABC):
-    allowed_chars = set(ascii_letters + digits + '_')
+    allowed_chars = set(ascii_letters + digits + '_$')
 
     @abstractmethod
     def __init__(self):

@@ -138,6 +138,7 @@ class AbstractTest(ABC):
                     type=DataType(col_type),
                     not_null=False,
                     default=None,
+                    expression=None,
                     collate=None,
                     comment=None,
                 )

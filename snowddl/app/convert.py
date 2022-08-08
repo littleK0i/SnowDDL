@@ -4,7 +4,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from snowddl.app.base import BaseApp
-from snowddl.blueprint import ObjectType
+from snowddl.blueprint import DatabaseIdent, ObjectType
 from snowddl.config import SnowDDLConfig
 from snowddl.converter import default_converter_sequence
 from snowddl.settings import SnowDDLSettings
@@ -41,6 +41,10 @@ class ConvertApp(BaseApp):
         parser.add_argument('--exclude-object-types', help="Comma-separated list of object types NOT to convert", default=None, metavar='')
         parser.add_argument('--include-object-types', help="Comma-separated list of object types TO convert, all other types are excluded", default=None, metavar='')
 
+        # Target specific database only
+        parser.add_argument('--include-databases', help="Comma-separated list of databases to convert", default=None, metavar='')
+        parser.add_argument('--ignore-ownership', help="Ignore OWNERSHIP of databases and schemas during conversion process, makes it possible to convert objects owned by another role", default=False, action='store_true')
+
         return parser
 
     def init_config_path(self):
@@ -74,6 +78,12 @@ class ConvertApp(BaseApp):
                 settings.include_object_types = [ObjectType[t.strip().upper()] for t in str(self.args.get('include_object_types')).split(',')]
             except KeyError as e:
                 raise ValueError(f"Invalid object type [{str(e)}]")
+
+        if self.args.get('include_databases'):
+            settings.include_databases = [DatabaseIdent(self.config.env_prefix, d) for d in str(self.args.get('include_databases')).split(',')]
+
+        if self.args.get('ignore_ownership'):
+            settings.ignore_ownership = True
 
         if self.args.get('max_workers'):
             settings.max_workers = int(self.args.get('max_workers'))

@@ -288,7 +288,7 @@ class TagBlueprint(SchemaObjectBlueprint):
 class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     body: str
     schedule: Optional[str]
-    after: Optional[Ident]
+    after: Optional[List[SchemaObjectIdent]]
     when: Optional[str]
     warehouse: Optional[AccountObjectIdent]
     user_task_managed_initial_warehouse_size: Optional[str]
