@@ -162,7 +162,7 @@ class AbstractResolver(ABC):
                 del remaining_blueprints[full_name]
 
             all_batches.append(batch)
-            allocated_full_names.union(batch)
+            allocated_full_names.update(batch)
 
         return all_batches
 

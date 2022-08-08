@@ -3,6 +3,7 @@
 ## [0.9.0] - 2022-08-01
 
 - (!breaking change!) Parameter `after` of `TASK` object type is now array of strings to support newly released [DAG-feature](https://docs.snowflake.com/en/user-guide/tasks-intro.html#dag-of-tasks). Previously it was a basic string.
+- Fixed a major bug with dependency resolution, when allocated full names were not preserved between cycles properly.
 - Allowed `$` (dollar sign) character in identifiers.
 - Added basic `expression` parameter to `TABLE` columns, as an experimental feature. Currently, it requires fully resolved and normalized SQL expression. Otherwise, SnowDDL will fail to perform expression comparison and suggest re-creating a table on every run.
 - Added `--include-databases` and `--ignore-ownership` options for `snowddl-convert` entry-point.
