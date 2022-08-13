@@ -41,7 +41,7 @@ class ParsedFile:
             self.schema = relative_path.parts[1]
 
     def _load_params(self):
-        with self.path.open('r') as f:
+        with self.path.open('r', encoding='utf-8') as f:
             self.params = safe_load(f) or {}
 
     def _apply_placeholders(self, data: dict):

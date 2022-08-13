@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.1] - 2022-08-13
+
+- Fixed incorrect encoding while opening files on Windows machines. Now it is explicitly set to `utf-8`.
+
 ## [0.9.0] - 2022-08-01
 
 - (!breaking change!) Parameter `after` of `TASK` object type is now array of strings to support newly released [DAG-feature](https://docs.snowflake.com/en/user-guide/tasks-intro.html#dag-of-tasks). Previously it was a basic string.

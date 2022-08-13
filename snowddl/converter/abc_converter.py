@@ -100,7 +100,7 @@ class AbstractConverter(ABC):
         validate(data, json_schema)
 
         # (Over)write file
-        with file_path.open('w') as f:
+        with file_path.open('w', encoding='utf-8') as f:
             dump_all([data], f, Dumper=SnowDDLDumper, sort_keys=False)
 
     def _normalise_name(self, name: str):
