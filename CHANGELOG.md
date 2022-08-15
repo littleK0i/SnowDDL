@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.2] - 2022-08-15
+
+- Implemented proper ALTER for `FILE_FORMAT`, fixed a bug when SnowDDL tried to re-create `FILE_FORMAT` which already exists. Also, `EXTERNAL_TABLE` will not lose association with `FILE_FORMAT` after ALTER.
+- Object types `EXTERNAL_FUNCTION`, `EXTERNAL_TABLE`, `FUNCTION`, `PROCEDURE` are now correctly resolved as REPLACE instead of ALTER, when object was actually replaced by `CREATE OR REPLACE ...` command.
+
 ## [0.9.1] - 2022-08-13
 
 - Fixed incorrect encoding while opening files on Windows machines. Now it is explicitly set to `utf-8`.

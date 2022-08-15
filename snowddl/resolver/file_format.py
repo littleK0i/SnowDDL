@@ -31,26 +31,41 @@ class FileFormatResolver(AbstractSchemaObjectResolver):
         return self.config.get_blueprints_by_type(FileFormatBlueprint)
 
     def create_object(self, bp: FileFormatBlueprint):
-        query = self._build_create_file_format(bp)
+        common_query = self._build_common_file_format_sql(bp)
+        create_query = self.engine.query_builder()
 
-        self.engine.execute_safe_ddl(query)
+        create_query.append("CREATE FILE FORMAT {full_name:i}", {
+            "full_name": bp.full_name,
+        })
+
+        create_query.append(common_query)
+
+        self.engine.execute_safe_ddl(create_query)
 
         self.engine.execute_safe_ddl("COMMENT ON FILE FORMAT {full_name:i} IS {comment}", {
             "full_name": bp.full_name,
-            "comment": query.add_short_hash(bp.comment),
+            "comment": common_query.add_short_hash(bp.comment),
         })
 
         return ResolveResult.CREATE
 
     def compare_object(self, bp: FileFormatBlueprint, row: dict):
-        query = self._build_create_file_format(bp)
+        common_query = self._build_common_file_format_sql(bp)
 
-        if not query.compare_short_hash(row['comment']):
-            self.engine.execute_safe_ddl(query)
+        if not common_query.compare_short_hash(row['comment']):
+            alter_query = self.engine.query_builder()
+
+            alter_query.append("ALTER FILE FORMAT {full_name:i} SET", {
+                "full_name": bp.full_name,
+            })
+
+            alter_query.append(common_query)
+
+            self.engine.execute_safe_ddl(alter_query)
 
             self.engine.execute_safe_ddl("COMMENT ON FILE FORMAT {full_name:i} IS {comment}", {
                 "full_name": bp.full_name,
-                "comment": query.add_short_hash(bp.comment),
+                "comment": common_query.add_short_hash(bp.comment),
             })
 
             return ResolveResult.ALTER
@@ -66,12 +81,8 @@ class FileFormatResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.DROP
 
-    def _build_create_file_format(self, bp: FileFormatBlueprint):
+    def _build_common_file_format_sql(self, bp: FileFormatBlueprint):
         query = self.engine.query_builder()
-
-        query.append("CREATE FILE FORMAT {full_name:i}", {
-            "full_name": bp.full_name,
-        })
 
         query.append_nl("TYPE = {type}", {
             "type": bp.type,

@@ -60,7 +60,7 @@ class FunctionResolver(AbstractSchemaObjectResolver):
                 "comment": query.add_short_hash(bp.comment),
             })
 
-            return ResolveResult.ALTER
+            return ResolveResult.REPLACE
 
         return ResolveResult.NOCHANGE
 
