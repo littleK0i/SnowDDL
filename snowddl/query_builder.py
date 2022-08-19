@@ -4,20 +4,20 @@ from typing import List, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from snowddl.engine import SnowDDLEngine
+    from snowddl.formatter import SnowDDLFormatter
 
 
 class SnowDDLQueryBuilder:
-    def __init__(self, engine: "SnowDDLEngine"):
-        self.engine = engine
+    def __init__(self, formatter: "SnowDDLFormatter"):
+        self.formatter = formatter
         self.fragments: List[List[str]] = [[]]
 
     def append(self, sql, params=None):
-        sql = self.engine.format(sql, params)
+        sql = self.formatter.format_sql(sql, params)
         self.fragments[-1].append(sql)
 
     def append_nl(self, sql, params=None):
-        sql = self.engine.format(sql, params)
+        sql = self.formatter.format_sql(sql, params)
         self.fragments.append([sql])
 
     def fragment_count(self):

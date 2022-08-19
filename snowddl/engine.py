@@ -23,9 +23,10 @@ class SnowDDLEngine:
         self.connection = connection
         self.config = config
         self.settings = settings
+        self.logger = logger
 
         self.formatter = SnowDDLFormatter()
-        self.logger = logger
+        self.format = self.formatter.format_sql
 
         self.executor = ThreadPoolExecutor(max_workers=self.settings.max_workers, thread_name_prefix=self.__class__.__name__)
 
@@ -46,16 +47,8 @@ class SnowDDLEngine:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.executor.shutdown()
 
-    def format(self, sql, params=None):
-        sql = str(sql)
-
-        if params:
-            return self.formatter.format(sql, **params)
-
-        return sql
-
     def query_builder(self):
-        return SnowDDLQueryBuilder(self)
+        return SnowDDLQueryBuilder(self.formatter)
 
     def describe_meta(self, sql, params=None):
         return self._describe(sql, params)

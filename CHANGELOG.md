@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.3] - 2022-08-19
+
+- Expose internal query builder `SnowDDLQueryBuilder` as public class. Now it can be used in external projects.
+- Minor internal changes in SQL formatter.
+
 ## [0.9.2] - 2022-08-15
 
 - Implemented proper ALTER for `FILE_FORMAT`, fixed a bug when SnowDDL tried to re-create `FILE_FORMAT` which already exists. Also, `EXTERNAL_TABLE` will not lose association with `FILE_FORMAT` after ALTER.

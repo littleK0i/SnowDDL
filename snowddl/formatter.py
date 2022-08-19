@@ -30,6 +30,14 @@ class SnowDDLFormatter(string.Formatter):
 
         self.default_transformation = 's'
 
+    def format_sql(self, sql, params=None):
+        sql = str(sql)
+
+        if params:
+            return self.vformat(sql, [], params)
+
+        return sql
+
     def convert_field(self, value, conversion):
         if conversion is not None:
             raise ValueError("Conversions are disabled for SnowDDLFormatter")
