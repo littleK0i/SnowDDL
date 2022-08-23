@@ -30,7 +30,7 @@ class ConvertApp(BaseApp):
 
         # Options
         parser.add_argument('--passphrase', help='Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)', default=environ.get('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE'))
-        parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=None)
+        parser.add_argument('--env-prefix', help='Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)', default=environ.get('SNOWFLAKE_ENV_PREFIX'))
         parser.add_argument('--max-workers', help='Maximum number of workers to resolve objects in parallel', default=None, type=int)
         parser.add_argument('--clean', help='Delete existing config files before conversion', default=False, action='store_true')
 

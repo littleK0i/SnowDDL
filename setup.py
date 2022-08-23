@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 from pathlib import Path
 
-__version__ = None
+__version__ = ""
 version_path = Path(__file__).parent / 'snowddl' / 'version.py'
 exec(version_path.read_text())
 
@@ -66,7 +66,7 @@ setup(
     ],
 
     extras_require={
-        'test': ['pytest', 'pytest-xdist'],
+        'test': ['pytest'],
     },
 
     python_requires='>=3.7',

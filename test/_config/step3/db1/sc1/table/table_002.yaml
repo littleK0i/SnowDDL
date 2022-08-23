@@ -1,0 +1,5 @@
+columns:
+  id:
+    type: NUMBER(10,0)
+  name:
+    type: VARCHAR(255)

@@ -1,0 +1,7 @@
+columns:
+  id:
+    type: NUMBER(10,0)
+    default_sequence: sequence_002_01
+  name:
+    type: VARCHAR(255)
+    default: "'John Doe'"

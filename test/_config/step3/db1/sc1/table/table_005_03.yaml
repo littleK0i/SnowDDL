@@ -1,0 +1,3 @@
+columns:
+  store_id: NUMBER(10,0)
+  store_name: VARCHAR(255)

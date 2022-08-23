@@ -44,6 +44,10 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
         for r in cur:
+            # Snowflake bug: phantom MATERIALIZED VIEW when SEARCH OPTIMIZATION is enabled for table
+            if ObjectType[r['granted_on']] == ObjectType.MATERIALIZED_VIEW and str(r['name']).endswith('IDX_MV_"'):
+                continue
+
             grants.append(Grant(
                 privilege=r['privilege'],
                 on=ObjectType[r['granted_on']],

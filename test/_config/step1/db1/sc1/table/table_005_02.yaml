@@ -1,0 +1,15 @@
+columns:
+  book_id: NUMBER(10,0)
+  book_name: VARCHAR(255)
+  book_isbn: VARCHAR(255)
+  author_id: NUMBER(10,0)
+
+primary_key: [book_id]
+
+unique_keys:
+  - [book_isbn]
+
+foreign_keys:
+  - columns: [author_id]
+    ref_table: table_005_01
+    ref_columns: [author_id]

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.4] - 2022-08-23
+
+- Added new supported data type `GEOMETRY` (in addition to existing `GEOGRAPHY`).
+- Added env variable `SNOWFLAKE_ENV_PREFIX` to specify `--env-prefix` without explicitly mentioning it in CLI command.
+- Added a workaround for Snowflake bug, which creates a grant for hidden MATERIALIZED VIEW when search optimization is enabled for a table.
+- Completely reworked an approach to tests. Now tests are executed in 3 steps, each step consists of "snowddl apply" followed by pytest execution. Now it should be much easier to add and maintain a large number of test.
+
 ## [0.9.3] - 2022-08-19
 
 - Expose internal query builder `SnowDDLQueryBuilder` as public class. Now it can be used in external projects.

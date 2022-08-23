@@ -1,0 +1,4 @@
+columns:
+  id: NUMBER(10,0)
+  status: VARCHAR(255)
+  delete_ts: TIMESTAMP_NTZ(3)

@@ -73,6 +73,11 @@ class BaseDataType(Enum):
         "number_of_properties": 0,
     }
 
+    GEOMETRY = {
+        "base_name": "GEOMETRY",
+        "number_of_properties": 0,
+    }
+
     @property
     def number_of_properties(self) -> int:
         return self.value.get('number_of_properties', 0)

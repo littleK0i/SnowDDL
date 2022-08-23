@@ -1,0 +1,13 @@
+columns:
+  id:
+    type: NUMBER(10,0) NOT NULL
+    default_sequence: sequence_002_02
+    comment: "abc"
+  name:
+    type: VARCHAR(255) NOT NULL
+    comment: "abc"
+
+comment: "abc"
+cluster_by: ["id"]
+change_tracking: true
+search_optimization: true
