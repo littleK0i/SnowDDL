@@ -1,0 +1,5 @@
+columns:
+  book_id: NUMBER(10,0)
+  book_name: VARCHAR(255)
+  book_isbn: VARCHAR(255)
+  author_id: NUMBER(10,0)

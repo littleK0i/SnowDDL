@@ -1,0 +1,7 @@
+text: |-
+  SELECT a.author_id
+      , a.author_name
+      , b.book_id
+      , b.book_name
+  FROM table_007_01 a
+      JOIN ${{ env_prefix }}db2.sc3.table_007_02 b ON (a.author_id=b.author_id)  -- Table in another database

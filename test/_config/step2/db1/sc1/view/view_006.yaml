@@ -1,0 +1,11 @@
+columns:
+  id: "abc"
+  name: "abc"
+  modified_name: ""
+
+is_secure: true
+
+text: |-
+  SELECT id, name, REPLACE(name, ' ', '_') AS modified_name FROM table_006
+
+comment: "abc"

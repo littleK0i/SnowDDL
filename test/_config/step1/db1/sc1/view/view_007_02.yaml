@@ -1,0 +1,6 @@
+text: |-
+  SELECT * FROM view_007_01
+
+depends_on:
+  - view_007_01
+

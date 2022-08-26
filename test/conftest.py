@@ -39,10 +39,33 @@ class Helper:
 
         return {r['name']: r for r in cur}
 
+    def desc_view(self, database, schema, name):
+        cur = self.execute("DESC VIEW {table_name:i}", {
+            "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        })
+
+        return {r['name']: r for r in cur}
+
+    def show_sequence(self, database, schema, name):
+        cur = self.execute("SHOW SEQUENCES LIKE {sequence_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "sequence_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
     def show_table(self, database, schema, name):
         cur = self.execute("SHOW TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "table_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_view(self, database, schema, name):
+        cur = self.execute("SHOW VIEWS LIKE {view_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "view_name": Ident(name),
         })
 
         return cur.fetchone()

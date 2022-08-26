@@ -1,0 +1,2 @@
+text: |-
+  SELECT id, name FROM table_006
