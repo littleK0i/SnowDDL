@@ -32,6 +32,7 @@ class UserResolver(AbstractResolver):
                 "default_role": r['default_role'] if r['default_role'] else None,
                 "has_password": r['has_password'] == 'true',
                 "has_rsa_public_key": r['has_rsa_public_key'] == 'true',
+                "comment": r['comment'] if r['comment'] else None,
             }
 
         return existing_objects
@@ -113,8 +114,9 @@ class UserResolver(AbstractResolver):
 
         query.append_nl("DEFAULT_WAREHOUSE = {default_warehouse}", {"default_warehouse": bp.default_warehouse})
         query.append_nl("DEFAULT_NAMESPACE = {default_namespace}", {"default_namespace": bp.default_namespace})
-
         query.append_nl("DEFAULT_ROLE = {default_role:i}", {"default_role": self._get_user_role_ident(bp)})
+
+        query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
 
         return query
 
@@ -138,7 +140,8 @@ class UserResolver(AbstractResolver):
         and bp.disabled == row['disabled'] \
         and ((bp.default_warehouse is None and row['default_warehouse'] is None) or str(bp.default_warehouse) == row['default_warehouse']) \
         and ((bp.default_namespace is None and row['default_namespace'] is None) or str(bp.default_namespace) == row['default_namespace']) \
-        and str(self._get_user_role_ident(bp)) == row['default_role']:
+        and str(self._get_user_role_ident(bp)) == row['default_role'] \
+        and bp.comment == row['comment']:
             return False
 
         query = self.engine.query_builder()

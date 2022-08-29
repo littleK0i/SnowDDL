@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.5] - 2022-08-29
+
+- Implement missing `comment` parameter for `USER` object type.
+- Add more tests.
+
 ## [0.9.4] - 2022-08-23
 
 - Added new supported data type `GEOMETRY` (in addition to existing `GEOGRAPHY`).

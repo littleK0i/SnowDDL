@@ -7,6 +7,7 @@ from snowflake.connector import connect, DictCursor
 from snowddl import (
     Edition,
     Ident,
+    AccountObjectIdent,
     SchemaIdent,
     SchemaObjectIdent,
     SnowDDLFormatter,
@@ -58,6 +59,13 @@ class Helper:
         cur = self.execute("SHOW TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "table_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_user(self, name):
+        cur = self.execute("SHOW USERS LIKE {user_name:lf}", {
+            "user_name": AccountObjectIdent(self.env_prefix, name),
         })
 
         return cur.fetchone()

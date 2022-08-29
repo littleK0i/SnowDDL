@@ -1,0 +1,30 @@
+user_009:
+  login_name: john_doe
+  display_name: JDoe
+  first_name: John
+  last_name: Doe
+  email: john@example.com
+  disabled: false
+  rsa_public_key: >-
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx4INStnNQshPamlDe5te
+    +sF/J3zbY9BCMgcl/B11NndFRuXZjKBAyVJyJdjm2XpHGyJZrpIf1kBVJbfxpNSi
+    qN/VLMm1nsqtEnLJsvHWT4AyJ8GG1ahYY34ody9SjLTCisSRpjzh7ZLajbyNtwbH
+    ukOCAhy1R7RzyEmuqz3rRmnx0MUb+1wdSYfMAnVwxT11otmClhXVe3Hj9hdNmljk
+    pw2rezWlKyeywkDpvh00/tuIFdCJD2gWcb3rAUC3e9iR6RJ4o/LFIEBlyktUPOqF
+    d4A3+Wp/pkTiYUh2GvjHTZrGViZXBPRjciP+6ktLMuXP4bW2DeS1xEYIUeYhxaNI
+    IwIDAQAB
+  rsa_public_key_2: >-
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx4INStnNQshPamlDe5te
+    +sF/J3zbY9BCMgcl/B11NndFRuXZjKBAyVJyJdjm2XpHGyJZrpIf1kBVJbfxpNSi
+    qN/VLMm1nsqtEnLJsvHWT4AyJ8GG1ahYY34ody9SjLTCisSRpjzh7ZLajbyNtwbH
+    ukOCAhy1R7RzyEmuqz3rRmnx0MUb+1wdSYfMAnVwxT11otmClhXVe3Hj9hdNmljk
+    pw2rezWlKyeywkDpvh00/tuIFdCJD2gWcb3rAUC3e9iR6RJ4o/LFIEBlyktUPOqF
+    d4A3+Wp/pkTiYUh2GvjHTZrGViZXBPRjciP+6ktLMuXP4bW2DeS1xEYIUeYhxaNI
+    IwIDAQAB
+  session_params:
+    query_tag: test
+    rows_per_resultset: 10000
+    strict_json_output: true
+  default_namespace: db1.sc1
+  business_roles:
+    - b_role_009_01

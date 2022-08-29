@@ -1,0 +1,15 @@
+user_009:
+  login_name: gill_goe
+  display_name: GGoe
+  first_name: Gill
+  last_name: Goe
+  email: gill@example.com
+  disabled: true
+  session_params:
+    query_tag: test1
+    rows_per_resultset: 100000
+    strict_json_output: false
+  default_namespace: db1.sc2
+  business_roles:
+    - b_role_009_02
+  comment: abc
