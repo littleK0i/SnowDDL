@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.6] - 2022-09-09
+
+- Prevent `USER_ROLE` resolver from dropping grants other than `ROLE` grants. User roles may accumulate random grants during normal operation from temporary tables, temporary stages, manually created objects in schemas not managed by SnowDDL.
+- Change testing Snowflake account once again.
+
 ## [0.9.5] - 2022-08-29
 
 - Implement missing `comment` parameter for `USER` object type.
