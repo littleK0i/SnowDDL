@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.7] - 2022-10-05
+
+- Try to fix markdown formatting on PyPi.
+- Enable converter for object type `VIEW` (currently not documented, work in progress).
+
 ## [0.9.6] - 2022-09-09
 
 - Prevent `USER_ROLE` resolver from dropping grants other than `ROLE` grants. User roles may accumulate random grants during normal operation from temporary tables, temporary stages, manually created objects in schemas not managed by SnowDDL.

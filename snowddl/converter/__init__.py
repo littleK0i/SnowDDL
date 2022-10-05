@@ -13,5 +13,5 @@ default_converter_sequence = [
     SchemaConverter,
     SequenceConverter,
     TableConverter,
-    #ViewConverter,
+    ViewConverter,
 ]
