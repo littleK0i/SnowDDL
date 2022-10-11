@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.8] - 2022-10-11
+
+- Add `collate` support for `TABLE` object type conversion.
+
 ## [0.9.7] - 2022-10-05
 
 - Try to fix markdown formatting on PyPi.

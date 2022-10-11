@@ -6,6 +6,8 @@ from snowddl.parser.table import table_json_schema
 
 
 cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
+collate_type_syntax_re = compile(r'^(.*) COLLATE \'(.*)\'$')
+
 
 class TableConverter(AbstractSchemaObjectConverter):
     def get_object_type(self) -> ObjectType:
@@ -75,22 +77,30 @@ class TableConverter(AbstractSchemaObjectConverter):
             "name": row['name'],
         })
 
-        for c in cur:
-            col = {"type": c['type']}
+        for r in cur:
+            m = collate_type_syntax_re.match(r['type'])
 
-            if c['null?'] == 'N':
+            if m:
+                col = {
+                    "type": m.group(1),
+                    "collate": m.group(2),
+                }
+            else:
+                col = {"type": r['type']}
+
+            if r['null?'] == 'N':
                 col['type'] = f"{col['type']} NOT NULL"
 
-            if c['default']:
-                if str(c['default']).upper().endswith('.NEXTVAL'):
-                    col['default_sequence'] = self._normalise_name_with_prefix(str(c['default'])[:-8])
+            if r['default']:
+                if str(r['default']).upper().endswith('.NEXTVAL'):
+                    col['default_sequence'] = self._normalise_name_with_prefix(str(r['default'])[:-8])
                 else:
-                    col['default'] = str(c['default'])
+                    col['default'] = str(r['default'])
 
-            if c['comment']:
-                col['comment'] = c['comment']
+            if r['comment']:
+                col['comment'] = r['comment']
 
-            cols[self._normalise_name(c['name'])] = col
+            cols[self._normalise_name(r['name'])] = col
 
         return cols
 
