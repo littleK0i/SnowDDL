@@ -108,7 +108,8 @@ table_json_schema = {
                 "additionalProperties": False
             },
             "minItems": 1
-        }
+        },
+        "is_transient": {"type": "boolean"}
     },
     "additionalProperties": False
 }
