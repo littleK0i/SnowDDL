@@ -15,18 +15,6 @@ You may find SnowDDL useful if:
 - your organization has multiple developers sharing the same Snowflake account and suffering from conflicts;
 - it is necessary to generate some part of configuration dynamically using Python;
 
-## Notice regarding Snowflake 6.32 (2022-10-04)
-
-Snowflake introduced a bug in the latest version `6.32`, which changed output of `DESC TABLE` command. Length is no longer returned for data type of `VARCHAR` and `BINARY` columns with maximum length.
-
-This change potentially breaks all schema management tools relying on output of `DESC TABLE`, including SnowDDL. It raises the following exception:
-
-```
-TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
-```
-
-This problem should be fixed in `6.33` in the next few days. If you cannot wait for new release, please ask customer support to revert your Snowflake account back to `6.31`.
-
 ## Main features
 
 1. SnowDDL is "stateless".

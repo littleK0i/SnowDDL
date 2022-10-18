@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.9] - 2022-10-13
+
+- Strip trailing spaces from each line of view text during `VIEW` object type conversion. It prevents formatting issues described in [pyyaml#411 issue](https://github.com/yaml/pyyaml/issues/411).
+
+## [0.9.8] - 2022-10-11
+
+- Add `collate` support for `TABLE` object type conversion.
+
 ## [0.9.7] - 2022-10-05
 
 - Try to fix markdown formatting on PyPi.

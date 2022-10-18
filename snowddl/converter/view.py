@@ -72,5 +72,10 @@ class ViewConverter(AbstractSchemaObjectConverter):
         })
 
         view_ddl = cur.fetchone()['VIEW_DDL']
+        view_text = view_text_re.sub(r'\1', view_ddl).strip(' \n\r\t()')
 
-        return view_text_re.sub(r'\1', view_ddl).strip(' \n\r\t')
+        # Remove trailing spaces from each line to prevent output formatting issues
+        # https://github.com/yaml/pyyaml/issues/411
+        view_text = '\n'.join(l.rstrip(' ') for l in view_text.split('\n'))
+
+        return view_text
