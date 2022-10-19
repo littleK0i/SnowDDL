@@ -1,7 +1,8 @@
 from pathlib import Path
 from re import compile, IGNORECASE
+from typing import Dict, List, Union
 
-from snowddl.blueprint import TableBlueprint, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, SchemaObjectIdent, TableConstraintIdent, build_schema_object_ident
+from snowddl.blueprint import TableBlueprint, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint, DataType, Ident, SchemaObjectIdent, TableConstraintIdent, build_schema_object_ident, SearchOptimizationItem
 from snowddl.config import SnowDDLConfig
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.schema import database_json_schema, schema_json_schema
@@ -60,7 +61,21 @@ table_json_schema = {
             "type": "boolean"
         },
         "search_optimization": {
-            "type": "boolean"
+            "anyOf": [
+                {
+                    "type": "boolean"
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minItems": 1,
+                        }
+                    }
+                }
+            ]
         },
         "comment": {
             "type": "string"
@@ -187,7 +202,7 @@ class TableParser(AbstractParser):
             is_transient=f.params.get('is_transient', self.combined_params[f.database][f.schema].get('is_transient', False)),
             retention_time=f.params.get('retention_time', self.combined_params[f.database][f.schema].get('retention_time', None)),
             change_tracking=f.params.get('change_tracking', False),
-            search_optimization=f.params.get('search_optimization', False),
+            search_optimization=self.get_search_optimization(f.params.get('search_optimization', False)),
             comment=f.params.get('comment'),
         )
 
@@ -226,3 +241,22 @@ class TableParser(AbstractParser):
             )
 
             self.config.add_blueprint(bp)
+
+    def get_search_optimization(self, search_optimization: Union[Dict[str,List[str]],bool]):
+        # Legacy search optimization on the whole table
+        if isinstance(search_optimization, bool):
+            return search_optimization
+
+        items = []
+
+        # Detailed search optimization on specific columns
+        for method, targets in search_optimization.items():
+            for t in targets:
+                t_parts = t.split(':', 2)
+
+                items.append(SearchOptimizationItem(
+                    method=str(method).upper(),
+                    target=Ident(t_parts[0]),
+                ))
+
+        return items

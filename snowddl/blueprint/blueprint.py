@@ -2,7 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Union, TypeVar, TYPE_CHECKING
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
+from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType, SearchOptimizationItem
 from .data_type import DataType
 from .grant import Grant, FutureGrant
 from .ident import AbstractIdent, Ident, AccountObjectIdent, DatabaseIdent, AccountIdent, InboundShareIdent, OutboundShareIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs, StageFileIdent, TableConstraintIdent
@@ -275,7 +275,7 @@ class TableBlueprint(SchemaObjectBlueprint):
     is_transient: bool
     retention_time: Optional[int]
     change_tracking: bool
-    search_optimization: bool
+    search_optimization: Union[bool,List[SearchOptimizationItem]]
 
 
 @dataclass

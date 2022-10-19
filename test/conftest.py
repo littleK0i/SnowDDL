@@ -33,6 +33,21 @@ class Helper:
     def query_builder(self):
         return SnowDDLQueryBuilder(self.formatter)
 
+    def desc_search_optimization(self, database, schema, name):
+        cur = self.execute("DESC SEARCH OPTIMIZATION ON {table_name:i}", {
+            "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        })
+
+        items = []
+
+        for r in cur:
+            items.append({
+                "method": r['method'],
+                "target": r['target'],
+            })
+
+        return items
+
     def desc_table(self, database, schema, name):
         cur = self.execute("DESC TABLE {table_name:i}", {
             "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)

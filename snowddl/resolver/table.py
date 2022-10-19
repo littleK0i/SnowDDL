@@ -1,7 +1,7 @@
 from itertools import islice
 from re import compile
 
-from snowddl.blueprint import TableBlueprint, TableColumn, DataType, BaseDataType, SchemaObjectIdent
+from snowddl.blueprint import Ident, TableBlueprint, TableColumn, DataType, BaseDataType, SchemaObjectIdent, SearchOptimizationItem
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
@@ -47,10 +47,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         query = self._build_create_table(bp)
         self.engine.execute_safe_ddl(query)
 
-        if bp.search_optimization:
-            self.engine.execute_safe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION", {
-                "full_name": bp.full_name,
-            })
+        self._compare_search_optimization(bp)
 
         return ResolveResult.CREATE
 
@@ -205,12 +202,6 @@ class TableResolver(AbstractSchemaObjectResolver):
                 "change_tracking": bp.change_tracking,
             }))
 
-        # Search optimization
-        if bp.search_optimization and not row['search_optimization']:
-            alters.append("ADD SEARCH OPTIMIZATION")
-        elif not bp.search_optimization and row['search_optimization']:
-            alters.append("DROP SEARCH OPTIMIZATION")
-
         # Comment
         if bp.comment != row['comment']:
             if bp.comment:
@@ -220,15 +211,14 @@ class TableResolver(AbstractSchemaObjectResolver):
             else:
                 alters.append(self.engine.format("UNSET COMMENT"))
 
+        # Apply changes
+        result = ResolveResult.NOCHANGE
+
         if is_replace_required:
             self.engine.execute_unsafe_ddl(self._build_create_table(bp, snow_cols), condition=self.engine.settings.execute_replace_table)
 
-            if bp.search_optimization:
-                self.engine.execute_safe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION", {
-                    "full_name": bp.full_name,
-                })
+            result = ResolveResult.REPLACE
 
-            return ResolveResult.REPLACE
         elif alters:
             for alter in alters:
                 self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} {alter:r}", {
@@ -236,9 +226,16 @@ class TableResolver(AbstractSchemaObjectResolver):
                     "alter": alter,
                 })
 
-            return ResolveResult.ALTER
+            result = ResolveResult.ALTER
 
-        return ResolveResult.NOCHANGE
+        # If table was re-created, apply or suggest search optimization using exactly the same condition value
+        if result == ResolveResult.REPLACE:
+            self._compare_search_optimization(bp, False, condition=self.engine.settings.execute_replace_table)
+        else:
+            if self._compare_search_optimization(bp, row['search_optimization']) and result == ResolveResult.NOCHANGE:
+                result = ResolveResult.ALTER
+
+        return result
 
     def drop_object(self, row: dict):
         self.engine.execute_unsafe_ddl("DROP TABLE {database:i}.{schema:i}.{table_name:i}", {
@@ -375,6 +372,63 @@ class TableResolver(AbstractSchemaObjectResolver):
         snow_cluster_by = cluster_by_syntax_re.sub(r'\2', row['cluster_by']) if row['cluster_by'] else None
 
         return bp_cluster_by == snow_cluster_by
+
+    def _compare_search_optimization(self, bp: TableBlueprint, is_search_optimization_enabled=False, condition=True):
+        # Legacy search optimization on the whole table
+        if isinstance(bp.search_optimization, bool):
+            if bp.search_optimization and not is_search_optimization_enabled:
+                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION", {
+                    "full_name": bp.full_name,
+                }, condition=condition)
+
+                return True
+
+            elif not bp.search_optimization and is_search_optimization_enabled:
+                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION", {
+                    "full_name": bp.full_name,
+                }, condition=condition)
+
+                return True
+
+            return False
+
+        # Detailed search optimization on specific columns
+        existing_search_optimization_items = []
+        result = False
+
+        cur = self.engine.execute_meta("DESC SEARCH OPTIMIZATION ON {full_name:i}", {
+            "full_name": bp.full_name,
+        })
+
+        for r in cur:
+            t_parts = r['target'].split(':', 2)
+
+            existing_search_optimization_items.append(SearchOptimizationItem(
+                method=r['method'],
+                target=Ident(t_parts[0]),
+            ))
+
+        for bp_item in bp.search_optimization:
+            if bp_item not in existing_search_optimization_items:
+                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION ON {method:r}({target:i})", {
+                    "full_name": bp.full_name,
+                    "method": bp_item.method,
+                    "target": bp_item.target,
+                }, condition=condition)
+
+                result = True
+
+        for ex_item in existing_search_optimization_items:
+            if ex_item not in bp.search_optimization:
+                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION ON {method:r}({target:i})", {
+                    "full_name": bp.full_name,
+                    "method": ex_item.method,
+                    "target": ex_item.target,
+                }, condition=condition)
+
+                result = True
+
+        return result
 
     def _normalize_bp_default(self, bp_default):
         if isinstance(bp_default, SchemaObjectIdent):

@@ -36,3 +36,9 @@ class ViewColumn:
 class NameWithType:
     name: "Ident"
     type: "DataType"
+
+
+@dataclass
+class SearchOptimizationItem:
+    method: str
+    target: "Ident"

@@ -38,7 +38,7 @@ from .blueprint import (
     T_Blueprint,
 )
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType
+from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType, SearchOptimizationItem
 from .data_type import BaseDataType, DataType
 from .edition import Edition
 from .grant import Grant, FutureGrant
