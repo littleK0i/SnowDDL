@@ -44,6 +44,9 @@ class TableConverter(AbstractSchemaObjectConverter):
     def dump_object(self, row):
         data = {'columns': self._get_columns(row)}
 
+        if row['is_transient']:
+            data['is_transient'] = True
+
         if row['cluster_by']:
             data['cluster_by'] = cluster_by_syntax_re.sub(r'\2', row['cluster_by']).split(', ')
 

@@ -32,6 +32,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 "name": r['name'],
                 "owner": r['owner'],
                 "is_transient": r['kind'] == 'TRANSIENT',
+                "retention_time": int(r['retention_time']),
                 "cluster_by": r['cluster_by'] if r['cluster_by'] else None,
                 "change_tracking": bool(r['change_tracking'] == 'ON'),
                 "search_optimization": bool(r.get('search_optimization') == 'ON'),
@@ -186,6 +187,12 @@ class TableResolver(AbstractSchemaObjectResolver):
         # Changing TRANSIENT tables to permanent and back are not supported
         if bp.is_transient != row['is_transient']:
             is_replace_required = True
+
+        # Retention time
+        if bp.retention_time is not None and bp.retention_time != row['retention_time']:
+            alters.append(self.engine.format("SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
+                "retention_time": bp.retention_time
+            }))
 
         # Clustering key
         if not self._compare_cluster_by(bp, row):

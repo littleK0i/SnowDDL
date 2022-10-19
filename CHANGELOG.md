@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.10.0] - 2022-10-19
+
+- Add `is_transient` and `retention_time` for `TABLE` object type config.
+- Add `is_transient` to `TABLE` object type converter.
+- Implement advanced SEARCH OPTIMIZATION on specific columns. NB: VARIANT column paths are currently not supported due to high complexity of parsing `target` column from output of `DESC SEARCH OPTIMIZATION` command.
+
 ## [0.9.9] - 2022-10-13
 
 - Strip trailing spaces from each line of view text during `VIEW` object type conversion. It prevents formatting issues described in [pyyaml#411 issue](https://github.com/yaml/pyyaml/issues/411).

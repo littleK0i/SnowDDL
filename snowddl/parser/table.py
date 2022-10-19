@@ -124,7 +124,12 @@ table_json_schema = {
             },
             "minItems": 1
         },
-        "is_transient": {"type": "boolean"}
+        "is_transient": {
+            "type": "boolean"
+        },
+        "retention_time": {
+            "type": "integer"
+        },
     },
     "additionalProperties": False
 }
