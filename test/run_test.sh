@@ -1,4 +1,11 @@
 #!/bin/sh
+
+# Set the following environment variables:
+# - SNOWFLAKE_ACCOUNT
+# - SNOWFLAKE_USER
+# - SNOWFLAKE_PASSWORD
+# - SNOWFLAKE_ENV_PREFIX
+
 cd "${0%/*}"
 
 # Cleanup

@@ -248,7 +248,7 @@ class UserResolver(AbstractResolver):
                 })
             except SnowDDLExecuteError as e:
                 # Password rejected due to 'PRIOR_USE'
-                # Not a error, skip such user
+                # Not an error, skip such user
                 if e.snow_exc.errno == 3002:
                     return False
                 else:

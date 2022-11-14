@@ -12,6 +12,8 @@ etl_script_wh:
   size: XSMALL
   auto_suspend: 60
   comment: "Warehouse for ETL jobs"
+  warehouse_params:
+    max_concurrency_level: 10
 
 monitor_script_wh:
   size: XSMALL

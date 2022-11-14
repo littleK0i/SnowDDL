@@ -337,12 +337,16 @@ class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 @dataclass
 class WarehouseBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
+    type: str
     size: str
     auto_suspend: int
     min_cluster_count: Optional[int]
     max_cluster_count: Optional[int]
     scaling_policy: Optional[str]
     resource_monitor: Optional[Ident]
+    enable_query_acceleration: Optional[bool]
+    query_acceleration_max_scale_factor: Optional[int]
+    warehouse_params: Optional[Dict[str,Union[bool,float,int,str]]]
 
 
 T_Blueprint = TypeVar('T_Blueprint', bound=AbstractBlueprint)

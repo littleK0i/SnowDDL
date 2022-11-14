@@ -84,12 +84,14 @@ class AbstractResolver(ABC):
             self._process_tasks(tasks)
 
     def _resolve_drop(self):
-        # Drop existing objects without blueprints
         tasks = {}
 
-        for full_name in sorted(self.existing_objects):
-            if full_name not in self.blueprints:
-                tasks[full_name] = (self.drop_object, self.existing_objects[full_name])
+        for object_full_name in sorted(self.existing_objects):
+            # Object exists in blueprints, should not be dropped
+            if object_full_name in self.blueprints:
+                continue
+
+            tasks[object_full_name] = (self.drop_object, self.existing_objects[object_full_name])
 
         self._process_tasks(tasks)
 

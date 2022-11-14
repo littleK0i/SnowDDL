@@ -88,21 +88,24 @@ class SchemaResolver(AbstractResolver):
                 break
 
     def _resolve_drop(self):
-        # Drop existing schemas without blueprints
-        # with additional check for "sandbox" database
         tasks = {}
 
-        for full_name in sorted(self.existing_objects):
-            if full_name not in self.blueprints and not self._is_sandbox_database(full_name):
-                tasks[full_name] = (self.drop_object, self.existing_objects[full_name])
+        for schema_full_name in sorted(self.existing_objects):
+            # Object exists in blueprints, should not be dropped
+            if schema_full_name in self.blueprints:
+                continue
+
+            database_full_name = '.'.join(schema_full_name.split('.')[:1])
+            database_bp = self.config.get_blueprints_by_type(DatabaseBlueprint).get(database_full_name)
+
+            # Schema database does not exist in blueprints, schema will be dropped automatically on DROP DATABASE
+            if database_bp is None:
+                continue
+
+            # Schemas without blueprints are allowed in sandbox databases, should not be dropped
+            if database_bp.is_sandbox:
+                continue
+
+            tasks[schema_full_name] = (self.drop_object, self.existing_objects[schema_full_name])
 
         self._process_tasks(tasks)
-
-    def _is_sandbox_database(self, schema_full_name):
-        database_full_name = '.'.join(schema_full_name.split('.')[:1])
-        database_bp = self.config.get_blueprints_by_type(DatabaseBlueprint).get(database_full_name)
-
-        if database_bp and database_bp.is_sandbox:
-            return True
-
-        return False

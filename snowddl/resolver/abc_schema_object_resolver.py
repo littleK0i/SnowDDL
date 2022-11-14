@@ -23,21 +23,24 @@ class AbstractSchemaObjectResolver(AbstractResolver):
         pass
 
     def _resolve_drop(self):
-        # Drop existing objects without blueprints
-        # with additional check for "sandbox" schema
         tasks = {}
 
-        for full_name in sorted(self.existing_objects):
-            if full_name not in self.blueprints and not self._is_sandbox_schema(full_name):
-                tasks[full_name] = (self.drop_object, self.existing_objects[full_name])
+        for object_full_name in sorted(self.existing_objects):
+            # Object exists in blueprints, should not be dropped
+            if object_full_name in self.blueprints:
+                continue
+
+            schema_full_name = '.'.join(object_full_name.split('.')[:2])
+            schema_bp = self.config.get_blueprints_by_type(SchemaBlueprint).get(schema_full_name)
+
+            # Object schema does not exist in blueprints, object will be dropped automatically on DROP DATABASE or DROP SCHEMA
+            if schema_bp is None:
+                continue
+
+            # Objects without blueprints are allowed in sandbox schemas, should not be dropped
+            if schema_bp.is_sandbox:
+                continue
+
+            tasks[object_full_name] = (self.drop_object, self.existing_objects[object_full_name])
 
         self._process_tasks(tasks)
-
-    def _is_sandbox_schema(self, object_full_name):
-        schema_full_name = '.'.join(object_full_name.split('.')[:2])
-        schema_bp = self.config.get_blueprints_by_type(SchemaBlueprint).get(schema_full_name)
-
-        if schema_bp and schema_bp.is_sandbox:
-            return True
-
-        return False
