@@ -2,11 +2,13 @@ from re import compile
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter, ConvertResult
+from snowddl.parser.sequence import sequence_json_schema
 from snowddl.parser.table import table_json_schema
 
 
 cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
 collate_type_syntax_re = compile(r'^(.*) COLLATE \'(.*)\'$')
+identity_re = compile(r'^IDENTITY START (\d+) INCREMENT (\d+)$')
 
 
 class TableConverter(AbstractSchemaObjectConverter):
@@ -42,7 +44,9 @@ class TableConverter(AbstractSchemaObjectConverter):
         return existing_objects
 
     def dump_object(self, row):
-        data = {'columns': self._get_columns(row)}
+        cols, identities =  self._get_columns(row)
+
+        data = {'columns': cols}
 
         if row['is_transient']:
             data['is_transient'] = True
@@ -65,14 +69,19 @@ class TableConverter(AbstractSchemaObjectConverter):
         object_path = self.base_path / self._normalise_name_with_prefix(row['database']) / self._normalise_name(row['schema']) / 'table'
         object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
-        if data:
-            self._dump_file(object_path / f"{self._normalise_name(row['name'])}.yaml", data, table_json_schema)
-            return ConvertResult.DUMP
+        self._dump_file(object_path / f"{self._normalise_name(row['name'])}.yaml", data, table_json_schema)
 
-        return ConvertResult.EMPTY
+        for sequence_name, sequence_data in identities.items():
+            object_path = self.base_path / self._normalise_name_with_prefix(row['database']) / self._normalise_name(row['schema']) / 'sequence'
+            object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
+
+            self._dump_file(object_path / f"{self._normalise_name(sequence_name)}.yaml", sequence_data, sequence_json_schema)
+
+        return ConvertResult.DUMP
 
     def _get_columns(self, row):
         cols = {}
+        identities = {}
 
         cur = self.engine.execute_meta("DESC TABLE {database:i}.{schema:i}.{name:i}", {
             "database": row['database'],
@@ -80,8 +89,8 @@ class TableConverter(AbstractSchemaObjectConverter):
             "name": row['name'],
         })
 
-        for r in cur:
-            m = collate_type_syntax_re.match(r['type'])
+        for c in cur:
+            m = collate_type_syntax_re.match(c['type'])
 
             if m:
                 col = {
@@ -89,23 +98,33 @@ class TableConverter(AbstractSchemaObjectConverter):
                     "collate": m.group(2),
                 }
             else:
-                col = {"type": r['type']}
+                col = {"type": c['type']}
 
-            if r['null?'] == 'N':
+            if c['null?'] == 'N':
                 col['type'] = f"{col['type']} NOT NULL"
 
-            if r['default']:
-                if str(r['default']).upper().endswith('.NEXTVAL'):
-                    col['default_sequence'] = self._normalise_name_with_prefix(str(r['default'])[:-8])
+            if c['default']:
+                i = identity_re.match(c['default'])
+
+                if i:
+                    sequence_name = self._get_auto_sequence_name(row['name'], c['name'])
+                    col['default_sequence'] = sequence_name
+
+                    identities[sequence_name] = {
+                        "start": int(i.group(1)),
+                        "interval": int(i.group(2)),
+                    }
+                elif str(c['default']).upper().endswith('.NEXTVAL'):
+                    col['default_sequence'] = self._normalise_name_with_prefix(str(c['default'])[:-8])
                 else:
-                    col['default'] = str(r['default'])
+                    col['default'] = str(c['default'])
 
-            if r['comment']:
-                col['comment'] = r['comment']
+            if c['comment']:
+                col['comment'] = c['comment']
 
-            cols[self._normalise_name(r['name'])] = col
+            cols[self._normalise_name(c['name'])] = col
 
-        return cols
+        return cols, identities
 
     def _get_primary_key(self, row):
         constraints = {}
@@ -186,3 +205,6 @@ class TableConverter(AbstractSchemaObjectConverter):
             })
 
         return foreign_keys
+
+    def _get_auto_sequence_name(self, table_name, column_name):
+        return self._normalise_name_with_prefix(f"{table_name}_{column_name}_seq")

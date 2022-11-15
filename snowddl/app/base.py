@@ -287,6 +287,7 @@ class BaseApp:
             roles.append("SECURITYADMIN")
 
         self.logger.info(f"Snowflake version = {self.engine.context.version} ({self.engine.context.edition.name}), SnowDDL version = {__version__}")
+        self.logger.info(f"Account = {self.engine.context.current_account}, Region = {self.engine.context.current_region}")
         self.logger.info(f"Session = {self.engine.context.current_session}, User = {self.engine.context.current_user}")
         self.logger.info(f"Role = {self.engine.context.current_role}, Warehouse = {self.engine.context.current_warehouse}")
         self.logger.info(f"Roles in session = {','.join(roles)}")

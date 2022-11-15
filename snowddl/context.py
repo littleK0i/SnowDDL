@@ -12,7 +12,9 @@ class SnowDDLContext:
         self.engine = engine
 
         cur = self.engine.execute_meta("""
-            SELECT CURRENT_SESSION() AS current_session
+            SELECT CURRENT_ACCOUNT() AS current_account
+                , CURRENT_REGION() AS current_region
+                , CURRENT_SESSION() AS current_session
                 , CURRENT_USER() AS current_user
                 , CURRENT_ROLE() AS current_role
                 , CURRENT_WAREHOUSE() AS current_warehouse
@@ -24,6 +26,8 @@ class SnowDDLContext:
 
         r = cur.fetchone()
 
+        self.current_account = r['CURRENT_ACCOUNT']
+        self.current_region = r['CURRENT_REGION']
         self.current_session = r['CURRENT_SESSION']
         self.current_user = r['CURRENT_USER']
         self.current_role = r['CURRENT_ROLE']
