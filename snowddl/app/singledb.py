@@ -95,6 +95,9 @@ class SingleDbApp(BaseApp):
         else:
             self.target_db = self.config_db
 
+        # Add placeholder for TARGET_DB
+        config.add_placeholder("TARGET_DB", str(self.target_db))
+
         return self.convert_config(config)
 
     def convert_config(self, original_config: SnowDDLConfig):
