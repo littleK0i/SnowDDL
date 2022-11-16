@@ -1,6 +1,6 @@
-def test_002_step1(helper):
-    table = helper.show_table("db1", "sc1", "table_002")
-    cols = helper.desc_table("db1", "sc1", "table_002")
+def test_step1(helper):
+    table = helper.show_table("db1", "sc1", "tb002_tb1")
+    cols = helper.desc_table("db1", "sc1", "tb002_tb1")
 
     # Empty table comment
     assert not table['comment']
@@ -10,7 +10,7 @@ def test_002_step1(helper):
     assert not cols['NAME']['comment']
 
     # Defaults are set
-    assert "SEQUENCE_002_01" in cols['ID']['default']
+    assert "TB002_SQ1" in cols['ID']['default']
     assert cols['NAME']['default']
 
     # Other params are off
@@ -21,9 +21,9 @@ def test_002_step1(helper):
         assert table['search_optimization'] == "OFF"
 
 
-def test_002_step2(helper):
-    table = helper.show_table("db1", "sc1", "table_002")
-    cols = helper.desc_table("db1", "sc1", "table_002")
+def test_step2(helper):
+    table = helper.show_table("db1", "sc1", "tb002_tb1")
+    cols = helper.desc_table("db1", "sc1", "tb002_tb1")
 
     # Set table comment
     assert table['comment']
@@ -33,7 +33,7 @@ def test_002_step2(helper):
     assert cols['NAME']['comment']
 
     # Default sequence was changed
-    assert "SEQUENCE_002_02" in cols['ID']['default']
+    assert "TB002_SQ2" in cols['ID']['default']
 
     # Default value is gone
     assert not cols['NAME']['default']
@@ -46,10 +46,9 @@ def test_002_step2(helper):
         assert table['search_optimization'] == "ON"
 
 
-def test_002_step3(helper):
-    table = helper.show_table("db1", "sc1", "table_002")
-    cols = helper.desc_table("db1", "sc1", "table_002")
-
+def test_step3(helper):
+    table = helper.show_table("db1", "sc1", "tb002_tb1")
+    cols = helper.desc_table("db1", "sc1", "tb002_tb1")
 
     # Empty table comment
     assert not table['comment']

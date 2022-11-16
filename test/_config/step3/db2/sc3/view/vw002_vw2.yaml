@@ -1,0 +1,5 @@
+text: |-
+  SELECT * FROM ${{ env_prefix }}db1.sc1.vw002_vw1 -- View in another database
+
+depends_on:
+  - db1.sc1.vw002_vw1

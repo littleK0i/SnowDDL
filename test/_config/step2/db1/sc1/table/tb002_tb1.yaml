@@ -1,7 +1,7 @@
 columns:
   id:
     type: NUMBER(10,0) NOT NULL
-    default_sequence: sequence_002_02
+    default_sequence: tb002_sq2
     comment: "abc"
   name:
     type: VARCHAR(255) NOT NULL

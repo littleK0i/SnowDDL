@@ -6,6 +6,6 @@ columns:
 is_secure: true
 
 text: |-
-  SELECT id, name, REPLACE(name, ' ', '_') AS modified_name FROM table_006
+  SELECT id, name, REPLACE(name, ' ', '_') AS modified_name FROM vw001_tb1
 
 comment: "abc"

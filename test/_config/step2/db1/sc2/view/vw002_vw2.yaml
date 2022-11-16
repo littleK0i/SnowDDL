@@ -1,0 +1,5 @@
+text: |-
+  SELECT * FROM sc1.vw002_vw1 -- View in another schema
+
+depends_on:
+  - sc1.vw002_vw1

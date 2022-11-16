@@ -1,5 +1,0 @@
-text: |-
-  SELECT * FROM ${{ env_prefix }}db1.sc1.view_007_01 -- View in another database
-
-depends_on:
-  - db1.sc1.view_007_01

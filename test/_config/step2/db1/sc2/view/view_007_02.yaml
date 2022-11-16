@@ -1,5 +1,0 @@
-text: |-
-  SELECT * FROM sc1.view_007_01 -- View in another schema
-
-depends_on:
-  - sc1.view_007_01

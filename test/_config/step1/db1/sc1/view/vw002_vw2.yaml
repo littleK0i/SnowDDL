@@ -1,0 +1,5 @@
+text: |-
+  SELECT * FROM vw002_vw1
+
+depends_on:
+  - vw002_vw1

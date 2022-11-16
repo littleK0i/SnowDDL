@@ -1,5 +1,5 @@
-def test_001_step1(helper):
-    cols = helper.desc_table("db1", "sc1", "table_001")
+def test_step1(helper):
+    cols = helper.desc_table("db1", "sc1", "tb001_tb1")
 
     # Created table with specific number of columns
     assert len(cols) == 23
@@ -10,8 +10,8 @@ def test_001_step1(helper):
     assert cols['VAR1']['type'] == "VARCHAR(10)"
 
 
-def test_001_step2(helper):
-    cols = helper.desc_table("db1", "sc1", "table_001")
+def test_step2(helper):
+    cols = helper.desc_table("db1", "sc1", "tb001_tb1")
 
     # Still the same number of columns
     assert len(cols) == 23
@@ -22,8 +22,8 @@ def test_001_step2(helper):
     assert cols['VAR1']['type'] == "VARCHAR(100)"
 
 
-def test_001_step3(helper):
-    table = helper.show_table("db1", "sc1", "table_001")
+def test_step3(helper):
+    table = helper.show_table("db1", "sc1", "tb001_tb1")
 
     # Table was dropped
     assert table is None

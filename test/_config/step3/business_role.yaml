@@ -1,11 +1,11 @@
-b_role_009_01:
+us001_br1:
   schema_read:
     - db1.sc1
   warehouse_usage:
-    - warehouse_009_01
+    - us001_wh1
 
-b_role_009_02:
+us001_br2:
   schema_read:
     - db1.sc1
   warehouse_usage:
-    - warehouse_009_02
+    - us001_wh1

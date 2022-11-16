@@ -3,4 +3,3 @@ columns:
   store_name: VARCHAR(255)
 
 primary_key: [store_id]
-

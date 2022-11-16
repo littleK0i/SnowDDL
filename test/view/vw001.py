@@ -1,6 +1,6 @@
-def test_006_step1(helper):
-    cols = helper.desc_view("db1", "sc1", "view_006")
-    view = helper.show_view("db1", "sc1", "view_006")
+def test_step1(helper):
+    cols = helper.desc_view("db1", "sc1", "vw001_vw1")
+    view = helper.show_view("db1", "sc1", "vw001_vw1")
 
     # Created view with specific number of columns
     assert len(cols) == 2
@@ -16,9 +16,9 @@ def test_006_step1(helper):
     assert view['is_secure'] == "false"
 
 
-def test_006_step2(helper):
-    cols = helper.desc_view("db1", "sc1", "view_006")
-    view = helper.show_view("db1", "sc1", "view_006")
+def test_step2(helper):
+    cols = helper.desc_view("db1", "sc1", "vw001_vw1")
+    view = helper.show_view("db1", "sc1", "vw001_vw1")
 
     # Added transformation column
     assert len(cols) == 3
@@ -34,8 +34,8 @@ def test_006_step2(helper):
     assert view['is_secure'] == "true"
 
 
-def test_006_step3(helper):
-    view = helper.show_view("db1", "sc1", "view_006")
+def test_step3(helper):
+    view = helper.show_view("db1", "sc1", "vw001_vw1")
 
     # Table was dropped
     assert view is None

@@ -3,5 +3,5 @@ text: |-
       , a.author_name
       , b.book_id
       , b.book_name
-  FROM table_007_01 a
-      JOIN table_007_02 b ON (a.author_id=b.author_id)
+  FROM vw002_tb1 a
+      JOIN vw002_tb2 b ON (a.author_id=b.author_id)

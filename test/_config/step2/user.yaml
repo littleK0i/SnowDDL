@@ -1,4 +1,4 @@
-user_009:
+us001_us1:
   login_name: gill_goe
   display_name: GGoe
   first_name: Gill
@@ -11,5 +11,5 @@ user_009:
     strict_json_output: false
   default_namespace: db1.sc2
   business_roles:
-    - b_role_009_02
+    - us001_br2
   comment: abc
