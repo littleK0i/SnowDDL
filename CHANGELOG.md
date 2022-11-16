@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.11.0] - 2022-11-16
+
+- Implement query acceleration and object parameters for `WAREHOUSE` object type.
+- Prevent suggestion of individual schema object drops if an entire schema was dropped.
+- Add automatic placeholder `TARGET_DB` for SingleDB mode. It holds full identifier of target database.
+- Add Snowflake account name and region to context object and logs.
+- Add special conversion logic for `IDENTITY` columns of object type `TABLE`. Such columns are converted into `SEQUENCE` objects automatically.
+- Rework naming of tests and objects in tests. It should help to streamline and speed up implementation of new tests.
+- Add complete SQL file with all commands required to set up a new Snowflake test account from scratch.
+
 ## [0.10.0] - 2022-10-19
 
 - Add `is_transient` and `retention_time` for `TABLE` object type config.

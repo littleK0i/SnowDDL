@@ -17,8 +17,7 @@ def test_step1(helper):
     assert not table['cluster_by']
     assert table['change_tracking'] == "OFF"
 
-    if helper.is_edition_enterprise():
-        assert table['search_optimization'] == "OFF"
+    assert table['search_optimization'] == "OFF"
 
 
 def test_step2(helper):
@@ -42,8 +41,7 @@ def test_step2(helper):
     assert table['cluster_by']
     assert table['change_tracking'] == "ON"
 
-    if helper.is_edition_enterprise():
-        assert table['search_optimization'] == "ON"
+    assert table['search_optimization'] == "ON"
 
 
 def test_step3(helper):
@@ -65,5 +63,4 @@ def test_step3(helper):
     assert not table['cluster_by']
     assert table['change_tracking'] == "OFF"
 
-    if helper.is_edition_enterprise():
-        assert table['search_optimization'] == "OFF"
+    assert table['search_optimization'] == "OFF"
