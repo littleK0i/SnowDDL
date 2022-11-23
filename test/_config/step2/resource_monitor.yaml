@@ -1,0 +1,26 @@
+rm001_rm1:
+  credit_quota: 50
+  frequency: daily
+  triggers:
+    20: notify
+    60: notify
+    90: suspend
+    100: suspend_immediate
+
+wh002_rm1:
+  credit_quota: 100
+  frequency: monthly
+  triggers:
+    50: notify
+    75: notify
+    100: suspend
+    110: suspend_immediate
+
+wh002_rm2:
+  credit_quota: 50
+  frequency: monthly
+  triggers:
+    50: notify
+    75: notify
+    100: suspend
+    110: suspend_immediate

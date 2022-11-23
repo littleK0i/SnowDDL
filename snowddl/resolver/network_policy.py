@@ -14,6 +14,12 @@ class NetworkPolicyResolver(AbstractResolver):
         cur = self.engine.execute_meta("SHOW NETWORK POLICIES")
 
         for r in cur:
+            # SHOW NETWORK POLICIES does not support LIKE filter, so it has to be applied manually in the code
+            if self.config.env_prefix and not str(r['name']).startswith(self.config.env_prefix):
+                continue
+
+            # SHOW NETWORK POLICIES does not return "owner", so additional ownership check cannot be performed
+
             existing_objects[r['name']] = {
                 "name": r['name'],
                 "entries_in_allowed_ip_list": r['entries_in_allowed_ip_list'],
@@ -104,6 +110,3 @@ class NetworkPolicyResolver(AbstractResolver):
         }, condition=self.engine.settings.execute_network_policy)
 
         return ResolveResult.DROP
-
-    def destroy(self):
-        pass

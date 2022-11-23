@@ -83,10 +83,11 @@ class SnowDDLContext:
                 "current_user": self.current_user,
             })
 
-            self.engine.execute_context_ddl("GRANT ROLE {role_with_prefix:i} TO ROLE ACCOUNTADMIN", {
-                "role_with_prefix": role_with_prefix,
-                "current_role": self.current_role,
-            })
+            if not self.is_account_admin:
+                self.engine.execute_context_ddl("GRANT ROLE {role_with_prefix:i} TO ROLE ACCOUNTADMIN", {
+                    "role_with_prefix": role_with_prefix,
+                    "current_role": self.current_role,
+                })
 
         self.engine.execute_meta("USE ROLE {role_with_prefix:i}", {
             "role_with_prefix": role_with_prefix,

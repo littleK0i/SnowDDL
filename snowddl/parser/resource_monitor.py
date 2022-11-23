@@ -1,4 +1,4 @@
-from snowddl.blueprint import ResourceMonitorBlueprint, Ident
+from snowddl.blueprint import ResourceMonitorBlueprint, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -33,7 +33,7 @@ class ResourceMonitorParser(AbstractParser):
     def process_resource_monitor(self, f: ParsedFile):
         for name, monitor in f.params.items():
             bp = ResourceMonitorBlueprint(
-                full_name=Ident(name),
+                full_name=AccountObjectIdent(self.env_prefix, name),
                 credit_quota=int(monitor.get('credit_quota')),
                 frequency=str(monitor.get('frequency')).upper(),
                 triggers={int(k): str(v).upper() for k, v in monitor.get('triggers').items()},

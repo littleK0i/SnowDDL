@@ -3,3 +3,17 @@ us001_wh1:
 
 us001_wh2:
   size: SMALL
+
+wh001_wh1:
+  size: SMALL
+  type: STANDARD
+  max_cluster_count: 2
+  scaling_policy: ECONOMY
+  auto_suspend: 90
+  comment: cde
+  warehouse_params:
+    statement_timeout_in_seconds: 120
+
+wh002_wh1:
+  size: XSMALL
+  resource_monitor: wh002_rm2

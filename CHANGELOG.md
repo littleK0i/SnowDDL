@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.12.0] - 2022-11-23
+
+- (!breaking change!) Object types `NETWORK_POLICY` and `RESOURCE_MONITOR` now use env prefix, similar to other account-level objects. Previously env prefix was ignored for these object types.
+- (!breaking change!) Object types `NETWORK_POLICY` and `RESOURCE_MONITOR` are now dropped during `destroy` action as long as `--apply-network-policy` and `--apply-resource-monitor` options are present.
+- Added `global_resource_monitor` parameter for `WAREHOUSE` object type. Original `resource_monitor` now refers to monitor defined in config and managed by SnowDDL. New `global_resource_monitor` refers to monitor managed outside SnowDDL.
+- User with `ACCOUNTADMIN` privileges is now required to run tests. It is not possible to test `RESOURCE_MONITOR` object type otherwise.
+- Fixed a bug with `warehouse_params` not being applied for `WAREHOUSE` object type.
+- Fixed a bug with `WAREHOUSE` parameters not being properly updated in specific edge cases.
+- Added tests for `WAREHOUSE`, `NETWORK_POLICY`, `RESOURCE_MONITOR` object types.
+
 ## [0.11.0] - 2022-11-16
 
 - Implement query acceleration and object parameters for `WAREHOUSE` object type.

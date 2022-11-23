@@ -11,9 +11,14 @@ class ResourceMonitorResolver(AbstractResolver):
     def get_existing_objects(self):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW RESOURCE MONITORS")
+        cur = self.engine.execute_meta("SHOW RESOURCE MONITORS LIKE {env_prefix:ls}", {
+            "env_prefix": self.config.env_prefix,
+        })
 
         for r in cur:
+            if r['owner'] != self.engine.context.current_role:
+                continue
+
             triggers = {}
 
             triggers.update(self._parse_triggers(r['notify_at'], 'NOTIFY'))
@@ -122,6 +127,3 @@ class ResourceMonitorResolver(AbstractResolver):
         }, condition=self.engine.settings.execute_resource_monitor)
 
         return ResolveResult.DROP
-
-    def destroy(self):
-        pass

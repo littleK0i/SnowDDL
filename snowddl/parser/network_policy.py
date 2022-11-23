@@ -1,4 +1,4 @@
-from snowddl.blueprint import NetworkPolicyBlueprint, Ident
+from snowddl.blueprint import NetworkPolicyBlueprint, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -38,7 +38,7 @@ class NetworkPolicyParser(AbstractParser):
     def process_network_policy(self, file: ParsedFile):
         for policy_name, policy in file.params.items():
             bp = NetworkPolicyBlueprint(
-                full_name=Ident(policy_name),
+                full_name=AccountObjectIdent(self.env_prefix, policy_name),
                 allowed_ip_list=policy['allowed_ip_list'],
                 blocked_ip_list=policy.get('blocked_ip_list', []),
                 comment=policy.get('comment'),

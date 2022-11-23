@@ -3,3 +3,6 @@ us001_wh1:
 
 us001_wh2:
   size: SMALL
+
+wh002_wh1:
+  size: XSMALL

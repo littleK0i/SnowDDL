@@ -25,6 +25,8 @@ class Helper:
 
         self.edition = self._init_edition()
 
+        self._activate_role_with_prefix()
+
     def execute(self, sql, params=None):
         sql = self.formatter.format_sql(sql, params)
 
@@ -58,6 +60,13 @@ class Helper:
     def desc_view(self, database, schema, name):
         cur = self.execute("DESC VIEW {table_name:i}", {
             "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        })
+
+        return {r['name']: r for r in cur}
+
+    def desc_network_policy(self, name):
+        cur = self.execute("DESC NETWORK POLICY {name:i}", {
+            "name": AccountObjectIdent(self.env_prefix, name)
         })
 
         return {r['name']: r for r in cur}
@@ -130,6 +139,37 @@ class Helper:
 
         return fk
 
+    def show_network_policy(self, name):
+        # SHOW NETWORK POLICIES does not support LIKE natively
+        cur = self.execute("SHOW NETWORK POLICIES")
+
+        for r in cur:
+            if r['name'] == str(AccountObjectIdent(self.env_prefix, name)):
+                return r
+
+        return None
+
+    def show_resource_monitor(self, name):
+        cur = self.execute("SHOW RESOURCE MONITORS LIKE {name:lf}", {
+            "name": AccountObjectIdent(self.env_prefix, name),
+        })
+
+        return cur.fetchone()
+
+    def show_warehouse(self, name):
+        cur = self.execute("SHOW WAREHOUSES LIKE {name:lf}", {
+            "name": AccountObjectIdent(self.env_prefix, name),
+        })
+
+        return cur.fetchone()
+
+    def show_warehouse_parameters(self, name):
+        cur = self.execute("SHOW PARAMETERS IN WAREHOUSE {name:i}", {
+            "name": AccountObjectIdent(self.env_prefix, name),
+        })
+
+        return {r['key']: r for r in cur}
+
     def is_edition_enterprise(self):
         return self.edition >= Edition.ENTERPRISE
 
@@ -161,6 +201,17 @@ class Helper:
         bootstrap_account = loads(r['BOOTSTRAP_ACCOUNT'])
 
         return Edition[bootstrap_account['accountInfo']['serviceLevelName']]
+
+    def _activate_role_with_prefix(self):
+        if not self.env_prefix:
+            return
+
+        cur = self.execute("SELECT CURRENT_ROLE() AS current_role")
+        r = cur.fetchone()
+
+        self.execute("USE ROLE {role_with_prefix:i}", {
+            "role_with_prefix": AccountObjectIdent(self.env_prefix, r['CURRENT_ROLE']),
+        })
 
 @fixture(scope="session")
 def helper():

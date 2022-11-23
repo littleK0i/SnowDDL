@@ -21,7 +21,7 @@ jobs:
 
     env:
       SNOWFLAKE_ACCOUNT: ${{ matrix.account-ident }}
-      SNOWFLAKE_USER: snowddl
+      SNOWFLAKE_USER: snowddl_test
       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
       SNOWFLAKE_ENV_PREFIX: PYTEST
 

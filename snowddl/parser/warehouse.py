@@ -28,6 +28,9 @@ warehouse_json_schema = {
             "resource_monitor": {
                 "type": "string"
             },
+            "global_resource_monitor": {
+                "type": "string"
+            },
             "enable_query_acceleration": {
                 "type": "boolean"
             },
@@ -56,6 +59,14 @@ class WarehouseParser(AbstractParser):
 
     def process_warehouse(self, f: ParsedFile):
         for warehouse_name, warehouse in f.params.items():
+            resource_monitor = None
+
+            if warehouse.get('resource_monitor'):
+                resource_monitor = AccountObjectIdent(self.env_prefix, warehouse['resource_monitor'])
+
+            if warehouse.get('global_resource_monitor'):
+                resource_monitor = Ident(warehouse['global_resource_monitor'])
+
             bp = WarehouseBlueprint(
                 full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
                 type=warehouse.get('type', 'STANDARD'),
@@ -64,10 +75,10 @@ class WarehouseParser(AbstractParser):
                 min_cluster_count=warehouse.get('min_cluster_count'),
                 max_cluster_count=warehouse.get('max_cluster_count'),
                 scaling_policy=warehouse.get('scaling_policy'),
-                resource_monitor=Ident(warehouse['resource_monitor']) if warehouse.get('resource_monitor') else None,
+                resource_monitor=resource_monitor,
                 enable_query_acceleration=warehouse.get('enable_query_acceleration'),
                 query_acceleration_max_scale_factor=warehouse.get('query_acceleration_max_scale_factor'),
-                warehouse_params=self.normalise_params_dict(warehouse.get('params', {})),
+                warehouse_params=self.normalise_params_dict(warehouse.get('warehouse_params', {})),
                 comment=warehouse.get('comment'),
             )
 

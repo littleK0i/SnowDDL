@@ -3,3 +3,21 @@ us001_wh1:
 
 us001_wh2:
   size: SMALL
+
+wh001_wh1:
+  size: XSMALL
+  type: STANDARD
+  min_cluster_count: 2
+  max_cluster_count: 4
+  scaling_policy: STANDARD
+  auto_suspend: 120
+  enable_query_acceleration: true
+  query_acceleration_max_scale_factor: 6
+  comment: abc
+  warehouse_params:
+    max_concurrency_level: 2
+    statement_timeout_in_seconds: 100
+
+wh002_wh1:
+  size: XSMALL
+  resource_monitor: wh002_rm1

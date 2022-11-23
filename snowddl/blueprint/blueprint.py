@@ -154,7 +154,7 @@ class MaskingPolicyBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class NetworkPolicyBlueprint(AbstractBlueprint):
-    full_name: Ident
+    full_name: AccountObjectIdent
     allowed_ip_list: List[str]
     blocked_ip_list: List[str]
 
@@ -206,7 +206,7 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class ResourceMonitorBlueprint(AbstractBlueprint):
-    full_name: Ident
+    full_name: AccountObjectIdent
     credit_quota: int
     frequency: str
     triggers: Dict[int,str]
@@ -343,7 +343,7 @@ class WarehouseBlueprint(AbstractBlueprint):
     min_cluster_count: Optional[int]
     max_cluster_count: Optional[int]
     scaling_policy: Optional[str]
-    resource_monitor: Optional[Ident]
+    resource_monitor: Optional[Union[Ident,AccountObjectIdent]]
     enable_query_acceleration: Optional[bool]
     query_acceleration_max_scale_factor: Optional[int]
     warehouse_params: Optional[Dict[str,Union[bool,float,int,str]]]
