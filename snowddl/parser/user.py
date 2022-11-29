@@ -106,7 +106,7 @@ class UserParser(AbstractParser):
                 rsa_public_key_2=user.get('rsa_public_key_2').replace(' ', '') if user.get('rsa_public_key_2') else None,
                 default_warehouse=AccountObjectIdent(self.env_prefix, default_warehouse) if default_warehouse else None,
                 default_namespace=build_default_namespace_ident(self.env_prefix, user.get('default_namespace')) if user.get('default_namespace') else None,
-                session_params=self.normalise_params_dict(user.get('params', {})),
+                session_params=self.normalise_params_dict(user.get('session_params', {})),
                 business_roles=business_roles,
                 comment=user.get('comment'),
             )

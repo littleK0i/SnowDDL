@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.12.1] - 2022-11-29
+
+- Fixed a bug with `session_params` being ignored for `USER` object type. Added additional checks to tests.
+
 ## [0.12.0] - 2022-11-23
 
 - (!breaking change!) Object types `NETWORK_POLICY` and `RESOURCE_MONITOR` now use env prefix, similar to other account-level objects. Previously env prefix was ignored for these object types.

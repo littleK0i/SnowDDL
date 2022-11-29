@@ -1,7 +1,7 @@
 def test_step1(helper):
     user = helper.show_user("us001_us1")
+    user_params = helper.show_user_parameters("us001_us1")
 
-    # Check each parameter
     assert str(user['login_name']).endswith('__JOHN_DOE')
     assert user['display_name'] == 'JDOE'
     assert user['first_name'] == 'John'
@@ -18,11 +18,20 @@ def test_step1(helper):
     # Empty comment
     assert not user['comment']
 
+    assert user_params['QUERY_TAG']['value'] == 'test'
+    assert user_params['QUERY_TAG']['level'] == 'USER'
+
+    assert user_params['ROWS_PER_RESULTSET']['value'] == '10000'
+    assert user_params['ROWS_PER_RESULTSET']['level'] == 'USER'
+
+    assert user_params['STRICT_JSON_OUTPUT']['value'] == 'true'
+    assert user_params['STRICT_JSON_OUTPUT']['level'] == 'USER'
+
 
 def test_step2(helper):
     user = helper.show_user("us001_us1")
+    user_params = helper.show_user_parameters("us001_us1")
 
-    # Check each parameter
     assert str(user['login_name']).endswith('__GILL_GOE')
     assert user['display_name'] == 'GGOE'
     assert user['first_name'] == 'Gill'
@@ -38,6 +47,14 @@ def test_step2(helper):
 
     # Non-empty comment
     assert user['comment']
+
+    assert user_params['QUERY_TAG']['value'] == 'test1'
+    assert user_params['QUERY_TAG']['level'] == 'USER'
+
+    assert user_params['ROWS_PER_RESULTSET']['value'] == '100000'
+    assert user_params['ROWS_PER_RESULTSET']['level'] == 'USER'
+
+    assert user_params['STRICT_JSON_OUTPUT']['level'] == ''
 
 
 def test_step3(helper):

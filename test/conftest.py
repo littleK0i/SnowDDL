@@ -94,6 +94,13 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_user_parameters(self, name):
+        cur = self.execute("SHOW PARAMETERS IN USER {name:i}", {
+            "name": AccountObjectIdent(self.env_prefix, name),
+        })
+
+        return {r['key']: r for r in cur}
+
     def show_view(self, database, schema, name):
         cur = self.execute("SHOW VIEWS LIKE {view_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),

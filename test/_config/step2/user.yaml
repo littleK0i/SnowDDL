@@ -8,7 +8,6 @@ us001_us1:
   session_params:
     query_tag: test1
     rows_per_resultset: 100000
-    strict_json_output: false
   default_namespace: db1.sc2
   business_roles:
     - us001_br2
