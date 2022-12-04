@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, Union
 
 from snowddl.config import SnowDDLConfig
-from snowddl.blueprint import NameWithType
+from snowddl.blueprint import NameWithType, BaseDataType
 from snowddl.parser._parsed_file import ParsedFile
 
 
@@ -62,5 +62,12 @@ class AbstractParser(ABC):
 
         if stem_name[open_pos+1:close_pos] != args_str:
             raise ValueError(f"File [{path}] name does not match list of arguments, expected [{base_name}({args_str}).yaml]")
+
+        # Snowflake bug: case 00444370
+        # TIME and TIMESTAMP-like arguments with non-default precision are currently bugged in Snowflake
+        # This check will be removed when the problem is fixed or workaround is provided
+        for a in arguments:
+            if a.type.base_type in (BaseDataType.TIME, BaseDataType.TIMESTAMP_LTZ, BaseDataType.TIMESTAMP_NTZ, BaseDataType.TIMESTAMP_TZ) and a.type.val1 != 9:
+                raise ValueError(f"Argument [{a.name}] with data type [{a.type.base_type.name}] must have precision of 9 (default) instead of [{a.type.val1}] due to known bug in Snowflake (case 00444370)")
 
         return base_name

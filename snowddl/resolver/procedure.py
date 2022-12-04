@@ -115,9 +115,6 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
         if bp.is_immutable:
             query.append_nl("IMMUTABLE")
 
-        if bp.is_execute_as_caller:
-            query.append_nl("EXECUTE AS CALLER")
-
         if bp.imports:
             query.append_nl("IMPORTS = ({imports})", {
                 "imports": [f"@{i.stage_name}{i.path}" for i in bp.imports]
@@ -137,6 +134,9 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
             query.append_nl("COMMENT = {comment}", {
                 "comment": bp.comment,
             })
+
+        if bp.is_execute_as_caller:
+            query.append_nl("EXECUTE AS CALLER")
 
         if bp.body:
             query.append_nl("AS {body}", {

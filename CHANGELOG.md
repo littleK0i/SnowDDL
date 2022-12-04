@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2] - 2022-12-04
+
+- Fixed incorrect order of parameters when resolving `PROCEDURE` with both `comment` and `is_execute_as_caller`.
+- Added protection from `FUNCTION` and `PROCEDURE` arguments with TIMESTAMP-like type and non-default precision. Snowflake bug, case 00444370.
+
+Tests for UDFs and procedures are expected to be added in the next version.
+
 ## [0.12.1] - 2022-11-29
 
 - Fixed a bug with `session_params` being ignored for `USER` object type. Added additional checks to tests.
