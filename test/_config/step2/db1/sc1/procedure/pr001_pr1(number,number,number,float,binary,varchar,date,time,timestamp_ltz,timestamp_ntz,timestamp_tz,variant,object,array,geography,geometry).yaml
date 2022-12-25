@@ -1,0 +1,60 @@
+arguments:
+  num1: NUMBER(12,0)
+  num2: NUMBER(36,0)
+  num3: NUMBER(10,5)
+  dbl: FLOAT
+  bin1: BINARY(100)
+  var1: VARCHAR(100)
+  dt1: DATE
+  tm1: TIME(9)
+  ltz1: TIMESTAMP_LTZ(9)
+  ntz1: TIMESTAMP_NTZ(9)
+  tz1: TIMESTAMP_TZ(9)
+  var: VARIANT
+  obj: OBJECT
+  arr: ARRAY
+  geo1: GEOGRAPHY
+  geo2: GEOMETRY
+
+
+returns:
+  num1: NUMBER(12,0)
+  num2: NUMBER(36,0)
+  num3: NUMBER(10,5)
+  dbl: FLOAT
+  bin1: BINARY(100)
+  var1: VARCHAR(100)
+  dt1: DATE
+  tm1: TIME(0)
+  ltz1: TIMESTAMP_LTZ(0)
+  ntz1: TIMESTAMP_NTZ(0)
+  tz1: TIMESTAMP_TZ(0)
+  var: VARIANT
+  obj: OBJECT
+  arr: ARRAY
+  geo1: GEOGRAPHY
+  geo2: GEOMETRY
+
+body: |-
+  DECLARE
+    res resultset default (
+        SELECT :NUM1, :NUM2, :NUM3
+            , :DBL
+            , :BIN1
+            , :VAR1
+            , :DT1
+            , :TM1
+            , :LTZ1
+            , :NTZ1
+            , :TZ1
+            , :VAR, :OBJ, :ARR
+            , :GEO1, :GEO2
+    );
+  BEGIN
+    RETURN table(res);
+  END;
+
+comment: cde
+
+is_strict: true
+is_execute_as_caller: true

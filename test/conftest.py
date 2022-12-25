@@ -5,11 +5,13 @@ from pytest import fixture
 from snowflake.connector import connect, DictCursor
 
 from snowddl import (
+    BaseDataType,
     Edition,
     Ident,
     AccountObjectIdent,
     SchemaIdent,
     SchemaObjectIdent,
+    SchemaObjectIdentWithArgs,
     SnowDDLFormatter,
     SnowDDLQueryBuilder,
 )
@@ -51,18 +53,32 @@ class Helper:
         return items
 
     def desc_table(self, database, schema, name):
-        cur = self.execute("DESC TABLE {table_name:i}", {
-            "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        cur = self.execute("DESC TABLE {name:i}", {
+            "name": SchemaObjectIdent(self.env_prefix, database, schema, name)
         })
 
         return {r['name']: r for r in cur}
 
     def desc_view(self, database, schema, name):
-        cur = self.execute("DESC VIEW {table_name:i}", {
-            "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        cur = self.execute("DESC VIEW {name:i}", {
+            "name": SchemaObjectIdent(self.env_prefix, database, schema, name)
         })
 
         return {r['name']: r for r in cur}
+
+    def desc_procedure(self, database, schema, name, dtypes):
+        cur = self.execute("DESC PROCEDURE {name:i}", {
+            "name": SchemaObjectIdentWithArgs(self.env_prefix, database, schema, name, dtypes)
+        })
+
+        return {r['property']: r['value'] for r in cur}
+
+    def desc_file_format(self, database, schema, name):
+        cur = self.execute("DESC FILE FORMAT {name:i}", {
+            "name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        })
+
+        return {r['property']: r for r in cur}
 
     def desc_network_policy(self, name):
         cur = self.execute("DESC NETWORK POLICY {name:i}", {
@@ -83,6 +99,22 @@ class Helper:
         cur = self.execute("SHOW TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "table_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_procedure(self, database, schema, name):
+        cur = self.execute("SHOW USER PROCEDURES LIKE {procedure_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "procedure_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_file_format(self, database, schema, name):
+        cur = self.execute("SHOW FILE FORMATS LIKE {format_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "format_name": Ident(name),
         })
 
         return cur.fetchone()
@@ -182,6 +214,15 @@ class Helper:
 
     def is_edition_business_critical(self):
         return self.edition >= Edition.BUSINESS_CRITICAL
+
+    def dtypes_from_arguments(self, arguments):
+        start_dtypes_idx = arguments.index('(')
+        finish_dtypes_idx = arguments.index(')')
+
+        if finish_dtypes_idx - start_dtypes_idx == 1:
+            return []
+
+        return [BaseDataType[a.strip(' ')] for a in arguments[start_dtypes_idx+1:finish_dtypes_idx].split(',')]
 
     def __enter__(self):
         return self

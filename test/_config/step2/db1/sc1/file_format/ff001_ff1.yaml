@@ -1,0 +1,9 @@
+type: CSV
+format_options:
+  compression: DEFLATE
+  record_delimiter: "\t"
+  field_delimiter: ";"
+  skip_header: 2
+  trim_space: false
+
+comment: cde

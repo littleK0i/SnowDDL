@@ -85,7 +85,7 @@ class WarehouseResolver(AbstractResolver):
         if self._normalise_warehouse_size(bp.size) == self._normalise_warehouse_size(row['size']) \
             and bp.type == row['type'] \
             and bp.auto_suspend == row['auto_suspend'] \
-            and bp.comment != row['comment'] \
+            and bp.comment == row['comment'] \
             and (row['min_cluster_count'] is None or coalesce(bp.min_cluster_count, 1) == row['min_cluster_count']) \
             and (row['max_cluster_count'] is None or coalesce(bp.max_cluster_count, 1) == row['max_cluster_count']) \
             and (row['scaling_policy'] is None or coalesce(bp.scaling_policy, 'STANDARD') == row['scaling_policy']) \

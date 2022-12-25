@@ -1,0 +1,8 @@
+language: javascript
+
+returns: VARCHAR(10)
+
+body: |-
+  return "abc";
+
+comment: abc

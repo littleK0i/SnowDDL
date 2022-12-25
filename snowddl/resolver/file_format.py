@@ -55,9 +55,20 @@ class FileFormatResolver(AbstractSchemaObjectResolver):
         if not common_query.compare_short_hash(row['comment']):
             alter_query = self.engine.query_builder()
 
-            alter_query.append("ALTER FILE FORMAT {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            if bp.type != row['type']:
+                # Format type cannot be changed with ALTER, must re-create the format entirely
+                alter_query.append("CREATE OR REPLACE FILE FORMAT {full_name:i}", {
+                    "full_name": bp.full_name,
+                })
+
+                result = ResolveResult.REPLACE
+            else:
+                # Individual format settings can be changed with ALTER
+                alter_query.append("ALTER FILE FORMAT {full_name:i} SET", {
+                    "full_name": bp.full_name,
+                })
+
+                result = ResolveResult.ALTER
 
             alter_query.append(common_query)
 
@@ -68,7 +79,7 @@ class FileFormatResolver(AbstractSchemaObjectResolver):
                 "comment": common_query.add_short_hash(bp.comment),
             })
 
-            return ResolveResult.ALTER
+            return result
 
         return ResolveResult.NOCHANGE
 

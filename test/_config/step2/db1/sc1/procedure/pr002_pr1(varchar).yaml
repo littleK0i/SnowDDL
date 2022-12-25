@@ -1,0 +1,11 @@
+language: javascript
+
+arguments:
+  a: VARCHAR(10)
+
+returns: VARCHAR(10)
+
+body: |-
+  return a;
+
+comment: cde

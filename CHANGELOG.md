@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.3] - 2022-12-25
+
+- Fix incorrect condition checking `comment` property for `WAREHOUSE` object type, which caused every warehouse to be re-created on every run.
+- `FILE_FORMAT` object type is now properly replaced when `type` was changed. Other changes are still applied using `alter file format` command.
+- Added tests for `PROCEDURE` and `FILE_FORMAT` object types.
+
 ## [0.12.2] - 2022-12-04
 
 - Fixed incorrect order of parameters when resolving `PROCEDURE` with both `comment` and `is_execute_as_caller`.
