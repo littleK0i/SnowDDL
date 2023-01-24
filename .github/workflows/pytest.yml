@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - account-ident: bh98348.eu-west-2.aws
+          - account-ident: gg06746.eu-west-2.aws
 
     runs-on: ubuntu-latest
     timeout-minutes: 10

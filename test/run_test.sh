@@ -18,13 +18,13 @@ snowddl -c _config/step1 --apply-unsafe --apply-resource-monitor --apply-network
 pytest -k "step1" --tb=short */*.py
 
 # Apply step2
-snowddl -c _config/step2 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-network-policy apply
+snowddl -c _config/step2 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-network-policy --refresh-stage-encryption apply
 
 # Run test step2
 pytest -k "step2" --tb=short */*.py
 
 # Apply step3
-snowddl -c _config/step3 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-network-policy apply
+snowddl -c _config/step3 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-network-policy --refresh-stage-encryption apply
 
 # Run test step3
 pytest -k "step3" --tb=short */*.py

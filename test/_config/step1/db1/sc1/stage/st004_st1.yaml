@@ -1,0 +1,5 @@
+url: gcs://test-bucket1
+storage_integration: test_storage_integration
+
+encryption:
+  type: GCS_SSE_KMS

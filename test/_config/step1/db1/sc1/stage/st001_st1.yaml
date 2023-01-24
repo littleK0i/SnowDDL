@@ -1,0 +1,11 @@
+file_format: st001_ff1
+
+directory:
+  enable: true
+
+copy_options:
+  on_error: SKIP_FILE
+  size_limit: 25000000
+  enforce_length: false
+
+comment: abc

@@ -1,0 +1,4 @@
+url: gcs://test-bucket1
+storage_integration: test_storage_integration
+
+comment: External stage

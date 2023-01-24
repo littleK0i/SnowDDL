@@ -87,10 +87,33 @@ class Helper:
 
         return {r['name']: r for r in cur}
 
+    def desc_stage(self, database, schema, name):
+        cur = self.execute("DESC STAGE {name:i}", {
+            "name": SchemaObjectIdent(self.env_prefix, database, schema, name)
+        })
+
+        result = {}
+
+        for r in cur:
+            if r['parent_property'] not in result:
+                result[r['parent_property']] = {}
+
+            result[r['parent_property']][r['property']] = r
+
+        return result
+
     def show_sequence(self, database, schema, name):
         cur = self.execute("SHOW SEQUENCES LIKE {sequence_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "sequence_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_stage(self, database, schema, name):
+        cur = self.execute("SHOW STAGES LIKE {stage_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "stage_name": Ident(name),
         })
 
         return cur.fetchone()

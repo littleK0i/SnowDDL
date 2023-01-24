@@ -79,6 +79,7 @@ class BaseApp:
         # Refresh state of specific objects
         parser.add_argument('--refresh-user-passwords', help="Additionally refresh passwords of users", default=False, action='store_true')
         parser.add_argument('--refresh-future-grants', help="Additionally refresh missing grants for existing objects derived from future grants", default=False, action='store_true')
+        parser.add_argument('--refresh-stage-encryption', help="Additionally refresh stage encryption parameters for existing external stages", default=False, action='store_true')
 
         # Destroy without env prefix
         parser.add_argument('--destroy-without-prefix', help="Allow {destroy} action without --env-prefix", default=False, action='store_true')
@@ -193,6 +194,9 @@ class BaseApp:
 
         if self.args.get('refresh_future_grants'):
             settings.refresh_future_grants = True
+
+        if self.args.get('refresh_stage_encryption'):
+            settings.refresh_stage_encryption = True
 
         if self.args.get('exclude_object_types'):
             try:

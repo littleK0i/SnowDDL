@@ -1,0 +1,4 @@
+url: gcs://test-bucket2
+storage_integration: test_storage_integration
+
+comment: cde
