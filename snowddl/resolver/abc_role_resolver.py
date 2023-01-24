@@ -43,7 +43,7 @@ class AbstractRoleResolver(AbstractResolver):
             "role_name": role_name,
         })
 
-        for r in cur:
+        for r in sorted(cur, key=self.sort_existing_grants):
             # Snowflake bug: phantom MATERIALIZED VIEW when SEARCH OPTIMIZATION is enabled for table
             if ObjectType[r['granted_on']] == ObjectType.MATERIALIZED_VIEW and str(r['name']).endswith('IDX_MV_"'):
                 continue
@@ -58,7 +58,7 @@ class AbstractRoleResolver(AbstractResolver):
             "role_name": role_name,
         })
 
-        for r in cur:
+        for r in sorted(cur, key=self.sort_existing_grants):
             future_grants.append(FutureGrant(
                 privilege=r['privilege'],
                 on=ObjectType[r['grant_on']],
@@ -66,6 +66,15 @@ class AbstractRoleResolver(AbstractResolver):
             ))
 
         return role_name, grants, future_grants
+
+    def sort_existing_grants(self, row):
+        offset = 0
+
+        # WRITE should be revoked before READ
+        if row['privilege'] == "WRITE":
+            offset = -1
+
+        return (row.get('grant_on'), row.get('granted_on'), row['name'], offset, row['privilege'])
 
     def create_object(self, bp: RoleBlueprint):
         query = self.engine.query_builder()
@@ -155,6 +164,10 @@ class AbstractRoleResolver(AbstractResolver):
             })
 
     def drop_grant(self, role_name, grant: Grant):
+        # OWNERSHIP can only be transferred
+        if grant.privilege == "OWNERSHIP":
+            return
+
         if grant.privilege == "USAGE" and grant.on == ObjectType.ROLE:
             self.engine.execute_safe_ddl("REVOKE ROLE {name:i} FROM ROLE {role_name:i}", {
                 "name": grant.name,
