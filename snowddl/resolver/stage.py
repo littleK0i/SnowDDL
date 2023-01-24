@@ -183,7 +183,8 @@ class StageResolver(AbstractSchemaObjectResolver):
     def _compare_file_format(self, bp: StageBlueprint, existing_properties):
         # Only named FILE FORMATs are supported
         if 'FORMAT_NAME' in existing_properties['STAGE_FILE_FORMAT']:
-            existing_file_format = str(existing_properties['STAGE_FILE_FORMAT']['FORMAT_NAME']['property_value']).replace('\\', '')
+            existing_file_format = str(existing_properties['STAGE_FILE_FORMAT']['FORMAT_NAME']['property_value'])
+            existing_file_format = existing_file_format.replace('\\', '').replace('"', '')
         else:
             existing_file_format = None
 
@@ -217,6 +218,14 @@ class StageResolver(AbstractSchemaObjectResolver):
         # Check non-default properties in DESC output exist in blueprint
         for prop_name, prop in existing_properties['STAGE_COPY_OPTIONS'].items():
             if prop['property_value'] != prop['property_default'] and (prop_name not in coalesce(bp.copy_options, {})):
+                # ENFORCE_LENGTH is a mirror for TRUNCATECOLUMNS
+                if prop_name == "ENFORCE_LENGTH" and "TRUNCATECOLUMNS" in coalesce(bp.copy_options, {}):
+                    continue
+
+                # TRUNCATECOLUMNS is a mirror for ENFORCE_LENGTH
+                if prop_name == "TRUNCATECOLUMNS" and "ENFORCE_LENGTH" in coalesce(bp.copy_options, {}):
+                    continue
+
                 is_alter_required = True
                 break
 

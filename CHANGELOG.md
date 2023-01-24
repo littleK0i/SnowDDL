@@ -1,8 +1,16 @@
 # Changelog
 
+## [0.13.0] - 2023-01-24
+
+- Completely reworked `STAGE` object type resolver. Now it checks actual property values and does not rely on short hash anymore. `STAGE` objects will be re-created only when absolutely necessary. ALTER will be applied for the majority of changes.
+- Introduced CLI option `--refresh-stage-encryption` to re-apply encryption parameters for each external `STAGE`. Normally it is not possible to compare config encryption parameters with existing parameters in Snowflake.
+- Introduced a few "safe" alters for `TABLE` object type: (1) add new column, (2) change comment on table, (3) change comment on specific column. Previously all alters for `TABLE` were unsafe.
+- `ROLE` resolver will no longer try to revoke `OWNERSHIP` grant on objects. This grant can only be transferred.
+- `ROLE` resolver will now revoke `WRITE` permission on `STAGES` before trying to revoke `READ` permission.
+
 ## [0.12.3] - 2022-12-25
 
-- Fix incorrect condition checking `comment` property for `WAREHOUSE` object type, which caused every warehouse to be re-created on every run.
+- Fixed incorrect condition checking `comment` property for `WAREHOUSE` object type, which caused every warehouse to be re-created on every run.
 - `FILE_FORMAT` object type is now properly replaced when `type` was changed. Other changes are still applied using `alter file format` command.
 - Added tests for `PROCEDURE` and `FILE_FORMAT` object types.
 
