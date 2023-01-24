@@ -53,7 +53,9 @@ class TableResolver(AbstractSchemaObjectResolver):
         return ResolveResult.CREATE
 
     def compare_object(self, bp: TableBlueprint, row: dict):
-        alters = []
+        safe_alters = []
+        unsafe_alters = []
+
         is_replace_required = False
 
         bp_cols = {str(c.name): c for c in bp.columns}
@@ -64,7 +66,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         for col_name, snow_c in snow_cols.items():
             # Drop columns which do not exist in blueprint
             if col_name not in bp_cols:
-                alters.append(self.engine.format("DROP COLUMN {col_name:i}", {
+                unsafe_alters.append(self.engine.format("DROP COLUMN {col_name:i}", {
                     "col_name": col_name,
                 }))
 
@@ -75,11 +77,11 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             # Set or drop NOT NULL constraint
             if snow_c.not_null and not bp_c.not_null:
-                alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP NOT NULL", {
+                unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP NOT NULL", {
                     "col_name": col_name,
                 }))
             elif not snow_c.not_null and bp_c.not_null:
-                alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET NOT NULL", {
+                unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET NOT NULL", {
                     "col_name": col_name,
                 }))
 
@@ -89,14 +91,14 @@ class TableResolver(AbstractSchemaObjectResolver):
             if snow_c.default != bp_c_default_value:
                 # DROP DEFAULT is supported
                 if snow_c.default is not None and bp_c_default_value is None:
-                    alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP DEFAULT", {
+                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP DEFAULT", {
                         "col_name": col_name,
                     }))
 
                 # Switch to another sequence is supported
                 elif isinstance(snow_c.default, str) and snow_c.default.upper().endswith('.NEXTVAL') \
                 and isinstance(bp_c_default_value, str) and bp_c_default_value.upper().endswith('.NEXTVAL'):
-                    alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET DEFAULT {default:r}", {
+                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET DEFAULT {default:r}", {
                         "col_name": col_name,
                         "default": bp_c_default_value,
                     }))
@@ -116,7 +118,7 @@ class TableResolver(AbstractSchemaObjectResolver):
             # Comments
             if snow_c.comment != bp_c.comment:
                 # UNSET COMMENT is currently not supported for columns, we can only set it to empty string
-                alters.append(self.engine.format("MODIFY COLUMN {col_name:i} COMMENT {comment}", {
+                safe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} COMMENT {comment}", {
                     "col_name": col_name,
                     "comment": bp_c.comment if bp_c.comment else '',
                 }))
@@ -132,7 +134,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 if snow_c.type.base_type == BaseDataType.NUMBER \
                 and snow_c.type.val1 != bp_c.type.val2 \
                 and snow_c.type.val2 == bp_c.type.val2:
-                    alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
+                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
                         "col_name": col_name,
                         "col_type": bp_c.type,
                     }))
@@ -141,7 +143,7 @@ class TableResolver(AbstractSchemaObjectResolver):
 
                 if snow_c.type.base_type == BaseDataType.VARCHAR \
                 and snow_c.type.val1 < bp_c.type.val1:
-                    alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
+                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
                         "col_name": col_name,
                         "col_type": bp_c.type,
                     }))
@@ -179,7 +181,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                         "comment": bp_c.comment,
                     })
 
-                alters.append(query)
+                safe_alters.append(query)
         else:
             # Reordering of columns is not supported
             is_replace_required = True
@@ -190,33 +192,33 @@ class TableResolver(AbstractSchemaObjectResolver):
 
         # Retention time
         if bp.retention_time is not None and bp.retention_time != row['retention_time']:
-            alters.append(self.engine.format("SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
+            unsafe_alters.append(self.engine.format("SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
                 "retention_time": bp.retention_time
             }))
 
         # Clustering key
         if not self._compare_cluster_by(bp, row):
             if bp.cluster_by:
-                alters.append(self.engine.format("CLUSTER BY ({cluster_by:r})", {
+                unsafe_alters.append(self.engine.format("CLUSTER BY ({cluster_by:r})", {
                     "cluster_by": bp.cluster_by,
                 }))
             else:
-                alters.append(self.engine.format("DROP CLUSTERING KEY"))
+                unsafe_alters.append(self.engine.format("DROP CLUSTERING KEY"))
 
         # Change tracking
         if bp.change_tracking != row['change_tracking']:
-            alters.append(self.engine.format("SET CHANGE_TRACKING = {change_tracking:b}", {
+            unsafe_alters.append(self.engine.format("SET CHANGE_TRACKING = {change_tracking:b}", {
                 "change_tracking": bp.change_tracking,
             }))
 
         # Comment
         if bp.comment != row['comment']:
             if bp.comment:
-                alters.append(self.engine.format("SET COMMENT = {comment}", {
+                safe_alters.append(self.engine.format("SET COMMENT = {comment}", {
                     "comment": bp.comment,
                 }))
             else:
-                alters.append(self.engine.format("UNSET COMMENT"))
+                safe_alters.append(self.engine.format("UNSET COMMENT"))
 
         # Apply changes
         result = ResolveResult.NOCHANGE
@@ -226,8 +228,14 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             result = ResolveResult.REPLACE
 
-        elif alters:
-            for alter in alters:
+        elif safe_alters or unsafe_alters:
+            for alter in safe_alters:
+                self.engine.execute_safe_ddl("ALTER TABLE {full_name:i} {alter:r}", {
+                    "full_name": bp.full_name,
+                    "alter": alter,
+                })
+
+            for alter in unsafe_alters:
                 self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} {alter:r}", {
                     "full_name": bp.full_name,
                     "alter": alter,
