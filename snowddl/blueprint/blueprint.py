@@ -44,6 +44,15 @@ class AccountParameterBlueprint(AbstractBlueprint):
 
 
 @dataclass
+class AlertBlueprint(SchemaObjectBlueprint):
+    full_name: SchemaObjectIdent
+    warehouse: AccountObjectIdent
+    schedule: str
+    condition: str
+    action: str
+
+
+@dataclass
 class BusinessRoleBlueprint(RoleBlueprint):
     pass
 

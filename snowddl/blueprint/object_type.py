@@ -10,6 +10,12 @@ class ObjectType(Enum):
         "blueprint_cls": AccountParameterBlueprint,
     }
 
+    ALERT = {
+        "singular": "ALERT",
+        "plural": "ALERTS",
+        "blueprint_cls": AlertBlueprint,
+    }
+
     DATABASE = {
         "singular": "DATABASE",
         "plural": "DATABASES",

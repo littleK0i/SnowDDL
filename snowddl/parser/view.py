@@ -28,6 +28,7 @@ view_json_schema = {
             "type": "string"
         }
     },
+    "required": ["text"],
     "additionalProperties": False
 }
 

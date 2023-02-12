@@ -2,6 +2,7 @@ from .abc_resolver import AbstractResolver, ResolveResult
 from .abc_role_resolver import AbstractRoleResolver
 from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
+from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .database import DatabaseResolver
 from .external_function import ExternalFunctionResolver
@@ -72,6 +73,7 @@ default_resolver_sequence = [
     BusinessRoleResolver,
     UserRoleResolver,
     UserResolver,
+    AlertResolver,
 ]
 
 
@@ -96,4 +98,5 @@ singledb_resolver_sequence = [
     TaskResolver,
     MaskingPolicyResolver,
     RowAccessPolicyResolver,
+    AlertResolver,
 ]

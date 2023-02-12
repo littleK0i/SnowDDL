@@ -1,5 +1,6 @@
 from ._parsed_file import ParsedFile
 from .account_params import AccountParameterParser
+from .alert import AlertParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
 from .external_function import ExternalFunctionParser
@@ -55,6 +56,7 @@ default_parser_sequence = [
     TechRoleParser,
     BusinessRoleParser,
     UserParser,
+    AlertParser,
 ]
 
 
@@ -76,4 +78,5 @@ singledb_parser_sequence = [
     TaskParser,
     MaskingPolicyParser,
     RowAccessPolicyParser,
+    AlertParser,
 ]

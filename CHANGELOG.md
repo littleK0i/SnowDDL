@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.0] - 2023-02-12
+
+- Implemented `ALERT` object type.
+- Added better error message for missing `text` in YAML config for `VIEW` object type.
+
 ## [0.13.0] - 2023-01-24
 
 - Completely reworked `STAGE` object type resolver. Now it checks actual property values and does not rely on short hash anymore. `STAGE` objects will be re-created only when absolutely necessary. ALTER will be applied for the majority of changes.

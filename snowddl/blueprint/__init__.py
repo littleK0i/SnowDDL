@@ -4,6 +4,7 @@ from .blueprint import (
     DependsOnMixin,
     RoleBlueprint,
     AccountParameterBlueprint,
+    AlertBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
     DatabaseShareBlueprint,
