@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.14.1] - 2023-02-23
+
+- Add `__hash__` implementation for `Ident` objects. It allows usage of such objects as keys for dictionaries.
+
 ## [0.14.0] - 2023-02-12
 
 - Implemented `ALERT` object type.
