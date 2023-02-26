@@ -37,7 +37,7 @@ procedure_json_schema = {
             "type": "boolean"
         },
         "runtime_version": {
-            "type": "string"
+            "type": ["number", "string"],
         },
         "imports": {
             "type": "array",
@@ -97,7 +97,7 @@ class ProcedureParser(AbstractParser):
             returns = DataType(f.params['returns'])
 
         if f.params.get('imports'):
-            imports = [StageWithPath(stage_name=build_schema_object_ident(self.env_prefix, i['stage'], f.database, f.schema), path=i['path']) for i in f.params.get('imports')]
+            imports = [StageWithPath(stage_name=build_schema_object_ident(self.env_prefix, i['stage'], f.database, f.schema), path=self.normalise_stage_path(i['path'])) for i in f.params.get('imports')]
         else:
             imports = None
 
@@ -117,7 +117,7 @@ class ProcedureParser(AbstractParser):
             is_strict=f.params.get('is_strict', False),
             is_immutable=f.params.get('is_immutable', False),
             is_execute_as_caller=f.params.get('is_execute_as_caller', False),
-            runtime_version=f.params.get('runtime_version'),
+            runtime_version=str(f.params.get('runtime_version')) if f.params.get('runtime_version') else None,
             imports=imports,
             packages=packages,
             handler=f.params.get('handler'),

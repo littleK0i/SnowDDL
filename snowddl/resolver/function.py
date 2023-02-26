@@ -30,6 +30,7 @@ class FunctionResolver(AbstractSchemaObjectResolver):
                 "comment": r['description'],
                 "is_table_function": r['is_table_function'] == 'Y',
                 "is_secure": r['is_secure'] == 'Y',
+                "is_memoizable": r['is_memoizable'] == 'Y',
             }
 
         return existing_objects
@@ -124,6 +125,9 @@ class FunctionResolver(AbstractSchemaObjectResolver):
 
         if bp.is_immutable:
             query.append_nl("IMMUTABLE")
+
+        if bp.is_memoizable:
+            query.append_nl("MEMOIZABLE")
 
         if bp.imports:
             query.append_nl("IMPORTS = ({imports})", {

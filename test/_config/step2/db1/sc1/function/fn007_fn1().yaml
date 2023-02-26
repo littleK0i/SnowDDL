@@ -1,0 +1,12 @@
+language: javascript
+
+returns:
+  output_col: VARCHAR(255)
+
+body: |-
+  {
+    processRow: function f(row, rowWriter, context) {
+      rowWriter.writeRow({OUTPUT_COL: "Hello"});
+      rowWriter.writeRow({OUTPUT_COL: "World"});
+    }
+  }

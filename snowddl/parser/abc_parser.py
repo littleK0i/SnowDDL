@@ -48,6 +48,17 @@ class AbstractParser(ABC):
 
         raise ValueError(f"Value is neither None, nor dictionary [{params}]")
 
+    def normalise_stage_path(self, stage_path):
+        if stage_path is None:
+            return None
+
+        stage_path = str(stage_path)
+
+        if not stage_path.startswith("/"):
+            stage_path = f"/{stage_path}"
+
+        return stage_path
+
     def validate_name_with_args(self, path: Path, arguments: List[NameWithType]):
         stem_name = str(path.stem)
         args_str = ','.join([a.type.base_type.name for a in arguments]).lower()

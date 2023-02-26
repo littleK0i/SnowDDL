@@ -66,6 +66,13 @@ class Helper:
 
         return {r['name']: r for r in cur}
 
+    def desc_function(self, database, schema, name, dtypes):
+        cur = self.execute("DESC FUNCTION {name:i}", {
+            "name": SchemaObjectIdentWithArgs(self.env_prefix, database, schema, name, dtypes)
+        })
+
+        return {r['property']: r['value'] for r in cur}
+
     def desc_procedure(self, database, schema, name, dtypes):
         cur = self.execute("DESC PROCEDURE {name:i}", {
             "name": SchemaObjectIdentWithArgs(self.env_prefix, database, schema, name, dtypes)
@@ -130,6 +137,14 @@ class Helper:
         cur = self.execute("SHOW TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "table_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_function(self, database, schema, name):
+        cur = self.execute("SHOW USER FUNCTIONS LIKE {function_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "function_name": Ident(name),
         })
 
         return cur.fetchone()

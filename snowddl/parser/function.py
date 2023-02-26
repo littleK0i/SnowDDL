@@ -39,8 +39,11 @@ function_json_schema = {
         "is_immutable": {
             "type": "boolean"
         },
+        "is_memoizable": {
+            "type": "boolean"
+        },
         "runtime_version": {
-            "type": "string"
+            "type": ["number", "string"]
         },
         "imports": {
             "type": "array",
@@ -100,7 +103,7 @@ class FunctionParser(AbstractParser):
             returns = DataType(f.params['returns'])
 
         if f.params.get('imports'):
-            imports = [StageWithPath(stage_name=build_schema_object_ident(self.env_prefix, i['stage'], f.database, f.schema), path=i['path']) for i in f.params.get('imports')]
+            imports = [StageWithPath(stage_name=build_schema_object_ident(self.env_prefix, i['stage'], f.database, f.schema), path=self.normalise_stage_path(i['path'])) for i in f.params.get('imports')]
         else:
             imports = None
 
@@ -120,7 +123,8 @@ class FunctionParser(AbstractParser):
             is_secure=f.params.get('is_secure', False),
             is_strict=f.params.get('is_strict', False),
             is_immutable=f.params.get('is_immutable', False),
-            runtime_version=f.params.get('runtime_version'),
+            is_memoizable=f.params.get('is_memoizable', False),
+            runtime_version=str(f.params.get('runtime_version')) if f.params.get('runtime_version') else None,
             imports=imports,
             packages=packages,
             handler=f.params.get('handler'),

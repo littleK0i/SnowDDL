@@ -1,0 +1,16 @@
+language: java
+runtime_version: 11
+
+arguments:
+  i: NUMBER(38,0)
+
+returns: NUMBER(38,0)
+
+handler: AddOneJava.process
+
+body: |-
+  class AddOneJava {
+      public static long process(long i) {
+          return i++;
+      }
+  }

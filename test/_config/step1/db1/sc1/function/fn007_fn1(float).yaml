@@ -1,0 +1,9 @@
+language: javascript
+
+arguments:
+  i: FLOAT
+
+returns: FLOAT
+
+body: |-
+  return i + 1

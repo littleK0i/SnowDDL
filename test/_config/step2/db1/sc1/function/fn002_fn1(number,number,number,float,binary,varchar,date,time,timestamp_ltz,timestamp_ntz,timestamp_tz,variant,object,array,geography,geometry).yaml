@@ -36,25 +36,14 @@ returns:
   geo2: GEOMETRY
 
 body: |-
-  DECLARE
-    res resultset default (
-        SELECT :NUM1, :NUM2, :NUM3
-            , :DBL
-            , :BIN1
-            , :VAR1
-            , :DT1
-            , :TM1
-            , :LTZ1
-            , :NTZ1
-            , :TZ1
-            , :VAR, :OBJ, :ARR
-            , :GEO1, :GEO2
-    );
-  BEGIN
-    RETURN table(res);
-  END;
-
-comment: cde
-
-is_strict: true
-is_execute_as_caller: true
+  SELECT NUM1, NUM2, NUM3
+      , DBL
+      , BIN1
+      , VAR1
+      , DT1
+      , TM1
+      , LTZ1
+      , NTZ1
+      , TZ1
+      , VAR, OBJ, ARR
+      , GEO1, GEO2

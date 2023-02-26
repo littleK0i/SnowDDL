@@ -130,6 +130,7 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     is_secure: bool
     is_strict: bool
     is_immutable: bool
+    is_memoizable : bool
     runtime_version: Optional[str]
     imports: Optional[List[StageWithPath]]
     packages: Optional[List[str]]

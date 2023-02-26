@@ -1,0 +1,11 @@
+returns: VARCHAR(255)
+
+body: |-
+  'abc'
+
+is_secure: true
+is_strict: true
+is_immutable: true
+is_memoizable: true
+
+comment: cde

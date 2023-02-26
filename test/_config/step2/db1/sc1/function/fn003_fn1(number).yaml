@@ -1,0 +1,17 @@
+language: python
+runtime_version: 3.8
+
+imports:
+  - stage: fn003_st1
+    path: /fn003_addone.py
+
+handler: fn003_addone.addone_py
+
+packages:
+  - numpy
+  - pandas
+
+arguments:
+  i: NUMBER(38,0)
+
+returns: NUMBER(38,0)

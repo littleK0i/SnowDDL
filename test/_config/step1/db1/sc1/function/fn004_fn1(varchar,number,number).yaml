@@ -1,0 +1,28 @@
+language: python
+runtime_version: 3.8
+
+arguments:
+  symbol: VARCHAR(1000)
+  quantity: NUMBER(38,0)
+  price: NUMBER(10,2)
+
+returns:
+  symbol: VARCHAR(1000)
+  total: NUMBER(10,2)
+
+handler: StockSaleSum
+
+body: |-
+  class StockSaleSum:
+    def __init__(self):
+      self._cost_total = 0
+      self._symbol = ""
+
+    def process(self, symbol, quantity, price):
+      self._symbol = symbol
+      cost = quantity * price
+      self._cost_total += cost
+      yield (symbol, cost)
+
+    def end_partition(self):
+      yield (self._symbol, self._cost_total)

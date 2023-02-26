@@ -1,0 +1,43 @@
+language: java
+runtime_version: 11
+
+arguments:
+  v: VARCHAR(1000)
+
+returns:
+  output_value: VARCHAR(1000)
+
+handler: TestFunction
+
+body: |-
+  import java.util.stream.Stream;
+
+  class OutputRow {
+      public String output_value;
+
+      public OutputRow(String outputValue) {
+          this.output_value = outputValue;
+      }
+  }
+
+  class TestFunction {
+      String myString;
+
+      public TestFunction()  {
+          myString = "Created in constructor and output from endPartition()";
+      }
+
+      public static Class getOutputClass() {
+          return OutputRow.class;
+      }
+
+      public Stream<OutputRow> process(String inputValue) {
+          // Return two rows with the same value.
+          return Stream.of(new OutputRow(inputValue), new OutputRow(inputValue));
+      }
+
+      public Stream<OutputRow> endPartition() {
+          // Returns the value we initialized in the constructor.
+          return Stream.of(new OutputRow(myString));
+      }
+  }

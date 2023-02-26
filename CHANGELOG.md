@@ -1,8 +1,15 @@
 # Changelog
 
+## [0.14.2] - 2023-02-26
+
+- Added `is_memoizable` for `FUNCTION` object type.
+- Added tests for `FUNCTION` object type.
+- Starting slash `/` in `STAGE FILE` path is now optional.
+- Runtime version for `FUNCTION` and `PROCEDURE` in YAML config can now be defined either as `number` or as `string`. Previously it was only defined as string, which caused confusion for numeric versions, like Python "3.8".
+
 ## [0.14.1] - 2023-02-23
 
-- Add `__hash__` implementation for `Ident` objects. It allows usage of such objects as keys for dictionaries.
+- Added `__hash__` implementation for `Ident` objects. It allows usage of such objects as keys for dictionaries.
 
 ## [0.14.0] - 2023-02-12
 

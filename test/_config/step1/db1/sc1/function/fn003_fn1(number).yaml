@@ -1,0 +1,12 @@
+language: python
+runtime_version: 3.8
+handler: addone_py
+
+arguments:
+  i: NUMBER(38,0)
+
+returns: NUMBER(38,0)
+
+body: |-
+  def addone_py(i):
+    return i+1
