@@ -115,11 +115,6 @@ class FunctionResolver(AbstractSchemaObjectResolver):
             "language": bp.language,
         })
 
-        if bp.runtime_version:
-            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
-                "runtime_version": bp.runtime_version,
-            })
-
         if bp.is_strict:
             query.append_nl("STRICT")
 
@@ -128,6 +123,11 @@ class FunctionResolver(AbstractSchemaObjectResolver):
 
         if bp.is_memoizable:
             query.append_nl("MEMOIZABLE")
+
+        if bp.runtime_version:
+            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
+                "runtime_version": bp.runtime_version,
+            })
 
         if bp.imports:
             query.append_nl("IMPORTS = ({imports})", {

@@ -16,11 +16,11 @@ jobs:
         include:
           - env-prefix: PY37_BC
             python-version: 3.7
-            account-ident: gg06746.eu-west-2.aws
+            account-ident: lc42479.eu-west-2.aws
 
           - env-prefix: PY39_BC
             python-version: 3.9
-            account-ident: gg06746.eu-west-2.aws
+            account-ident: lc42479.eu-west-2.aws
 
     runs-on: ubuntu-latest
     timeout-minutes: 10

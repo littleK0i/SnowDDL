@@ -104,16 +104,16 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
             "language": bp.language,
         })
 
-        if bp.runtime_version:
-            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
-                "runtime_version": bp.runtime_version,
-            })
-
         if bp.is_strict:
             query.append_nl("STRICT")
 
         if bp.is_immutable:
             query.append_nl("IMMUTABLE")
+
+        if bp.runtime_version:
+            query.append_nl("RUNTIME_VERSION = {runtime_version}", {
+                "runtime_version": bp.runtime_version,
+            })
 
         if bp.imports:
             query.append_nl("IMPORTS = ({imports})", {

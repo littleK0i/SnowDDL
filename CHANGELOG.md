@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.14.3] - 2023-03-08
+
+- Move `STRICT` and `IMMUTABLE` before `RUNTIME_VERSION` in SQL generated for object types `FUNCTION` and `PROCEDURE`.
+
 ## [0.14.2] - 2023-02-26
 
 - Added `is_memoizable` for `FUNCTION` object type.
