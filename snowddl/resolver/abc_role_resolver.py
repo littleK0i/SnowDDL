@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 from snowddl.blueprint import RoleBlueprint, Grant, FutureGrant, SchemaIdent, SchemaObjectIdent, build_grant_name_ident_snowflake
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
+from snowddl.blueprint import DatabaseBlueprint
 
 
 class AbstractRoleResolver(AbstractResolver):
@@ -44,8 +45,8 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
         for r in sorted(cur, key=self.sort_existing_grants):
-            # Snowflake bug: phantom MATERIALIZED VIEW when SEARCH OPTIMIZATION is enabled for table
-            if ObjectType[r['granted_on']] == ObjectType.MATERIALIZED_VIEW and str(r['name']).endswith('IDX_MV_"'):
+                        
+            if self.ignore_grant(r):
                 continue
 
             grants.append(Grant(
@@ -59,6 +60,10 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
         for r in sorted(cur, key=self.sort_existing_grants):
+
+            if self.ignore_grant(r, grant_column_name = 'grant_on'):
+                continue
+    
             future_grants.append(FutureGrant(
                 privilege=r['privilege'],
                 on=ObjectType[r['grant_on']],
@@ -66,7 +71,19 @@ class AbstractRoleResolver(AbstractResolver):
             ))
 
         return role_name, grants, future_grants
-
+    
+    def ignore_grant(self, grant_row, grant_column_name = 'granted_on'):
+        # Snowflake bug: phantom MATERIALIZED VIEW when SEARCH OPTIMIZATION is enabled for table
+        if ObjectType[grant_row[grant_column_name]] == ObjectType.MATERIALIZED_VIEW and str(grant_row['name']).endswith('IDX_MV_"'):
+            return True
+        # Ignore grants on objects in databases that SnowDDL does not manage
+        elif grant_row['name'].split('.')[0] not in self.config.get_blueprints_by_type(cls = DatabaseBlueprint).keys() \
+                and (ObjectType[grant_row[grant_column_name]] == ObjectType.DATABASE \
+                    or '.' in grant_row['name']):
+            return True
+        else:
+            return False
+        
     def sort_existing_grants(self, row):
         offset = 0
 
