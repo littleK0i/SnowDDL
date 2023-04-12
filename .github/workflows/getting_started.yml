@@ -16,17 +16,18 @@ jobs:
         include:
           - env-prefix: PY37_BC
             python-version: 3.7
-            account-ident: ${{ secrets.SNOWFLAKE_ACCOUNT }}
 
           - env-prefix: PY311_BC
             python-version: 3.11
-            account-ident: ${{ secrets.SNOWFLAKE_ACCOUNT }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: snowddl
       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ENV_PREFIX: ${{ matrix.env-prefix }}
 
     steps:
       - name: Checkout repo
@@ -41,22 +42,22 @@ jobs:
         run: pip install -e .
 
       - name: "Cleanup"
-        run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe destroy
+        run: snowddl -c sample01_01 --apply-unsafe destroy
 
       - name: "Apply sample01_01, run 1"
-        run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+        run: snowddl -c sample01_01 --apply-unsafe apply
 
       - name: "Apply sample01_01, run 2"
-        run: snowddl -c sample01_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+        run: snowddl -c sample01_01 --apply-unsafe apply
 
       - name: "Apply sample01_02, run 1"
-        run: snowddl -c sample01_02 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+        run: snowddl -c sample01_02 --apply-unsafe apply
 
       - name: "Apply sample01_02, run 2"
-        run: snowddl -c sample01_02 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe apply
+        run: snowddl -c sample01_02 --apply-unsafe apply
 
       - name: "Apply sample02_01"
-        run: snowddl -c sample02_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
+        run: snowddl -c sample02_01 --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
 
       - name: "Apply singledb"
-        run: snowddl-singledb -c sample02_01 -a ${{ matrix.account-ident }} -u snowddl --env-prefix=${{ matrix.env-prefix }} --config-db=TEST_DB --target-db=ANOTHER_DB --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
+        run: snowddl-singledb -c sample02_01 --config-db=TEST_DB --target-db=ANOTHER_DB --apply-unsafe --apply-masking-policy --apply-row-access-policy apply
