@@ -10,17 +10,12 @@ on:
 
 jobs:
   getting_started:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - account-ident: yx98111.eu-west-2.aws
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     env:
-      SNOWFLAKE_ACCOUNT: ${{ matrix.account-ident }}
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_USER: snowddl_test
       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
       SNOWFLAKE_ENV_PREFIX: PYTEST
@@ -32,7 +27,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install
         run: pip install -e .[test]
