@@ -33,6 +33,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
         ))
 
         create_object_types = [
+            ObjectType.FILE_FORMAT,
             ObjectType.FUNCTION,
             ObjectType.PROCEDURE,
             ObjectType.TABLE,

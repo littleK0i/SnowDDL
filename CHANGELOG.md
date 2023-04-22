@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.14.4]
+
+- Grant `CREATE FILE FORMAT` privilege for OWNER schema roles. It should help to handle common use case when external tools try to create a `FILE_FORMAT` object before running `COPY INTO` command.
+
 ## [0.14.3] - 2023-03-08
 
 - Move `STRICT` and `IMMUTABLE` before `RUNTIME_VERSION` in SQL generated for object types `FUNCTION` and `PROCEDURE`.
