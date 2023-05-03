@@ -30,7 +30,7 @@ jobs:
           python-version: 3.11
 
       - name: Install
-        run: pip install -e .[test]
+        run: pip install -e .[dev]
 
       - name: Run pytest
         run: test/run_test.sh

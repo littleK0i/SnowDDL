@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.14.4]
+## [0.15.0] - 2023-05-03
+
+- Switched from packaging via legacy `setup.py` to `pyproject.toml` and `setup.cfg`.
+
+## [0.14.4] - 2023-04-22
 
 - Grant `CREATE FILE FORMAT` privilege for OWNER schema roles. It should help to handle common use case when external tools try to create a `FILE_FORMAT` object before running `COPY INTO` command.
 
