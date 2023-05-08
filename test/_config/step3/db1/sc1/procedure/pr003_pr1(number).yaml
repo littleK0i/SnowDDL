@@ -1,0 +1,13 @@
+language: java
+runtime_version: 11
+
+packages:
+  - com.snowflake:snowpark:latest
+
+arguments:
+  step_id: NUMBER(38,0)
+
+returns: BOOLEAN
+
+handler: TestClass.process
+body: !include java/pr003_pr1(number).java

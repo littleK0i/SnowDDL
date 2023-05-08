@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.0] - 2023-05-08
+
+- Implement custom YAML tag `!include`, which allows to load specific config parameters from external files. It helps to maintain proper syntax highlight for SQL snippets (such as `VIEW` text) and bodies of Java / Scala / Python UDFs.
+- Add more tests for `PROCEDURE` object type.
+
 ## [0.15.0] - 2023-05-03
 
 - Switched from packaging via legacy `setup.py` to `pyproject.toml` and `setup.cfg`.

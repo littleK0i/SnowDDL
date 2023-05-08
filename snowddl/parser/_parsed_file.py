@@ -2,7 +2,9 @@ from jsonschema import validate
 from pathlib import Path
 from re import compile, IGNORECASE
 from typing import TYPE_CHECKING
-from yaml import safe_load
+from yaml import load
+
+from snowddl.parser._yaml import SnowDDLLoader
 
 if TYPE_CHECKING:
     from snowddl.parser.abc_parser import AbstractParser
@@ -42,7 +44,7 @@ class ParsedFile:
 
     def _load_params(self):
         with self.path.open('r', encoding='utf-8') as f:
-            self.params = safe_load(f) or {}
+            self.params = load(f, Loader=SnowDDLLoader) or {}
 
     def _apply_placeholders(self, data: dict):
         for k, v in data.items():

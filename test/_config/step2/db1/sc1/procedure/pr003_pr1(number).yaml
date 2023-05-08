@@ -1,0 +1,13 @@
+language: python
+runtime_version: 3.8
+
+packages:
+  - snowflake-snowpark-python
+
+arguments:
+  step_id: NUMBER(38,0)
+
+returns: BOOLEAN
+
+handler: process
+body: !include python/pr003_pr1(number).py
