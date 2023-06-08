@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.16.1] - 2023-06-08
+
+- Do not remove accounts from `OUTBOUND_SHARE` if `accounts` parameter was not set in config. Outbound shares without explicitly defined accounts are managed by Snowflake Marketplace.
+
 ## [0.16.0] - 2023-05-08
 
 - Implement custom YAML tag `!include`, which allows to load specific config parameters from external files. It helps to maintain proper syntax highlight for SQL snippets (such as `VIEW` text) and bodies of Java / Scala / Python UDFs.

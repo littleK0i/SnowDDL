@@ -74,7 +74,7 @@ class OutboundShareResolver(AbstractResolver):
 
         # SHOW SHARES command returns only 3 accounts for each OUTBOUND SHARE
         # If you have to set more accounts, it will work, but SnowDDL will be forced to run SET ACCOUNTS every time
-        if [str(a) for a in bp.accounts] != row['accounts']:
+        if bp.accounts and [str(a) for a in bp.accounts] != row['accounts']:
             self.set_accounts(bp)
             result = ResolveResult.ALTER
 
@@ -96,25 +96,19 @@ class OutboundShareResolver(AbstractResolver):
         return ResolveResult.DROP
 
     def set_accounts(self, bp: OutboundShareBlueprint):
-        if bp.accounts:
-            query = self.engine.query_builder()
+        query = self.engine.query_builder()
 
-            query.append("ALTER SHARE {full_name:i} SET ACCOUNTS = {accounts:i}", {
-                "full_name": bp.full_name,
-                "accounts": bp.accounts,
+        query.append("ALTER SHARE {full_name:i} SET ACCOUNTS = {accounts:i}", {
+            "full_name": bp.full_name,
+            "accounts": bp.accounts,
+        })
+
+        if bp.share_restrictions is not None:
+            query.append_nl("SHARE_RESTRICTIONS = {share_restrictions:b}", {
+                "share_restrictions": bp.share_restrictions
             })
 
-            if bp.share_restrictions is not None:
-                query.append_nl("SHARE_RESTRICTIONS = {share_restrictions:b}", {
-                    "share_restrictions": bp.share_restrictions
-                })
-
-            self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
-        else:
-            # Special case for all consumer accounts being removed from SHARE
-            self.engine.execute_unsafe_ddl("ALTER SHARE {full_name:i} SET ACCOUNTS = NULL", {
-                "full_name": bp.full_name,
-            }, condition=self.engine.settings.execute_outbound_share)
+        self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
 
     def create_grant(self, share_name, grant: Grant):
         self.engine.execute_unsafe_ddl("GRANT {privilege:r} ON {on:r} {name:i} TO SHARE {share_name:i}", {

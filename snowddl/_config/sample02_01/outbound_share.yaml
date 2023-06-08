@@ -14,3 +14,14 @@ test_share_1:
   share_restrictions: false
 
   comment: Test share
+
+test_share_2:
+  grants:
+    DATABASE:USAGE:
+      - test_db
+    SCHEMA:USAGE:
+      - test_db.test_schema
+    TABLE:SELECT:
+      - test_db.test_schema.*
+
+  comment: Test share without accounts
