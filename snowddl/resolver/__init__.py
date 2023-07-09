@@ -5,6 +5,7 @@ from .account_params import AccountParameterResolver
 from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .database import DatabaseResolver
+from .dynamic_table import DynamicTableResolver
 from .external_function import ExternalFunctionResolver
 from .external_table import ExternalTableResolver
 from .file_format import FileFormatResolver
@@ -57,6 +58,7 @@ default_resolver_sequence = [
     ExternalFunctionResolver,
     ProcedureResolver,
     TableResolver,
+    DynamicTableResolver,
     ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,
@@ -87,6 +89,7 @@ singledb_resolver_sequence = [
     ExternalFunctionResolver,
     ProcedureResolver,
     TableResolver,
+    DynamicTableResolver,
     ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,

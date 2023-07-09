@@ -3,6 +3,7 @@ from .account_params import AccountParameterParser
 from .alert import AlertParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
+from .dynamic_table import DynamicTableParser
 from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
@@ -44,6 +45,7 @@ default_parser_sequence = [
     ExternalFunctionParser,
     ProcedureParser,
     TableParser,
+    DynamicTableParser,
     ExternalTableParser,
     StreamParser,
     MaterializedViewParser,

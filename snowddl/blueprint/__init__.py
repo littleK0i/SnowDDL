@@ -8,6 +8,7 @@ from .blueprint import (
     BusinessRoleBlueprint,
     DatabaseBlueprint,
     DatabaseShareBlueprint,
+    DynamicTableBlueprint,
     ExternalFunctionBlueprint,
     ExternalTableBlueprint,
     FileFormatBlueprint,

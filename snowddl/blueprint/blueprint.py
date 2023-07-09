@@ -72,6 +72,13 @@ class DatabaseShareBlueprint(AbstractBlueprint):
 
 
 @dataclass
+class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
+    text: str
+    target_lag: str
+    warehouse: AccountObjectIdent
+
+
+@dataclass
 class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdent
     arguments: List[NameWithType]

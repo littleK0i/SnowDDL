@@ -22,6 +22,14 @@ class ObjectType(Enum):
         "blueprint_cls": DatabaseBlueprint,
     }
 
+    DYNAMIC_TABLE = {
+        "singular": "DYNAMIC TABLE",
+        "plural": "DYNAMIC TABLES",
+        "simplified": "TABLE",
+        "is_future_grant_supported": True,
+        "blueprint_cls": DynamicTableBlueprint,
+    }
+
     EXTERNAL_FUNCTION = {
         "singular": "EXTERNAL FUNCTION",
         "plural": "EXTERNAL FUNCTIONS",

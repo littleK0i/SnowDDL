@@ -1,0 +1,7 @@
+text: |-
+  SELECT status, count(*) AS cnt
+  FROM ${{ env_prefix }}test_db.test_schema.test_table_1
+  GROUP BY 1
+
+target_lag: 1 minute
+warehouse: dynamic_table_wh

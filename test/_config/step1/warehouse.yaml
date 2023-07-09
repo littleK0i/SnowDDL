@@ -1,6 +1,15 @@
 al001_wh1:
   size: XSMALL
 
+dt001_wh1:
+  size: XSMALL
+
+dt001_wh2:
+  size: XSMALL
+
+dt002_wh1:
+  size: XSMALL
+
 us001_wh1:
   size: XSMALL
 

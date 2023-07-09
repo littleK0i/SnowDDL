@@ -1,0 +1,9 @@
+text: |-
+  SELECT count(*) AS cnt
+  FROM ${{ env_prefix }}db1.sc1.dt002_dt1
+
+target_lag: 5 minute
+warehouse: dt002_wh1
+
+depends_on:
+  - dt002_dt1

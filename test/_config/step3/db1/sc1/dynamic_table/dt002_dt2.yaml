@@ -1,0 +1,7 @@
+text: |-
+  SELECT name, count(*) AS name_cnt
+  FROM ${{ env_prefix }}db1.sc1.dt002_tb2
+  GROUP BY ALL
+
+target_lag: downstream
+warehouse: dt002_wh1

@@ -1,0 +1,9 @@
+text: |-
+  SELECT count(*) AS cnt
+  FROM ${{ env_prefix }}test_db.test_schema.test_dynamic_table_1
+
+target_lag: downstream
+warehouse: dynamic_table_wh
+
+depends_on:
+  - test_dynamic_table_1

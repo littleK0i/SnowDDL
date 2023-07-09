@@ -15,6 +15,7 @@ from snowddl import (
     SnowDDLFormatter,
     SnowDDLQueryBuilder,
 )
+from snowflake.connector.cursor import SnowflakeCursor
 
 
 class Helper:
@@ -29,7 +30,7 @@ class Helper:
 
         self._activate_role_with_prefix()
 
-    def execute(self, sql, params=None):
+    def execute(self, sql, params=None) -> SnowflakeCursor:
         sql = self.formatter.format_sql(sql, params)
 
         return self.connection.cursor(DictCursor).execute(sql)
@@ -113,6 +114,14 @@ class Helper:
         cur = self.execute("SHOW ALERTS LIKE {alert_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),
             "alert_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
+    def show_dynamic_table(self, database, schema, name):
+        cur = self.execute("SHOW DYNAMIC TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "table_name": Ident(name),
         })
 
         return cur.fetchone()

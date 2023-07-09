@@ -1,0 +1,8 @@
+text: |-
+  SELECT type, count(*) AS cnt
+  FROM ${{ env_prefix }}db1.sc1.dt001_tb1
+  GROUP BY 1
+
+target_lag: 1 minute
+warehouse: dt001_wh1
+comment: abc
