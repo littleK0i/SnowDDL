@@ -4,6 +4,7 @@ from .alert import AlertParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
 from .dynamic_table import DynamicTableParser
+from .event_table import EventTableParser
 from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
@@ -46,6 +47,7 @@ default_parser_sequence = [
     ProcedureParser,
     TableParser,
     DynamicTableParser,
+    EventTableParser,
     ExternalTableParser,
     StreamParser,
     MaterializedViewParser,
@@ -72,6 +74,8 @@ singledb_parser_sequence = [
     ExternalFunctionParser,
     ProcedureParser,
     TableParser,
+    DynamicTableParser,
+    EventTableParser,
     ExternalTableParser,
     StreamParser,
     MaterializedViewParser,

@@ -9,6 +9,7 @@ from .blueprint import (
     DatabaseBlueprint,
     DatabaseShareBlueprint,
     DynamicTableBlueprint,
+    EventTableBlueprint,
     ExternalFunctionBlueprint,
     ExternalTableBlueprint,
     FileFormatBlueprint,

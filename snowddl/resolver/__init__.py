@@ -6,6 +6,7 @@ from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .database import DatabaseResolver
 from .dynamic_table import DynamicTableResolver
+from .event_table import EventTableResolver
 from .external_function import ExternalFunctionResolver
 from .external_table import ExternalTableResolver
 from .file_format import FileFormatResolver
@@ -59,6 +60,7 @@ default_resolver_sequence = [
     ProcedureResolver,
     TableResolver,
     DynamicTableResolver,
+    EventTableResolver,
     ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,
@@ -90,6 +92,7 @@ singledb_resolver_sequence = [
     ProcedureResolver,
     TableResolver,
     DynamicTableResolver,
+    EventTableResolver,
     ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,

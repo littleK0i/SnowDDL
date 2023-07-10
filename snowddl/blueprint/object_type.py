@@ -30,6 +30,14 @@ class ObjectType(Enum):
         "blueprint_cls": DynamicTableBlueprint,
     }
 
+    EVENT_TABLE = {
+        "singular": "EVENT TABLE",
+        "plural": "EVENT TABLES",
+        "simplified": "TABLE",
+        "is_future_grant_supported": True,
+        "blueprint_cls": EventTableBlueprint,
+    }
+
     EXTERNAL_FUNCTION = {
         "singular": "EXTERNAL FUNCTION",
         "plural": "EXTERNAL FUNCTIONS",

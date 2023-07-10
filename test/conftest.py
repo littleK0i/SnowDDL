@@ -126,6 +126,14 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_event_table(self, database, schema, name):
+        cur = self.execute("SHOW EVENT TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}", {
+            "schema_name": SchemaIdent(self.env_prefix, database, schema),
+            "table_name": Ident(name),
+        })
+
+        return cur.fetchone()
+
     def show_sequence(self, database, schema, name):
         cur = self.execute("SHOW SEQUENCES LIKE {sequence_name:lf} IN SCHEMA {schema_name:i}", {
             "schema_name": SchemaIdent(self.env_prefix, database, schema),

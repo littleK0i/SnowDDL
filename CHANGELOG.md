@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.17.0] - 2023-07-10
+
+- Implement `DYNAMIC_TABLE` object type.
+- Implement `EVENT_TABLE` object type (only with `change_tracking` parameter).
+
 ## [0.16.1] - 2023-06-08
 
 - Do not remove accounts from `OUTBOUND_SHARE` if `accounts` parameter was not set in config. Outbound shares without explicitly defined accounts are managed by Snowflake Marketplace.

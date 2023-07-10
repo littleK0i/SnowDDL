@@ -79,6 +79,11 @@ class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 
 
 @dataclass
+class EventTableBlueprint(SchemaObjectBlueprint):
+    change_tracking: bool
+
+
+@dataclass
 class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdent
     arguments: List[NameWithType]
