@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.17.1] - 2023-07-16
+
+- Improve handling of `PRIMARY_KEY` when column list is being changed.
+
 ## [0.17.0] - 2023-07-10
 
 - Implement `DYNAMIC_TABLE` object type.

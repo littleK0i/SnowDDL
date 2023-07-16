@@ -205,7 +205,7 @@ class PipeBlueprint(SchemaObjectBlueprint):
 
 @dataclass
 class PrimaryKeyBlueprint(SchemaObjectBlueprint):
-    full_name: TableConstraintIdent
+    full_name: SchemaObjectIdent
     table_name: SchemaObjectIdent
     columns: List[Ident]
 

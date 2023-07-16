@@ -1,0 +1,4 @@
+columns:
+  author_id: VARCHAR(255)
+  author_code: VARCHAR(255)
+  author_name: VARCHAR(255)

@@ -217,7 +217,7 @@ class TableParser(AbstractParser):
 
         if f.params.get('primary_key'):
             bp = PrimaryKeyBlueprint(
-                full_name=TableConstraintIdent(self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in f.params.get('primary_key')]),
+                full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in f.params.get('primary_key')],
                 comment=None,

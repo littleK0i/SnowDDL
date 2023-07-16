@@ -1,5 +1,4 @@
 columns:
-  store_id: NUMBER(10,0)
   book_id: NUMBER(10,0)
   book_name: VARCHAR(255)
   book_isbn: VARCHAR(255)
@@ -12,5 +11,5 @@ unique_keys:
 
 foreign_keys:
   - columns: [author_id]
-    ref_table: tb005_tb1
+    ref_table: tb008_tb1
     ref_columns: [author_id]

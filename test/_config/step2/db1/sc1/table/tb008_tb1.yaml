@@ -1,0 +1,9 @@
+columns:
+  author_id: VARCHAR(255)
+  author_code: VARCHAR(255)
+  author_name: VARCHAR(255)
+
+primary_key: [author_id]
+
+unique_keys :
+  - [author_code]
