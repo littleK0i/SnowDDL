@@ -164,6 +164,10 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         # Check non-default properties in DESC output exist in blueprint
         for prop_name, prop in existing_properties['DIRECTORY'].items():
+            # LAST_REFRESHED_ON is an informational property, it should not be compared or set explicitly
+            if prop_name == "LAST_REFRESHED_ON":
+                continue
+
             if prop['property_value'] != prop['property_default'] and (prop_name not in coalesce(bp.directory, {})):
                 is_alter_required = True
                 break

@@ -65,9 +65,9 @@ class DynamicTableParser(AbstractParser):
         num = int(num)
         unit = unit.lower()
 
-        if num > 1 and (unit in self.unit_plural_to_singular):
-            unit = self.unit_plural_to_singular[unit]
-        elif num == 1 and (unit in self.unit_singular_to_plural):
+        if num > 1 and (unit in self.unit_singular_to_plural):
             unit = self.unit_singular_to_plural[unit]
+        elif num == 1 and (unit in self.unit_plural_to_singular):
+            unit = self.unit_plural_to_singular[unit]
 
         return f"{num} {unit}"

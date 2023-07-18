@@ -18,6 +18,7 @@ class SnowDDLSettings:
     refresh_user_passwords: bool = False
     refresh_future_grants: bool = False
     refresh_stage_encryption: bool = False
+    clone_table: bool = False
     exclude_object_types: List[ObjectType] = field(default_factory=list)
     include_object_types: List[ObjectType] = field(default_factory=list)
     include_databases: List[DatabaseIdent] = field(default_factory=list)

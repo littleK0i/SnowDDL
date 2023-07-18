@@ -56,6 +56,9 @@ class SnowDDLEngine:
     def execute_meta(self, sql, params=None):
         return self._execute(sql, params, is_meta=True)
 
+    def execute_clone(self, sql, params=None):
+        return self._execute(sql, params)
+
     def execute_context_ddl(self, sql, params=None):
         return self._execute(sql, params)
 

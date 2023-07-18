@@ -81,6 +81,9 @@ class BaseApp:
         parser.add_argument('--refresh-future-grants', help="Additionally refresh missing grants for existing objects derived from future grants", default=False, action='store_true')
         parser.add_argument('--refresh-stage-encryption', help="Additionally refresh stage encryption parameters for existing external stages", default=False, action='store_true')
 
+        # Cloning
+        parser.add_argument('--clone-table', help="Clone all tables from source databases (without env_prefix) to destination databases (with env_prefix)", default=False, action='store_true')
+
         # Destroy without env prefix
         parser.add_argument('--destroy-without-prefix', help="Allow {destroy} action without --env-prefix", default=False, action='store_true')
 
@@ -197,6 +200,15 @@ class BaseApp:
 
         if self.args.get('refresh_stage_encryption'):
             settings.refresh_stage_encryption = True
+
+        if self.args.get('clone_table'):
+            if self.args.get('action') != "apply":
+                raise ValueError("Argument --clone-table requires action [apply]")
+
+            if not self.args.get('env_prefix'):
+                raise ValueError("Argument --clone-table requires argument --env-prefix")
+
+            settings.clone_table = True
 
         if self.args.get('exclude_object_types'):
             try:

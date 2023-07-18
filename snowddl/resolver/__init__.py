@@ -4,6 +4,7 @@ from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
 from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
+from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
 from .dynamic_table import DynamicTableResolver
 from .event_table import EventTableResolver
@@ -58,6 +59,7 @@ default_resolver_sequence = [
     FunctionResolver,
     ExternalFunctionResolver,
     ProcedureResolver,
+    CloneTableResolver,
     TableResolver,
     EventTableResolver,
     DynamicTableResolver,
@@ -90,6 +92,7 @@ singledb_resolver_sequence = [
     FunctionResolver,
     ExternalFunctionResolver,
     ProcedureResolver,
+    CloneTableResolver,
     TableResolver,
     EventTableResolver,
     DynamicTableResolver,

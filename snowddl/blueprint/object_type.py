@@ -16,6 +16,12 @@ class ObjectType(Enum):
         "blueprint_cls": AlertBlueprint,
     }
 
+    CLONE_TABLE = {
+        "singular": "CLONE TABLE",
+        "plural": "CLONE TABLES",
+        "blueprint_cls": TableBlueprint,
+    }
+
     DATABASE = {
         "singular": "DATABASE",
         "plural": "DATABASES",

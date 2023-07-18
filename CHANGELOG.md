@@ -1,13 +1,20 @@
 # Changelog
 
+## [0.18.0] - 2023-07-18
+
+- Added initial implementation of table cloning while using `--env-prefix` argument.
+- Fixed issue with `STAGE` re-applying `directory` parameter on every run.
+- Fixed issue with `DYNAMIC_TABLE` re-applying `target_lag` parameter on every run.
+- Fixed missing `change_tracking` parameter for some `DYNAMIC_TABLE` tests.
+
 ## [0.17.1] - 2023-07-16
 
-- Improve handling of `PRIMARY_KEY` when column list is being changed.
+- Improved handling of `PRIMARY_KEY` when column list is being changed.
 
 ## [0.17.0] - 2023-07-10
 
-- Implement `DYNAMIC_TABLE` object type.
-- Implement `EVENT_TABLE` object type (only with `change_tracking` parameter).
+- Implemented `DYNAMIC_TABLE` object type.
+- Implemented `EVENT_TABLE` object type (only with `change_tracking` parameter).
 
 ## [0.16.1] - 2023-06-08
 
@@ -15,8 +22,8 @@
 
 ## [0.16.0] - 2023-05-08
 
-- Implement custom YAML tag `!include`, which allows to load specific config parameters from external files. It helps to maintain proper syntax highlight for SQL snippets (such as `VIEW` text) and bodies of Java / Scala / Python UDFs.
-- Add more tests for `PROCEDURE` object type.
+- Implemented custom YAML tag `!include`, which allows to load specific config parameters from external files. It helps to maintain proper syntax highlight for SQL snippets (such as `VIEW` text) and bodies of Java / Scala / Python UDFs.
+- Added more tests for `PROCEDURE` object type.
 
 ## [0.15.0] - 2023-05-03
 

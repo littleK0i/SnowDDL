@@ -64,6 +64,9 @@ class SingleDbApp(BaseApp):
         parser.add_argument('--apply-masking-policy', help="Additionally apply changes to MASKING POLICIES", default=False, action='store_true')
         parser.add_argument('--apply-row-access-policy', help="Additionally apply changes to ROW ACCESS POLICIES", default=False, action='store_true')
 
+        # Cloning
+        parser.add_argument('--clone-table', help="Clone all tables from source database (without env_prefix) to destination database (with env_prefix)", default=False, action='store_true')
+
         # Subparsers
         subparsers = parser.add_subparsers(dest="action")
         subparsers.required = True
