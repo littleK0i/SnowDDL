@@ -44,14 +44,20 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
         for r in sorted(cur, key=self.sort_existing_grants):
+            # Skip grants on unknown object types
+            try:
+                object_type = ObjectType[r['granted_on']]
+            except KeyError:
+                continue
+
             # Snowflake bug: phantom MATERIALIZED VIEW when SEARCH OPTIMIZATION is enabled for table
-            if ObjectType[r['granted_on']] == ObjectType.MATERIALIZED_VIEW and str(r['name']).endswith('IDX_MV_"'):
+            if object_type == ObjectType.MATERIALIZED_VIEW and str(r['name']).endswith('IDX_MV_"'):
                 continue
 
             grants.append(Grant(
                 privilege=r['privilege'],
-                on=ObjectType[r['granted_on']],
-                name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['granted_on']]),
+                on=object_type,
+                name=build_grant_name_ident_snowflake(r['name'], object_type),
             ))
 
         cur = self.engine.execute_meta("SHOW FUTURE GRANTS TO ROLE {role_name:i}", {
@@ -59,10 +65,16 @@ class AbstractRoleResolver(AbstractResolver):
         })
 
         for r in sorted(cur, key=self.sort_existing_grants):
+            # Skip future grants on unknown object types
+            try:
+                object_type = ObjectType[r['grant_on']]
+            except KeyError:
+                continue
+
             future_grants.append(FutureGrant(
                 privilege=r['privilege'],
-                on=ObjectType[r['grant_on']],
-                name=build_grant_name_ident_snowflake(r['name'], ObjectType[r['grant_on']]),
+                on=object_type,
+                name=build_grant_name_ident_snowflake(r['name'], object_type),
             ))
 
         return role_name, grants, future_grants

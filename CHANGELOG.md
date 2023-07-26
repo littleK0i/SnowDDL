@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.18.1] - 2023-07-26
+
+- Ignore grants for object types which are currently not supported by SnowDDL.
+
 ## [0.18.0] - 2023-07-18
 
 - Added initial implementation of table cloning while using `--env-prefix` argument.
