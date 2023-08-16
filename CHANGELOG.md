@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.18.2] - 2023-08-16
+
+- When comparing grants, run `REVOKE` commands prior to `GRANT` commands. It should help to resolve issues with `OWNERSHIP` future grant, which should be revoked before a new `OWNERSHIP` grant can be added.
+
 ## [0.18.1] - 2023-07-26
 
 - Ignore grants for object types which are currently not supported by SnowDDL.

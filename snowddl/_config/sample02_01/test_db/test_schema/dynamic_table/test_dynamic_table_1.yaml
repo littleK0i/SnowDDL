@@ -3,5 +3,5 @@ text: |-
   FROM ${{ env_prefix }}test_db.test_schema.test_table_1
   GROUP BY 1
 
-target_lag: 1 minute
+target_lag: 1 hour
 warehouse: dynamic_table_wh

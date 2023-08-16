@@ -126,15 +126,20 @@ class AbstractRoleResolver(AbstractResolver):
 
             result = ResolveResult.ALTER
 
+        for existing_grant in row['grants']:
+            if existing_grant not in bp.grants \
+            and self.grant_to_future_grant(existing_grant) not in bp.future_grants:
+                self.drop_grant(bp.full_name, existing_grant)
+                result = ResolveResult.GRANT
+
         for bp_grant in bp.grants:
             if bp_grant not in row['grants']:
                 self.create_grant(bp.full_name, bp_grant)
                 result = ResolveResult.GRANT
 
-        for existing_grant in row['grants']:
-            if existing_grant not in bp.grants \
-            and self.grant_to_future_grant(existing_grant) not in bp.future_grants:
-                self.drop_grant(bp.full_name, existing_grant)
+        for existing_future_grant in row['future_grants']:
+            if existing_future_grant not in bp.future_grants:
+                self.drop_future_grant(bp.full_name, existing_future_grant)
                 result = ResolveResult.GRANT
 
         for bp_future_grant in bp.future_grants:
@@ -144,11 +149,6 @@ class AbstractRoleResolver(AbstractResolver):
 
             if self.engine.settings.refresh_future_grants:
                 self.refresh_future_grant(bp.full_name, bp_future_grant)
-                result = ResolveResult.GRANT
-
-        for existing_future_grant in row['future_grants']:
-            if existing_future_grant not in bp.future_grants:
-                self.drop_future_grant(bp.full_name, existing_future_grant)
                 result = ResolveResult.GRANT
 
         return result
