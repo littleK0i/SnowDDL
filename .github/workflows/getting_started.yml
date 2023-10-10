@@ -20,9 +20,6 @@ jobs:
           - env-prefix: PY311_BC
             python-version: 3.11
 
-          - env-prefix: PY312_BC
-            python-version: 3.12
-
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -35,9 +32,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-
-      - name: Setup CMake
-        uses: lukka/get-cmake@latest
 
       - name: Setup Python
         uses: actions/setup-python@v2
