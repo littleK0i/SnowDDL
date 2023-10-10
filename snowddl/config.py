@@ -1,5 +1,4 @@
 from collections import defaultdict
-from dataclasses import fields
 from fnmatch import translate
 from pathlib import Path
 from re import compile
@@ -32,12 +31,8 @@ class SnowDDLConfig:
         type_blueprints = self.blueprints.get(cls, {})
 
         # Add env prefix to pattern IF blueprint supports it
-        for f in fields(cls):
-            if f.name == 'full_name':
-                if issubclass(f.type, AbstractIdentWithPrefix):
-                    pattern = f"{self.env_prefix}{pattern}"
-
-            break
+        if "full_name" in cls.__fields__ and issubclass(cls.__fields__["full_name"].annotation, AbstractIdentWithPrefix):
+            pattern = f"{self.env_prefix}{pattern}"
 
         # Use Unix-style wildcards if any special characters detected in pattern
         if any(special_char in pattern for special_char in ['*', '?', '[', ']']):

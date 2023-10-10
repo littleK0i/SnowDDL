@@ -76,7 +76,7 @@ class WarehouseParser(AbstractParser):
                 max_cluster_count=warehouse.get('max_cluster_count'),
                 scaling_policy=warehouse.get('scaling_policy'),
                 resource_monitor=resource_monitor,
-                enable_query_acceleration=warehouse.get('enable_query_acceleration'),
+                enable_query_acceleration=warehouse.get('enable_query_acceleration', False),
                 query_acceleration_max_scale_factor=warehouse.get('query_acceleration_max_scale_factor'),
                 warehouse_params=self.normalise_params_dict(warehouse.get('warehouse_params', {})),
                 comment=warehouse.get('comment'),

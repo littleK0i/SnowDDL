@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, HelpFormatter
-from dataclasses import fields, is_dataclass
 from os import environ, getcwd
+from pydantic import BaseModel
 from typing import Optional
 
 from snowddl.app.base import BaseApp
@@ -114,15 +114,15 @@ class SingleDbApp(BaseApp):
         return singledb_config
 
     def convert_blueprint(self, bp: AbstractBlueprint):
-        for f in fields(bp):
-            self.convert_object_recursive(getattr(bp, f.name))
+        for field_name, field_value in bp:
+            self.convert_object_recursive(getattr(bp, field_name))
 
         return bp
 
     def convert_object_recursive(self, obj):
-        if is_dataclass(obj):
-            for f in fields(obj):
-                self.convert_object_recursive(getattr(obj, f.name))
+        if isinstance(obj, BaseModel):
+            for field_name, field_value in obj:
+                self.convert_object_recursive(getattr(obj, field_name))
 
         if isinstance(obj, list):
             for item in obj:

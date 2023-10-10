@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
 from typing import List
 
 from snowddl.blueprint import DatabaseIdent, ObjectType
+from snowddl.model import BaseModelWithConfig
 
-@dataclass
-class SnowDDLSettings:
+
+class SnowDDLSettings(BaseModelWithConfig):
     execute_safe_ddl: bool = False
     execute_unsafe_ddl: bool = False
     execute_replace_table: bool = False
@@ -19,8 +19,8 @@ class SnowDDLSettings:
     refresh_future_grants: bool = False
     refresh_stage_encryption: bool = False
     clone_table: bool = False
-    exclude_object_types: List[ObjectType] = field(default_factory=list)
-    include_object_types: List[ObjectType] = field(default_factory=list)
-    include_databases: List[DatabaseIdent] = field(default_factory=list)
+    exclude_object_types: List[ObjectType] = []
+    include_object_types: List[ObjectType] = []
+    include_databases: List[DatabaseIdent] = []
     ignore_ownership: bool = False
     max_workers: int = 8

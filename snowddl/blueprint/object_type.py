@@ -1,31 +1,29 @@
 from enum import Enum
 
-from .blueprint import *
-
 
 class ObjectType(Enum):
     ACCOUNT_PARAMETER = {
         "singular": "ACCOUNT PARAMETER",
         "plural": "ACCOUNT PARAMETERS",
-        "blueprint_cls": AccountParameterBlueprint,
+        "blueprint_cls": "AccountParameterBlueprint",
     }
 
     ALERT = {
         "singular": "ALERT",
         "plural": "ALERTS",
-        "blueprint_cls": AlertBlueprint,
+        "blueprint_cls": "AlertBlueprint",
     }
 
     CLONE_TABLE = {
         "singular": "CLONE TABLE",
         "plural": "CLONE TABLES",
-        "blueprint_cls": TableBlueprint,
+        "blueprint_cls": "TableBlueprint",
     }
 
     DATABASE = {
         "singular": "DATABASE",
         "plural": "DATABASES",
-        "blueprint_cls": DatabaseBlueprint,
+        "blueprint_cls": "DatabaseBlueprint",
     }
 
     DYNAMIC_TABLE = {
@@ -33,7 +31,7 @@ class ObjectType(Enum):
         "plural": "DYNAMIC TABLES",
         "simplified": "TABLE",
         "is_future_grant_supported": True,
-        "blueprint_cls": DynamicTableBlueprint,
+        "blueprint_cls": "DynamicTableBlueprint",
     }
 
     EVENT_TABLE = {
@@ -41,14 +39,14 @@ class ObjectType(Enum):
         "plural": "EVENT TABLES",
         "simplified": "TABLE",
         "is_future_grant_supported": True,
-        "blueprint_cls": EventTableBlueprint,
+        "blueprint_cls": "EventTableBlueprint",
     }
 
     EXTERNAL_FUNCTION = {
         "singular": "EXTERNAL FUNCTION",
         "plural": "EXTERNAL FUNCTIONS",
         "is_future_grant_supported": True,
-        "blueprint_cls": ExternalFunctionBlueprint,
+        "blueprint_cls": "ExternalFunctionBlueprint",
     }
 
     EXTERNAL_TABLE = {
@@ -56,27 +54,27 @@ class ObjectType(Enum):
         "plural": "EXTERNAL TABLES",
         "simplified": "TABLE",
         "is_future_grant_supported": True,
-        "blueprint_cls": ExternalTableBlueprint,
+        "blueprint_cls": "ExternalTableBlueprint",
     }
 
     FILE_FORMAT = {
         "singular": "FILE FORMAT",
         "plural": "FILE FORMATS",
         "is_future_grant_supported": True,
-        "blueprint_cls": FileFormatBlueprint,
+        "blueprint_cls": "FileFormatBlueprint",
     }
 
     FUNCTION = {
         "singular": "FUNCTION",
         "plural": "FUNCTIONS",
         "is_future_grant_supported": True,
-        "blueprint_cls": FunctionBlueprint,
+        "blueprint_cls": "FunctionBlueprint",
     }
 
     MASKING_POLICY = {
         "singular": "MASKING POLICY",
         "plural": "MASKING POLICIES",
-        "blueprint_cls": MaskingPolicyBlueprint,
+        "blueprint_cls": "MaskingPolicyBlueprint",
     }
 
     MATERIALIZED_VIEW = {
@@ -84,144 +82,144 @@ class ObjectType(Enum):
         "plural": "MATERIALIZED VIEWS",
         "simplified": "VIEW",
         "is_future_grant_supported": True,
-        "blueprint_cls": MaterializedViewBlueprint,
+        "blueprint_cls": "MaterializedViewBlueprint",
     }
 
     NETWORK_POLICY = {
         "singular": "NETWORK POLICY",
         "plural": "NETWORK POLICIES",
-        "blueprint_cls": NetworkPolicyBlueprint,
+        "blueprint_cls": "NetworkPolicyBlueprint",
     }
 
     PIPE = {
         "singular": "PIPE",
         "plural": "PIPES",
         "is_future_grant_supported": True,
-        "blueprint_cls": PipeBlueprint,
+        "blueprint_cls": "PipeBlueprint",
     }
 
     PROCEDURE = {
         "singular": "PROCEDURE",
         "plural": "PROCEDURES",
         "is_future_grant_supported": True,
-        "blueprint_cls": ProcedureBlueprint,
+        "blueprint_cls": "ProcedureBlueprint",
     }
 
     RESOURCE_MONITOR = {
         "singular": "RESOURCE MONITOR",
         "plural": "RESOURCE MONITORS",
-        "blueprint_cls": ResourceMonitorBlueprint,
+        "blueprint_cls": "ResourceMonitorBlueprint",
     }
 
     ROLE = {
         "singular": "ROLE",
         "plural": "ROLES",
-        "blueprint_cls": RoleBlueprint,
+        "blueprint_cls": "RoleBlueprint",
     }
 
     ROW_ACCESS_POLICY = {
         "singular": "ROW ACCESS POLICY",
         "plural": "ROW ACCESS POLICIES",
-        "blueprint_cls": RowAccessPolicyBlueprint,
+        "blueprint_cls": "RowAccessPolicyBlueprint",
     }
 
     SCHEMA = {
         "singular": "SCHEMA",
         "plural": "SCHEMAS",
         "is_future_grant_supported": True,
-        "blueprint_cls": SchemaBlueprint,
+        "blueprint_cls": "SchemaBlueprint",
     }
 
     SEQUENCE = {
         "singular": "SEQUENCE",
         "plural": "SEQUENCES",
         "is_future_grant_supported": True,
-        "blueprint_cls": SequenceBlueprint,
+        "blueprint_cls": "SequenceBlueprint",
     }
 
     SHARE = {
         "singluar": "SHARE",
         "plural": "SHARES",
-        "blueprint_cls": OutboundShareBlueprint,
+        "blueprint_cls": "OutboundShareBlueprint",
     }
 
     STAGE = {
         "singular": "STAGE",
         "plural": "STAGES",
         "is_future_grant_supported": True,
-        "blueprint_cls": StageBlueprint,
+        "blueprint_cls": "StageBlueprint",
     }
 
     STAGE_FILE = {
         "singular": "STAGE FILE",
         "plural": "STAGE FILES",
-        "blueprint_cls": StageFileBlueprint,
+        "blueprint_cls": "StageFileBlueprint",
     }
 
     STREAM = {
         "singular": "STREAM",
         "plural": "STREAMS",
         "is_future_grant_supported": True,
-        "blueprint_cls": StreamBlueprint,
+        "blueprint_cls": "StreamBlueprint",
     }
 
     TABLE = {
         "singular": "TABLE",
         "plural": "TABLES",
         "is_future_grant_supported": True,
-        "blueprint_cls": TableBlueprint,
+        "blueprint_cls": "TableBlueprint",
     }
 
     TAG = {
         "singular": "TAG",
         "plural": "TAGS",
         "is_future_grant_supported": True,
-        "blueprint_cls": TagBlueprint,
+        "blueprint_cls": "TagBlueprint",
     }
 
     TASK = {
         "singular": "TASK",
         "plural": "TASKS",
         "is_future_grant_supported": True,
-        "blueprint_cls": TaskBlueprint,
+        "blueprint_cls": "TaskBlueprint",
     }
 
     VIEW = {
         "singular": "VIEW",
         "plural": "VIEWS",
         "is_future_grant_supported": True,
-        "blueprint_cls": ViewBlueprint,
+        "blueprint_cls": "ViewBlueprint",
     }
 
     USER = {
         "singular": "USER",
         "plural": "USERS",
-        "blueprint_cls": UserBlueprint,
+        "blueprint_cls": "UserBlueprint",
     }
 
     WAREHOUSE = {
         "singular": "WAREHOUSE",
         "plural": "WAREHOUSES",
-        "blueprint_cls": WarehouseBlueprint,
+        "blueprint_cls": "WarehouseBlueprint",
     }
 
     # Constraints
     PRIMARY_KEY = {
         "singular": "PRIMARY KEY",
         "plural": "PRIMARY KEYS",
-        "blueprint_cls": PrimaryKeyBlueprint,
+        "blueprint_cls": "PrimaryKeyBlueprint",
     }
 
     UNIQUE_KEY = {
         "singular": "UNIQUE KEY",
         "plural": "UNIQUE KEYS",
-        "blueprint_cls": UniqueKeyBlueprint,
+        "blueprint_cls": "UniqueKeyBlueprint",
     }
 
     FOREIGN_KEY = {
         "singular": "FOREIGN KEY",
         "plural": "FOREIGN KEYS",
-        "blueprint_cls": ForeignKeyBlueprint,
+        "blueprint_cls": "ForeignKeyBlueprint",
     }
 
     @property
@@ -238,7 +236,10 @@ class ObjectType(Enum):
 
     @property
     def blueprint_cls(self):
-        return self.value.get('blueprint_cls')
+        # This import prevents cicrular dependency between blueprints and object types
+        from . import blueprint
+
+        return getattr(blueprint, self.value.get('blueprint_cls'))
 
     @property
     def is_future_grant_supported(self) -> bool:

@@ -279,7 +279,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 collate = None
 
             existing_columns[r['name']] = TableColumn(
-                name=r['name'],
+                name=Ident(r['name']),
                 type=DataType(dtype),
                 not_null=bool(r['null?'] == 'N'),
                 default=r['default'] if r['default'] else None,

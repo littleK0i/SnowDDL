@@ -1,44 +1,39 @@
-from dataclasses import dataclass
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union
 
-if TYPE_CHECKING:
-    from .ident import Ident, SchemaObjectIdent
-    from .data_type import DataType
+from .data_type import DataType
+from .ident import Ident, SchemaObjectIdent
+from ..model import BaseModelWithConfig
 
 
-@dataclass
-class ExternalTableColumn:
-    name: "Ident"
-    type: "DataType"
+
+class ExternalTableColumn(BaseModelWithConfig):
+    name: Ident
+    type: DataType
     expr: str
     not_null: bool
     comment: Optional[str]
 
 
-@dataclass
-class TableColumn:
-    name: "Ident"
-    type: "DataType"
+class TableColumn(BaseModelWithConfig):
+    name: Ident
+    type: DataType
     not_null: bool
-    default: Optional[Union["SchemaObjectIdent", str]]
+    default: Optional[Union[SchemaObjectIdent, str]]
     expression: Optional[str]
     collate: Optional[str]
     comment: Optional[str]
 
 
-@dataclass
-class ViewColumn:
-    name: "Ident"
+class ViewColumn(BaseModelWithConfig):
+    name: Ident
     comment: Optional[str]
 
 
-@dataclass
-class NameWithType:
-    name: "Ident"
-    type: "DataType"
+class NameWithType(BaseModelWithConfig):
+    name: Ident
+    type: DataType
 
 
-@dataclass
-class SearchOptimizationItem:
+class SearchOptimizationItem(BaseModelWithConfig):
     method: str
-    target: "Ident"
+    target: Ident

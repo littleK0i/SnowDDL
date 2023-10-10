@@ -1,20 +1,15 @@
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .ident import AbstractIdent
-    from .object_type import ObjectType
+from .ident import AbstractIdent
+from .object_type import ObjectType
+from ..model import BaseModelWithConfig
 
 
-@dataclass
-class Grant:
+class Grant(BaseModelWithConfig):
     privilege: str
-    on: "ObjectType"
-    name: "AbstractIdent"
+    on: ObjectType
+    name: AbstractIdent
 
 
-@dataclass
-class FutureGrant:
+class FutureGrant(BaseModelWithConfig):
     privilege: str
-    on: "ObjectType"
-    name: "AbstractIdent"
+    on: ObjectType
+    name: AbstractIdent

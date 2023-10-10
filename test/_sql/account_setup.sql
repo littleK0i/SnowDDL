@@ -1,5 +1,7 @@
 -- SQL script to set up a new Snowflake account for tests and GitHub workflows
--- Replace replace <password> placeholder in CREATE USER statement with an actual password of your choice
+-- Replace replace <password> placeholder statement with an actual password of your choice
+
+SET PASSWORD = '<password>';  -- replace with actual password of your choice
 
 USE ROLE ACCOUNTADMIN;
 
@@ -11,7 +13,7 @@ GRANT ROLE SYSADMIN TO ROLE SNOWDDL_ADMIN;
 GRANT ROLE SECURITYADMIN TO ROLE SNOWDDL_ADMIN;
 
 CREATE USER SNOWDDL
-PASSWORD = '<password>'
+PASSWORD = $PASSWORD
 DEFAULT_ROLE = SNOWDDL_ADMIN;
 
 GRANT ROLE SNOWDDL_ADMIN TO USER SNOWDDL;
@@ -24,7 +26,7 @@ CREATE ROLE SNOWDDL_ADMIN_TEST;
 GRANT ROLE ACCOUNTADMIN TO ROLE SNOWDDL_ADMIN_TEST;
 
 CREATE USER SNOWDDL_TEST
-PASSWORD = '<password>'
+PASSWORD = $PASSWORD
 DEFAULT_ROLE = SNOWDDL_ADMIN_TEST;
 
 GRANT ROLE SNOWDDL_ADMIN_TEST TO USER SNOWDDL_TEST;
@@ -66,4 +68,3 @@ API_ALLOWED_PREFIXES=('https://xyz.execute-api.us-west-2.amazonaws.com/productio
 ENABLED=TRUE;
 
 GRANT USAGE ON INTEGRATION TEST_API_INTEGRATION TO ROLE SNOWDDL_ADMIN;
-

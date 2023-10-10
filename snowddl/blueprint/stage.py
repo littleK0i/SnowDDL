@@ -1,18 +1,14 @@
-from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .ident import SchemaObjectIdent
+from .ident import SchemaObjectIdent
+from ..model import BaseModelWithConfig
 
 
-@dataclass
-class StageWithPath:
-    stage_name: "SchemaObjectIdent"
+class StageWithPath(BaseModelWithConfig):
+    stage_name: SchemaObjectIdent
     path: str
 
 
-@dataclass
-class StageUploadFile:
+class StageUploadFile(BaseModelWithConfig):
     local_path: Path
     stage_path: str
