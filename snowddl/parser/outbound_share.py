@@ -44,7 +44,7 @@ class OutboundShareParser(AbstractParser):
             bp = OutboundShareBlueprint(
                 full_name=OutboundShareIdent(self.env_prefix, share_name),
                 accounts=self.get_share_accounts(share),
-                share_restrictions=share.get('share_restrictions'),
+                share_restrictions=share.get('share_restrictions', False),
                 grants=self.get_share_grants(share),
                 comment=share.get('comment'),
             )
