@@ -6,7 +6,7 @@ from .data_type import BaseDataType
 
 
 class AbstractIdent(ABC):
-    allowed_chars = set(ascii_letters + digits + '_$')
+    allowed_chars = set(ascii_letters + digits + "_$")
 
     @abstractmethod
     def __init__(self):
@@ -22,7 +22,7 @@ class AbstractIdent(ABC):
         if argument_parts is not None:
             return f"{'.'.join(core_parts)}({','.join(argument_parts)})"
 
-        return '.'.join(core_parts)
+        return ".".join(core_parts)
 
     def __hash__(self):
         return hash(str(self))
@@ -44,7 +44,9 @@ class AbstractIdent(ABC):
 
         for char in val:
             if char not in self.allowed_chars:
-                raise ValueError(f"Character [{char}] in not allowed in identifier [{val}], only ASCII letters, digits and single underscores are accepted")
+                raise ValueError(
+                    f"Character [{char}] in not allowed in identifier [{val}], only ASCII letters, digits and single underscores are accepted"
+                )
 
         return val.upper()
 
@@ -58,9 +60,11 @@ class AbstractIdentWithPrefix(AbstractIdent, ABC):
 
         for char in val:
             if char not in self.allowed_chars:
-                raise ValueError(f"Character [{char}] in not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted")
+                raise ValueError(
+                    f"Character [{char}] in not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted"
+                )
 
-        if val and not val.endswith('__'):
+        if val and not val.endswith("__"):
             raise ValueError(f"Env prefix [{val}] in identifier must end with [__] double underscore")
 
         return val.upper()

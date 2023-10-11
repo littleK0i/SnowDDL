@@ -9,10 +9,11 @@ from snowddl.parser._yaml import SnowDDLLoader
 if TYPE_CHECKING:
     from snowddl.parser.abc_parser import AbstractParser
 
+
 class ParsedFile:
-    placeholder_start = '${{ '
-    placeholder_end = ' }}'
-    placeholder_re = compile(r'\${{\s([a-z0-9._-]+)\s}}', IGNORECASE)
+    placeholder_start = "${{ "
+    placeholder_end = " }}"
+    placeholder_re = compile(r"\${{\s([a-z0-9._-]+)\s}}", IGNORECASE)
 
     def __init__(self, parser: "AbstractParser", path: Path, json_schema: dict):
         self.parser = parser
@@ -43,7 +44,7 @@ class ParsedFile:
             self.schema = relative_path.parts[1]
 
     def _load_params(self):
-        with self.path.open('r', encoding='utf-8') as f:
+        with self.path.open("r", encoding="utf-8") as f:
             self.params = load(f, Loader=SnowDDLLoader) or {}
 
     def _apply_placeholders(self, data: dict):

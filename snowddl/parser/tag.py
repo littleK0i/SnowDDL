@@ -10,29 +10,19 @@ tag_json_schema = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "object_type": {
-                        "type": "string"
-                    },
-                    "object_name": {
-                        "type": "string"
-                    },
-                    "column_name": {
-                        "type": "string"
-                    },
-                    "tag_value": {
-                        "type": "string"
-                    }
+                    "object_type": {"type": "string"},
+                    "object_name": {"type": "string"},
+                    "column_name": {"type": "string"},
+                    "tag_value": {"type": "string"},
                 },
                 "required": ["object_type", "object_name", "tag_value"],
-                "additionalProperties": False
+                "additionalProperties": False,
             },
-            "minItems": 1
+            "minItems": 1,
         },
-        "comment": {
-            "type": "string"
-        }
+        "comment": {"type": "string"},
     },
-    "additionalProperties": False
+    "additionalProperties": False,
 }
 
 
@@ -43,12 +33,12 @@ class TagParser(AbstractParser):
     def process_tag(self, f: ParsedFile):
         references = []
 
-        for a in f.params.get('references', []):
+        for a in f.params.get("references", []):
             ref = TagReference(
-                object_type=ObjectType[a['object_type'].upper()],
-                object_name=build_schema_object_ident(self.env_prefix, a['object_name'], f.database, f.schema),
-                column_name=Ident(a['column_name']) if a.get('column_name') else None,
-                tag_value=a['tag_value'],
+                object_type=ObjectType[a["object_type"].upper()],
+                object_name=build_schema_object_ident(self.env_prefix, a["object_name"], f.database, f.schema),
+                column_name=Ident(a["column_name"]) if a.get("column_name") else None,
+                tag_value=a["tag_value"],
             )
 
             references.append(ref)
@@ -56,7 +46,7 @@ class TagParser(AbstractParser):
         bp = TagBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             references=references,
-            comment=f.params.get('comment'),
+            comment=f.params.get("comment"),
         )
 
         self.config.add_blueprint(bp)

@@ -12,9 +12,9 @@ def test_step1(helper):
     assert len(fk) == 1
 
     assert {
-       "columns": ["AUTHOR_ID"],
-       "ref_table": str(SchemaObjectIdent(helper.env_prefix, "db1", "sc1", "tb008_tb1")),
-       "ref_columns": ["AUTHOR_ID"],
+        "columns": ["AUTHOR_ID"],
+        "ref_table": str(SchemaObjectIdent(helper.env_prefix, "db1", "sc1", "tb008_tb1")),
+        "ref_columns": ["AUTHOR_ID"],
     } in fk
 
 
@@ -29,9 +29,9 @@ def test_step2(helper):
     assert len(fk) == 1
 
     assert {
-       "columns": ["AUTHOR_ID"],
-       "ref_table": str(SchemaObjectIdent(helper.env_prefix, "db1", "sc1", "tb008_tb1")),
-       "ref_columns": ["AUTHOR_ID"],
+        "columns": ["AUTHOR_ID"],
+        "ref_table": str(SchemaObjectIdent(helper.env_prefix, "db1", "sc1", "tb008_tb1")),
+        "ref_columns": ["AUTHOR_ID"],
     } in fk
 
 
@@ -43,4 +43,3 @@ def test_step3(helper):
     assert pk == []
     assert uk == []
     assert fk == []
-

@@ -19,32 +19,33 @@ class DatabaseResolver(AbstractResolver):
         if bp.is_transient:
             query.append("TRANSIENT")
 
-        query.append("DATABASE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "DATABASE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         if bp.retention_time is not None:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            })
+            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
         if bp.comment:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         self.engine.execute_safe_ddl(query)
 
         # Drop schema PUBLIC which is created automatically
-        self.engine.execute_safe_ddl("DROP SCHEMA {database:i}.{schema:i}", {
-            "database": bp.full_name,
-            "schema": "PUBLIC"
-        })
+        self.engine.execute_safe_ddl("DROP SCHEMA {database:i}.{schema:i}", {"database": bp.full_name, "schema": "PUBLIC"})
 
         return ResolveResult.CREATE
 
     def compare_object(self, bp: DatabaseBlueprint, row: dict):
-        if bp.is_transient != row['is_transient']:
+        if bp.is_transient != row["is_transient"]:
             if bp.is_transient:
                 raise SnowDDLUnsupportedError("Cannot change PERMANENT object into TRANSIENT object")
             else:
@@ -52,19 +53,18 @@ class DatabaseResolver(AbstractResolver):
 
         query = self.engine.query_builder()
 
-        query.append("ALTER DATABASE {full_name:i} SET ", {
-            "full_name": bp.full_name
-        })
+        query.append("ALTER DATABASE {full_name:i} SET ", {"full_name": bp.full_name})
 
-        if bp.retention_time is not None and bp.retention_time != row['retention_time']:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            })
+        if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
+            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
-        if bp.comment != row['comment']:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+        if bp.comment != row["comment"]:
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         if query.fragment_count() > 1:
             self.engine.execute_unsafe_ddl(query)
@@ -73,9 +73,7 @@ class DatabaseResolver(AbstractResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP DATABASE {database:i}", {
-            "database": row['database']
-        })
+        self.engine.execute_unsafe_ddl("DROP DATABASE {database:i}", {"database": row["database"]})
 
         return ResolveResult.DROP
 

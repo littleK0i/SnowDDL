@@ -3,7 +3,7 @@ def test_step1(helper):
     so_items = helper.desc_search_optimization("db1", "sc1", "tb006_tb1")
 
     # Search optimization is ON
-    assert table['search_optimization'] == "ON"
+    assert table["search_optimization"] == "ON"
 
     # Specific search optimization items
     assert {"method": "EQUALITY", "target": "NUM1"} in so_items
@@ -32,12 +32,13 @@ def test_step1(helper):
     assert {"method": "GEO", "target": "GEO1"} in so_items
     assert {"method": "GEO", "target": "GEO2"} not in so_items
 
+
 def test_step2(helper):
     table = helper.show_table("db1", "sc1", "tb006_tb1")
     so_items = helper.desc_search_optimization("db1", "sc1", "tb006_tb1")
 
     # Search optimization is ON
-    assert table['search_optimization'] == "ON"
+    assert table["search_optimization"] == "ON"
 
     # Specific search optimization items
     assert {"method": "EQUALITY", "target": "NUM1"} in so_items
@@ -60,6 +61,6 @@ def test_step3(helper):
     so_items = helper.desc_search_optimization("db1", "sc1", "tb006_tb1")
 
     # Search optimization is OFF
-    assert table['search_optimization'] == "OFF"
+    assert table["search_optimization"] == "OFF"
 
     assert len(so_items) == 0

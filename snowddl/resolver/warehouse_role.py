@@ -18,20 +18,24 @@ class WarehouseRoleResolver(AbstractRoleResolver):
     def get_blueprint_usage_role(self, warehouse: WarehouseBlueprint):
         grants = []
 
-        grants.append(Grant(
-            privilege="USAGE",
-            on=ObjectType.WAREHOUSE,
-            name=warehouse.full_name,
-        ))
+        grants.append(
+            Grant(
+                privilege="USAGE",
+                on=ObjectType.WAREHOUSE,
+                name=warehouse.full_name,
+            )
+        )
 
-        grants.append(Grant(
-            privilege="OPERATE",
-            on=ObjectType.WAREHOUSE,
-            name=warehouse.full_name,
-        ))
+        grants.append(
+            Grant(
+                privilege="OPERATE",
+                on=ObjectType.WAREHOUSE,
+                name=warehouse.full_name,
+            )
+        )
 
         bp = RoleBlueprint(
-            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, 'USAGE', self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, "USAGE", self.get_role_suffix()),
             grants=grants,
             future_grants=[],
             comment=None,
@@ -42,20 +46,24 @@ class WarehouseRoleResolver(AbstractRoleResolver):
     def get_blueprint_monitor_role(self, warehouse: WarehouseBlueprint):
         grants = []
 
-        grants.append(Grant(
-            privilege="MONITOR",
-            on=ObjectType.WAREHOUSE,
-            name=warehouse.full_name,
-        ))
+        grants.append(
+            Grant(
+                privilege="MONITOR",
+                on=ObjectType.WAREHOUSE,
+                name=warehouse.full_name,
+            )
+        )
 
-        grants.append(Grant(
-            privilege="OPERATE",
-            on=ObjectType.WAREHOUSE,
-            name=warehouse.full_name,
-        ))
+        grants.append(
+            Grant(
+                privilege="OPERATE",
+                on=ObjectType.WAREHOUSE,
+                name=warehouse.full_name,
+            )
+        )
 
         bp = RoleBlueprint(
-            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, 'MONITOR', self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, warehouse.full_name, "MONITOR", self.get_role_suffix()),
             grants=grants,
             future_grants=[],
             comment=None,

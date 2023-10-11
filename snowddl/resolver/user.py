@@ -11,28 +11,31 @@ class UserResolver(AbstractResolver):
     def get_existing_objects(self):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW USERS LIKE {env_prefix:ls}", {
-            'env_prefix': self.config.env_prefix,
-        })
+        cur = self.engine.execute_meta(
+            "SHOW USERS LIKE {env_prefix:ls}",
+            {
+                "env_prefix": self.config.env_prefix,
+            },
+        )
 
         for r in cur:
-            if r['owner'] != self.engine.context.current_role:
+            if r["owner"] != self.engine.context.current_role:
                 continue
 
-            existing_objects[r['name']] = {
-                "name": r['name'],
-                "login_name": r['login_name'] if r['login_name'] else None,
-                "display_name": r['display_name'] if r['display_name'] else None,
-                "first_name": r['first_name'] if r['first_name'] else None,
-                "last_name": r['last_name'] if r['last_name'] else None,
-                "email": r['email'] if r['email'] else None,
-                "disabled": r['disabled'] == 'true',
-                "default_warehouse": r['default_warehouse'] if r['default_warehouse'] else None,
-                "default_namespace": r['default_namespace'] if r['default_namespace'] else None,
-                "default_role": r['default_role'] if r['default_role'] else None,
-                "has_password": r['has_password'] == 'true',
-                "has_rsa_public_key": r['has_rsa_public_key'] == 'true',
-                "comment": r['comment'] if r['comment'] else None,
+            existing_objects[r["name"]] = {
+                "name": r["name"],
+                "login_name": r["login_name"] if r["login_name"] else None,
+                "display_name": r["display_name"] if r["display_name"] else None,
+                "first_name": r["first_name"] if r["first_name"] else None,
+                "last_name": r["last_name"] if r["last_name"] else None,
+                "email": r["email"] if r["email"] else None,
+                "disabled": r["disabled"] == "true",
+                "default_warehouse": r["default_warehouse"] if r["default_warehouse"] else None,
+                "default_namespace": r["default_namespace"] if r["default_namespace"] else None,
+                "default_role": r["default_role"] if r["default_role"] else None,
+                "has_password": r["has_password"] == "true",
+                "has_rsa_public_key": r["has_rsa_public_key"] == "true",
+                "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
@@ -43,34 +46,49 @@ class UserResolver(AbstractResolver):
     def create_object(self, bp: UserBlueprint):
         query = self.engine.query_builder()
 
-        query.append("CREATE USER {name:i}", {
-            "name": bp.full_name,
-        })
+        query.append(
+            "CREATE USER {name:i}",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         if bp.password:
-            query.append_nl("PASSWORD = {password}", {
-                "password": bp.password,
-            })
+            query.append_nl(
+                "PASSWORD = {password}",
+                {
+                    "password": bp.password,
+                },
+            )
 
         if bp.rsa_public_key:
-            query.append_nl("RSA_PUBLIC_KEY = {rsa_public_key}", {
-                "rsa_public_key": bp.rsa_public_key,
-            })
+            query.append_nl(
+                "RSA_PUBLIC_KEY = {rsa_public_key}",
+                {
+                    "rsa_public_key": bp.rsa_public_key,
+                },
+            )
 
         if bp.rsa_public_key_2:
-            query.append_nl("RSA_PUBLIC_KEY_2 = {rsa_public_key_2}", {
-                "rsa_public_key_2": bp.rsa_public_key_2,
-            })
+            query.append_nl(
+                "RSA_PUBLIC_KEY_2 = {rsa_public_key_2}",
+                {
+                    "rsa_public_key_2": bp.rsa_public_key_2,
+                },
+            )
 
         query.append(self._build_common_properties(bp))
         query.append(self._build_common_parameters(bp))
 
         self.engine.execute_safe_ddl(query)
 
-        self.engine.execute_safe_ddl("GRANT ROLE {user_role:i} TO USER {user_name:i}", {
-            "user_name": bp.full_name,
-            "user_role": self._get_user_role_ident(bp),
-        })
+        self.engine.execute_safe_ddl(
+            "GRANT ROLE {user_role:i} TO USER {user_name:i}",
+            {
+                "user_name": bp.full_name,
+                "user_role": self._get_user_role_ident(bp),
+            },
+        )
 
         return ResolveResult.CREATE
 
@@ -95,9 +113,12 @@ class UserResolver(AbstractResolver):
         return result
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP USER {name:i}", {
-            "name": row['name'],
-        })
+        self.engine.execute_unsafe_ddl(
+            "DROP USER {name:i}",
+            {
+                "name": row["name"],
+            },
+        )
 
         return ResolveResult.DROP
 
@@ -124,31 +145,45 @@ class UserResolver(AbstractResolver):
         query = self.engine.query_builder()
 
         for param_name, param_value in bp.session_params.items():
-            query.append_nl("{param_name:r} = {param_value:dp}", {
-                "param_name": param_name,
-                "param_value": param_value,
-            })
+            query.append_nl(
+                "{param_name:r} = {param_value:dp}",
+                {
+                    "param_name": param_name,
+                    "param_value": param_value,
+                },
+            )
 
         return query
 
     def _compare_properties(self, bp: UserBlueprint, row: dict):
-        if bp.login_name == row['login_name'] \
-        and bp.display_name == row['display_name'] \
-        and bp.first_name == row['first_name'] \
-        and bp.last_name == row['last_name'] \
-        and bp.email == row['email'] \
-        and bp.disabled == row['disabled'] \
-        and ((bp.default_warehouse is None and row['default_warehouse'] is None) or str(bp.default_warehouse) == row['default_warehouse']) \
-        and ((bp.default_namespace is None and row['default_namespace'] is None) or str(bp.default_namespace) == row['default_namespace']) \
-        and str(self._get_user_role_ident(bp)) == row['default_role'] \
-        and bp.comment == row['comment']:
+        if (
+            bp.login_name == row["login_name"]
+            and bp.display_name == row["display_name"]
+            and bp.first_name == row["first_name"]
+            and bp.last_name == row["last_name"]
+            and bp.email == row["email"]
+            and bp.disabled == row["disabled"]
+            and (
+                (bp.default_warehouse is None and row["default_warehouse"] is None)
+                or str(bp.default_warehouse) == row["default_warehouse"]
+            )
+            and (
+                (bp.default_namespace is None and row["default_namespace"] is None)
+                or str(bp.default_namespace) == row["default_namespace"]
+            )
+            and str(self._get_user_role_ident(bp)) == row["default_role"]
+            and bp.comment == row["comment"]
+        ):
             return False
 
         query = self.engine.query_builder()
 
-        query.append("ALTER USER {name:i} SET", {
-            "name": bp.full_name,
-        })
+        query.append(
+            "ALTER USER {name:i} SET",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         query.append(self._build_common_properties(bp))
 
@@ -157,32 +192,37 @@ class UserResolver(AbstractResolver):
         return True
 
     def _compare_public_keys(self, bp: UserBlueprint, row: dict):
-        if not bp.rsa_public_key and not bp.rsa_public_key_2 and not row['has_rsa_public_key']:
+        if not bp.rsa_public_key and not bp.rsa_public_key_2 and not row["has_rsa_public_key"]:
             return False
 
         existing_public_key = None
         existing_public_key_2 = None
 
-        cur = self.engine.execute_meta("DESC USER {name:i}", {
-            "name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "DESC USER {name:i}",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         for r in cur:
-            if r['property'] == 'RSA_PUBLIC_KEY' and r['value'] != 'null':
-                existing_public_key = r['value']
+            if r["property"] == "RSA_PUBLIC_KEY" and r["value"] != "null":
+                existing_public_key = r["value"]
 
-            if r['property'] == 'RSA_PUBLIC_KEY_2' and r['value'] != 'null':
-                existing_public_key_2 = r['value']
+            if r["property"] == "RSA_PUBLIC_KEY_2" and r["value"] != "null":
+                existing_public_key_2 = r["value"]
 
-        if bp.rsa_public_key == existing_public_key \
-        and bp.rsa_public_key_2 == existing_public_key_2:
+        if bp.rsa_public_key == existing_public_key and bp.rsa_public_key_2 == existing_public_key_2:
             return False
 
-        self.engine.execute_safe_ddl("ALTER USER {name:i} SET rsa_public_key = {rsa_public_key}, rsa_public_key_2={rsa_public_key_2}", {
-            "name": bp.full_name,
-            "rsa_public_key": bp.rsa_public_key,
-            "rsa_public_key_2": bp.rsa_public_key_2,
-        })
+        self.engine.execute_safe_ddl(
+            "ALTER USER {name:i} SET rsa_public_key = {rsa_public_key}, rsa_public_key_2={rsa_public_key_2}",
+            {
+                "name": bp.full_name,
+                "rsa_public_key": bp.rsa_public_key,
+                "rsa_public_key_2": bp.rsa_public_key_2,
+            },
+        )
 
         return True
 
@@ -190,15 +230,18 @@ class UserResolver(AbstractResolver):
         existing_params = self._get_existing_user_parameters(bp)
         query = self.engine.query_builder()
 
-        query.append("ALTER USER {name:i} SET", {
-            "name": bp.full_name,
-        })
+        query.append(
+            "ALTER USER {name:i} SET",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         for param_name, param_value in bp.session_params.items():
             if param_name not in existing_params:
                 raise ValueError(f"Unknown parameter [{param_name}] for user [{bp.full_name}]")
 
-            if compare_dynamic_param_value(param_value, existing_params[param_name]['value']):
+            if compare_dynamic_param_value(param_value, existing_params[param_name]["value"]):
                 continue
 
             # At least one parameter in blueprint does not match the existing value
@@ -209,11 +252,14 @@ class UserResolver(AbstractResolver):
         # If parameter was set on USER level and does not exist in blueprint anymore
         # Unset such parameter and reset it to default
         for param_name, p in existing_params.items():
-            if p['level'] == 'USER' and p['key'] not in bp.session_params:
+            if p["level"] == "USER" and p["key"] not in bp.session_params:
                 # Setting parameter to NULL equals to UNSET
-                query.append_nl("{param_name:r} = NULL", {
-                    "param_name": param_name,
-                })
+                query.append_nl(
+                    "{param_name:r} = NULL",
+                    {
+                        "param_name": param_name,
+                    },
+                )
 
         if query.fragment_count() > 1:
             self.engine.execute_safe_ddl(query)
@@ -224,28 +270,37 @@ class UserResolver(AbstractResolver):
     def _check_user_role_grant(self, bp: UserBlueprint):
         user_role = self._get_user_role_ident(bp)
 
-        cur = self.engine.execute_meta("SHOW GRANTS TO USER {name:i}", {
-            "name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "SHOW GRANTS TO USER {name:i}",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         for r in cur:
-            if r['role'] == str(user_role):
+            if r["role"] == str(user_role):
                 return False
 
-        self.engine.execute_safe_ddl("GRANT ROLE {user_role:i} TO USER {user_name:i}", {
-            "user_name": bp.full_name,
-            "user_role": user_role,
-        })
+        self.engine.execute_safe_ddl(
+            "GRANT ROLE {user_role:i} TO USER {user_name:i}",
+            {
+                "user_name": bp.full_name,
+                "user_role": user_role,
+            },
+        )
 
         return True
 
     def _refresh_password(self, bp: UserBlueprint, row: dict):
         if bp.password:
             try:
-                self.engine.execute_safe_ddl("ALTER USER {name:i} SET PASSWORD = {password}", {
-                    "name": bp.full_name,
-                    "password": bp.password,
-                })
+                self.engine.execute_safe_ddl(
+                    "ALTER USER {name:i} SET PASSWORD = {password}",
+                    {
+                        "name": bp.full_name,
+                        "password": bp.password,
+                    },
+                )
             except SnowDDLExecuteError as e:
                 # Password rejected due to 'PRIOR_USE'
                 # Not an error, skip such user
@@ -256,10 +311,13 @@ class UserResolver(AbstractResolver):
 
             return True
 
-        if row['has_password']:
-            self.engine.execute_safe_ddl("ALTER USER {name:i} UNSET PASSWORD", {
-                "name": bp.full_name,
-            })
+        if row["has_password"]:
+            self.engine.execute_safe_ddl(
+                "ALTER USER {name:i} UNSET PASSWORD",
+                {
+                    "name": bp.full_name,
+                },
+            )
 
             return True
 
@@ -271,11 +329,14 @@ class UserResolver(AbstractResolver):
     def _get_existing_user_parameters(self, bp: UserBlueprint):
         existing_params = {}
 
-        cur = self.engine.execute_meta("SHOW PARAMETERS IN USER {name:i}", {
-            "name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "SHOW PARAMETERS IN USER {name:i}",
+            {
+                "name": bp.full_name,
+            },
+        )
 
         for r in cur:
-            existing_params[r['key']] = r
+            existing_params[r["key"]] = r
 
         return existing_params

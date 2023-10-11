@@ -5,9 +5,9 @@ def test_step1(helper):
     assert len(cols) == 23
 
     # Data types and sizes
-    assert cols['NUM1']['type'] == "NUMBER(10,0)"
-    assert cols['NUM2']['type'] == "NUMBER(38,0)"
-    assert cols['VAR1']['type'] == "VARCHAR(10)"
+    assert cols["NUM1"]["type"] == "NUMBER(10,0)"
+    assert cols["NUM2"]["type"] == "NUMBER(38,0)"
+    assert cols["VAR1"]["type"] == "VARCHAR(10)"
 
 
 def test_step2(helper):
@@ -17,9 +17,9 @@ def test_step2(helper):
     assert len(cols) == 23
 
     # Data types and sizes
-    assert cols['NUM1']['type'] == "NUMBER(12,0)"
-    assert cols['NUM2']['type'] == "NUMBER(36,0)"
-    assert cols['VAR1']['type'] == "VARCHAR(100)"
+    assert cols["NUM1"]["type"] == "NUMBER(12,0)"
+    assert cols["NUM2"]["type"] == "NUMBER(36,0)"
+    assert cols["VAR1"]["type"] == "VARCHAR(100)"
 
 
 def test_step3(helper):

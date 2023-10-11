@@ -11,23 +11,26 @@ class ViewResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW VIEWS IN SCHEMA {database:i}.{schema:i}", {
-            "database": schema['database'],
-            "schema": schema['schema'],
-        })
+        cur = self.engine.execute_meta(
+            "SHOW VIEWS IN SCHEMA {database:i}.{schema:i}",
+            {
+                "database": schema["database"],
+                "schema": schema["schema"],
+            },
+        )
 
         for r in cur:
-            if r['is_materialized'] == 'true':
+            if r["is_materialized"] == "true":
                 continue
 
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
-                "database": r['database_name'],
-                "schema": r['schema_name'],
-                "name": r['name'],
-                "owner": r['owner'],
-                "text": r['text'],
-                "is_secure": r['is_secure'] == "true",
-                "comment": r['comment'] if r['comment'] else None,
+                "database": r["database_name"],
+                "schema": r["schema_name"],
+                "name": r["name"],
+                "owner": r["owner"],
+                "text": r["text"],
+                "is_secure": r["is_secure"] == "true",
+                "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
@@ -40,10 +43,13 @@ class ViewResolver(AbstractSchemaObjectResolver):
 
         # Comments on views are broken and must be applied separately
         if bp.comment:
-            self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
-                "full_name": bp.full_name,
-                "comment": bp.comment,
-            })
+            self.engine.execute_safe_ddl(
+                "COMMENT ON VIEW {full_name:i} IS {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
 
         return ResolveResult.CREATE
 
@@ -51,22 +57,28 @@ class ViewResolver(AbstractSchemaObjectResolver):
         query = self._build_create_view(bp)
 
         # If view text is exactly the same
-        if row['text'] == str(query):
+        if row["text"] == str(query):
             try:
                 # ... and it is possible to query view (underlying objects were not changed)
-                self.engine.describe_meta("SELECT * FROM {full_name:i}", {
-                    "full_name": bp.full_name,
-                })
-            except SnowDDLExecuteError as e:
+                self.engine.describe_meta(
+                    "SELECT * FROM {full_name:i}",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                )
+            except SnowDDLExecuteError:
                 # TODO: add checks for specific errors?
                 pass
             else:
                 # Comments on views are broken and must be applied separately
-                if bp.comment != row['comment']:
-                    self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
-                        "full_name": bp.full_name,
-                        "comment": bp.comment if bp.comment else '',
-                    })
+                if bp.comment != row["comment"]:
+                    self.engine.execute_safe_ddl(
+                        "COMMENT ON VIEW {full_name:i} IS {comment}",
+                        {
+                            "full_name": bp.full_name,
+                            "comment": bp.comment if bp.comment else "",
+                        },
+                    )
 
                     return ResolveResult.ALTER
                 else:
@@ -77,19 +89,25 @@ class ViewResolver(AbstractSchemaObjectResolver):
 
         # Comments on views are broken and must be applied separately
         if bp.comment:
-            self.engine.execute_safe_ddl("COMMENT ON VIEW {full_name:i} IS {comment}", {
-                "full_name": bp.full_name,
-                "comment": bp.comment,
-            })
+            self.engine.execute_safe_ddl(
+                "COMMENT ON VIEW {full_name:i} IS {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
 
         return ResolveResult.REPLACE
 
     def drop_object(self, row: dict):
-        self.engine.execute_safe_ddl("DROP VIEW {database:i}.{schema:i}.{view_name:i}", {
-            "database": row['database'],
-            "schema": row['schema'],
-            "view_name": row['name'],
-        })
+        self.engine.execute_safe_ddl(
+            "DROP VIEW {database:i}.{schema:i}.{view_name:i}",
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+                "view_name": row["name"],
+            },
+        )
 
         return ResolveResult.DROP
 
@@ -101,25 +119,34 @@ class ViewResolver(AbstractSchemaObjectResolver):
         if bp.is_secure:
             query.append("SECURE")
 
-        query.append("VIEW {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "VIEW {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         if bp.columns:
-            query.append_nl('(')
+            query.append_nl("(")
 
             for idx, c in enumerate(bp.columns):
-                query.append_nl("    {comma:r}{col_name:i}", {
-                    "comma": "  " if idx == 0 else ", ",
-                    "col_name": c.name,
-                })
+                query.append_nl(
+                    "    {comma:r}{col_name:i}",
+                    {
+                        "comma": "  " if idx == 0 else ", ",
+                        "col_name": c.name,
+                    },
+                )
 
                 if c.comment:
-                    query.append("COMMENT {col_comment}", {
-                        "col_comment": c.comment,
-                    })
+                    query.append(
+                        "COMMENT {col_comment}",
+                        {
+                            "col_comment": c.comment,
+                        },
+                    )
 
-            query.append_nl(')')
+            query.append_nl(")")
 
         query.append_nl("COPY GRANTS")
         query.append_nl("AS")

@@ -11,7 +11,8 @@ class SnowDDLContext:
     def __init__(self, engine: "SnowDDLEngine"):
         self.engine = engine
 
-        cur = self.engine.execute_meta("""
+        cur = self.engine.execute_meta(
+            """
             SELECT CURRENT_ACCOUNT() AS current_account
                 , CURRENT_REGION() AS current_region
                 , CURRENT_SESSION() AS current_session
@@ -22,27 +23,28 @@ class SnowDDLContext:
                 , IS_ROLE_IN_SESSION('SYSADMIN') AS is_sys_admin
                 , IS_ROLE_IN_SESSION('SECURITYADMIN') AS is_security_admin
                 , SYSTEM$BOOTSTRAP_DATA_REQUEST('ACCOUNT') AS bootstrap_account
-        """)
+        """
+        )
 
         r = cur.fetchone()
 
-        self.current_account = r['CURRENT_ACCOUNT']
-        self.current_region = r['CURRENT_REGION']
-        self.current_session = r['CURRENT_SESSION']
-        self.current_user = r['CURRENT_USER']
-        self.current_role = r['CURRENT_ROLE']
-        self.current_warehouse = r['CURRENT_WAREHOUSE']
+        self.current_account = r["CURRENT_ACCOUNT"]
+        self.current_region = r["CURRENT_REGION"]
+        self.current_session = r["CURRENT_SESSION"]
+        self.current_user = r["CURRENT_USER"]
+        self.current_role = r["CURRENT_ROLE"]
+        self.current_warehouse = r["CURRENT_WAREHOUSE"]
 
         self.original_role = self.current_role
 
-        self.is_account_admin = r['IS_ACCOUNT_ADMIN']
-        self.is_sys_admin = r['IS_SYS_ADMIN']
-        self.is_security_admin = r['IS_SECURITY_ADMIN']
+        self.is_account_admin = r["IS_ACCOUNT_ADMIN"]
+        self.is_sys_admin = r["IS_SYS_ADMIN"]
+        self.is_security_admin = r["IS_SECURITY_ADMIN"]
 
-        bootstrap_account = loads(r['BOOTSTRAP_ACCOUNT'])
+        bootstrap_account = loads(r["BOOTSTRAP_ACCOUNT"])
 
-        self.version = bootstrap_account['serverVersion']
-        self.edition = Edition[bootstrap_account['accountInfo']['serviceLevelName']]
+        self.version = bootstrap_account["serverVersion"]
+        self.edition = Edition[bootstrap_account["accountInfo"]["serviceLevelName"]]
 
         self._validate()
 
@@ -64,34 +66,47 @@ class SnowDDLContext:
 
         role_with_prefix = AccountObjectIdent(self.engine.config.env_prefix, self.current_role)
 
-        cur = self.engine.execute_meta("SHOW ROLES LIKE {role_with_prefix:lf}", {
-            "role_with_prefix": role_with_prefix
-        })
+        cur = self.engine.execute_meta("SHOW ROLES LIKE {role_with_prefix:lf}", {"role_with_prefix": role_with_prefix})
 
         if cur.rowcount == 0:
-            self.engine.execute_context_ddl("CREATE ROLE {role_with_prefix:i}", {
-                "role_with_prefix": role_with_prefix,
-            })
+            self.engine.execute_context_ddl(
+                "CREATE ROLE {role_with_prefix:i}",
+                {
+                    "role_with_prefix": role_with_prefix,
+                },
+            )
 
-            self.engine.execute_context_ddl("GRANT ROLE {current_role:i} TO ROLE {role_with_prefix:i}", {
-                "role_with_prefix": role_with_prefix,
-                "current_role": self.current_role,
-            })
-
-            self.engine.execute_context_ddl("GRANT ROLE {role_with_prefix:i} TO USER {current_user:i}", {
-                "role_with_prefix": role_with_prefix,
-                "current_user": self.current_user,
-            })
-
-            if not self.is_account_admin:
-                self.engine.execute_context_ddl("GRANT ROLE {role_with_prefix:i} TO ROLE ACCOUNTADMIN", {
+            self.engine.execute_context_ddl(
+                "GRANT ROLE {current_role:i} TO ROLE {role_with_prefix:i}",
+                {
                     "role_with_prefix": role_with_prefix,
                     "current_role": self.current_role,
-                })
+                },
+            )
 
-        self.engine.execute_meta("USE ROLE {role_with_prefix:i}", {
-            "role_with_prefix": role_with_prefix,
-        })
+            self.engine.execute_context_ddl(
+                "GRANT ROLE {role_with_prefix:i} TO USER {current_user:i}",
+                {
+                    "role_with_prefix": role_with_prefix,
+                    "current_user": self.current_user,
+                },
+            )
+
+            if not self.is_account_admin:
+                self.engine.execute_context_ddl(
+                    "GRANT ROLE {role_with_prefix:i} TO ROLE ACCOUNTADMIN",
+                    {
+                        "role_with_prefix": role_with_prefix,
+                        "current_role": self.current_role,
+                    },
+                )
+
+        self.engine.execute_meta(
+            "USE ROLE {role_with_prefix:i}",
+            {
+                "role_with_prefix": role_with_prefix,
+            },
+        )
 
         self.current_role = str(role_with_prefix)
         self.engine.flush_thread_buffers()
@@ -100,13 +115,19 @@ class SnowDDLContext:
         if not self.engine.config.env_prefix:
             return
 
-        self.engine.execute_meta("USE ROLE {original_role:i}", {
-            "original_role": self.original_role,
-        })
+        self.engine.execute_meta(
+            "USE ROLE {original_role:i}",
+            {
+                "original_role": self.original_role,
+            },
+        )
 
-        self.engine.execute_context_ddl("DROP ROLE {role_with_prefix:i}", {
-            "role_with_prefix": self.current_role,
-        })
+        self.engine.execute_context_ddl(
+            "DROP ROLE {role_with_prefix:i}",
+            {
+                "role_with_prefix": self.current_role,
+            },
+        )
 
         self.current_role = self.original_role
         self.engine.flush_thread_buffers()

@@ -13,14 +13,14 @@ if TYPE_CHECKING:
 
 
 class ResolveResult(Enum):
-    CREATE      = "CREATE"
-    ALTER       = "ALTER"
-    DROP        = "DROP"
-    REPLACE     = "REPLACE"
-    SKIP        = "SKIP"
-    GRANT       = "GRANT"
-    NOCHANGE    = "NOCHANGE"
-    ERROR       = "ERROR"
+    CREATE = "CREATE"
+    ALTER = "ALTER"
+    DROP = "DROP"
+    REPLACE = "REPLACE"
+    SKIP = "SKIP"
+    GRANT = "GRANT"
+    NOCHANGE = "NOCHANGE"
+    ERROR = "ERROR"
     UNSUPPORTED = "UNSUPPORTED"
 
 
@@ -34,10 +34,10 @@ class AbstractResolver(ABC):
 
         self.object_type = self.get_object_type()
         self.blueprints: Dict[str, AbstractBlueprint] = {}
-        self.existing_objects: Dict[str,Dict] = {}
+        self.existing_objects: Dict[str, Dict] = {}
 
-        self.resolved_objects: Dict[str,ResolveResult] = {}
-        self.errors: Dict[str,Exception] = {}
+        self.resolved_objects: Dict[str, ResolveResult] = {}
+        self.errors: Dict[str, Exception] = {}
 
     def resolve(self):
         if self._is_skipped():
@@ -48,7 +48,9 @@ class AbstractResolver(ABC):
         try:
             self.existing_objects = self.get_existing_objects()
         except SnowDDLExecuteError as e:
-            self.engine.logger.info(f"Could not get existing objects for resolver [{self.__class__.__name__}]: \n{e.verbose_message()}")
+            self.engine.logger.info(
+                f"Could not get existing objects for resolver [{self.__class__.__name__}]: \n{e.verbose_message()}"
+            )
             raise e.snow_exc
 
         self._pre_process()
@@ -63,7 +65,9 @@ class AbstractResolver(ABC):
         try:
             self.existing_objects = self.get_existing_objects()
         except SnowDDLExecuteError as e:
-            self.engine.logger.info(f"Could not get existing objects for resolver [{self.__class__.__name__}]: \n{e.verbose_message()}")
+            self.engine.logger.info(
+                f"Could not get existing objects for resolver [{self.__class__.__name__}]: \n{e.verbose_message()}"
+            )
             raise e.snow_exc
 
         self._pre_process()
@@ -149,9 +153,11 @@ class AbstractResolver(ABC):
 
             # Allocate blueprints with no dependencies or fully resolved dependencies
             for full_name, bp in remaining_blueprints.items():
-                if not isinstance(bp, DependsOnMixin) \
-                or not bp.depends_on \
-                or all((str(d) in allocated_full_names) for d in bp.depends_on):
+                if (
+                    not isinstance(bp, DependsOnMixin)
+                    or not bp.depends_on
+                    or all((str(d) in allocated_full_names) for d in bp.depends_on)
+                ):
                     batch.append(full_name)
 
             # Allocate blueprints with unresolved dependencies to the last batch
@@ -176,7 +182,7 @@ class AbstractResolver(ABC):
             return True
 
         if self.engine.settings.include_object_types:
-            return not (self.object_type in self.engine.settings.include_object_types)
+            return self.object_type not in self.engine.settings.include_object_types
 
         if self.skip_on_empty_blueprints and not self.get_blueprints():
             return True

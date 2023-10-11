@@ -5,7 +5,6 @@ from .ident import Ident, SchemaObjectIdent
 from ..model import BaseModelWithConfig
 
 
-
 class ExternalTableColumn(BaseModelWithConfig):
     name: Ident
     type: DataType

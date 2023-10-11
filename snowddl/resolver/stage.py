@@ -2,6 +2,7 @@ from snowddl.blueprint import StageBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 from snowddl.resolver._utils import coalesce, compare_dynamic_param_value
 
+
 class StageResolver(AbstractSchemaObjectResolver):
     def get_object_type(self) -> ObjectType:
         return ObjectType.STAGE
@@ -9,25 +10,28 @@ class StageResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW STAGES IN SCHEMA {database:i}.{schema:i}", {
-            "database": schema['database'],
-            "schema": schema['schema'],
-        })
+        cur = self.engine.execute_meta(
+            "SHOW STAGES IN SCHEMA {database:i}.{schema:i}",
+            {
+                "database": schema["database"],
+                "schema": schema["schema"],
+            },
+        )
 
         for r in cur:
-            if 'TEMPORARY' in r['type']:
+            if "TEMPORARY" in r["type"]:
                 # Skip TEMPORARY stages
                 continue
 
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
-                "database": r['database_name'],
-                "schema": r['schema_name'],
-                "name": r['name'],
-                "url": r['url'] if r['url'] else None,
-                "storage_integration": r['storage_integration'] if r['storage_integration'] else None,
-                "owner": r['owner'],
-                "type": r['type'],
-                "comment": r['comment'] if r['comment'] else None,
+                "database": r["database_name"],
+                "schema": r["schema_name"],
+                "name": r["name"],
+                "url": r["url"] if r["url"] else None,
+                "storage_integration": r["storage_integration"] if r["storage_integration"] else None,
+                "owner": r["owner"],
+                "type": r["type"],
+                "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
@@ -37,9 +41,12 @@ class StageResolver(AbstractSchemaObjectResolver):
 
     def create_object(self, bp: StageBlueprint):
         query = self.engine.query_builder()
-        query.append("CREATE STAGE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "CREATE STAGE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         query.append_nl(self._build_create_stage_sql(bp))
         self.engine.execute_safe_ddl(query)
@@ -49,9 +56,12 @@ class StageResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: StageBlueprint, row: dict):
         if self._is_replace_required(bp, row):
             query = self.engine.query_builder()
-            query.append("CREATE OR REPLACE STAGE {full_name:i}", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "CREATE OR REPLACE STAGE {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append_nl(self._build_create_stage_sql(bp))
             self.engine.execute_unsafe_ddl(query)
@@ -86,40 +96,49 @@ class StageResolver(AbstractSchemaObjectResolver):
         return result
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP STAGE {database:i}.{schema:i}.{name:i}", {
-            "database": row['database'],
-            "schema": row['schema'],
-            "name": row['name'],
-        })
+        self.engine.execute_unsafe_ddl(
+            "DROP STAGE {database:i}.{schema:i}.{name:i}",
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+                "name": row["name"],
+            },
+        )
 
         return ResolveResult.DROP
 
     def _is_replace_required(self, bp: StageBlueprint, row):
         # Change of stage type from INTERNAL to EXTERNAL or vice versa
-        if (bp.url and not row['url']) or (not bp.url and row['url']):
+        if (bp.url and not row["url"]) or (not bp.url and row["url"]):
             return True
 
         if bp.url is None:
             encryption_type = coalesce(bp.encryption, {}).get("TYPE", "SNOWFLAKE_FULL")
 
-            if row['type'] == "INTERNAL" and encryption_type != "SNOWFLAKE_FULL":
+            if row["type"] == "INTERNAL" and encryption_type != "SNOWFLAKE_FULL":
                 return True
 
-            if row['type'] == "INTERNAL NO CSE" and encryption_type != "SNOWFLAKE_SSE":
+            if row["type"] == "INTERNAL NO CSE" and encryption_type != "SNOWFLAKE_SSE":
                 return True
 
         return False
 
     def _compare_url(self, bp: StageBlueprint, row):
-        if not ((bp.url is None and row['url'] is None) or str(bp.url) == row['url']):
+        if not ((bp.url is None and row["url"] is None) or str(bp.url) == row["url"]):
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
-            query.append_nl("URL = {url:i}", {
-                "url": bp.url,
-            })
+            query.append_nl(
+                "URL = {url:i}",
+                {
+                    "url": bp.url,
+                },
+            )
 
             self.engine.execute_safe_ddl(query)
 
@@ -128,15 +147,24 @@ class StageResolver(AbstractSchemaObjectResolver):
         return False
 
     def _compare_storage_integration(self, bp: StageBlueprint, row):
-        if not ((bp.storage_integration is None and row['storage_integration'] is None) or str(bp.storage_integration) == row['storage_integration']):
+        if not (
+            (bp.storage_integration is None and row["storage_integration"] is None)
+            or str(bp.storage_integration) == row["storage_integration"]
+        ):
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
-            query.append_nl("STORAGE_INTEGRATION = {storage_integration:i}", {
-                "storage_integration": bp.storage_integration,
-            })
+            query.append_nl(
+                "STORAGE_INTEGRATION = {storage_integration:i}",
+                {
+                    "storage_integration": bp.storage_integration,
+                },
+            )
 
             self.engine.execute_safe_ddl(query)
 
@@ -153,31 +181,34 @@ class StageResolver(AbstractSchemaObjectResolver):
             if prop_name == "REFRESH_ON_CREATE":
                 continue
 
-            if prop_name not in existing_properties['DIRECTORY']:
+            if prop_name not in existing_properties["DIRECTORY"]:
                 raise ValueError(f"Unknown DIRECTORY property [{prop_name}] for stage [{bp.full_name}]")
 
-            if compare_dynamic_param_value(prop_value,  existing_properties['DIRECTORY'][prop_name]['property_value']):
+            if compare_dynamic_param_value(prop_value, existing_properties["DIRECTORY"][prop_name]["property_value"]):
                 continue
 
             is_alter_required = True
             break
 
         # Check non-default properties in DESC output exist in blueprint
-        for prop_name, prop in existing_properties['DIRECTORY'].items():
+        for prop_name, prop in existing_properties["DIRECTORY"].items():
             # LAST_REFRESHED_ON is an informational property, it should not be compared or set explicitly
             if prop_name == "LAST_REFRESHED_ON":
                 continue
 
-            if prop['property_value'] != prop['property_default'] and (prop_name not in coalesce(bp.directory, {})):
+            if prop["property_value"] != prop["property_default"] and (prop_name not in coalesce(bp.directory, {})):
                 is_alter_required = True
                 break
 
         # If anything did not match, refresh all properties for this section
         if is_alter_required:
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append_nl(self._build_directory(bp))
             self.engine.execute_safe_ddl(query)
@@ -186,17 +217,20 @@ class StageResolver(AbstractSchemaObjectResolver):
 
     def _compare_file_format(self, bp: StageBlueprint, existing_properties):
         # Only named FILE FORMATs are supported
-        if 'FORMAT_NAME' in existing_properties['STAGE_FILE_FORMAT']:
-            existing_file_format = str(existing_properties['STAGE_FILE_FORMAT']['FORMAT_NAME']['property_value'])
-            existing_file_format = existing_file_format.replace('\\', '').replace('"', '')
+        if "FORMAT_NAME" in existing_properties["STAGE_FILE_FORMAT"]:
+            existing_file_format = str(existing_properties["STAGE_FILE_FORMAT"]["FORMAT_NAME"]["property_value"])
+            existing_file_format = existing_file_format.replace("\\", "").replace('"', "")
         else:
             existing_file_format = None
 
         if not ((bp.file_format is None and existing_file_format is None) or str(bp.file_format) == existing_file_format):
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append_nl(self._build_file_format(bp))
             self.engine.execute_safe_ddl(query)
@@ -210,18 +244,18 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         # Check properties in blueprint against DESC output
         for prop_name, prop_value in coalesce(bp.copy_options, {}).items():
-            if prop_name not in existing_properties['STAGE_COPY_OPTIONS']:
+            if prop_name not in existing_properties["STAGE_COPY_OPTIONS"]:
                 raise ValueError(f"Unknown COPY_OPTIONS property [{prop_name}] for stage [{bp.full_name}]")
 
-            if compare_dynamic_param_value(prop_value,  existing_properties['STAGE_COPY_OPTIONS'][prop_name]['property_value']):
+            if compare_dynamic_param_value(prop_value, existing_properties["STAGE_COPY_OPTIONS"][prop_name]["property_value"]):
                 continue
 
             is_alter_required = True
             break
 
         # Check non-default properties in DESC output exist in blueprint
-        for prop_name, prop in existing_properties['STAGE_COPY_OPTIONS'].items():
-            if prop['property_value'] != prop['property_default'] and (prop_name not in coalesce(bp.copy_options, {})):
+        for prop_name, prop in existing_properties["STAGE_COPY_OPTIONS"].items():
+            if prop["property_value"] != prop["property_default"] and (prop_name not in coalesce(bp.copy_options, {})):
                 # ENFORCE_LENGTH is a mirror for TRUNCATECOLUMNS
                 if prop_name == "ENFORCE_LENGTH" and "TRUNCATECOLUMNS" in coalesce(bp.copy_options, {}):
                     continue
@@ -236,9 +270,12 @@ class StageResolver(AbstractSchemaObjectResolver):
         # If anything did not match, refresh all properties for this section
         if is_alter_required:
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append_nl(self._build_copy_options(bp))
             self.engine.execute_safe_ddl(query)
@@ -246,15 +283,21 @@ class StageResolver(AbstractSchemaObjectResolver):
         return is_alter_required
 
     def _compare_comment(self, bp: StageBlueprint, row):
-        if not ((bp.comment is None and row['comment'] is None) or str(bp.comment) == row['comment']):
+        if not ((bp.comment is None and row["comment"] is None) or str(bp.comment) == row["comment"]):
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
             self.engine.execute_safe_ddl(query)
 
@@ -265,9 +308,12 @@ class StageResolver(AbstractSchemaObjectResolver):
     def _refresh_encryption(self, bp: StageBlueprint):
         if bp.encryption:
             query = self.engine.query_builder()
-            query.append("ALTER STAGE {full_name:i} SET", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append_nl(self._build_encryption(bp))
 
@@ -284,10 +330,13 @@ class StageResolver(AbstractSchemaObjectResolver):
             query.append("DIRECTORY = (")
 
             for k, v in bp.directory.items():
-                query.append("{param_name:r} = {param_value:dp}", {
-                    "param_name": k,
-                    "param_value": v,
-                })
+                query.append(
+                    "{param_name:r} = {param_value:dp}",
+                    {
+                        "param_name": k,
+                        "param_value": v,
+                    },
+                )
 
             query.append(")")
         else:
@@ -299,9 +348,12 @@ class StageResolver(AbstractSchemaObjectResolver):
         query = self.engine.query_builder()
 
         if bp.file_format:
-            query.append("FILE_FORMAT = ( FORMAT_NAME = {file_format:i} )", {
-                "file_format": bp.file_format,
-            })
+            query.append(
+                "FILE_FORMAT = ( FORMAT_NAME = {file_format:i} )",
+                {
+                    "file_format": bp.file_format,
+                },
+            )
         else:
             query.append("FILE_FORMAT = ( TYPE = CSV )")
 
@@ -314,10 +366,13 @@ class StageResolver(AbstractSchemaObjectResolver):
             query.append("COPY_OPTIONS = (")
 
             for k, v in bp.copy_options.items():
-                query.append("{param_name:r} = {param_value:dp}", {
-                    "param_name": k,
-                    "param_value": v,
-                })
+                query.append(
+                    "{param_name:r} = {param_value:dp}",
+                    {
+                        "param_name": k,
+                        "param_value": v,
+                    },
+                )
 
             query.append(")")
         else:
@@ -332,10 +387,13 @@ class StageResolver(AbstractSchemaObjectResolver):
             query.append("ENCRYPTION = (")
 
             for k, v in bp.encryption.items():
-                query.append("{param_name:r} = {param_value:dp}", {
-                    "param_name": k,
-                    "param_value": v,
-                })
+                query.append(
+                    "{param_name:r} = {param_value:dp}",
+                    {
+                        "param_name": k,
+                        "param_value": v,
+                    },
+                )
 
             query.append(")")
 
@@ -348,14 +406,15 @@ class StageResolver(AbstractSchemaObjectResolver):
         query = self.engine.query_builder()
 
         if bp.url:
-            query.append_nl("URL = {url}", {
-                "url": bp.url
-            })
+            query.append_nl("URL = {url}", {"url": bp.url})
 
         if bp.storage_integration:
-            query.append_nl("STORAGE_INTEGRATION = {storage_integration:i}", {
-                "storage_integration": bp.storage_integration,
-            })
+            query.append_nl(
+                "STORAGE_INTEGRATION = {storage_integration:i}",
+                {
+                    "storage_integration": bp.storage_integration,
+                },
+            )
 
         if bp.directory:
             query.append_nl(self._build_directory(bp))
@@ -370,16 +429,22 @@ class StageResolver(AbstractSchemaObjectResolver):
             query.append_nl(self._build_encryption(bp))
 
         if bp.comment:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         return query
 
     def _get_existing_stage_properties(self, bp: StageBlueprint):
-        cur = self.engine.execute_meta("DESC STAGE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "DESC STAGE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         result = {
             "STAGE_FILE_FORMAT": {},
@@ -388,9 +453,9 @@ class StageResolver(AbstractSchemaObjectResolver):
         }
 
         for r in cur:
-            if r['parent_property'] not in result:
-                result[r['parent_property']] = {}
+            if r["parent_property"] not in result:
+                result[r["parent_property"]] = {}
 
-            result[r['parent_property']][r['property']] = r
+            result[r["parent_property"]][r["property"]] = r
 
         return result

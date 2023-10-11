@@ -9,7 +9,7 @@ from yaml import dump_all
 
 from snowddl.error import SnowDDLExecuteError
 from snowddl.blueprint import ObjectType, Edition
-from snowddl.converter._yaml import SnowDDLDumper, YamlFoldedStr, YamlLiteralStr
+from snowddl.converter._yaml import SnowDDLDumper
 
 if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
@@ -45,7 +45,9 @@ class AbstractConverter(ABC):
         try:
             self.existing_objects = self.get_existing_objects()
         except SnowDDLExecuteError as e:
-            self.engine.logger.info(f"Could not get existing objects for converter [{self.__class__.__name__}]: \n{e.verbose_message()}")
+            self.engine.logger.info(
+                f"Could not get existing objects for converter [{self.__class__.__name__}]: \n{e.verbose_message()}"
+            )
             raise e.snow_exc
 
         tasks = {}
@@ -88,19 +90,19 @@ class AbstractConverter(ABC):
             return True
 
         if self.engine.settings.include_object_types:
-            return not (self.object_type in self.engine.settings.include_object_types)
+            return self.object_type not in self.engine.settings.include_object_types
 
         return False
 
     def _dump_file(self, file_path: Path, data: Dict, json_schema: dict):
         # Remove None values
-        data = {k:v for k,v in data.items() if v is not None}
+        data = {k: v for k, v in data.items() if v is not None}
 
         # Validate JSON schema
         validate(data, json_schema)
 
         # (Over)write file
-        with file_path.open('w', encoding='utf-8') as f:
+        with file_path.open("w", encoding="utf-8") as f:
             dump_all([data], f, Dumper=SnowDDLDumper, sort_keys=False)
 
     def _normalise_name(self, name: str):
@@ -108,7 +110,7 @@ class AbstractConverter(ABC):
 
     def _normalise_name_with_prefix(self, name: str):
         if name.startswith(self.env_prefix):
-            name = name[len(self.env_prefix):]
+            name = name[len(self.env_prefix) :]
 
         return self._normalise_name(name)
 

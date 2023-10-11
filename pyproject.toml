@@ -1,3 +1,15 @@
 [build-system]
 requires = ["setuptools >= 62.3.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 130
+
+[tool.ruff]
+line-length = 130
+ignore = ["E501", "E731"]
+include = ["snowddl/**/*.py"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+"snowddl/resolver/abc_schema_object_resolver.py" = ["F401"]

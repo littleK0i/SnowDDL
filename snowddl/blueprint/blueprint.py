@@ -4,7 +4,20 @@ from typing import Optional, List, Dict, Union, TypeVar
 from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType, SearchOptimizationItem
 from .data_type import DataType
 from .grant import Grant, FutureGrant
-from .ident import AbstractIdent, Ident, AccountObjectIdent, DatabaseIdent, AccountIdent, InboundShareIdent, OutboundShareIdent, SchemaIdent, SchemaObjectIdent, SchemaObjectIdentWithArgs, StageFileIdent, TableConstraintIdent
+from .ident import (
+    AbstractIdent,
+    Ident,
+    AccountObjectIdent,
+    DatabaseIdent,
+    AccountIdent,
+    InboundShareIdent,
+    OutboundShareIdent,
+    SchemaIdent,
+    SchemaObjectIdent,
+    SchemaObjectIdentWithArgs,
+    StageFileIdent,
+    TableConstraintIdent,
+)
 from .object_type import ObjectType
 from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
@@ -32,7 +45,7 @@ class DependsOnMixin(BaseModelWithConfig, ABC):
 
 class AccountParameterBlueprint(AbstractBlueprint):
     full_name: Ident
-    value: Union[bool,float,int,str]
+    value: Union[bool, float, int, str]
 
 
 class AlertBlueprint(SchemaObjectBlueprint):
@@ -50,7 +63,7 @@ class BusinessRoleBlueprint(RoleBlueprint):
 class DatabaseBlueprint(AbstractBlueprint):
     full_name: DatabaseIdent
     is_transient: Optional[bool] = None
-    retention_time: Optional[int]  = None
+    retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
 
 
@@ -78,7 +91,7 @@ class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     is_secure: bool = False
     is_strict: bool = False
     is_immutable: bool = False
-    headers: Optional[Dict[str,str]] = None
+    headers: Optional[Dict[str, str]] = None
     context_headers: Optional[List[Ident]] = None
     max_batch_rows: Optional[int] = None
     compression: Optional[str] = None
@@ -103,7 +116,7 @@ class ExternalTableBlueprint(SchemaObjectBlueprint):
 
 class FileFormatBlueprint(SchemaObjectBlueprint):
     type: str
-    format_options: Optional[Dict[str,Union[bool,float,int,str,list]]] = None
+    format_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
 
 
 class ForeignKeyBlueprint(SchemaObjectBlueprint):
@@ -119,11 +132,11 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     language: str
     body: Optional[str] = None
     arguments: List[NameWithType]
-    returns: Union[DataType,List[NameWithType]]
+    returns: Union[DataType, List[NameWithType]]
     is_secure: bool = False
     is_strict: bool = False
     is_immutable: bool = False
-    is_memoizable : bool = False
+    is_memoizable: bool = False
     runtime_version: Optional[str] = None
     imports: Optional[List[StageWithPath]] = None
     packages: Optional[List[str]] = None
@@ -172,7 +185,7 @@ class PipeBlueprint(SchemaObjectBlueprint):
     copy_pattern: Optional[str] = None
     copy_transform: Optional[Dict[str, str]] = None
     copy_file_format: Optional[SchemaObjectIdent] = None
-    copy_options: Optional[Dict[str,Union[bool,float,int,str,list]]] = None
+    copy_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     aws_sns_topic: Optional[str] = None
     integration: Optional[Ident] = None
 
@@ -187,7 +200,7 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
     language: str
     body: str
     arguments: List[NameWithType]
-    returns: Union[DataType,List[NameWithType]]
+    returns: Union[DataType, List[NameWithType]]
     is_strict: bool = False
     is_immutable: bool = False
     is_execute_as_caller: bool = False
@@ -201,7 +214,7 @@ class ResourceMonitorBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     credit_quota: int
     frequency: str
-    triggers: Dict[int,str]
+    triggers: Dict[int, str]
 
 
 class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
@@ -225,10 +238,10 @@ class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
 class StageBlueprint(SchemaObjectBlueprint):
     url: Optional[str] = None
     storage_integration: Optional[Ident] = None
-    encryption: Optional[Dict[str,Union[bool,float,int,str,list]]] = None
-    directory: Optional[Dict[str,Union[bool,float,int,str,list]]] = None
+    encryption: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
+    directory: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     file_format: Optional[SchemaObjectIdent] = None
-    copy_options: Optional[Dict[str,Union[bool,float,int,str,list]]] = None
+    copy_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     upload_stage_files: bool = False
 
 
@@ -258,7 +271,7 @@ class TableBlueprint(SchemaObjectBlueprint):
     is_transient: bool = False
     retention_time: Optional[int] = None
     change_tracking: bool = False
-    search_optimization: Union[bool,List[SearchOptimizationItem]] = False
+    search_optimization: Union[bool, List[SearchOptimizationItem]] = False
 
 
 class TagBlueprint(SchemaObjectBlueprint):
@@ -274,7 +287,7 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     warehouse: Optional[AccountObjectIdent] = None
     user_task_managed_initial_warehouse_size: Optional[str] = None
     allow_overlapping_execution: Optional[bool] = None
-    session_params: Optional[Dict[str,Union[bool,float,int,str]]] = None
+    session_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
     user_task_timeout_ms: Optional[int] = None
 
 
@@ -302,7 +315,7 @@ class UserBlueprint(AbstractBlueprint):
     rsa_public_key_2: Optional[str] = None
     default_warehouse: Optional[AccountObjectIdent] = None
     default_namespace: Optional[Union[DatabaseIdent, SchemaIdent]] = None
-    session_params: Optional[Dict[str,Union[bool,float,int,str]]] = None
+    session_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
 
 
 class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
@@ -319,10 +332,10 @@ class WarehouseBlueprint(AbstractBlueprint):
     min_cluster_count: Optional[int] = None
     max_cluster_count: Optional[int] = None
     scaling_policy: Optional[str] = None
-    resource_monitor: Optional[Union[Ident,AccountObjectIdent]] = None
+    resource_monitor: Optional[Union[Ident, AccountObjectIdent]] = None
     enable_query_acceleration: bool = False
     query_acceleration_max_scale_factor: Optional[int] = None
-    warehouse_params: Optional[Dict[str,Union[bool,float,int,str]]] = None
+    warehouse_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
 
 
-T_Blueprint = TypeVar('T_Blueprint', bound=AbstractBlueprint)
+T_Blueprint = TypeVar("T_Blueprint", bound=AbstractBlueprint)

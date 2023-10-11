@@ -5,30 +5,30 @@ from snowddl.blueprint import AbstractIdent
 
 
 class SnowDDLFormatter(string.Formatter):
-    safe_ident_regexp = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
-    safe_decimal_regexp = re.compile(r'^[+-]?[0-9]+(\.[0-9]+)?$')
-    safe_float_regexp = re.compile(r'^[+-]?[0-9]+(\.[0-9]+([e|E][+-][0-9]+)?)?$')
+    safe_ident_regexp = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+    safe_decimal_regexp = re.compile(r"^[+-]?[0-9]+(\.[0-9]+)?$")
+    safe_float_regexp = re.compile(r"^[+-]?[0-9]+(\.[0-9]+([e|E][+-][0-9]+)?)?$")
 
     def __init__(self):
         self.smart_transformations = {
-            's': self.quote,
-            'd': self.safe_decimal,
-            'f': self.safe_float,
-            'b': self.safe_bool,
-            'i': self.quote_ident,
-            'in': self.quote_ident_no_argument,
-            'r': str,
-            'lf': self.quote_like_full_match,
-            'ls': self.quote_like_starts_with,
-            'le': self.quote_like_ends_with,
-            'lse': self.quote_like_starts_ends_with,
+            "s": self.quote,
+            "d": self.safe_decimal,
+            "f": self.safe_float,
+            "b": self.safe_bool,
+            "i": self.quote_ident,
+            "in": self.quote_ident_no_argument,
+            "r": str,
+            "lf": self.quote_like_full_match,
+            "ls": self.quote_like_starts_with,
+            "le": self.quote_like_ends_with,
+            "lse": self.quote_like_starts_ends_with,
         }
 
         self.raw_transformations = {
-            'dp': self.dynamic_param,
+            "dp": self.dynamic_param,
         }
 
-        self.default_transformation = 's'
+        self.default_transformation = "s"
 
     def format_sql(self, sql, params=None):
         sql = str(sql)
@@ -54,10 +54,10 @@ class SnowDDLFormatter(string.Formatter):
         if format_spec not in self.smart_transformations:
             raise ValueError(f"Unknown format transformation [{format_spec}]")
 
-        if isinstance(value, list) and format_spec != 'dp':
+        if isinstance(value, list) and format_spec != "dp":
             if not value:
                 raise ValueError("Attempt to format an empty list")
-            return ', '.join([self.smart_transformations[format_spec](v) for v in value])
+            return ", ".join([self.smart_transformations[format_spec](v) for v in value])
         else:
             return self.smart_transformations[format_spec](value)
 
@@ -81,7 +81,7 @@ class SnowDDLFormatter(string.Formatter):
     @classmethod
     def quote(cls, val):
         if val is None:
-            return 'NULL'
+            return "NULL"
 
         return f"'{cls.escape(val)}'"
 
@@ -93,10 +93,14 @@ class SnowDDLFormatter(string.Formatter):
         core_parts, argument_parts = val.parts_for_format()
 
         if argument_parts is not None:
-            return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts) + \
-                   '(' + ','.join(cls.safe_ident(p) for p in argument_parts) + ')'
+            return (
+                ".".join(f'"{cls.escape_ident(p)}"' for p in core_parts)
+                + "("
+                + ",".join(cls.safe_ident(p) for p in argument_parts)
+                + ")"
+            )
 
-        return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts)
+        return ".".join(f'"{cls.escape_ident(p)}"' for p in core_parts)
 
     @classmethod
     def quote_ident_no_argument(cls, val):
@@ -105,7 +109,7 @@ class SnowDDLFormatter(string.Formatter):
 
         core_parts, _ = val.parts_for_format()
 
-        return '.'.join(f'"{cls.escape_ident(p)}"' for p in core_parts)
+        return ".".join(f'"{cls.escape_ident(p)}"' for p in core_parts)
 
     @classmethod
     def quote_like_full_match(cls, val):
@@ -135,33 +139,33 @@ class SnowDDLFormatter(string.Formatter):
     @classmethod
     def safe_float(cls, val):
         if val is None:
-            return 'NULL'
+            return "NULL"
 
         val = str(val)
 
         if not cls.safe_float_regexp.match(val):
-            raise ValueError(f'Value [{val}] is not a safe float')
+            raise ValueError(f"Value [{val}] is not a safe float")
 
         return val
 
     @classmethod
     def safe_decimal(cls, val):
         if val is None:
-            return 'NULL'
+            return "NULL"
 
         val = str(val)
 
         if not cls.safe_decimal_regexp.match(val):
-            raise ValueError(f'Value [{val}] is not a safe integer')
+            raise ValueError(f"Value [{val}] is not a safe integer")
 
         return val
 
     @classmethod
     def safe_bool(cls, val):
         if not isinstance(val, bool):
-            raise ValueError(f'Value [{val}] is not a safe boolean')
+            raise ValueError(f"Value [{val}] is not a safe boolean")
 
-        return 'TRUE' if val else 'FALSE'
+        return "TRUE" if val else "FALSE"
 
     @classmethod
     def dynamic_param(cls, val):

@@ -9,7 +9,9 @@ class AbstractSchemaObjectResolver(AbstractResolver):
         existing_objects = {}
 
         # Process schemas in parallel
-        for schema_objects in self.engine.executor.map(self.get_existing_objects_in_schema, self.engine.schema_cache.schemas.values()):
+        for schema_objects in self.engine.executor.map(
+            self.get_existing_objects_in_schema, self.engine.schema_cache.schemas.values()
+        ):
             existing_objects.update(schema_objects)
 
         return existing_objects
@@ -30,7 +32,7 @@ class AbstractSchemaObjectResolver(AbstractResolver):
             if object_full_name in self.blueprints:
                 continue
 
-            schema_full_name = '.'.join(object_full_name.split('.')[:2])
+            schema_full_name = ".".join(object_full_name.split(".")[:2])
             schema_bp = self.config.get_blueprints_by_type(SchemaBlueprint).get(schema_full_name)
 
             # Object schema does not exist in blueprints, object will be dropped automatically on DROP DATABASE or DROP SCHEMA

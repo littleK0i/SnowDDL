@@ -224,26 +224,26 @@ class ObjectType(Enum):
 
     @property
     def singular(self):
-        return self.value.get('singular')
+        return self.value.get("singular")
 
     @property
     def plural(self):
-        return self.value.get('plural')
+        return self.value.get("plural")
 
     @property
     def simplified(self):
-        return self.value.get('simplified', self.value.get('singular'))
+        return self.value.get("simplified", self.value.get("singular"))
 
     @property
     def blueprint_cls(self):
         # This import prevents cicrular dependency between blueprints and object types
         from . import blueprint
 
-        return getattr(blueprint, self.value.get('blueprint_cls'))
+        return getattr(blueprint, self.value.get("blueprint_cls"))
 
     @property
     def is_future_grant_supported(self) -> bool:
-        return self.value.get('is_future_grant_supported', False)
+        return self.value.get("is_future_grant_supported", False)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}.{super().name}>"

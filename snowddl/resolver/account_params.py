@@ -15,12 +15,12 @@ class AccountParameterResolver(AbstractResolver):
         cur = self.engine.execute_meta("SHOW PARAMETERS FOR ACCOUNT")
 
         for r in cur:
-            existing_objects[r['key']] = {
-                "key": r['key'],
-                "value": r['value'],
-                "default": r['default'],
-                "level": r['level'],
-                "type": r['type'],
+            existing_objects[r["key"]] = {
+                "key": r["key"],
+                "value": r["value"],
+                "default": r["default"],
+                "level": r["level"],
+                "type": r["type"],
             }
 
         return existing_objects
@@ -32,21 +32,29 @@ class AccountParameterResolver(AbstractResolver):
         raise ValueError(f"Unknown account parameter [{bp.full_name}]")
 
     def compare_object(self, bp: AccountParameterBlueprint, row: dict):
-        if compare_dynamic_param_value(bp.value, row['value']):
+        if compare_dynamic_param_value(bp.value, row["value"]):
             return ResolveResult.NOCHANGE
 
-        self.engine.execute_unsafe_ddl("ALTER ACCOUNT SET {param_name:r} = {param_value:dp}", {
-            "param_name": row['key'],
-            "param_value": bp.value,
-        }, condition=self.engine.settings.execute_account_params)
+        self.engine.execute_unsafe_ddl(
+            "ALTER ACCOUNT SET {param_name:r} = {param_value:dp}",
+            {
+                "param_name": row["key"],
+                "param_value": bp.value,
+            },
+            condition=self.engine.settings.execute_account_params,
+        )
 
         return ResolveResult.ALTER
 
     def drop_object(self, row: dict):
-        if row['value'] != row['default'] and row['level'] == 'ACCOUNT':
-            self.engine.execute_unsafe_ddl("ALTER ACCOUNT UNSET {param_name:r}", {
-                "param_name": row['key'],
-            }, condition=self.engine.settings.execute_account_params)
+        if row["value"] != row["default"] and row["level"] == "ACCOUNT":
+            self.engine.execute_unsafe_ddl(
+                "ALTER ACCOUNT UNSET {param_name:r}",
+                {
+                    "param_name": row["key"],
+                },
+                condition=self.engine.settings.execute_account_params,
+            )
 
             return ResolveResult.ALTER
 

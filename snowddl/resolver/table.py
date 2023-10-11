@@ -1,11 +1,19 @@
 from itertools import islice
 from re import compile
 
-from snowddl.blueprint import Ident, TableBlueprint, TableColumn, DataType, BaseDataType, SchemaObjectIdent, SearchOptimizationItem
+from snowddl.blueprint import (
+    Ident,
+    TableBlueprint,
+    TableColumn,
+    DataType,
+    BaseDataType,
+    SchemaObjectIdent,
+    SearchOptimizationItem,
+)
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
-cluster_by_syntax_re = compile(r'^(\w+)?\((.*)\)$')
-collate_type_syntax_re = compile(r'^(.*) COLLATE \'(.*)\'$')
+cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
+collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
 
 
 class TableResolver(AbstractSchemaObjectResolver):
@@ -15,28 +23,31 @@ class TableResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW TABLES IN SCHEMA {database:i}.{schema:i}", {
-            "database": schema['database'],
-            "schema": schema['schema'],
-        })
+        cur = self.engine.execute_meta(
+            "SHOW TABLES IN SCHEMA {database:i}.{schema:i}",
+            {
+                "database": schema["database"],
+                "schema": schema["schema"],
+            },
+        )
 
         for r in cur:
             # Skip external tables
-            if r['is_external'] == 'Y':
+            if r["is_external"] == "Y":
                 continue
 
             full_name = f"{r['database_name']}.{r['schema_name']}.{r['name']}"
             existing_objects[full_name] = {
-                "database": r['database_name'],
-                "schema": r['schema_name'],
-                "name": r['name'],
-                "owner": r['owner'],
-                "is_transient": r['kind'] == 'TRANSIENT',
-                "retention_time": int(r['retention_time']),
-                "cluster_by": r['cluster_by'] if r['cluster_by'] else None,
-                "change_tracking": bool(r['change_tracking'] == 'ON'),
-                "search_optimization": bool(r.get('search_optimization') == 'ON'),
-                "comment": r['comment'] if r['comment'] else None,
+                "database": r["database_name"],
+                "schema": r["schema_name"],
+                "name": r["name"],
+                "owner": r["owner"],
+                "is_transient": r["kind"] == "TRANSIENT",
+                "retention_time": int(r["retention_time"]),
+                "cluster_by": r["cluster_by"] if r["cluster_by"] else None,
+                "change_tracking": bool(r["change_tracking"] == "ON"),
+                "search_optimization": bool(r.get("search_optimization") == "ON"),
+                "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
@@ -66,9 +77,14 @@ class TableResolver(AbstractSchemaObjectResolver):
         for col_name, snow_c in snow_cols.items():
             # Drop columns which do not exist in blueprint
             if col_name not in bp_cols:
-                unsafe_alters.append(self.engine.format("DROP COLUMN {col_name:i}", {
-                    "col_name": col_name,
-                }))
+                unsafe_alters.append(
+                    self.engine.format(
+                        "DROP COLUMN {col_name:i}",
+                        {
+                            "col_name": col_name,
+                        },
+                    )
+                )
 
                 remaining_col_names.remove(col_name)
                 continue
@@ -77,13 +93,23 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             # Set or drop NOT NULL constraint
             if snow_c.not_null and not bp_c.not_null:
-                unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP NOT NULL", {
-                    "col_name": col_name,
-                }))
+                unsafe_alters.append(
+                    self.engine.format(
+                        "MODIFY COLUMN {col_name:i} DROP NOT NULL",
+                        {
+                            "col_name": col_name,
+                        },
+                    )
+                )
             elif not snow_c.not_null and bp_c.not_null:
-                unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET NOT NULL", {
-                    "col_name": col_name,
-                }))
+                unsafe_alters.append(
+                    self.engine.format(
+                        "MODIFY COLUMN {col_name:i} SET NOT NULL",
+                        {
+                            "col_name": col_name,
+                        },
+                    )
+                )
 
             # Default
             bp_c_default_value = self._normalize_bp_default(bp_c.default)
@@ -91,17 +117,31 @@ class TableResolver(AbstractSchemaObjectResolver):
             if snow_c.default != bp_c_default_value:
                 # DROP DEFAULT is supported
                 if snow_c.default is not None and bp_c_default_value is None:
-                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} DROP DEFAULT", {
-                        "col_name": col_name,
-                    }))
+                    unsafe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} DROP DEFAULT",
+                            {
+                                "col_name": col_name,
+                            },
+                        )
+                    )
 
                 # Switch to another sequence is supported
-                elif isinstance(snow_c.default, str) and snow_c.default.upper().endswith('.NEXTVAL') \
-                and isinstance(bp_c_default_value, str) and bp_c_default_value.upper().endswith('.NEXTVAL'):
-                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} SET DEFAULT {default:r}", {
-                        "col_name": col_name,
-                        "default": bp_c_default_value,
-                    }))
+                elif (
+                    isinstance(snow_c.default, str)
+                    and snow_c.default.upper().endswith(".NEXTVAL")
+                    and isinstance(bp_c_default_value, str)
+                    and bp_c_default_value.upper().endswith(".NEXTVAL")
+                ):
+                    unsafe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} SET DEFAULT {default:r}",
+                            {
+                                "col_name": col_name,
+                                "default": bp_c_default_value,
+                            },
+                        )
+                    )
 
                 # All other DEFAULT changes are not supported
                 else:
@@ -118,10 +158,15 @@ class TableResolver(AbstractSchemaObjectResolver):
             # Comments
             if snow_c.comment != bp_c.comment:
                 # UNSET COMMENT is currently not supported for columns, we can only set it to empty string
-                safe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} COMMENT {comment}", {
-                    "col_name": col_name,
-                    "comment": bp_c.comment if bp_c.comment else '',
-                }))
+                safe_alters.append(
+                    self.engine.format(
+                        "MODIFY COLUMN {col_name:i} COMMENT {comment}",
+                        {
+                            "col_name": col_name,
+                            "comment": bp_c.comment if bp_c.comment else "",
+                        },
+                    )
+                )
 
             # If type matches exactly, skip all other checks
             if snow_c.type == bp_c.type:
@@ -131,22 +176,33 @@ class TableResolver(AbstractSchemaObjectResolver):
             # https://docs.snowflake.com/en/sql-reference/sql/alter-table-column.html
             if snow_c.type.base_type == bp_c.type.base_type:
                 # Increase or decrease precision of NUMBER, but not scale
-                if snow_c.type.base_type == BaseDataType.NUMBER \
-                and snow_c.type.val1 != bp_c.type.val2 \
-                and snow_c.type.val2 == bp_c.type.val2:
-                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
-                        "col_name": col_name,
-                        "col_type": bp_c.type,
-                    }))
+                if (
+                    snow_c.type.base_type == BaseDataType.NUMBER
+                    and snow_c.type.val1 != bp_c.type.val2
+                    and snow_c.type.val2 == bp_c.type.val2
+                ):
+                    unsafe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} TYPE {col_type:r}",
+                            {
+                                "col_name": col_name,
+                                "col_type": bp_c.type,
+                            },
+                        )
+                    )
 
                     continue
 
-                if snow_c.type.base_type == BaseDataType.VARCHAR \
-                and snow_c.type.val1 < bp_c.type.val1:
-                    unsafe_alters.append(self.engine.format("MODIFY COLUMN {col_name:i} TYPE {col_type:r}", {
-                        "col_name": col_name,
-                        "col_type": bp_c.type,
-                    }))
+                if snow_c.type.base_type == BaseDataType.VARCHAR and snow_c.type.val1 < bp_c.type.val1:
+                    unsafe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} TYPE {col_type:r}",
+                            {
+                                "col_name": col_name,
+                                "col_type": bp_c.type,
+                            },
+                        )
+                    )
 
                     continue
 
@@ -158,28 +214,40 @@ class TableResolver(AbstractSchemaObjectResolver):
             # Get remaining part of blueprint columns
             for col_name, bp_c in islice(bp_cols.items(), len(remaining_col_names), None):
                 query = self.engine.query_builder()
-                query.append("ADD COLUMN {col_name:i} {col_type:r}", {
-                    "col_name": col_name,
-                    "col_type": bp_c.type,
-                })
+                query.append(
+                    "ADD COLUMN {col_name:i} {col_type:r}",
+                    {
+                        "col_name": col_name,
+                        "col_type": bp_c.type,
+                    },
+                )
 
                 if bp_c.collate:
-                    query.append("COLLATE {collate}", {
-                        "collate": bp_c.collate,
-                    })
+                    query.append(
+                        "COLLATE {collate}",
+                        {
+                            "collate": bp_c.collate,
+                        },
+                    )
 
                 if bp_c.default is not None:
-                    query.append("DEFAULT {default:r}", {
-                        "default": self._normalize_bp_default(bp_c.default),
-                    })
+                    query.append(
+                        "DEFAULT {default:r}",
+                        {
+                            "default": self._normalize_bp_default(bp_c.default),
+                        },
+                    )
 
                 if bp_c.not_null:
                     query.append("NOT NULL")
 
                 if bp_c.comment:
-                    query.append("COMMENT {comment}", {
-                        "comment": bp_c.comment,
-                    })
+                    query.append(
+                        "COMMENT {comment}",
+                        {
+                            "comment": bp_c.comment,
+                        },
+                    )
 
                 safe_alters.append(query)
         else:
@@ -187,36 +255,51 @@ class TableResolver(AbstractSchemaObjectResolver):
             is_replace_required = True
 
         # Changing TRANSIENT tables to permanent and back are not supported
-        if bp.is_transient != row['is_transient']:
+        if bp.is_transient != row["is_transient"]:
             is_replace_required = True
 
         # Retention time
-        if bp.retention_time is not None and bp.retention_time != row['retention_time']:
-            unsafe_alters.append(self.engine.format("SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            }))
+        if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
+            unsafe_alters.append(
+                self.engine.format("SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
+            )
 
         # Clustering key
         if not self._compare_cluster_by(bp, row):
             if bp.cluster_by:
-                unsafe_alters.append(self.engine.format("CLUSTER BY ({cluster_by:r})", {
-                    "cluster_by": bp.cluster_by,
-                }))
+                unsafe_alters.append(
+                    self.engine.format(
+                        "CLUSTER BY ({cluster_by:r})",
+                        {
+                            "cluster_by": bp.cluster_by,
+                        },
+                    )
+                )
             else:
                 unsafe_alters.append(self.engine.format("DROP CLUSTERING KEY"))
 
         # Change tracking
-        if bp.change_tracking != row['change_tracking']:
-            unsafe_alters.append(self.engine.format("SET CHANGE_TRACKING = {change_tracking:b}", {
-                "change_tracking": bp.change_tracking,
-            }))
+        if bp.change_tracking != row["change_tracking"]:
+            unsafe_alters.append(
+                self.engine.format(
+                    "SET CHANGE_TRACKING = {change_tracking:b}",
+                    {
+                        "change_tracking": bp.change_tracking,
+                    },
+                )
+            )
 
         # Comment
-        if bp.comment != row['comment']:
+        if bp.comment != row["comment"]:
             if bp.comment:
-                safe_alters.append(self.engine.format("SET COMMENT = {comment}", {
-                    "comment": bp.comment,
-                }))
+                safe_alters.append(
+                    self.engine.format(
+                        "SET COMMENT = {comment}",
+                        {
+                            "comment": bp.comment,
+                        },
+                    )
+                )
             else:
                 safe_alters.append(self.engine.format("UNSET COMMENT"))
 
@@ -224,22 +307,30 @@ class TableResolver(AbstractSchemaObjectResolver):
         result = ResolveResult.NOCHANGE
 
         if is_replace_required:
-            self.engine.execute_unsafe_ddl(self._build_create_table(bp, snow_cols), condition=self.engine.settings.execute_replace_table)
+            self.engine.execute_unsafe_ddl(
+                self._build_create_table(bp, snow_cols), condition=self.engine.settings.execute_replace_table
+            )
 
             result = ResolveResult.REPLACE
 
         elif safe_alters or unsafe_alters:
             for alter in safe_alters:
-                self.engine.execute_safe_ddl("ALTER TABLE {full_name:i} {alter:r}", {
-                    "full_name": bp.full_name,
-                    "alter": alter,
-                })
+                self.engine.execute_safe_ddl(
+                    "ALTER TABLE {full_name:i} {alter:r}",
+                    {
+                        "full_name": bp.full_name,
+                        "alter": alter,
+                    },
+                )
 
             for alter in unsafe_alters:
-                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} {alter:r}", {
-                    "full_name": bp.full_name,
-                    "alter": alter,
-                })
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} {alter:r}",
+                    {
+                        "full_name": bp.full_name,
+                        "alter": alter,
+                    },
+                )
 
             result = ResolveResult.ALTER
 
@@ -247,45 +338,51 @@ class TableResolver(AbstractSchemaObjectResolver):
         if result == ResolveResult.REPLACE:
             self._compare_search_optimization(bp, False, condition=self.engine.settings.execute_replace_table)
         else:
-            if self._compare_search_optimization(bp, row['search_optimization']) and result == ResolveResult.NOCHANGE:
+            if self._compare_search_optimization(bp, row["search_optimization"]) and result == ResolveResult.NOCHANGE:
                 result = ResolveResult.ALTER
 
         return result
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP TABLE {database:i}.{schema:i}.{table_name:i}", {
-            "database": row['database'],
-            "schema": row['schema'],
-            "table_name": row['name'],
-        })
+        self.engine.execute_unsafe_ddl(
+            "DROP TABLE {database:i}.{schema:i}.{table_name:i}",
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+                "table_name": row["name"],
+            },
+        )
 
         return ResolveResult.DROP
 
     def _get_existing_columns(self, bp: TableBlueprint):
         existing_columns = {}
 
-        cur = self.engine.execute_meta("DESC TABLE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "DESC TABLE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         for r in cur:
-            m = collate_type_syntax_re.match(r['type'])
+            m = collate_type_syntax_re.match(r["type"])
 
             if m:
                 dtype = m.group(1)
                 collate = m.group(2)
             else:
-                dtype = r['type']
+                dtype = r["type"]
                 collate = None
 
-            existing_columns[r['name']] = TableColumn(
-                name=Ident(r['name']),
+            existing_columns[r["name"]] = TableColumn(
+                name=Ident(r["name"]),
                 type=DataType(dtype),
-                not_null=bool(r['null?'] == 'N'),
-                default=r['default'] if r['default'] else None,
-                expression=r['expression'] if r['expression'] else None,
+                not_null=bool(r["null?"] == "N"),
+                default=r["default"] if r["default"] else None,
+                expression=r["expression"] if r["expression"] else None,
                 collate=collate,
-                comment=r['comment'] if r['comment'] else None,
+                comment=r["comment"] if r["comment"] else None,
             )
 
         return existing_columns
@@ -300,61 +397,83 @@ class TableResolver(AbstractSchemaObjectResolver):
         if bp.is_transient:
             query.append("TRANSIENT")
 
-        query.append("TABLE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "TABLE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         query.append_nl("(")
 
         for idx, c in enumerate(bp.columns):
-            query.append_nl("    {comma:r}{col_name:i} {col_type:r}", {
-                "comma": "  " if idx == 0 else ", ",
-                "col_name": c.name,
-                "col_type": c.type,
-            })
+            query.append_nl(
+                "    {comma:r}{col_name:i} {col_type:r}",
+                {
+                    "comma": "  " if idx == 0 else ", ",
+                    "col_name": c.name,
+                    "col_type": c.type,
+                },
+            )
 
             if c.collate:
-                query.append("COLLATE {collate}", {
-                    "collate": c.collate,
-                })
+                query.append(
+                    "COLLATE {collate}",
+                    {
+                        "collate": c.collate,
+                    },
+                )
 
             if c.default is not None:
-                query.append("DEFAULT {default:r}", {
-                    "default": self._normalize_bp_default(c.default),
-                })
+                query.append(
+                    "DEFAULT {default:r}",
+                    {
+                        "default": self._normalize_bp_default(c.default),
+                    },
+                )
 
             if c.not_null:
                 query.append("NOT NULL")
 
             if c.expression:
-                query.append("AS ({expression:r})", {
-                    "expression": c.expression,
-                })
+                query.append(
+                    "AS ({expression:r})",
+                    {
+                        "expression": c.expression,
+                    },
+                )
 
             if c.comment:
-                query.append("COMMENT {comment}", {
-                    "comment": c.comment,
-                })
+                query.append(
+                    "COMMENT {comment}",
+                    {
+                        "comment": c.comment,
+                    },
+                )
 
         query.append_nl(")")
 
         if bp.cluster_by:
-            query.append_nl("CLUSTER BY ({cluster_by:r})", {
-                "cluster_by": bp.cluster_by,
-            })
+            query.append_nl(
+                "CLUSTER BY ({cluster_by:r})",
+                {
+                    "cluster_by": bp.cluster_by,
+                },
+            )
 
         if bp.change_tracking:
             query.append_nl("CHANGE_TRACKING = TRUE")
 
         if bp.retention_time is not None:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            })
+            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
         if bp.comment:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         if snow_cols:
             query.append_nl("COPY GRANTS")
@@ -363,28 +482,37 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             for idx, c in enumerate(bp.columns):
                 if str(c.name) in snow_cols:
-                    query.append_nl("    {comma:r}{col_name:i}::{col_type:r} AS {col_name:i}", {
-                        "comma": "  " if idx == 0 else ", ",
-                        "col_name": c.name,
-                        "col_type": c.type,
-                    })
+                    query.append_nl(
+                        "    {comma:r}{col_name:i}::{col_type:r} AS {col_name:i}",
+                        {
+                            "comma": "  " if idx == 0 else ", ",
+                            "col_name": c.name,
+                            "col_type": c.type,
+                        },
+                    )
                 else:
-                    query.append_nl("    {comma:r}{col_val}::{col_type:r} AS {col_name:i}", {
-                        "comma": "  " if idx == 0 else ", ",
-                        "col_name": c.name,
-                        "col_type": c.type,
-                        "col_val": c.default,
-                    })
+                    query.append_nl(
+                        "    {comma:r}{col_val}::{col_type:r} AS {col_name:i}",
+                        {
+                            "comma": "  " if idx == 0 else ", ",
+                            "col_name": c.name,
+                            "col_type": c.type,
+                            "col_val": c.default,
+                        },
+                    )
 
-            query.append_nl("FROM {full_name:i}", {
-                "full_name": bp.full_name,
-            })
+            query.append_nl(
+                "FROM {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
         return query
 
     def _compare_cluster_by(self, bp: TableBlueprint, row: dict):
-        bp_cluster_by = ', '.join(bp.cluster_by) if bp.cluster_by else None
-        snow_cluster_by = cluster_by_syntax_re.sub(r'\2', row['cluster_by']) if row['cluster_by'] else None
+        bp_cluster_by = ", ".join(bp.cluster_by) if bp.cluster_by else None
+        snow_cluster_by = cluster_by_syntax_re.sub(r"\2", row["cluster_by"]) if row["cluster_by"] else None
 
         return bp_cluster_by == snow_cluster_by
 
@@ -392,16 +520,24 @@ class TableResolver(AbstractSchemaObjectResolver):
         # Legacy search optimization on the whole table
         if isinstance(bp.search_optimization, bool):
             if bp.search_optimization and not is_search_optimization_enabled:
-                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION", {
-                    "full_name": bp.full_name,
-                }, condition=condition)
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=condition,
+                )
 
                 return True
 
             elif not bp.search_optimization and is_search_optimization_enabled:
-                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION", {
-                    "full_name": bp.full_name,
-                }, condition=condition)
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=condition,
+                )
 
                 return True
 
@@ -411,35 +547,48 @@ class TableResolver(AbstractSchemaObjectResolver):
         existing_search_optimization_items = []
         result = False
 
-        cur = self.engine.execute_meta("DESC SEARCH OPTIMIZATION ON {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        cur = self.engine.execute_meta(
+            "DESC SEARCH OPTIMIZATION ON {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         for r in cur:
-            t_parts = r['target'].split(':', 2)
+            t_parts = r["target"].split(":", 2)
 
-            existing_search_optimization_items.append(SearchOptimizationItem(
-                method=r['method'],
-                target=Ident(t_parts[0]),
-            ))
+            existing_search_optimization_items.append(
+                SearchOptimizationItem(
+                    method=r["method"],
+                    target=Ident(t_parts[0]),
+                )
+            )
 
         for bp_item in bp.search_optimization:
             if bp_item not in existing_search_optimization_items:
-                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION ON {method:r}({target:i})", {
-                    "full_name": bp.full_name,
-                    "method": bp_item.method,
-                    "target": bp_item.target,
-                }, condition=condition)
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION ON {method:r}({target:i})",
+                    {
+                        "full_name": bp.full_name,
+                        "method": bp_item.method,
+                        "target": bp_item.target,
+                    },
+                    condition=condition,
+                )
 
                 result = True
 
         for ex_item in existing_search_optimization_items:
             if ex_item not in bp.search_optimization:
-                self.engine.execute_unsafe_ddl("ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION ON {method:r}({target:i})", {
-                    "full_name": bp.full_name,
-                    "method": ex_item.method,
-                    "target": ex_item.target,
-                }, condition=condition)
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} DROP SEARCH OPTIMIZATION ON {method:r}({target:i})",
+                    {
+                        "full_name": bp.full_name,
+                        "method": ex_item.method,
+                        "target": ex_item.target,
+                    },
+                    condition=condition,
+                )
 
                 result = True
 

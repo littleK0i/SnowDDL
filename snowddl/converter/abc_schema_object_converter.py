@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from snowddl.converter.abc_converter import AbstractConverter, ConvertResult, YamlLiteralStr, YamlFoldedStr
+from snowddl.converter.abc_converter import AbstractConverter
 
 
 class AbstractSchemaObjectConverter(AbstractConverter, ABC):
@@ -8,7 +8,9 @@ class AbstractSchemaObjectConverter(AbstractConverter, ABC):
         existing_objects = {}
 
         # Process schemas in parallel
-        for schema_objects in self.engine.executor.map(self.get_existing_objects_in_schema, self.engine.schema_cache.schemas.values()):
+        for schema_objects in self.engine.executor.map(
+            self.get_existing_objects_in_schema, self.engine.schema_cache.schemas.values()
+        ):
             existing_objects.update(schema_objects)
 
         return existing_objects

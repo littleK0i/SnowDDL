@@ -19,28 +19,27 @@ class SchemaResolver(AbstractResolver):
         if bp.is_transient:
             query.append("TRANSIENT")
 
-        query.append("SCHEMA {full_name:i}", {
-            "full_name": bp.full_name
-        })
+        query.append("SCHEMA {full_name:i}", {"full_name": bp.full_name})
 
         query.append_nl("WITH MANAGED ACCESS")
 
         if bp.retention_time is not None:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            })
+            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
         if bp.comment:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         self.engine.execute_safe_ddl(query)
 
         return ResolveResult.CREATE
 
     def compare_object(self, bp: SchemaBlueprint, row: dict):
-        if bp.is_transient != row['is_transient']:
+        if bp.is_transient != row["is_transient"]:
             if bp.is_transient:
                 raise SnowDDLUnsupportedError("Cannot change PERMANENT object into TRANSIENT object")
             else:
@@ -48,19 +47,18 @@ class SchemaResolver(AbstractResolver):
 
         query = self.engine.query_builder()
 
-        query.append("ALTER SCHEMA {full_name:i} SET ", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "ALTER SCHEMA {full_name:i} SET ",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
-        if bp.retention_time is not None and bp.retention_time != row['retention_time']:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {
-                "retention_time": bp.retention_time
-            })
+        if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
+            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
-        if bp.comment != row['comment']:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment
-            })
+        if bp.comment != row["comment"]:
+            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
 
         if query.fragment_count() > 1:
             self.engine.execute_unsafe_ddl(query)
@@ -69,10 +67,13 @@ class SchemaResolver(AbstractResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP SCHEMA {database:i}.{schema:i}", {
-            "database": row['database'],
-            "schema": row['schema'],
-        })
+        self.engine.execute_unsafe_ddl(
+            "DROP SCHEMA {database:i}.{schema:i}",
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+            },
+        )
 
         return ResolveResult.DROP
 
@@ -95,7 +96,7 @@ class SchemaResolver(AbstractResolver):
             if schema_full_name in self.blueprints:
                 continue
 
-            database_full_name = '.'.join(schema_full_name.split('.')[:1])
+            database_full_name = ".".join(schema_full_name.split(".")[:1])
             database_bp = self.config.get_blueprints_by_type(DatabaseBlueprint).get(database_full_name)
 
             # Schema database does not exist in blueprints, schema will be dropped automatically on DROP DATABASE

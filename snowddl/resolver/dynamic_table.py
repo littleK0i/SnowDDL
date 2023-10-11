@@ -13,24 +13,27 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW DYNAMIC TABLES IN SCHEMA {database:i}.{schema:i}", {
-            "database": schema['database'],
-            "schema": schema['schema'],
-        })
+        cur = self.engine.execute_meta(
+            "SHOW DYNAMIC TABLES IN SCHEMA {database:i}.{schema:i}",
+            {
+                "database": schema["database"],
+                "schema": schema["schema"],
+            },
+        )
 
         for r in cur:
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
-                "database": r['database_name'],
-                "schema": r['schema_name'],
-                "name": r['name'],
-                "owner": r['owner'],
+                "database": r["database_name"],
+                "schema": r["schema_name"],
+                "name": r["name"],
+                "owner": r["owner"],
                 # Extract SQL query text only, skip the initial "CREATE DYNAMIC TABLE ..." part
                 # Snowflake modifies original SQL text in this column, it cannot be compared directly
-                "text": r['text'].partition("\nAS\n")[2],
-                "target_lag": r['target_lag'],
-                "refresh_mode": r['refresh_mode'],
-                "warehouse": r['warehouse'],
-                "comment": r['comment'] if r['comment'] else None,
+                "text": r["text"].partition("\nAS\n")[2],
+                "target_lag": r["target_lag"],
+                "refresh_mode": r["refresh_mode"],
+                "warehouse": r["warehouse"],
+                "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
@@ -40,9 +43,12 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
     def create_object(self, bp: DynamicTableBlueprint):
         query = self.engine.query_builder()
-        query.append("CREATE DYNAMIC TABLE {full_name:i}", {
-            "full_name": bp.full_name,
-        })
+        query.append(
+            "CREATE DYNAMIC TABLE {full_name:i}",
+            {
+                "full_name": bp.full_name,
+            },
+        )
 
         query.append(self._build_common_dynamic_table_sql(bp))
 
@@ -53,67 +59,91 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: DynamicTableBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
-        if bp.text != row['text']:
+        if bp.text != row["text"]:
             query = self.engine.query_builder()
-            query.append("CREATE OR REPLACE DYNAMIC TABLE {full_name:i}", {
-                "full_name": bp.full_name,
-            })
+            query.append(
+                "CREATE OR REPLACE DYNAMIC TABLE {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
             query.append(self._build_common_dynamic_table_sql(bp))
             self.engine.execute_unsafe_ddl(query)
 
             return ResolveResult.REPLACE
 
-        if bp.target_lag != row['target_lag']:
-            self.engine.execute_safe_ddl("ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG = {target_lag}", {
-                "full_name": bp.full_name,
-                "target_lag": bp.target_lag,
-            })
+        if bp.target_lag != row["target_lag"]:
+            self.engine.execute_safe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG = {target_lag}",
+                {
+                    "full_name": bp.full_name,
+                    "target_lag": bp.target_lag,
+                },
+            )
 
             result = ResolveResult.ALTER
 
-        if str(bp.warehouse) != row['warehouse']:
-            self.engine.execute_safe_ddl("ALTER DYNAMIC TABLE {full_name:i} SET WAREHOUSE = {warehouse:i}", {
-                "full_name": bp.full_name,
-                "warehouse": bp.warehouse,
-            })
+        if str(bp.warehouse) != row["warehouse"]:
+            self.engine.execute_safe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET WAREHOUSE = {warehouse:i}",
+                {
+                    "full_name": bp.full_name,
+                    "warehouse": bp.warehouse,
+                },
+            )
 
             result = ResolveResult.ALTER
 
-        if bp.comment != row['comment']:
-            self.engine.execute_safe_ddl("ALTER DYNAMIC TABLE {full_name:i} SET COMMENT = {comment}", {
-                "full_name": bp.full_name,
-                "comment": bp.comment,
-            })
+        if bp.comment != row["comment"]:
+            self.engine.execute_safe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
 
             result = ResolveResult.ALTER
 
         return result
 
     def drop_object(self, row: dict):
-        self.engine.execute_unsafe_ddl("DROP DYNAMIC TABLE {database:i}.{schema:i}.{name:i}", {
-            "database": row['database'],
-            "schema": row['schema'],
-            "name": row['name'],
-        })
+        self.engine.execute_unsafe_ddl(
+            "DROP DYNAMIC TABLE {database:i}.{schema:i}.{name:i}",
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+                "name": row["name"],
+            },
+        )
 
         return ResolveResult.DROP
 
     def _build_common_dynamic_table_sql(self, bp: DynamicTableBlueprint):
         query = self.engine.query_builder()
 
-        query.append_nl("TARGET_LAG = {target_lag}", {
-            "target_lag": bp.target_lag,
-        })
+        query.append_nl(
+            "TARGET_LAG = {target_lag}",
+            {
+                "target_lag": bp.target_lag,
+            },
+        )
 
-        query.append_nl("WAREHOUSE = {warehouse:i}", {
-            "warehouse": bp.warehouse,
-        })
+        query.append_nl(
+            "WAREHOUSE = {warehouse:i}",
+            {
+                "warehouse": bp.warehouse,
+            },
+        )
 
         if bp.comment:
-            query.append_nl("COMMENT = {comment}", {
-                "comment": bp.comment,
-            })
+            query.append_nl(
+                "COMMENT = {comment}",
+                {
+                    "comment": bp.comment,
+                },
+            )
 
         query.append_nl("AS")
         query.append_nl(bp.text)
