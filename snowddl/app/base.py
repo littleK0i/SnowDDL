@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, HelpFormatter
+from importlib.util import module_from_spec, spec_from_file_location
 from json import loads as json_loads
 from json.decoder import JSONDecodeError
 from logging import getLogger, Formatter, StreamHandler
@@ -258,6 +259,22 @@ class BaseApp:
         for parser_cls in self.parser_sequence:
             parser = parser_cls(config, self.config_path)
             parser.load_blueprints()
+
+        if config.errors:
+            self.output_config_errors(config)
+            exit(1)
+
+        # Custom programmatically generated blueprints and config adjustments
+        for module_path in sorted(self.config_path.glob("__custom/*.py")):
+            try:
+                spec = spec_from_file_location(module_path.name, module_path)
+
+                module = module_from_spec(spec)
+                spec.loader.exec_module(module)
+
+                module.handler(config)
+            except Exception as e:
+                config.add_error(module_path, e)
 
         if config.errors:
             self.output_config_errors(config)

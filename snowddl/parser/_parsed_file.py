@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 
 class ParsedFile:
-    placeholder_start = "${{ "
-    placeholder_end = " }}"
-    placeholder_re = compile(r"\${{\s([a-z0-9._-]+)\s}}", IGNORECASE)
+    placeholder_start = "${{"
+    placeholder_end = "}}"
+    placeholder_re = compile(r"\${{\s?([a-z0-9._-]+)\s?}}", IGNORECASE)
 
     def __init__(self, parser: "AbstractParser", path: Path, json_schema: dict):
         self.parser = parser

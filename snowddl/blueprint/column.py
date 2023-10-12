@@ -9,23 +9,23 @@ class ExternalTableColumn(BaseModelWithConfig):
     name: Ident
     type: DataType
     expr: str
-    not_null: bool
-    comment: Optional[str]
+    not_null: bool = False
+    comment: Optional[str] = None
 
 
 class TableColumn(BaseModelWithConfig):
     name: Ident
     type: DataType
-    not_null: bool
-    default: Optional[Union[SchemaObjectIdent, str]]
-    expression: Optional[str]
-    collate: Optional[str]
-    comment: Optional[str]
+    not_null: bool = False
+    default: Optional[Union[SchemaObjectIdent, str]] = None
+    expression: Optional[str] = None
+    collate: Optional[str] = None
+    comment: Optional[str] = None
 
 
 class ViewColumn(BaseModelWithConfig):
     name: Ident
-    comment: Optional[str]
+    comment: Optional[str] = None
 
 
 class NameWithType(BaseModelWithConfig):

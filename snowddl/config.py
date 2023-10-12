@@ -55,6 +55,10 @@ class SnowDDLConfig:
     def add_blueprint(self, bp: AbstractBlueprint):
         self.blueprints[bp.__class__][str(bp.full_name)] = bp
 
+    def remove_blueprint(self, bp: AbstractBlueprint):
+        if str(bp.full_name) not in self.blueprints.get(bp.__class__, {}):
+            raise ValueError(f"Blueprint with type [{bp.__class__.__name__}] and name [{bp.full_name}] does not exist in config")
+
     def add_error(self, path: Path, e: Exception):
         self.errors.append(
             {
