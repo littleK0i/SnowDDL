@@ -2,14 +2,23 @@ from snowddl.blueprint import DatabaseIdent, DatabaseShareBlueprint, InboundShar
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 inbound_share_json_schema = {
     "type": "object",
     "additionalProperties": {
-        "properties": {"share_name": {"type": "string"}, "comment": {"type": "string"}},
+        "properties": {
+            "share_name": {
+                "type": "string"
+            },
+            "comment": {
+                "type": "string"
+            }
+        },
         "required": ["share_name"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class InboundShareParser(AbstractParser):

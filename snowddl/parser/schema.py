@@ -3,18 +3,38 @@ from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
 
 
+# fmt: off
 schema_json_schema = {
     "type": "object",
     "properties": {
-        "is_transient": {"type": "boolean"},
-        "retention_time": {"type": "integer"},
-        "is_sandbox": {"type": "boolean"},
-        "owner_schema_read": {"type": "array", "items": {"type": "string"}},
-        "owner_schema_write": {"type": "array", "items": {"type": "string"}},
-        "comment": {"type": "string"},
+        "is_transient": {
+            "type": "boolean"
+        },
+        "retention_time": {
+            "type": "integer"
+        },
+        "is_sandbox": {
+            "type": "boolean"
+        },
+        "owner_schema_read": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "owner_schema_write": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class SchemaParser(AbstractParser):

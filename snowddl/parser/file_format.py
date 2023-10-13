@@ -2,16 +2,27 @@ from snowddl.blueprint import FileFormatBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 file_format_json_schema = {
     "type": "object",
     "properties": {
-        "type": {"type": "string"},
-        "format_options": {"type": "object", "additionalProperties": {"type": ["array", "boolean", "number", "string"]}},
-        "comment": {"type": "string"},
+        "type": {
+            "type": "string"
+        },
+        "format_options": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["array", "boolean", "number", "string"]
+            }
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["type"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class FileFormatParser(AbstractParser):

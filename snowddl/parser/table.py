@@ -22,6 +22,7 @@ from snowddl.parser.schema import database_json_schema, schema_json_schema
 col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
 
 
+# fmt: off
 table_json_schema = {
     "type": "object",
     "properties": {
@@ -30,28 +31,51 @@ table_json_schema = {
             "minItems": 1,
             "items": {
                 "anyOf": [
-                    {"type": "string"},
+                    {
+                        "type": "string"
+                    },
                     {
                         "type": "object",
                         "properties": {
-                            "type": {"type": "string"},
-                            "default": {"type": "string"},
-                            "default_sequence": {"type": "string"},
-                            "expression": {"type": "string"},
-                            "collate": {"type": "string"},
-                            "comment": {"type": "string"},
+                            "type": {
+                                "type": "string"
+                            },
+                            "default": {
+                                "type": "string"
+                            },
+                            "default_sequence": {
+                                "type": "string"
+                            },
+                            "expression": {
+                                "type": "string"
+                            },
+                            "collate": {
+                                "type": "string"
+                            },
+                            "comment": {
+                                "type": "string"
+                            }
                         },
                         "required": ["type"],
-                        "additionalProperties": False,
-                    },
+                        "additionalProperties": False
+                    }
                 ]
-            },
+            }
         },
-        "cluster_by": {"type": "array", "items": {"type": "string"}},
-        "change_tracking": {"type": "boolean"},
+        "cluster_by": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "change_tracking": {
+            "type": "boolean"
+        },
         "search_optimization": {
             "anyOf": [
-                {"type": "boolean"},
+                {
+                    "type": "boolean"
+                },
                 {
                     "type": "object",
                     "additionalProperties": {
@@ -59,39 +83,68 @@ table_json_schema = {
                         "items": {
                             "type": "string",
                             "minItems": 1,
-                        },
-                    },
-                },
+                        }
+                    }
+                }
             ]
         },
-        "comment": {"type": "string"},
-        "primary_key": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "comment": {
+            "type": "string"
+        },
+        "primary_key": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
         "unique_keys": {
             "type": "array",
             "items": {
                 "type": "array",
-                "items": {"type": "string"},
+                "items": {
+                    "type": "string"
+                },
                 "minItems": 1,
-            },
+            }
         },
         "foreign_keys": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "columns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-                    "ref_table": {"type": "string"},
-                    "ref_columns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
+                    "ref_table": {
+                        "type": "string"
+                    },
+                    "ref_columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
                 },
-                "additionalProperties": False,
+                "additionalProperties": False
             },
-            "minItems": 1,
+            "minItems": 1
         },
-        "is_transient": {"type": "boolean"},
-        "retention_time": {"type": "integer"},
+        "is_transient": {
+            "type": "boolean"
+        },
+        "retention_time": {
+            "type": "integer"
+        },
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class TableParser(AbstractParser):

@@ -2,22 +2,39 @@ from snowddl.blueprint import AccountIdent, OutboundShareBlueprint, OutboundShar
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 outbound_share_json_schema = {
     "type": "object",
     "additionalProperties": {
         "properties": {
             "accounts": {
                 "type": "array",
-                "items": {"type": "string"},
+                "items": {
+                    "type": "string"
+                },
             },
-            "share_restrictions": {"type": "boolean"},
-            "grants": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}, "minItems": 1}},
-            "comment": {"type": "string"},
+            "share_restrictions": {
+                "type": "boolean"
+            },
+            "grants": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
+            "comment": {
+                "type": "string"
+            }
         },
         "required": ["grants"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class OutboundShareParser(AbstractParser):

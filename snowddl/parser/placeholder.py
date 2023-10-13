@@ -4,7 +4,14 @@ from typing import Dict, Optional
 from snowddl.parser.abc_parser import AbstractParser
 
 
-placeholder_json_schema = {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}}
+# fmt: off
+placeholder_json_schema = {
+    "type": "object",
+    "additionalProperties": {
+        "type": ["boolean", "number", "string"]
+    }
+}
+# fmt: on
 
 
 class PlaceholderParser(AbstractParser):

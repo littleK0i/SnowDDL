@@ -2,22 +2,51 @@ from snowddl.blueprint import TaskBlueprint, AccountObjectIdent, SchemaObjectIde
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 task_json_schema = {
     "type": "object",
     "properties": {
-        "body": {"type": "string"},
-        "schedule": {"type": "string"},
-        "after": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "when": {"type": "string"},
-        "warehouse": {"type": "string"},
-        "user_task_managed_initial_warehouse_size": {"type": "string"},
-        "allow_overlapping_execution": {"type": "boolean"},
-        "session_params": {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}},
-        "user_task_timeout_ms": {"type": "integer"},
-        "comment": {"type": "string"},
+        "body": {
+            "type": "string"
+        },
+        "schedule": {
+            "type": "string"
+        },
+        "after": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "when": {
+            "type": "string"
+        },
+        "warehouse": {
+            "type": "string"
+        },
+        "user_task_managed_initial_warehouse_size": {
+            "type": "string"
+        },
+        "allow_overlapping_execution": {
+            "type": "boolean"
+        },
+        "session_params": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["boolean", "number", "string"]
+            }
+        },
+        "user_task_timeout_ms": {
+            "type": "integer"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class TaskParser(AbstractParser):

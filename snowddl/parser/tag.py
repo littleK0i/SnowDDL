@@ -2,6 +2,7 @@ from snowddl.blueprint import TagBlueprint, Ident, SchemaObjectIdent, ObjectType
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 tag_json_schema = {
     "type": "object",
     "properties": {
@@ -10,20 +11,31 @@ tag_json_schema = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "object_type": {"type": "string"},
-                    "object_name": {"type": "string"},
-                    "column_name": {"type": "string"},
-                    "tag_value": {"type": "string"},
+                    "object_type": {
+                        "type": "string"
+                    },
+                    "object_name": {
+                        "type": "string"
+                    },
+                    "column_name": {
+                        "type": "string"
+                    },
+                    "tag_value": {
+                        "type": "string"
+                    }
                 },
                 "required": ["object_type", "object_name", "tag_value"],
-                "additionalProperties": False,
+                "additionalProperties": False
             },
-            "minItems": 1,
+            "minItems": 1
         },
-        "comment": {"type": "string"},
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class TagParser(AbstractParser):

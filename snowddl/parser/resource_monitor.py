@@ -2,19 +2,30 @@ from snowddl.blueprint import ResourceMonitorBlueprint, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 resource_monitor_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "credit_quota": {"type": "integer"},
-            "frequency": {"type": "string"},
-            "triggers": {"type": "object", "additionalProperties": {"type": "string"}},
+            "credit_quota": {
+                "type": "integer"
+            },
+            "frequency": {
+                "type": "string"
+            },
+            "triggers": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }
         },
         "required": ["credit_quota", "frequency", "triggers"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class ResourceMonitorParser(AbstractParser):

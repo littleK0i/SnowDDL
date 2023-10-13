@@ -2,28 +2,57 @@ from snowddl.blueprint import WarehouseBlueprint, Ident, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 warehouse_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "type": {"type": "string"},
-            "size": {"type": "string"},
-            "min_cluster_count": {"type": "integer"},
-            "max_cluster_count": {"type": "integer"},
-            "scaling_policy": {"type": "string"},
-            "auto_suspend": {"type": "integer"},
-            "resource_monitor": {"type": "string"},
-            "global_resource_monitor": {"type": "string"},
-            "enable_query_acceleration": {"type": "boolean"},
-            "query_acceleration_max_scale_factor": {"type": "integer"},
-            "warehouse_params": {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}},
-            "comment": {"type": "string"},
+            "type": {
+                "type": "string"
+            },
+            "size": {
+                "type": "string"
+            },
+            "min_cluster_count": {
+                "type": "integer"
+            },
+            "max_cluster_count": {
+                "type": "integer"
+            },
+            "scaling_policy": {
+                "type": "string"
+            },
+            "auto_suspend": {
+                "type": "integer"
+            },
+            "resource_monitor": {
+                "type": "string"
+            },
+            "global_resource_monitor": {
+                "type": "string"
+            },
+            "enable_query_acceleration": {
+                "type": "boolean"
+            },
+            "query_acceleration_max_scale_factor": {
+                "type": "integer"
+            },
+            "warehouse_params": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": ["boolean", "number", "string"]
+                }
+            },
+            "comment": {
+                "type": "string"
+            }
         },
         "required": ["size"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class WarehouseParser(AbstractParser):

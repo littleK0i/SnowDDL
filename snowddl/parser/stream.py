@@ -2,19 +2,33 @@ from snowddl.blueprint import StreamBlueprint, SchemaObjectIdent, ObjectType, bu
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 stream_json_schema = {
     "type": "object",
     "properties": {
-        "object_type": {"type": "string"},
-        "object_name": {"type": "string"},
-        "append_only": {"type": "boolean"},
-        "insert_only": {"type": "boolean"},
-        "show_initial_rows": {"type": "boolean"},
-        "comment": {"type": "string"},
+        "object_type": {
+            "type": "string"
+        },
+        "object_name": {
+            "type": "string"
+        },
+        "append_only": {
+            "type": "boolean"
+        },
+        "insert_only": {
+            "type": "boolean"
+        },
+        "show_initial_rows": {
+            "type": "boolean"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["object_type", "object_name"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class StreamParser(AbstractParser):

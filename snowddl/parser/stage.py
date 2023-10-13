@@ -9,19 +9,44 @@ from snowddl.blueprint import (
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 stage_json_schema = {
     "type": "object",
     "properties": {
-        "url": {"type": "string"},
-        "storage_integration": {"type": "string"},
-        "encryption": {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}},
-        "directory": {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}},
-        "file_format": {"type": "string"},
-        "copy_options": {"type": "object", "additionalProperties": {"type": ["array", "boolean", "number", "string"]}},
-        "comment": {"type": "string"},
+        "url": {
+            "type": "string"
+        },
+        "storage_integration": {
+            "type": "string"
+        },
+        "encryption": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["boolean", "number", "string"]
+            }
+        },
+        "directory": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["boolean", "number", "string"]
+            }
+        },
+        "file_format": {
+            "type": "string"
+        },
+        "copy_options": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["array", "boolean", "number", "string"]
+            }
+        },
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class StageParser(AbstractParser):

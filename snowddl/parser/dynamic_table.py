@@ -2,20 +2,34 @@ from snowddl.blueprint import AccountObjectIdent, DynamicTableBlueprint, SchemaO
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 dynamic_table_json_schema = {
     "type": "object",
     "properties": {
-        "text": {"type": "string"},
-        "target_lag": {"type": "string"},
+        "text": {
+            "type": "string"
+        },
+        "target_lag": {
+            "type": "string"
+        },
         "warehouse": {
             "type": "string",
         },
-        "depends_on": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "comment": {"type": "string"},
+        "depends_on": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "comment": {
+            "type": "string"
+        },
     },
     "required": ["text", "target_lag", "warehouse"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class DynamicTableParser(AbstractParser):

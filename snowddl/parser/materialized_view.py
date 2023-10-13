@@ -2,18 +2,37 @@ from snowddl.blueprint import MaterializedViewBlueprint, ViewColumn, Ident, Sche
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 materialized_view_json_schema = {
     "type": "object",
     "properties": {
-        "columns": {"type": "object", "additionalProperties": {"type": "string"}},
-        "text": {"type": "string"},
-        "cluster_by": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "is_secure": {"type": "boolean"},
-        "comment": {"type": "string"},
+        "columns": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "text": {
+            "type": "string"
+        },
+        "cluster_by": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "is_secure": {
+            "type": "boolean"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["text"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class MaterializedViewParser(AbstractParser):

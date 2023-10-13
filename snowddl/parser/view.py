@@ -2,18 +2,37 @@ from snowddl.blueprint import ViewBlueprint, ViewColumn, Ident, SchemaObjectIden
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 view_json_schema = {
     "type": "object",
     "properties": {
-        "columns": {"type": "object", "additionalProperties": {"type": ["string", "null"]}},
-        "text": {"type": "string"},
-        "is_secure": {"type": "boolean"},
-        "depends_on": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "comment": {"type": "string"},
+        "columns": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["string", "null"]
+            }
+        },
+        "text": {
+            "type": "string"
+        },
+        "is_secure": {
+            "type": "boolean"
+        },
+        "depends_on": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["text"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class ViewParser(AbstractParser):

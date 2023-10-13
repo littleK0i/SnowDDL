@@ -9,22 +9,61 @@ from snowddl.blueprint import (
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 business_role_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "schema_owner": {"type": "array", "items": {"type": "string"}},
-            "schema_read": {"type": "array", "items": {"type": "string"}},
-            "schema_write": {"type": "array", "items": {"type": "string"}},
-            "warehouse_usage": {"type": "array", "items": {"type": "string"}},
-            "warehouse_monitor": {"type": "array", "items": {"type": "string"}},
-            "tech_roles": {"type": "array", "items": {"type": "string"}},
-            "global_roles": {"type": "array", "items": {"type": "string"}},
-            "comment": {"type": "string"},
-        },
-    },
+            "schema_owner": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "schema_read": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "schema_write": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "warehouse_usage": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "warehouse_monitor": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "tech_roles": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "global_roles": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "comment": {
+                "type": "string"
+            }
+        }
+    }
 }
+# fmt: on
 
 
 class BusinessRoleParser(AbstractParser):

@@ -3,28 +3,65 @@ from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema
 
 
+# fmt: off
 user_json_schema = {
     "type": "object",
     "additionalProperties": {
         "properties": {
-            "login_name": {"type": "string"},
-            "display_name": {"type": "string"},
-            "first_name": {"type": "string"},
-            "last_name": {"type": "string"},
-            "email": {"type": "string"},
-            "disabled": {"type": "boolean"},
-            "password": {"type": "string"},
-            "rsa_public_key": {"type": "string"},
-            "rsa_public_key_2": {"type": "string"},
-            "default_warehouse": {"type": "string"},
-            "default_namespace": {"type": "string"},
-            "session_params": {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}},
-            "business_roles": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-            "comment": {"type": "string"},
+            "login_name": {
+                "type": "string"
+            },
+            "display_name": {
+                "type": "string"
+            },
+            "first_name": {
+                "type": "string"
+            },
+            "last_name": {
+                "type": "string"
+            },
+            "email": {
+                "type": "string"
+            },
+            "disabled": {
+                "type": "boolean"
+            },
+            "password": {
+                "type": "string"
+            },
+            "rsa_public_key": {
+                "type": "string"
+            },
+            "rsa_public_key_2": {
+                "type": "string"
+            },
+            "default_warehouse": {
+                "type": "string"
+            },
+            "default_namespace": {
+                "type": "string"
+            },
+            "session_params": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": ["boolean", "number", "string"]
+                }
+            },
+            "business_roles": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "comment": {
+                "type": "string"
+            }
         },
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class UserParser(AbstractParser):

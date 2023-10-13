@@ -2,11 +2,23 @@ from snowddl.blueprint import SequenceBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 sequence_json_schema = {
     "type": "object",
-    "properties": {"start": {"type": "integer"}, "interval": {"type": "integer"}, "comment": {"type": "string"}},
-    "additionalProperties": False,
+    "properties": {
+        "start": {
+            "type": "integer"
+        },
+        "interval": {
+            "type": "integer"
+        },
+        "comment": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class SequenceParser(AbstractParser):

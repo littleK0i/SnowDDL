@@ -10,35 +10,92 @@ from snowddl.blueprint import (
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 function_json_schema = {
     "type": "object",
     "properties": {
-        "language": {"type": "string"},
-        "arguments": {"type": "object", "additionalProperties": {"type": "string"}},
-        "returns": {"anyOf": [{"type": "string"}, {"type": "object", "additionalProperties": {"type": "string"}}]},
-        "body": {"type": "string"},
-        "is_secure": {"type": "boolean"},
-        "is_strict": {"type": "boolean"},
-        "is_immutable": {"type": "boolean"},
-        "is_memoizable": {"type": "boolean"},
-        "runtime_version": {"type": ["number", "string"]},
+        "language": {
+            "type": "string"
+        },
+        "arguments": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "returns": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "body": {
+            "type": "string"
+        },
+        "is_secure": {
+            "type": "boolean"
+        },
+        "is_strict": {
+            "type": "boolean"
+        },
+        "is_immutable": {
+            "type": "boolean"
+        },
+        "is_memoizable": {
+            "type": "boolean"
+        },
+        "runtime_version": {
+            "type": ["number", "string"]
+        },
         "imports": {
             "type": "array",
             "items": {
                 "type": "object",
-                "properties": {"stage": {"type": "string"}, "path": {"type": "string"}},
+                "properties": {
+                    "stage": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
                 "required": ["stage"],
-                "additionalProperties": False,
+                "additionalProperties": False
             },
-            "minItems": 1,
+            "minItems": 1
         },
-        "packages": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "handler": {"type": "string"},
-        "comment": {"type": "string"},
+        "packages": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "handler": {
+            "type": "string"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
-    "anyOf": [{"required": ["body", "returns"]}, {"required": ["handler", "returns"]}],
-    "additionalProperties": False,
+    "anyOf": [
+        {
+            "required": ["body", "returns"]
+        },
+        {
+            "required": ["handler", "returns"]
+        }
+    ],
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class FunctionParser(AbstractParser):

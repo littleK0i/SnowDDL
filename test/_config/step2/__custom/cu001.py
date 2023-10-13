@@ -3,7 +3,7 @@ from snowddl import DataType, Ident, SchemaObjectIdent, SnowDDLConfig, TableBlue
 
 def handler(config: SnowDDLConfig):
     # Add some custom tables and corresponding views
-    for i in range(1,4):
+    for i in range(1, 4):
         bp = TableBlueprint(
             full_name=SchemaObjectIdent(config.env_prefix, "db1", "sc1", f"cu001_tb{i}"),
             columns=[

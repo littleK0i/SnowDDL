@@ -2,14 +2,20 @@ from snowddl.blueprint import EventTableBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 event_table_json_schema = {
     "type": "object",
     "properties": {
-        "change_tracking": {"type": "boolean"},
-        "comment": {"type": "string"},
+        "change_tracking": {
+            "type": "boolean"
+        },
+        "comment": {
+            "type": "string"
+        },
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class EventTableParser(AbstractParser):

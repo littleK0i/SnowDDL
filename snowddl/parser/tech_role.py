@@ -2,18 +2,31 @@ from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType, build_role_i
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 tech_role_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "grants": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}, "minItems": 1}},
-            "comment": {"type": "string"},
+            "grants": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
+            "comment": {
+                "type": "string"
+            }
         },
         "required": ["grants"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class TechRoleParser(AbstractParser):

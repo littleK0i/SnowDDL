@@ -2,16 +2,26 @@ from snowddl.blueprint import DatabaseBlueprint, DatabaseIdent
 from snowddl.parser.abc_parser import AbstractParser
 
 
+# fmt: off
 database_json_schema = {
     "type": "object",
     "properties": {
-        "is_transient": {"type": "boolean"},
-        "retention_time": {"type": "integer"},
-        "is_sandbox": {"type": "boolean"},
-        "comment": {"type": "string"},
+        "is_transient": {
+            "type": "boolean"
+        },
+        "retention_time": {
+            "type": "integer"
+        },
+        "is_sandbox": {
+            "type": "boolean"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class DatabaseParser(AbstractParser):

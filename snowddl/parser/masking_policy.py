@@ -11,31 +11,54 @@ from snowddl.blueprint import (
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 masking_policy_json_schema = {
     "type": "object",
     "properties": {
-        "arguments": {"type": "object", "additionalProperties": {"type": "string"}},
-        "returns": {"type": "string"},
-        "body": {"type": "string"},
+        "arguments": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "returns": {
+            "type": "string"
+        },
+        "body": {
+            "type": "string"
+        },
         "references": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "object_type": {"type": "string"},
-                    "object_name": {"type": "string"},
-                    "columns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+                    "object_type": {
+                        "type": "string"
+                    },
+                    "object_name": {
+                        "type": "string"
+                    },
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
                 },
                 "required": ["object_type", "object_name", "columns"],
-                "additionalProperties": False,
+                "additionalProperties": False
             },
-            "minItems": 1,
+            "minItems": 1
         },
-        "comment": {"type": "string"},
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["arguments", "returns", "body"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class MaskingPolicyParser(AbstractParser):

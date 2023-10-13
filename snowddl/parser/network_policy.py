@@ -2,19 +2,35 @@ from snowddl.blueprint import NetworkPolicyBlueprint, AccountObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 network_policy_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
         "properties": {
-            "allowed_ip_list": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-            "blocked_ip_list": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-            "comment": {"type": "string"},
+            "allowed_ip_list": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "blocked_ip_list": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "comment": {
+                "type": "string"
+            }
         },
         "required": ["allowed_ip_list"],
-        "additionalProperties": False,
-    },
+        "additionalProperties": False
+    }
 }
+# fmt: on
 
 
 class NetworkPolicyParser(AbstractParser):

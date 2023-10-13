@@ -2,18 +2,30 @@ from snowddl.blueprint import AlertBlueprint, AccountObjectIdent, SchemaObjectId
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 alert_json_schema = {
     "type": "object",
     "properties": {
-        "warehouse": {"type": "string"},
-        "schedule": {"type": "string"},
-        "condition": {"type": "string"},
-        "action": {"type": "string"},
-        "comment": {"type": "string"},
+        "warehouse": {
+            "type": "string"
+        },
+        "schedule": {
+            "type": "string"
+        },
+        "condition": {
+            "type": "string"
+        },
+        "action": {
+            "type": "string"
+        },
+        "comment": {
+            "type": "string"
+        },
     },
     "required": ["warehouse", "schedule", "condition", "action"],
     "additionalProperties": False,
 }
+# fmt: on
 
 
 class AlertParser(AbstractParser):

@@ -2,7 +2,14 @@ from snowddl.blueprint import AccountParameterBlueprint, Ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
-account_params_json_schema = {"type": "object", "additionalProperties": {"type": ["boolean", "number", "string"]}}
+# fmt: off
+account_params_json_schema = {
+    "type": "object",
+    "additionalProperties": {
+        "type": ["boolean", "number", "string"]
+    }
+}
+# fmt: on
 
 
 class AccountParameterParser(AbstractParser):

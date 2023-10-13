@@ -16,6 +16,7 @@ from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
 
+# fmt: off
 external_table_json_schema = table_json_schema = {
     "type": "object",
     "properties": {
@@ -23,56 +24,118 @@ external_table_json_schema = table_json_schema = {
             "type": "object",
             "additionalProperties": {
                 "type": "object",
-                "properties": {"type": {"type": "string"}, "expr": {"type": "string"}, "comment": {"type": "string"}},
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "expr": {
+                        "type": "string"
+                    },
+                    "comment": {
+                        "type": "string"
+                    }
+                },
                 "required": ["type", "expr"],
-                "additionalProperties": False,
-            },
+                "additionalProperties": False
+            }
         },
         "location": {
             "type": "object",
             "properties": {
-                "stage": {"type": "string"},
-                "path": {"type": "string"},
-                "pattern": {"type": "string"},
-                "file_format": {"type": "string"},
+                "stage": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "file_format": {
+                    "type": "string"
+                }
             },
             "required": ["stage", "file_format"],
-            "additionalProperties": False,
+            "additionalProperties": False
         },
-        "partition_by": {"type": "array", "items": {"type": "string"}},
-        "partition_type": {"type": "string", "pattern": "^[A-Za-z_]+$"},
-        "auto_refresh": {"type": "boolean"},
-        "refresh_on_create": {"type": "boolean"},
-        "aws_sns_topic": {"type": "string"},
-        "table_format": {"type": "string", "pattern": "^[A-Za-z_]+$"},
-        "integration": {"type": "string"},
-        "comment": {"type": "string"},
-        "primary_key": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "partition_by": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "partition_type": {
+            "type": "string",
+            "pattern": "^[A-Za-z_]+$"
+        },
+        "auto_refresh": {
+            "type": "boolean"
+        },
+        "refresh_on_create": {
+            "type": "boolean"
+        },
+        "aws_sns_topic": {
+            "type": "string"
+        },
+        "table_format": {
+            "type": "string",
+            "pattern": "^[A-Za-z_]+$"
+        },
+        "integration": {
+            "type": "string"
+        },
+        "comment": {
+            "type": "string"
+        },
+        "primary_key": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
         "unique_keys": {
             "type": "array",
             "items": {
                 "type": "array",
-                "items": {"type": "string"},
+                "items": {
+                    "type": "string"
+                },
                 "minItems": 1,
-            },
+            }
         },
         "foreign_keys": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "columns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-                    "ref_table": {"type": "string"},
-                    "ref_columns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
+                    "ref_table": {
+                        "type": "string"
+                    },
+                    "ref_columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
                 },
-                "additionalProperties": False,
+                "additionalProperties": False
             },
-            "minItems": 1,
-        },
+            "minItems": 1
+        }
     },
     "required": ["location"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class ExternalTableParser(AbstractParser):

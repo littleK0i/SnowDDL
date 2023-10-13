@@ -9,29 +9,67 @@ from snowddl.blueprint import (
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 external_function_json_schema = {
     "type": "object",
     "properties": {
-        "arguments": {"type": "object", "additionalProperties": {"type": "string"}},
-        "returns": {"type": "string"},
-        "api_integration": {"type": "string"},
+        "arguments": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "returns": {
+            "type": "string"
+        },
+        "api_integration": {
+            "type": "string"
+        },
         "url": {
             "type": "string",
         },
-        "is_secure": {"type": "boolean"},
-        "is_strict": {"type": "boolean"},
-        "is_immutable": {"type": "boolean"},
-        "headers": {"type": "object", "additionalProperties": {"type": "string"}},
-        "context_headers": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "max_batch_rows": {"type": "integer"},
-        "compression": {"type": "string"},
-        "request_translator": {"type": "string"},
-        "response_translator": {"type": "string"},
-        "comment": {"type": "string"},
+        "is_secure": {
+            "type": "boolean"
+        },
+        "is_strict": {
+            "type": "boolean"
+        },
+        "is_immutable": {
+            "type": "boolean"
+        },
+        "headers": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "context_headers": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1
+        },
+        "max_batch_rows": {
+            "type": "integer"
+        },
+        "compression": {
+            "type": "string"
+        },
+        "request_translator": {
+            "type": "string"
+        },
+        "response_translator": {
+            "type": "string"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["api_integration", "url"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class ExternalFunctionParser(AbstractParser):

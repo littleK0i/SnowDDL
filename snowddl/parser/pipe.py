@@ -2,31 +2,61 @@ from snowddl.blueprint import PipeBlueprint, Ident, SchemaObjectIdent, build_sch
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
+# fmt: off
 pipe_json_schema = {
     "type": "object",
     "properties": {
         "copy": {
             "type": "object",
             "properties": {
-                "table": {"type": "string"},
-                "stage": {"type": "string"},
-                "path": {"type": "string"},
-                "pattern": {"type": "string"},
-                "file_format": {"type": "string"},
-                "transform": {"type": "object", "additionalProperties": {"type": "string"}},
-                "options": {"type": "object", "additionalProperties": {"type": ["array", "boolean", "number", "string"]}},
+                "table": {
+                    "type": "string"
+                },
+                "stage": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "file_format": {
+                    "type": "string"
+                },
+                "transform": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "options": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": ["array", "boolean", "number", "string"]
+                    }
+                }
             },
             "required": ["table", "stage"],
-            "additionalProperties": False,
+            "additionalProperties": False
         },
-        "auto_ingest": {"type": "boolean"},
-        "aws_sns_topic": {"type": "string"},
-        "integration": {"type": "string"},
-        "comment": {"type": "string"},
+        "auto_ingest": {
+            "type": "boolean"
+        },
+        "aws_sns_topic": {
+            "type": "string"
+        },
+        "integration": {
+            "type": "string"
+        },
+        "comment": {
+            "type": "string"
+        }
     },
     "required": ["copy", "auto_ingest"],
-    "additionalProperties": False,
+    "additionalProperties": False
 }
+# fmt: on
 
 
 class PipeParser(AbstractParser):

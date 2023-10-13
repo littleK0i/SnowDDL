@@ -1,8 +1,9 @@
-from snowddl import DataType, Ident,  SchemaObjectIdent, SnowDDLConfig, TableBlueprint, TableColumn
+from snowddl import DataType, Ident, SchemaObjectIdent, SnowDDLConfig, TableBlueprint, TableColumn
+
 
 def handler(config: SnowDDLConfig):
     # Add some custom tables
-    for i in range(1,5):
+    for i in range(1, 5):
         bp = TableBlueprint(
             full_name=SchemaObjectIdent(config.env_prefix, "db1", "sc1", f"cu001_tb{i}"),
             columns=[
