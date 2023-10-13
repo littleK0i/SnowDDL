@@ -11,7 +11,7 @@ def handler(config: SnowDDLConfig):
     bp = ViewBlueprint(
         full_name=SchemaObjectIdent(config.env_prefix, "test_db", "test_schema", "custom_view"),
         text="\nUNION ALL\n".join(parts),
-        comment=f"This view was created programmatically",
+        comment="This view was created programmatically",
     )
 
     config.add_blueprint(bp)

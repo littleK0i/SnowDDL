@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.0] - 2023-10-13
+
+- Replaced blueprint dataclasses with `pydantic` V2 models. Dataclasses are no longer used.
+- Introduced a lot of default parameter values for the majority of blueprints and related objects. It should make the custom code operating on config and blueprints more clear. It will also prevent this code from breaking when new optional parameters are added to blueprints.
+- Introduced `black` for code formatting. Reformatted entire codebase.
+- Introduced `ruff` for code linting. Fixed or explicitly skipped ruff warnings across the entire codebase.
+- Introduced the ability to dynamically add custom blueprints and adjust existing blueprints by placing Python modules in special config directory `__custom`.
+
 ## [0.18.2] - 2023-08-16
 
 - When comparing grants, run `REVOKE` commands prior to `GRANT` commands. It should help to resolve issues with `OWNERSHIP` future grant, which should be revoked before a new `OWNERSHIP` grant can be added.

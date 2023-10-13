@@ -17,7 +17,7 @@ def handler(config: SnowDDLConfig):
                 ),
             ],
             is_transient=True,
-            comment=f"This table was created programmatically",
+            comment="This table was created programmatically",
         )
 
         config.add_blueprint(bp)
