@@ -7,6 +7,7 @@
 - Introduced `black` for code formatting. Reformatted entire codebase.
 - Introduced `ruff` for code linting. Fixed or explicitly skipped ruff warnings across the entire codebase.
 - Introduced the ability to dynamically add custom blueprints and adjust existing blueprints by placing Python modules in special config directory `__custom`.
+- Database names starting with `__` (double underscore) will now be ignored. It is necessary to support more special config sub-directories in future.
 
 ## [0.18.2] - 2023-08-16
 

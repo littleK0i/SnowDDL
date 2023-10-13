@@ -43,6 +43,10 @@ class SchemaParser(AbstractParser):
             if not database_path.is_dir():
                 continue
 
+            # Skip special sub-directories
+            if database_path.name.startswith("__"):
+                continue
+
             database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
 
             for schema_path in database_path.iterdir():
