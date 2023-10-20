@@ -66,9 +66,8 @@ class ViewResolver(AbstractSchemaObjectResolver):
                         "full_name": bp.full_name,
                     },
                 )
-            except SnowDDLExecuteError:
-                # TODO: add checks for specific errors?
-                pass
+            except SnowDDLExecuteError as e:
+                self.engine.logger.debug(f"View [{bp.full_name}] caused describe error [{e.snow_exc.errno}]: {e.snow_exc.raw_msg}")
             else:
                 # Comments on views are broken and must be applied separately
                 if bp.comment != row["comment"]:
@@ -83,6 +82,8 @@ class ViewResolver(AbstractSchemaObjectResolver):
                     return ResolveResult.ALTER
                 else:
                     return ResolveResult.NOCHANGE
+        else:
+            self.engine.logger.debug(f"View [{bp.full_name}] text did not match")
 
         # Replace view if we got here
         self.engine.execute_safe_ddl(query)

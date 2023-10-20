@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.20.1] - 2023-10-20
+
+- Add additional debug logs for `VIEW` resolver in attempt to diagnose rare unnecessary re-creation problem.
+
 ## [0.20.0] - 2023-10-13
 
 - Replaced blueprint dataclasses with `pydantic` V2 models. Dataclasses are no longer used.
