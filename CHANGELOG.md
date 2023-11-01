@@ -1,8 +1,15 @@
 # Changelog
 
+## [0.21.0] - 2023-11-01
+
+- Introduced custom value for application option (`SnowDDL <version>`) while opening Snowflake connection. Now it should be possible to find sessions created by SnowDDL using `SESSIONS` system view.
+- Added `--query-tag` CLI option to set custom `QUERY_TAG` session parameter.
+- Fixed pydantic deprecation warning related to `__fields__`.
+- Added explicit `.close()` call for Snowflake connection after execution of CLI commands. It should help to terminate SnowDDL sessions earlier, regardless of `CLIENT_SESSION_KEEP_ALIVE` parameter.
+
 ## [0.20.1] - 2023-10-20
 
-- Add additional debug logs for `VIEW` resolver in attempt to diagnose rare unnecessary re-creation problem.
+- Added additional debug logs for `VIEW` resolver in attempt to diagnose rare unnecessary re-creation problem.
 
 ## [0.20.0] - 2023-10-13
 

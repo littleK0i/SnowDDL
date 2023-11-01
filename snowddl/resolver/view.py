@@ -67,7 +67,9 @@ class ViewResolver(AbstractSchemaObjectResolver):
                     },
                 )
             except SnowDDLExecuteError as e:
-                self.engine.logger.debug(f"View [{bp.full_name}] caused describe error [{e.snow_exc.errno}]: {e.snow_exc.raw_msg}")
+                self.engine.logger.debug(
+                    f"View [{bp.full_name}] caused describe error [{e.snow_exc.errno}]: {e.snow_exc.raw_msg}"
+                )
             else:
                 # Comments on views are broken and must be applied separately
                 if bp.comment != row["comment"]:

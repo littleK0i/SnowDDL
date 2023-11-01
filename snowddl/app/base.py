@@ -18,6 +18,9 @@ from snowddl.version import __version__
 
 
 class BaseApp:
+    application_name = "SnowDDL"
+    application_version = __version__
+
     parser_sequence = default_parser_sequence
     resolver_sequence = default_resolver_sequence
 
@@ -99,6 +102,11 @@ class BaseApp:
         )
         parser.add_argument(
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
+        )
+        parser.add_argument(
+            "--query-tag",
+            help="Add QUERY_TAG to all queries produced by SnowDDL",
+            default=environ.get("SNOWFLAKE_QUERY_TAG"),
         )
 
         # Logging
@@ -363,6 +371,7 @@ class BaseApp:
             "user": self.args["u"],
             "role": self.args["r"],
             "warehouse": self.args["w"],
+            "application": f"{self.application_name} {self.application_version}",
         }
 
         if self.args.get("k"):
@@ -380,6 +389,11 @@ class BaseApp:
             )
         else:
             options["password"] = self.args["p"]
+
+        if self.args.get("query_tag"):
+            options["session_parameters"] = {
+                "QUERY_TAG": self.args.get("query_tag"),
+            }
 
         return connect(**options)
 
@@ -407,6 +421,7 @@ class BaseApp:
 
                     error_count += len(resolver.errors)
 
+            self.engine.connection.close()
             self.output_engine_stats()
 
             if self.args.get("show_sql"):

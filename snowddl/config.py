@@ -31,7 +31,7 @@ class SnowDDLConfig:
         type_blueprints = self.blueprints.get(cls, {})
 
         # Add env prefix to pattern IF blueprint supports it
-        if "full_name" in cls.__fields__ and issubclass(cls.__fields__["full_name"].annotation, AbstractIdentWithPrefix):
+        if "full_name" in cls.model_fields and issubclass(cls.model_fields["full_name"].annotation, AbstractIdentWithPrefix):
             pattern = f"{self.env_prefix}{pattern}"
 
         # Use Unix-style wildcards if any special characters detected in pattern
