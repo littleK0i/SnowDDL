@@ -1,0 +1,4 @@
+type: HOST_PORT
+mode: EGRESS
+value_list:
+  - catfact.ninja

@@ -11,14 +11,13 @@ class NetworkPolicyResolver(AbstractResolver):
     def get_existing_objects(self):
         existing_objects = {}
 
-        cur = self.engine.execute_meta(
-            "SHOW NETWORK POLICIES LIKE {env_prefix:ls}",
-            {
-                "env_prefix": self.config.env_prefix,
-            }
-        )
+        cur = self.engine.execute_meta("SHOW NETWORK POLICIES")
 
         for r in cur:
+            # SHOW NETWORK POLICIES does not support LIKE filter, so it has to be applied manually in the code
+            if self.config.env_prefix and not str(r["name"]).startswith(self.config.env_prefix):
+                continue
+
             existing_objects[r["name"]] = {
                 "name": r["name"],
                 "entries_in_allowed_ip_list": r["entries_in_allowed_ip_list"],

@@ -1,0 +1,76 @@
+arguments:
+  num1:
+    type: NUMBER(10,0)
+    default: 0
+  num2:
+    type: NUMBER(10,5)
+    default: 10.15
+  dbl:
+    type: FLOAT
+    default: 10.15
+  bin1:
+    type: BINARY(10)
+    default: TO_BINARY('SUN', 'utf-8')
+  var1:
+    type: VARCHAR(10)
+    default: "'abc'"
+  dt1:
+    type: DATE
+    default: CURRENT_DATE()
+  tm1:
+    type: TIME(9)
+    default: "'01:02:03'::time"
+  ltz1:
+    type: TIMESTAMP_LTZ(9)
+    default: CURRENT_TIMESTAMP()
+  ntz1:
+    type: TIMESTAMP_NTZ(9)
+    default: CURRENT_TIMESTAMP()
+  tz1:
+    type: TIMESTAMP_TZ(9)
+    default: CURRENT_TIMESTAMP()
+  var:
+    type: VARIANT
+    default: "PARSE_JSON('{\"foo\": \"bar\"}')::variant"
+  obj:
+    type: OBJECT
+    default: "PARSE_JSON('{\"foo\": \"bar\"}')::object"
+  arr:
+    type: ARRAY
+    default: "PARSE_JSON('[1, 2, 3]')::array"
+
+
+returns:
+  num1: NUMBER(10,0)
+  num2: NUMBER(10,5)
+  dbl: FLOAT
+  bin1: BINARY(10)
+  var1: VARCHAR(10)
+  dt1: DATE
+  tm1: TIME(0)
+  ltz1: TIMESTAMP_LTZ(9)
+  ntz1: TIMESTAMP_NTZ(9)
+  tz1: TIMESTAMP_TZ(9)
+  var: VARIANT
+  obj: OBJECT
+  arr: ARRAY
+
+body: |-
+  DECLARE
+    res resultset default (
+        SELECT :NUM1, :NUM2
+            , :DBL
+            , :BIN1
+            , :VAR1
+            , :DT1
+            , :TM1
+            , :LTZ1
+            , :NTZ1
+            , :TZ1
+            , :VAR, :OBJ, :ARR
+    );
+  BEGIN
+    RETURN table(res);
+  END;
+
+comment: abc

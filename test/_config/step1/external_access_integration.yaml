@@ -1,0 +1,17 @@
+eai001_eai1:
+  allowed_network_rules:
+    - db1.sc1.eai001_nr1
+    - db1.sc1.eai001_nr2
+  allowed_api_authentication_integrations:
+    - TEST_API_SECURITY_INTEGRATION
+  allowed_authentication_secrets:
+    - db1.sc1.eai001_se1
+    - db1.sc1.eai001_se2
+  comment: abc
+
+fn009_eai1:
+  allowed_network_rules:
+    - db1.sc1.fn009_nr1
+  allowed_authentication_secrets:
+    - db1.sc1.fn009_se1
+    - db1.sc1.fn009_se2

@@ -92,12 +92,19 @@ class SnowDDLContext:
                 },
             )
 
-            if not self.is_account_admin:
+            if self.engine.settings.env_admin_role:
+                self.engine.execute_context_ddl(
+                    "GRANT ROLE {role_with_prefix:i} TO ROLE {env_admin_role:i}",
+                    {
+                        "role_with_prefix": role_with_prefix,
+                        "env_admin_role": self.engine.settings.env_admin_role,
+                    },
+                )
+            elif not self.is_account_admin:
                 self.engine.execute_context_ddl(
                     "GRANT ROLE {role_with_prefix:i} TO ROLE ACCOUNTADMIN",
                     {
                         "role_with_prefix": role_with_prefix,
-                        "current_role": self.current_role,
                     },
                 )
 

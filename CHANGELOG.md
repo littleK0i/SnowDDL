@@ -6,8 +6,8 @@
 - Added `EXTERNAL_ACCESS_INTEGRATIOS` and `SECRETS` parameters for functions and procedures.
 - Added ability to set `default` for function and procedure arguments.
 - Fixed issue with event tables being dropped while processing normal tables.
-- Implemented `LIKE` check for `NETWORK POLICY` object type. Previously it was not available in Snowflake.
 - Implemented "owner" check via `SHOW GRANTS` for `NETWORK POLICY` and `EXTERNAL ACCESS INTEGRATION`. "Owner" column is normally not available for these objects types.
+- Added `--env-admin-role` CLI option.
 
 ## [0.21.0] - 2023-11-01
 

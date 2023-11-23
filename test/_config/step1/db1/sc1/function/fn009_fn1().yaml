@@ -1,0 +1,27 @@
+language: python
+runtime_version: "3.10"
+handler: get_fact
+packages:
+  - requests
+
+external_access_integrations:
+  - fn009_eai1
+secrets:
+  foo: fn009_se1
+  bar: fn009_se2
+
+returns: VARIANT
+
+body: |-
+  import _snowflake
+  import requests
+
+  def get_fact():
+      response = requests.get("https://catfact.ninja/fact")
+
+      return {
+          "foo": _snowflake.get_generic_secret_string("foo"),
+          "bar": _snowflake.get_generic_secret_string("bar"),
+          "fact": response.json()["fact"],
+          "length": response.json()["length"],
+      }

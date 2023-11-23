@@ -66,6 +66,13 @@ class Helper:
 
         return {r["name"]: r for r in cur}
 
+    def desc_external_access_integration(self, name):
+        cur = self.execute(
+            "DESC EXTERNAL ACCESS INTEGRATION {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)}
+        )
+
+        return {r["property"]: r["property_value"] for r in cur}
+
     def desc_function(self, database, schema, name, dtypes):
         cur = self.execute(
             "DESC FUNCTION {name:i}", {"name": SchemaObjectIdentWithArgs(self.env_prefix, database, schema, name, dtypes)}
@@ -89,6 +96,11 @@ class Helper:
         cur = self.execute("DESC NETWORK POLICY {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)})
 
         return {r["name"]: r for r in cur}
+
+    def desc_network_rule(self, database, schema, name):
+        cur = self.execute("DESC NETWORK RULE {name:i}", {"name": SchemaObjectIdent(self.env_prefix, database, schema, name)})
+
+        return cur.fetchone()
 
     def desc_stage(self, database, schema, name):
         cur = self.execute("DESC STAGE {name:i}", {"name": SchemaObjectIdent(self.env_prefix, database, schema, name)})
@@ -131,6 +143,16 @@ class Helper:
             {
                 "schema_name": SchemaIdent(self.env_prefix, database, schema),
                 "table_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
+
+    def show_external_access_integration(self, name):
+        cur = self.execute(
+            "SHOW EXTERNAL ACCESS INTEGRATIONS LIKE {name:lf}",
+            {
+                "name": AccountObjectIdent(self.env_prefix, name),
             },
         )
 
@@ -282,13 +304,33 @@ class Helper:
             if r["name"] == str(AccountObjectIdent(self.env_prefix, name)):
                 return r
 
-        return None
+    def show_network_rule(self, database, schema, name):
+        cur = self.execute(
+            "SHOW NETWORK RULES LIKE {object_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "object_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
 
     def show_resource_monitor(self, name):
         cur = self.execute(
             "SHOW RESOURCE MONITORS LIKE {name:lf}",
             {
                 "name": AccountObjectIdent(self.env_prefix, name),
+            },
+        )
+
+        return cur.fetchone()
+
+    def show_secret(self, database, schema, name):
+        cur = self.execute(
+            "SHOW SECRETS LIKE {object_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "object_name": Ident(name),
             },
         )
 
@@ -321,13 +363,15 @@ class Helper:
         return self.edition >= Edition.BUSINESS_CRITICAL
 
     def dtypes_from_arguments(self, arguments):
+        arguments = arguments.translate(str.maketrans('', '', '[] '))
+
         start_dtypes_idx = arguments.index("(")
         finish_dtypes_idx = arguments.index(")")
 
         if finish_dtypes_idx - start_dtypes_idx == 1:
             return []
 
-        return [BaseDataType[a.strip(" ")] for a in arguments[start_dtypes_idx + 1 : finish_dtypes_idx].split(",")]
+        return [BaseDataType[a] for a in arguments[start_dtypes_idx + 1 : finish_dtypes_idx].split(",")]
 
     def __enter__(self):
         return self

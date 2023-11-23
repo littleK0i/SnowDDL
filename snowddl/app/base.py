@@ -101,6 +101,11 @@ class BaseApp:
             default=environ.get("SNOWFLAKE_ENV_PREFIX"),
         )
         parser.add_argument(
+            "--env-admin-role",
+            help="Super administration role which should inherit env prefixed SnowDDL role",
+            default=environ.get("SNOWFLAKE_ENV_ADMIN_ROLE"),
+        )
+        parser.add_argument(
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
         )
         parser.add_argument(
@@ -349,6 +354,9 @@ class BaseApp:
                 raise ValueError("Argument --clone-table requires argument --env-prefix")
 
             settings.clone_table = True
+
+        if self.args.get("env_admin_role"):
+            settings.env_admin_role = Ident(self.args.get("env_admin_role"))
 
         if self.args.get("exclude_object_types"):
             try:

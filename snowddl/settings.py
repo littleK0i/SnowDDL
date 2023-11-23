@@ -1,10 +1,11 @@
-from typing import List
+from typing import Optional, List
 
-from snowddl.blueprint import DatabaseIdent, ObjectType
+from snowddl.blueprint import DatabaseIdent, ObjectType, Ident
 from snowddl.model import BaseModelWithConfig
 
 
 class SnowDDLSettings(BaseModelWithConfig):
+    env_admin_role: Optional[Ident] = None
     execute_safe_ddl: bool = False
     execute_unsafe_ddl: bool = False
     execute_replace_table: bool = False

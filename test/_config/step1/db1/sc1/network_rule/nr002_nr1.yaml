@@ -1,0 +1,5 @@
+type: HOST_PORT
+mode: EGRESS
+value_list:
+  - example.com
+  - company.com:443

@@ -1,0 +1,78 @@
+arguments:
+  num1:
+    type: NUMBER(10,0)
+    default: 1
+  num2:
+    type: NUMBER(10,5)
+    default: 10.10
+  dbl:
+    type: FLOAT
+    default: 10.10
+  bin1:
+    type: BINARY(10)
+    default: "TO_BINARY('SNOW', 'utf-8')"
+  var1:
+    type: VARCHAR(10)
+    default: "'cde'"
+  dt1:
+    type: DATE
+    default: "'2024-01-01'::date"
+  tm1:
+    type: TIME(9)
+    default: "'01:02:03.124'::time"
+  ltz1:
+    type: TIMESTAMP_LTZ(9)
+    default: "'2024-01-02 16:00:00'::timestamp_ltz"
+  ntz1:
+    type: TIMESTAMP_NTZ(9)
+    default: "'2024-01-02 16:00:00'::timestamp_ntz"
+  tz1:
+    type: TIMESTAMP_TZ(9)
+    default: "'2024-01-02 16:00:00 +01:00'::timestamp_tz"
+  var:
+    type: VARIANT
+    default: "PARSE_JSON('{\"bar\": \"foo\"}')::variant"
+  obj:
+    type: OBJECT
+    default: "PARSE_JSON('{\"foo\": 123}')::object"
+  arr:
+    type: ARRAY
+    default: "PARSE_JSON('[''a'', ''b'', ''c'']')::array"
+  geo1:
+    type: GEOGRAPHY
+    default: "TO_GEOGRAPHY('POINT(1 1)')"
+  geo2:
+    type: GEOMETRY
+    default: "TO_GEOMETRY('POINT(1 1)')"
+
+
+returns:
+  num1: NUMBER(10,0)
+  num2: NUMBER(10,5)
+  dbl: FLOAT
+  bin1: BINARY(10)
+  var1: VARCHAR(10)
+  dt1: DATE
+  tm1: TIME(9)
+  ltz1: TIMESTAMP_LTZ(9)
+  ntz1: TIMESTAMP_NTZ(9)
+  tz1: TIMESTAMP_TZ(9)
+  var: VARIANT
+  obj: OBJECT
+  arr: ARRAY
+  geo1: GEOGRAPHY
+  geo2: GEOMETRY
+
+
+body: |-
+  SELECT NUM1, NUM2
+      , DBL
+      , BIN1
+      , VAR1
+      , DT1
+      , TM1
+      , LTZ1
+      , NTZ1
+      , TZ1
+      , VAR, OBJ, ARR
+      , GEO1, GEO2
