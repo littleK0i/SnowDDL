@@ -69,19 +69,19 @@ def test_step2(helper):
 
     # Compare returns signature
     assert (
-            procedure_desc["returns"] == "TABLE ("
-                                         "NUM1 NUMBER, NUM2 NUMBER, "
-                                         "DBL FLOAT, "
-                                         "BIN1 BINARY, "
-                                         "VAR1 VARCHAR, "
-                                         "DT1 DATE, "
-                                         "TM1 TIME, "
-                                         "LTZ1 TIMESTAMP_LTZ, "
-                                         "NTZ1 TIMESTAMP_NTZ, "
-                                         "TZ1 TIMESTAMP_TZ, "
-                                         "VAR VARIANT, "
-                                         "OBJ OBJECT, "
-                                         "ARR ARRAY)"
+        procedure_desc["returns"] == "TABLE ("
+        "NUM1 NUMBER, NUM2 NUMBER, "
+        "DBL FLOAT, "
+        "BIN1 BINARY, "
+        "VAR1 VARCHAR, "
+        "DT1 DATE, "
+        "TM1 TIME, "
+        "LTZ1 TIMESTAMP_LTZ, "
+        "NTZ1 TIMESTAMP_NTZ, "
+        "TZ1 TIMESTAMP_TZ, "
+        "VAR VARIANT, "
+        "OBJ OBJECT, "
+        "ARR ARRAY)"
     )
 
     assert "[" in procedure_show["arguments"]

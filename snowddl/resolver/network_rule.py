@@ -16,7 +16,7 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
-            }
+            },
         )
 
         for r in cur:
@@ -43,7 +43,7 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
             "CREATE NETWORK RULE {full_name:i}",
             {
                 "full_name": bp.full_name,
-            }
+            },
         )
 
         create_query.append(common_query)
@@ -62,7 +62,12 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
         desc = cur.fetchone()
         is_replace_required = False
 
-        if bp.type != row["type"] or bp.mode != row["mode"] or bp.value_list != desc["value_list"].split(",") or bp.comment != row["comment"]:
+        if (
+            bp.type != row["type"]
+            or bp.mode != row["mode"]
+            or bp.value_list != desc["value_list"].split(",")
+            or bp.comment != row["comment"]
+        ):
             is_replace_required = True
 
         if not is_replace_required:
@@ -75,7 +80,7 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
             "CREATE OR REPLACE NETWORK RULE {full_name:i}",
             {
                 "full_name": bp.full_name,
-            }
+            },
         )
 
         replace_query.append(common_query)
@@ -90,7 +95,7 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
                 "database": row["database"],
                 "schema": row["schema"],
                 "name": row["name"],
-            }
+            },
         )
 
         return ResolveResult.DROP
@@ -102,21 +107,21 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
             "TYPE = {type}",
             {
                 "type": bp.type,
-            }
+            },
         )
 
         query.append_nl(
             "VALUE_LIST = ({value_list})",
             {
                 "value_list": bp.value_list,
-            }
+            },
         )
 
         query.append_nl(
             "MODE = {mode}",
             {
                 "mode": bp.mode,
-            }
+            },
         )
 
         if bp.comment:
@@ -124,7 +129,7 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
                 "COMMENT = {comment}",
                 {
                     "comment": bp.comment,
-                }
+                },
             )
 
         return query

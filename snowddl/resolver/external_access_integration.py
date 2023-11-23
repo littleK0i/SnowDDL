@@ -15,7 +15,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
             "SHOW EXTERNAL ACCESS INTEGRATIONS LIKE {env_prefix:ls}",
             {
                 "env_prefix": self.config.env_prefix,
-            }
+            },
         )
 
         for r in cur:
@@ -36,7 +36,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
             "SHOW GRANTS ON INTEGRATION {name:i}",
             {
                 "name": name,
-            }
+            },
         )
 
         for r in cur:
@@ -55,7 +55,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
             "CREATE EXTERNAL ACCESS INTEGRATION {name:i}",
             {
                 "name": bp.full_name,
-            }
+            },
         )
 
         create_query.append_nl(common_query)
@@ -81,7 +81,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
                 "CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION {name:i}",
                 {
                     "name": bp.full_name,
-                }
+                },
             )
 
             replace_query.append_nl(common_query)
@@ -92,7 +92,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
                 {
                     "name": bp.full_name,
                     "comment": common_query.add_short_hash(bp.comment),
-                }
+                },
             )
 
             return ResolveResult.ALTER
@@ -116,7 +116,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
             "ALLOWED_NETWORK_RULES = ({allowed_network_rules:i})",
             {
                 "allowed_network_rules": bp.allowed_network_rules,
-            }
+            },
         )
 
         if bp.allowed_api_authentication_integrations:
@@ -124,7 +124,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
                 "ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ({allowed_api_authentication_integrations:i})",
                 {
                     "allowed_api_authentication_integrations": bp.allowed_api_authentication_integrations,
-                }
+                },
             )
 
         if bp.allowed_authentication_secrets:
@@ -132,14 +132,14 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
                 "ALLOWED_AUTHENTICATION_SECRETS = ({allowed_authentication_secrets:i})",
                 {
                     "allowed_authentication_secrets": bp.allowed_authentication_secrets,
-                }
+                },
             )
 
         query.append_nl(
             "ENABLED = {enabled:b}",
             {
                 "enabled": bp.enabled,
-            }
+            },
         )
 
         if bp.comment:
@@ -147,7 +147,7 @@ class ExternalAccessIntegrationResolver(AbstractResolver):
                 "COMMENT = {comment}",
                 {
                     "comment": bp.comment,
-                }
+                },
             )
 
         return query

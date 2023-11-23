@@ -36,7 +36,7 @@ class NetworkPolicyResolver(AbstractResolver):
             "SHOW GRANTS ON NETWORK POLICY {name:i}",
             {
                 "name": name,
-            }
+            },
         )
 
         for r in cur:

@@ -16,7 +16,7 @@ class SecretResolver(AbstractSchemaObjectResolver):
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
-            }
+            },
         )
 
         for r in cur:
@@ -42,7 +42,7 @@ class SecretResolver(AbstractSchemaObjectResolver):
             "CREATE SECRET {full_name:i}",
             {
                 "full_name": bp.full_name,
-            }
+            },
         )
 
         create_query.append(common_query)
@@ -70,7 +70,7 @@ class SecretResolver(AbstractSchemaObjectResolver):
             "CREATE OR REPLACE SECRET {full_name:i}",
             {
                 "full_name": bp.full_name,
-            }
+            },
         )
 
         replace_query.append(common_query)
@@ -85,7 +85,7 @@ class SecretResolver(AbstractSchemaObjectResolver):
                 "database": row["database"],
                 "schema": row["schema"],
                 "name": row["name"],
-            }
+            },
         )
 
         return ResolveResult.DROP
@@ -97,50 +97,71 @@ class SecretResolver(AbstractSchemaObjectResolver):
             "TYPE = {type}",
             {
                 "type": bp.type,
-            }
+            },
         )
 
         if bp.api_authentication:
-            query.append_nl("API_AUTHENTICATION = {api_authentication:i}", {
-                "api_authentication": bp.api_authentication,
-            })
+            query.append_nl(
+                "API_AUTHENTICATION = {api_authentication:i}",
+                {
+                    "api_authentication": bp.api_authentication,
+                },
+            )
 
         if bp.oauth_scopes:
-            query.append_nl("OAUTH_SCOPES = ({oauth_scopes})", {
-                "oauth_scopes": bp.oauth_scopes,
-            })
+            query.append_nl(
+                "OAUTH_SCOPES = ({oauth_scopes})",
+                {
+                    "oauth_scopes": bp.oauth_scopes,
+                },
+            )
 
         if bp.oauth_refresh_token:
-            query.append_nl("OAUTH_REFRESH_TOKEN = {oauth_refresh_token}", {
-                "oauth_refresh_token": bp.oauth_refresh_token,
-            })
+            query.append_nl(
+                "OAUTH_REFRESH_TOKEN = {oauth_refresh_token}",
+                {
+                    "oauth_refresh_token": bp.oauth_refresh_token,
+                },
+            )
 
         if bp.oauth_refresh_token_expiry_time:
-            query.append_nl("OAUTH_REFRESH_TOKEN_EXPIRY_TIME = {oauth_refresh_token_expiry_time}", {
-                "oauth_refresh_token_expiry_time": bp.oauth_refresh_token_expiry_time,
-            })
+            query.append_nl(
+                "OAUTH_REFRESH_TOKEN_EXPIRY_TIME = {oauth_refresh_token_expiry_time}",
+                {
+                    "oauth_refresh_token_expiry_time": bp.oauth_refresh_token_expiry_time,
+                },
+            )
 
         if bp.username:
-            query.append_nl("USERNAME = {username}", {
-                "username": bp.username,
-            })
+            query.append_nl(
+                "USERNAME = {username}",
+                {
+                    "username": bp.username,
+                },
+            )
 
         if bp.password:
-            query.append_nl("PASSWORD = {password}", {
-                "password": bp.password,
-            })
+            query.append_nl(
+                "PASSWORD = {password}",
+                {
+                    "password": bp.password,
+                },
+            )
 
         if bp.secret_string:
-            query.append_nl("SECRET_STRING = {secret_string}", {
-                "secret_string": bp.secret_string,
-            })
+            query.append_nl(
+                "SECRET_STRING = {secret_string}",
+                {
+                    "secret_string": bp.secret_string,
+                },
+            )
 
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
                 {
                     "comment": bp.comment,
-                }
+                },
             )
 
         return query

@@ -8,7 +8,7 @@ from pathlib import Path
 from snowflake.connector import connect
 from traceback import TracebackException
 
-from snowddl.blueprint import ObjectType
+from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig
 from snowddl.engine import SnowDDLEngine
 from snowddl.parser import default_parser_sequence, PlaceholderParser

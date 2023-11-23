@@ -67,9 +67,7 @@ class Helper:
         return {r["name"]: r for r in cur}
 
     def desc_external_access_integration(self, name):
-        cur = self.execute(
-            "DESC EXTERNAL ACCESS INTEGRATION {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)}
-        )
+        cur = self.execute("DESC EXTERNAL ACCESS INTEGRATION {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)})
 
         return {r["property"]: r["property_value"] for r in cur}
 
@@ -363,7 +361,7 @@ class Helper:
         return self.edition >= Edition.BUSINESS_CRITICAL
 
     def dtypes_from_arguments(self, arguments):
-        arguments = arguments.translate(str.maketrans('', '', '[] '))
+        arguments = arguments.translate(str.maketrans("", "", "[] "))
 
         start_dtypes_idx = arguments.index("(")
         finish_dtypes_idx = arguments.index(")")

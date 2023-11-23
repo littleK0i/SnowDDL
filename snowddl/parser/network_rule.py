@@ -1,4 +1,4 @@
-from snowddl.blueprint import NetworkRuleBlueprint, SchemaObjectIdent, Ident
+from snowddl.blueprint import NetworkRuleBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
