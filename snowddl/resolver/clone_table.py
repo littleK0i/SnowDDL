@@ -86,6 +86,10 @@ class CloneTableResolver(AbstractResolver):
             if r["is_external"] == "Y":
                 continue
 
+            # Skip event tables
+            if r["is_event"] == "Y":
+                continue
+
             tables_for_clone[f"{self.config.env_prefix}{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
                 "database": r["database_name"],
                 "schema": r["schema_name"],

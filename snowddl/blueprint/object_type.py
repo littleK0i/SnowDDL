@@ -42,6 +42,13 @@ class ObjectType(Enum):
         "blueprint_cls": "EventTableBlueprint",
     }
 
+    EXTERNAL_ACCESS_INTEGRATION = {
+        "singular": "EXTERNAL ACCESS INTEGRATION",
+        "plural": "EXTERNAL ACCESS INTEGRATIONS",
+        "simplified": "INTEGRATION",
+        "blueprint_cls": "ExternalAccessIntegrationBlueprint",
+    }
+
     EXTERNAL_FUNCTION = {
         "singular": "EXTERNAL FUNCTION",
         "plural": "EXTERNAL FUNCTIONS",
@@ -91,6 +98,13 @@ class ObjectType(Enum):
         "blueprint_cls": "NetworkPolicyBlueprint",
     }
 
+    NETWORK_RULE = {
+        "singular": "NETWORK RULE",
+        "plural": "NETWORK RULES",
+        "is_future_grant_supported": True,
+        "blueprint_cls": "NetworkRuleBlueprint",
+    }
+
     PIPE = {
         "singular": "PIPE",
         "plural": "PIPES",
@@ -128,6 +142,13 @@ class ObjectType(Enum):
         "plural": "SCHEMAS",
         "is_future_grant_supported": True,
         "blueprint_cls": "SchemaBlueprint",
+    }
+
+    SECRET = {
+        "singular": "SECRET",
+        "plural": "SECRETS",
+        "is_future_grant_supported": True,
+        "blueprint_cls": "SecretBlueprint",
     }
 
     SEQUENCE = {

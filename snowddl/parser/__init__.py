@@ -5,6 +5,7 @@ from .business_role import BusinessRoleParser
 from .database import DatabaseParser
 from .dynamic_table import DynamicTableParser
 from .event_table import EventTableParser
+from .external_access_integration import ExternalAccessIntegrationParser
 from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
@@ -13,6 +14,7 @@ from .inbound_share import InboundShareParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
+from .network_rule import NetworkRuleParser
 from .outbound_share import OutboundShareParser
 from .pipe import PipeParser
 from .placeholder import PlaceholderParser
@@ -20,6 +22,7 @@ from .procedure import ProcedureParser
 from .resource_monitor import ResourceMonitorParser
 from .row_access_policy import RowAccessPolicyParser
 from .schema import SchemaParser
+from .secret import SecretParser
 from .sequence import SequenceParser
 from .stage import StageParser
 from .stream import StreamParser
@@ -38,6 +41,9 @@ default_parser_sequence = [
     WarehouseParser,
     DatabaseParser,
     SchemaParser,
+    SecretParser,
+    NetworkRuleParser,
+    ExternalAccessIntegrationParser,
     # InboundShareParser,
     FileFormatParser,
     StageParser,
@@ -67,6 +73,9 @@ default_parser_sequence = [
 singledb_parser_sequence = [
     DatabaseParser,
     SchemaParser,
+    SecretParser,
+    NetworkRuleParser,
+    ExternalAccessIntegrationParser,
     FileFormatParser,
     StageParser,
     SequenceParser,

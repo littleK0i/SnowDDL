@@ -186,6 +186,12 @@ class BaseApp:
             default=False,
             action="store_true",
         )
+        parser.add_argument(
+            "--refresh-secrets",
+            help="Additionally refresh secrets",
+            default=False,
+            action="store_true",
+        )
 
         # Cloning
         parser.add_argument(
@@ -331,6 +337,9 @@ class BaseApp:
 
         if self.args.get("refresh_stage_encryption"):
             settings.refresh_stage_encryption = True
+
+        if self.args.get("refresh_secrets"):
+            settings.refresh_secrets = True
 
         if self.args.get("clone_table"):
             if self.args.get("action") != "apply":

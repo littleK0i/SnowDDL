@@ -33,6 +33,10 @@ class NameWithType(BaseModelWithConfig):
     type: DataType
 
 
+class ArgumentWithType(NameWithType):
+    default: Optional[str] = None
+
+
 class SearchOptimizationItem(BaseModelWithConfig):
     method: str
     target: Ident

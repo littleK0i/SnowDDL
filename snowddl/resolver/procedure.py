@@ -95,6 +95,14 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+            if arg.default:
+                query.append(
+                    "DEFAULT {default:r}",
+                    {
+                        "default": arg.default,
+                    },
+                )
+
         query.append_nl(")")
 
         if isinstance(bp.returns, list):
@@ -158,6 +166,25 @@ class ProcedureResolver(AbstractSchemaObjectResolver):
                     "handler": bp.handler,
                 },
             )
+
+        if bp.external_access_integrations:
+            # Snowflake bug: EXTERNAL_ACCESS_INTEGRATIONS must be identifiers
+            # It does not accept identifiers in double-quotes
+            query.append_nl("EXTERNAL_ACCESS_INTEGRATIONS = ({external_access_integrations:r})", {
+                "external_access_integrations": bp.external_access_integrations,
+            })
+
+        if bp.secrets:
+            query.append_nl("SECRETS = (")
+
+            for idx, (var_name, secret_name) in enumerate(bp.secrets.items()):
+                query.append("{comma:r}{var_name} = {secret_name:i}", {
+                    "comma": "" if idx == 0 else ", ",
+                    "var_name": var_name,
+                    "secret_name": secret_name,
+                })
+
+            query.append(")")
 
         if bp.comment:
             query.append_nl(

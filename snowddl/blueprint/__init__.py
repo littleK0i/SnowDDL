@@ -10,6 +10,7 @@ from .blueprint import (
     DatabaseShareBlueprint,
     DynamicTableBlueprint,
     EventTableBlueprint,
+    ExternalAccessIntegrationBlueprint,
     ExternalFunctionBlueprint,
     ExternalTableBlueprint,
     FileFormatBlueprint,
@@ -18,6 +19,7 @@ from .blueprint import (
     MaterializedViewBlueprint,
     MaskingPolicyBlueprint,
     NetworkPolicyBlueprint,
+    NetworkRuleBlueprint,
     OutboundShareBlueprint,
     PipeBlueprint,
     PrimaryKeyBlueprint,
@@ -26,6 +28,7 @@ from .blueprint import (
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
     SchemaRoleBlueprint,
+    SecretBlueprint,
     StageBlueprint,
     StageFileBlueprint,
     SequenceBlueprint,
@@ -41,7 +44,7 @@ from .blueprint import (
     T_Blueprint,
 )
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType, SearchOptimizationItem
+from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import BaseDataType, DataType
 from .edition import Edition
 from .grant import Grant, FutureGrant

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.0] - 2023-11-23
+
+- Introduced `NETWORK RULE`, `SECRET`, `EXTERNAL ACCESS INTEGRATION` object types.
+- Added `EXTERNAL_ACCESS_INTEGRATIOS` and `SECRETS` parameters for functions and procedures.
+- Added ability to set `default` for function and procedure arguments.
+- Fixed issue with event tables being dropped while processing normal tables.
+- Implemented `LIKE` check for `NETWORK POLICY` object type. Previously it was not available in Snowflake.
+- Implemented "owner" check via `SHOW GRANTS` for `NETWORK POLICY` and `EXTERNAL ACCESS INTEGRATION`. "Owner" column is normally not available for these objects types.
+
 ## [0.21.0] - 2023-11-01
 
 - Introduced custom value for application option (`SnowDDL <version>`) while opening Snowflake connection. Now it should be possible to find sessions created by SnowDDL using `SESSIONS` system view.

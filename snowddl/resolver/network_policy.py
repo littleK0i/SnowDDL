@@ -11,15 +11,14 @@ class NetworkPolicyResolver(AbstractResolver):
     def get_existing_objects(self):
         existing_objects = {}
 
-        cur = self.engine.execute_meta("SHOW NETWORK POLICIES")
+        cur = self.engine.execute_meta(
+            "SHOW NETWORK POLICIES LIKE {env_prefix:ls}",
+            {
+                "env_prefix": self.config.env_prefix,
+            }
+        )
 
         for r in cur:
-            # SHOW NETWORK POLICIES does not support LIKE filter, so it has to be applied manually in the code
-            if self.config.env_prefix and not str(r["name"]).startswith(self.config.env_prefix):
-                continue
-
-            # SHOW NETWORK POLICIES does not return "owner", so additional ownership check cannot be performed
-
             existing_objects[r["name"]] = {
                 "name": r["name"],
                 "entries_in_allowed_ip_list": r["entries_in_allowed_ip_list"],
@@ -27,7 +26,24 @@ class NetworkPolicyResolver(AbstractResolver):
                 "comment": r["comment"] if r["comment"] else None,
             }
 
+        for name, owner in self.engine.executor.map(self.get_owner_from_grant, existing_objects.keys()):
+            if owner != self.engine.context.current_role:
+                del existing_objects[name]
+
         return existing_objects
+
+    def get_owner_from_grant(self, name):
+        cur = self.engine.execute_meta(
+            "SHOW GRANTS ON NETWORK POLICY {name:i}",
+            {
+                "name": name,
+            }
+        )
+
+        for r in cur:
+            # Assumption: OWNERSHIP grant always exist, exactly 1 row
+            if r["privilege"] == "OWNERSHIP":
+                return name, r["grantee_name"]
 
     def get_blueprints(self):
         return self.config.get_blueprints_by_type(NetworkPolicyBlueprint)

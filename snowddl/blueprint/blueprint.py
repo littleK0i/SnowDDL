@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Optional, List, Dict, Union, TypeVar
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, NameWithType, SearchOptimizationItem
+from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import DataType
 from .grant import Grant, FutureGrant
 from .ident import (
@@ -82,6 +82,13 @@ class EventTableBlueprint(SchemaObjectBlueprint):
     change_tracking: bool
 
 
+class ExternalAccessIntegrationBlueprint(AbstractBlueprint):
+    allowed_network_rules: List[SchemaObjectIdent]
+    allowed_api_authentication_integrations: Optional[List[Ident]] = None
+    allowed_authentication_secrets: Optional[List[SchemaObjectIdent]] = None
+    enabled: bool = True
+
+
 class ExternalFunctionBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdent
     arguments: List[NameWithType]
@@ -131,7 +138,7 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdentWithArgs
     language: str
     body: Optional[str] = None
-    arguments: List[NameWithType]
+    arguments: List[ArgumentWithType]
     returns: Union[DataType, List[NameWithType]]
     is_secure: bool = False
     is_strict: bool = False
@@ -141,6 +148,8 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     imports: Optional[List[StageWithPath]] = None
     packages: Optional[List[str]] = None
     handler: Optional[str] = None
+    external_access_integrations: Optional[List[AccountObjectIdent]] = None
+    secrets: Optional[Dict[str, SchemaObjectIdent]] = None
 
 
 class InboundShareBlueprint(AbstractBlueprint):
@@ -168,6 +177,12 @@ class NetworkPolicyBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     allowed_ip_list: List[str] = []
     blocked_ip_list: List[str] = []
+
+
+class NetworkRuleBlueprint(SchemaObjectBlueprint):
+    type: str
+    value_list: List[str]
+    mode: str
 
 
 class OutboundShareBlueprint(AbstractBlueprint):
@@ -199,7 +214,7 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdentWithArgs
     language: str
     body: str
-    arguments: List[NameWithType]
+    arguments: List[ArgumentWithType]
     returns: Union[DataType, List[NameWithType]]
     is_strict: bool = False
     is_immutable: bool = False
@@ -208,6 +223,8 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
     imports: Optional[List[StageWithPath]] = None
     packages: Optional[List[str]] = None
     handler: Optional[str] = None
+    external_access_integrations: Optional[List[AccountObjectIdent]] = None
+    secrets: Optional[Dict[str, SchemaObjectIdent]] = None
 
 
 class ResourceMonitorBlueprint(AbstractBlueprint):
@@ -233,6 +250,17 @@ class SchemaBlueprint(AbstractBlueprint):
 
 class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
     pass
+
+
+class SecretBlueprint(SchemaObjectBlueprint):
+    type: str
+    api_authentication: Optional[Ident] = None
+    oauth_scopes: Optional[List[str]] = None
+    oauth_refresh_token: Optional[str] = None
+    oauth_refresh_token_expiry_time: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    secret_string: Optional[str] = None
 
 
 class StageBlueprint(SchemaObjectBlueprint):

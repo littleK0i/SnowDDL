@@ -8,6 +8,7 @@ from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
 from .dynamic_table import DynamicTableResolver
 from .event_table import EventTableResolver
+from .external_access_integration import ExternalAccessIntegrationResolver
 from .external_function import ExternalFunctionResolver
 from .external_table import ExternalTableResolver
 from .file_format import FileFormatResolver
@@ -18,6 +19,7 @@ from .inbound_share_role import InboundShareRoleResolver
 from .masking_policy import MaskingPolicyResolver
 from .materialized_view import MaterializedViewResolver
 from .network_policy import NetworkPolicyResolver
+from .network_rule import NetworkRuleResolver
 from .outbound_share import OutboundShareResolver
 from .pipe import PipeResolver
 from .primary_key import PrimaryKeyResolver
@@ -27,6 +29,7 @@ from .row_access_policy import RowAccessPolicyResolver
 from .sequence import SequenceResolver
 from .schema import SchemaResolver
 from .schema_role import SchemaRoleResolver
+from .secret import SecretResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
 from .stream import StreamResolver
@@ -52,6 +55,9 @@ default_resolver_sequence = [
     SchemaRoleResolver,
     # InboundShareResolver,
     # InboundShareRoleResolver,
+    SecretResolver,
+    NetworkRuleResolver,
+    ExternalAccessIntegrationResolver,
     FileFormatResolver,
     StageResolver,
     StageFileResolver,
@@ -85,6 +91,9 @@ default_resolver_sequence = [
 
 singledb_resolver_sequence = [
     SchemaResolver,
+    SecretResolver,
+    NetworkRuleResolver,
+    ExternalAccessIntegrationResolver,
     FileFormatResolver,
     StageResolver,
     StageFileResolver,
