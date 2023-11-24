@@ -93,7 +93,6 @@ singledb_resolver_sequence = [
     SchemaResolver,
     SecretResolver,
     NetworkRuleResolver,
-    ExternalAccessIntegrationResolver,
     FileFormatResolver,
     StageResolver,
     StageFileResolver,

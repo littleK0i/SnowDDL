@@ -75,7 +75,6 @@ singledb_parser_sequence = [
     SchemaParser,
     SecretParser,
     NetworkRuleParser,
-    ExternalAccessIntegrationParser,
     FileFormatParser,
     StageParser,
     SequenceParser,
