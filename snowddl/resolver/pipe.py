@@ -126,6 +126,14 @@ class PipeResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.error_integration:
+            query.append_nl(
+                "ERROR_INTEGRATION = {error_integration:i}",
+                {
+                    "error_integration": bp.error_integration,
+                },
+            )
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",

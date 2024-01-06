@@ -1,0 +1,16 @@
+copy:
+  table: pi002_tb1
+  stage: pi002_st1
+
+  path: /abc/cde
+  file_format: pi002_ff1
+
+  transform:
+    id: "GET($1, 'id')"
+    name: "GET($1, 'name')"
+
+  options:
+    ON_ERROR: CONTINUE
+    ENFORCE_LENGTH: true
+
+auto_ingest: false

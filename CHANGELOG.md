@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.22.1] - 2024-01-06
+
+- Added `error_notification` for `PIPE`.
+- Added tests for `PIPE`.
+
 ## [0.22.0] - 2023-11-23
 
 - Introduced `NETWORK RULE`, `SECRET`, `EXTERNAL ACCESS INTEGRATION` object types.

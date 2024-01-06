@@ -203,6 +203,7 @@ class PipeBlueprint(SchemaObjectBlueprint):
     copy_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     aws_sns_topic: Optional[str] = None
     integration: Optional[Ident] = None
+    error_integration: Optional[Ident] = None
 
 
 class PrimaryKeyBlueprint(SchemaObjectBlueprint):

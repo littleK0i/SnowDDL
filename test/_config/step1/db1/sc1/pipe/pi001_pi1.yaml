@@ -1,0 +1,8 @@
+copy:
+  table: pi001_tb1
+  stage: pi001_st1
+  pattern: ".*[.]csv"
+
+auto_ingest: false
+
+comment: abc

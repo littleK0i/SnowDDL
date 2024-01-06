@@ -49,6 +49,9 @@ pipe_json_schema = {
         "integration": {
             "type": "string"
         },
+        "error_integration": {
+            "type": "string"
+        },
         "comment": {
             "type": "string"
         }
@@ -66,6 +69,11 @@ class PipeParser(AbstractParser):
     def process_pipe(self, f: ParsedFile):
         copy = f.params["copy"]
 
+        if copy.get("file_format"):
+            file_format = build_schema_object_ident(self.env_prefix, copy.get("file_format"), f.database, f.schema)
+        else:
+            file_format = None
+
         bp = PipeBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             auto_ingest=f.params["auto_ingest"],
@@ -74,12 +82,11 @@ class PipeParser(AbstractParser):
             copy_path=copy.get("path"),
             copy_pattern=copy.get("pattern"),
             copy_transform=self.normalise_params_dict(copy.get("transform")),
-            copy_file_format=build_schema_object_ident(self.env_prefix, copy.get("file_format"), f.database, f.schema)
-            if copy.get("file_format")
-            else None,
+            copy_file_format=file_format,
             copy_options=self.normalise_params_dict(copy.get("options")),
             aws_sns_topic=f.params.get("aws_sns_topic"),
             integration=Ident(f.params["integration"]) if f.params.get("integration") else None,
+            error_integration=Ident(f.params["error_integration"]) if f.params.get("error_integration") else None,
             comment=f.params.get("comment"),
         )
 

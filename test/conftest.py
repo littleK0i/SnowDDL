@@ -222,6 +222,17 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_pipe(self, database, schema, name):
+        cur = self.execute(
+            "SHOW PIPES LIKE {format_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "format_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
+
     def show_user(self, name):
         cur = self.execute(
             "SHOW USERS LIKE {user_name:lf}",

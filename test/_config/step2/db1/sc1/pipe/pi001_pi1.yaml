@@ -1,0 +1,9 @@
+copy:
+  table: pi001_tb1
+  stage: pi001_st1
+  pattern: ".*[.]csv[.]gz"
+
+auto_ingest: false
+error_integration: test_notification_integration
+
+comment: cde

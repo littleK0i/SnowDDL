@@ -1,0 +1,16 @@
+copy:
+  table: pi002_tb1
+  stage: pi002_st1
+
+  path: /abc/cde/fgh
+  file_format: pi002_ff1
+
+  transform:
+    id: "GET($1, 'id')"
+    name: "GET($1, 'another_name')"
+
+  options:
+    ON_ERROR: SKIP_FILE
+    ENFORCE_LENGTH: false
+
+auto_ingest: false
