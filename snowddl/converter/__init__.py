@@ -5,6 +5,7 @@ from .database import DatabaseConverter
 from .schema import SchemaConverter
 from .sequence import SequenceConverter
 from .table import TableConverter
+from .task import TaskConverter
 from .view import ViewConverter
 
 
@@ -13,5 +14,6 @@ default_converter_sequence = [
     SchemaConverter,
     SequenceConverter,
     TableConverter,
+    TaskConverter,
     ViewConverter,
 ]
