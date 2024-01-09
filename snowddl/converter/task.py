@@ -7,9 +7,6 @@ from snowddl.converter._yaml import YamlLiteralStr
 from snowddl.parser.task import task_json_schema
 import json
 
-task_text_re = compile(r"^.*\n\)\sas(.*)$", DOTALL)
-after_syntax_re = compile(r"^(\w+)?\((.*)\)$")
-
 
 class TaskConverter(AbstractSchemaObjectConverter):
     def get_object_type(self) -> ObjectType:
@@ -27,9 +24,6 @@ class TaskConverter(AbstractSchemaObjectConverter):
         )
 
         for r in cur:
-            if r["state"] == "suspended":
-                continue
-
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
                 "database": r["database_name"],
                 "schema": r["schema_name"],
@@ -52,12 +46,8 @@ class TaskConverter(AbstractSchemaObjectConverter):
             "after": self._get_after(row),
             "when": row["when"] if "when" in row else None,
             "warehouse": row["warehouse"] if "warehouse" in row else None,
-            "user_task_managed_initial_warehouse_size": (
-                row["user_task_managed_initial_warehouse_size"] if "user_task_managed_initial_warehouse_size" in row else None
-            ),
-            "allow_overlapping_execution": row["allow_overlapping_execution"] if "allow_overlapping_execution" in row else None,
-            "session_params": self._get_session_params(row),
-            "user_task_timeout_ms": row["user_task_timeout_ms"] if "user_task_timeout_ms" in row else None,
+            "user_task_managed_initial_warehouse_size": "XSMALL" if "warehouse" is None else None,
+            "allow_overlapping_execution": self._get_allow_overlapping_execution(row),
             "comment": row["comment"] if "comment" in row else None,
         }
 
@@ -72,21 +62,18 @@ class TaskConverter(AbstractSchemaObjectConverter):
 
         return ConvertResult.EMPTY
 
+    def _get_allow_overlapping_execution(self, row):
+        if "allow_overlapping_execution" not in row or row["allow_overlapping_execution"] == "null":
+            return None
+        else: 
+            return (row["allow_overlapping_execution"] == "true");
+
     def _get_after(self, row):
-        after = []
         if "after" not in row:
             return None
-        after = json.loads(row["after"])
+        after = [self._normalise_name_with_prefix(n) for n in json.loads(row["after"])]
         if len(after) == 0:
             return None
         return after
-    
-    def _get_session_params(self, row):
-        session_params = dict
-        if "session_params" not in row:
-            return None
-        session_params = json.loads(row["session_params"])
-        if len(session_params) == 0:
-            return None
-        return session_params
+
     
