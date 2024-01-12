@@ -312,12 +312,16 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     body: str
     schedule: Optional[str] = None
     after: Optional[List[SchemaObjectIdent]] = None
+    finalize: Optional[SchemaObjectIdent] = None
     when: Optional[str] = None
     warehouse: Optional[AccountObjectIdent] = None
     user_task_managed_initial_warehouse_size: Optional[str] = None
+    config: Optional[str] = None
     allow_overlapping_execution: Optional[bool] = None
     session_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
     user_task_timeout_ms: Optional[int] = None
+    suspend_task_after_num_failures: Optional[int] = None
+    error_integration: Optional[Ident] = None
 
 
 class TechRoleBlueprint(RoleBlueprint):

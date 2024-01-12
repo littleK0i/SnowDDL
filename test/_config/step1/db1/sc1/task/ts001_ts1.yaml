@@ -1,0 +1,7 @@
+body: |-
+  SELECT 1
+
+schedule: 60 minutes
+warehouse: ts001_wh1
+
+comment: abc

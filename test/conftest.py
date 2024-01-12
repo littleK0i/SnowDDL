@@ -224,10 +224,21 @@ class Helper:
 
     def show_pipe(self, database, schema, name):
         cur = self.execute(
-            "SHOW PIPES LIKE {format_name:lf} IN SCHEMA {schema_name:i}",
+            "SHOW PIPES LIKE {pipe_name:lf} IN SCHEMA {schema_name:i}",
             {
                 "schema_name": SchemaIdent(self.env_prefix, database, schema),
-                "format_name": Ident(name),
+                "pipe_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
+
+    def show_task(self, database, schema, name):
+        cur = self.execute(
+            "SHOW TASKS LIKE {task_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "task_name": Ident(name),
             },
         )
 

@@ -1,0 +1,9 @@
+body: |-
+  SELECT 1
+
+user_task_managed_initial_warehouse_size: XSMALL
+
+after:
+  - ts002_ts3
+
+comment: "ts3 -> ts1,[ts4] -> ts2"

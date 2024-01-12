@@ -123,6 +123,14 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.config:
+            query.append_nl(
+                "CONFIG = {config}",
+                {
+                    "config": bp.config,
+                },
+            )
+
         if bp.allow_overlapping_execution:
             query.append_nl(
                 "ALLOW_OVERLAPPING_EXECUTION = {allow_overlapping_execution:b}",
@@ -136,6 +144,22 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 "USER_TASK_TIMEOUT_MS = {timeout:d}",
                 {
                     "timeout": bp.user_task_timeout_ms,
+                },
+            )
+
+        if bp.suspend_task_after_num_failures:
+            query.append_nl(
+                "SUSPEND_TASK_AFTER_NUM_FAILURES = {suspend_task_after_num_failures:d}",
+                {
+                    "suspend_task_after_num_failures": bp.suspend_task_after_num_failures,
+                },
+            )
+
+        if bp.error_integration:
+            query.append_nl(
+                "ERROR_INTEGRATION = {error_integration:i}",
+                {
+                    "error_integration": bp.error_integration,
                 },
             )
 
@@ -159,6 +183,9 @@ class TaskResolver(AbstractSchemaObjectResolver):
 
         if bp.after:
             query.append_nl("AFTER {after:i}", {"after": bp.after})
+
+        if bp.finalize:
+            query.append_nl("FINALIZE = {finalize:i}", {"finalize": bp.finalize})
 
         if bp.when:
             query.append_nl("WHEN {when:r}", {"when": bp.when})
