@@ -32,6 +32,10 @@ class TableConverter(AbstractSchemaObjectConverter):
             if r["is_external"] == "Y":
                 continue
 
+            # Skip event tables
+            if r["is_event"] == "Y":
+                continue
+
             full_name = f"{r['database_name']}.{r['schema_name']}.{r['name']}"
             existing_objects[full_name] = {
                 "database": r["database_name"],

@@ -25,7 +25,7 @@ def test_step2(helper):
     assert show["condition"] is None
     assert show["allow_overlapping_execution"] == "false"
     assert show["error_integration"] == "TEST_NOTIFICATION_INTEGRATION"
-    assert show["config"] == "{\"foo\": \"bar\"}"
+    assert show["config"] == '{"foo": "bar"}'
 
     assert str(show["comment"]).startswith("cde #")
 

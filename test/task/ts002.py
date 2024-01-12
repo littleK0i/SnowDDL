@@ -4,6 +4,7 @@
 
 from json import loads
 
+
 def test_step1(helper):
     show_1 = helper.show_task("db1", "sc1", "ts002_ts1")
     show_2 = helper.show_task("db1", "sc1", "ts002_ts2")
@@ -34,7 +35,6 @@ def test_step1(helper):
     assert show_2["condition"] == "SYSTEM$GET_PREDECESSOR_RETURN_VALUE('ts002_ts1') >= 1"
     assert show_3["condition"] is None
     assert show_4["condition"] is None
-
 
 
 def test_step2(helper):

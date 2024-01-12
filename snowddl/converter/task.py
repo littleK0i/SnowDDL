@@ -1,11 +1,10 @@
-from re import compile, DOTALL
+from json import loads
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_converter import ConvertResult
 from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter
 from snowddl.converter._yaml import YamlLiteralStr
 from snowddl.parser.task import task_json_schema
-import json
 
 
 class TaskConverter(AbstractSchemaObjectConverter):
@@ -34,21 +33,34 @@ class TaskConverter(AbstractSchemaObjectConverter):
                 "schedule": r["schedule"],
                 "after": r["predecessors"],
                 "warehouse": r["warehouse"],
+                "allow_overlapping_execution": r["allow_overlapping_execution"],
+                "error_integration": r["error_integration"],
+                "config": r["config"],
                 "comment": r["comment"] if r["comment"] else None,
             }
 
         return existing_objects
 
     def dump_object(self, row):
+        """
+        The following parameters are currently not available for conversion due to lack of data
+        in SHOW TASKS and DESC TASK commands output:
+        - session_params
+        - user_task_timeout_ms
+        - suspend_task_after_num_failures
+        - finalize
+        """
         data = {
             "body": YamlLiteralStr(row["body"]),
-            "schedule": row["schedule"] if "schedule" in row else None,
+            "schedule": row["schedule"],
             "after": self._get_after(row),
-            "when": row["when"] if "when" in row else None,
-            "warehouse": row["warehouse"] if "warehouse" in row else None,
-            "user_task_managed_initial_warehouse_size": "XSMALL" if "warehouse" is None else None,
+            "when": row["when"],
+            "warehouse": row["warehouse"],
+            "user_task_managed_initial_warehouse_size": self._get_user_task_managed_initial_warehouse_size(row),
             "allow_overlapping_execution": self._get_allow_overlapping_execution(row),
-            "comment": row["comment"] if "comment" in row else None,
+            "error_integration": self._get_error_integration(row),
+            "config": row["config"],
+            "comment": row["comment"],
         }
 
         object_path = (
@@ -62,18 +74,34 @@ class TaskConverter(AbstractSchemaObjectConverter):
 
         return ConvertResult.EMPTY
 
-    def _get_allow_overlapping_execution(self, row):
-        if "allow_overlapping_execution" not in row or row["allow_overlapping_execution"] == "null":
+    def _get_user_task_managed_initial_warehouse_size(self, row):
+        if row["warehouse"]:
             return None
-        else: 
-            return (row["allow_overlapping_execution"] == "true");
+
+        return "XSMALL"
+
+    def _get_allow_overlapping_execution(self, row):
+        if row["allow_overlapping_execution"] == "true":
+            return True
+
+        if row["allow_overlapping_execution"] == "false":
+            return False
+
+        return None
+
+    def _get_error_integration(self, row):
+        if row["error_integration"] == "null":
+            return None
+
+        return row["error_integration"]
 
     def _get_after(self, row):
         if "after" not in row:
             return None
-        after = [self._normalise_name_with_prefix(n) for n in json.loads(row["after"])]
+
+        after = [self._normalise_name_with_prefix(n) for n in loads(row["after"])]
+
         if len(after) == 0:
             return None
-        return after
 
-    
+        return after
