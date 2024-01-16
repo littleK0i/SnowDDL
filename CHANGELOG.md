@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.0] - 2024-01-16
+
+- Added remaining parameters for `TASK`.
+- Added `is_ordered` for `SEQUENCE`.
+- Added converter for `TASKS` (thanks to Osborne Hardison).
+- Adjusted converter for `TABLE` to ignore event tables.
+- Fixed issue with ALTER for `STAGE` objects trying to apply `REFRESH_ON_CREATE` to existing objects, which is not allowed.
+
 ## [0.22.1] - 2024-01-06
 
 - Added `error_notification` for `PIPE`.

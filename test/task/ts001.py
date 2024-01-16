@@ -1,7 +1,7 @@
 def test_step1(helper):
     show = helper.show_task("db1", "sc1", "ts001_ts1")
 
-    assert str(show["warehouse"]).startswith(".TS001_WH1")
+    assert str(show["warehouse"]).endswith("TS001_WH1")
     assert show["schedule"] == "60 minutes"
     assert show["predecessors"] == "[]"
     assert show["state"] == "suspended"

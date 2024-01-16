@@ -284,6 +284,7 @@ class StageFileBlueprint(SchemaObjectBlueprint):
 class SequenceBlueprint(SchemaObjectBlueprint):
     start: int
     interval: int
+    is_ordered: Optional[bool] = None
 
 
 class StreamBlueprint(SchemaObjectBlueprint):

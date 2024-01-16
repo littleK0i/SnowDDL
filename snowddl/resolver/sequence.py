@@ -1,4 +1,5 @@
 from snowddl.blueprint import SequenceBlueprint
+from snowddl.error import SnowDDLUnsupportedError
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 
@@ -25,6 +26,7 @@ class SequenceResolver(AbstractSchemaObjectResolver):
                 "owner": r["owner"],
                 "next_value": r["next_value"],
                 "interval": r["interval"],
+                "ordered": bool(r["ordered"] == "Y"),
                 "comment": r["comment"] if r["comment"] else None,
             }
 
@@ -57,6 +59,11 @@ class SequenceResolver(AbstractSchemaObjectResolver):
             },
         )
 
+        if bp.is_ordered is True:
+            query.append_nl("ORDER")
+        elif bp.is_ordered is False:
+            query.append_nl("NOORDER")
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
@@ -82,6 +89,17 @@ class SequenceResolver(AbstractSchemaObjectResolver):
             )
 
             result = ResolveResult.ALTER
+
+        if bp.is_ordered is not None and bp.is_ordered != row["ordered"]:
+            if bp.is_ordered is False:
+                self.engine.execute_safe_ddl(
+                    "ALTER SEQUENCE {full_name:i} SET NOORDER",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                )
+            else:
+                raise SnowDDLUnsupportedError("Cannot change NOORDER sequence to ORDER")
 
         if bp.comment != row["comment"]:
             self.engine.execute_safe_ddl(

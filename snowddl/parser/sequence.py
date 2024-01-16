@@ -12,6 +12,9 @@ sequence_json_schema = {
         "interval": {
             "type": "integer"
         },
+        "is_ordered": {
+            "type": "boolean"
+        },
         "comment": {
             "type": "string"
         }
@@ -30,6 +33,7 @@ class SequenceParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             start=f.params.get("start", 1),
             interval=f.params.get("interval", 1),
+            is_ordered=f.params.get("is_ordered"),
             comment=f.params.get("comment"),
         )
 

@@ -210,7 +210,7 @@ class StageResolver(AbstractSchemaObjectResolver):
                 },
             )
 
-            query.append_nl(self._build_directory(bp))
+            query.append_nl(self._build_directory(bp, existing_properties))
             self.engine.execute_safe_ddl(query)
 
         return is_alter_required
@@ -323,22 +323,29 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         return False
 
-    def _build_directory(self, bp: StageBlueprint):
+    def _build_directory(self, bp: StageBlueprint, existing_properties=None):
         query = self.engine.query_builder()
 
         if bp.directory:
-            query.append("DIRECTORY = (")
+            adjusted_directory = bp.directory
 
-            for k, v in bp.directory.items():
-                query.append(
-                    "{param_name:r} = {param_value:dp}",
-                    {
-                        "param_name": k,
-                        "param_value": v,
-                    },
-                )
+            # REFRESH_ON_CREATE is only used for CREATE command, but is not available for ALTER, must be skipped
+            if existing_properties and "REFRESH_ON_CREATE" in adjusted_directory:
+                del adjusted_directory["REFRESH_ON_CREATE"]
 
-            query.append(")")
+            if adjusted_directory:
+                query.append("DIRECTORY = (")
+
+                for k, v in adjusted_directory.items():
+                    query.append(
+                        "{param_name:r} = {param_value:dp}",
+                        {
+                            "param_name": k,
+                            "param_value": v,
+                        },
+                    )
+
+                query.append(")")
         else:
             query.append("DIRECTORY = ( ENABLE = FALSE )")
 
