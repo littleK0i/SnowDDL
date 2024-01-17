@@ -78,6 +78,13 @@ class ObjectType(Enum):
         "blueprint_cls": "FunctionBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    INTEGRATION = {
+        "singular": "INTEGRATION",
+        "plural": "INTEGRATIONS",
+    }
+
     MASKING_POLICY = {
         "singular": "MASKING POLICY",
         "plural": "MASKING POLICIES",

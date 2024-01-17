@@ -1,4 +1,4 @@
-from snowddl.blueprint import SchemaBlueprint, SchemaIdent, Grant, ObjectType, build_role_ident
+from snowddl.blueprint import SchemaBlueprint, SchemaIdent, Grant, ObjectType, Ident, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
 
@@ -23,6 +23,12 @@ schema_json_schema = {
             }
         },
         "owner_schema_write": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "owner_integration_usage": {
             "type": "array",
             "items": {
                 "type": "string"
@@ -69,6 +75,9 @@ class SchemaParser(AbstractParser):
                 for full_schema_name in schema_params.get("owner_schema_write", []):
                     owner_additional_grants.append(self.build_schema_role_grant(full_schema_name, "WRITE"))
 
+                for integration_name in schema_params.get("owner_integration_usage", []):
+                    owner_additional_grants.append(self.build_integration_usage_grant(integration_name))
+
                 bp = SchemaBlueprint(
                     full_name=SchemaIdent(self.env_prefix, database_path.name, schema_path.name),
                     is_transient=combined_params.get("is_transient", False),
@@ -87,4 +96,11 @@ class SchemaParser(AbstractParser):
             privilege="USAGE",
             on=ObjectType.ROLE,
             name=build_role_ident(self.env_prefix, database, schema, grant_type, self.config.SCHEMA_ROLE_SUFFIX),
+        )
+
+    def build_integration_usage_grant(self, integration_name):
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.INTEGRATION,
+            name=Ident(integration_name),
         )

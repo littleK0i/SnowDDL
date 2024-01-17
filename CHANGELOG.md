@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.23.1] - 2024-01-17
+
+- Added `owner_integration_usage` parameter for `SCHEMA`. It grants usage privilege to schema owner role on integrations pre-configured outside SnowDDL.
+- Added future grant on `DYNAMIC TABLES` for schema owner role. Previously this future grant was not implemented by Snowflake.
+
 ## [0.23.0] - 2024-01-16
 
 - Added remaining parameters for `TASK`.
