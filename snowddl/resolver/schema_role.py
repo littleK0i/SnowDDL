@@ -54,7 +54,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
 
         ownership_object_types = [
-            ObjectType.DYNAMIC_TABLE,
             ObjectType.EXTERNAL_TABLE,
             ObjectType.FILE_FORMAT,
             ObjectType.FUNCTION,
