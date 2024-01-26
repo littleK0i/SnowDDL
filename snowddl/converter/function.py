@@ -1,5 +1,6 @@
 import re
 import json
+from pathlib import Path
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_converter import ConvertResult
@@ -58,12 +59,18 @@ class FunctionConverter(AbstractSchemaObjectConverter):
         for r in cur:
             desc_func_row[r["property"]] = r["value"]
 
+        object_path = (
+            self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "function"
+        )
+
+        object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
+
         data = {
             "language": row["language"].upper(),
             "arguments": self._get_arguments(row["arguments"]),
             "returns": self._get_returns(row["arguments"]),
             "handler": desc_func_row["handler"] if "handler" in desc_func_row else None,
-            "body": YamlLiteralStr(desc_func_row["body"]),
+            "body": self._get_body_or_include(object_path, row["name"], desc_func_row),
             "is_secure": row["is_secure"] == "Y" if "is_secure" in row else None,
             "is_strict": row["is_strict"] == "Y" if "is_strict" in row else None,
             "is_immutable": row["is_immutable"] == "Y" if "is_immutable" in row else None,
@@ -77,16 +84,32 @@ class FunctionConverter(AbstractSchemaObjectConverter):
             "comment": row["comment"] if "comment" in row else None,
         }
 
-        object_path = (
-            self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "function"
-        )
-        object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
-
         if data:
             self._dump_file(object_path / f"{self._normalise_name(row['name'])}.yaml", data, function_json_schema)
             return ConvertResult.DUMP
 
         return ConvertResult.EMPTY
+
+    def _get_body_or_include(self, object_path: Path, name: str, row: dict):
+        body = row["body"] if "body" in row else None
+        if body is None:
+            raise RuntimeError(f"No resource text body found but required")
+        if self.engine.settings.add_include_files:
+            dir = row["language"].lower()
+            suffix = dir
+            if dir == "python":
+                suffix = "py"
+            elif dir == "javascript":
+                suffix = "js"
+            file = f"{name}.{suffix}".lower()
+
+            source_path = object_path / dir
+            source_path.mkdir(mode=0o755, parents=True, exist_ok=True)
+            (source_path / file).write_text(body, encoding="utf-8")
+
+            return f"!include {dir}/{file}"
+        else:
+            return YamlLiteralStr(body)
 
     def _get_argument_type(self, full_args: str):
         return args_type_re.search(full_args).group(1)

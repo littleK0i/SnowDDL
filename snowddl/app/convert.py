@@ -79,6 +79,11 @@ class ConvertApp(BaseApp):
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
         )
         parser.add_argument("--clean", help="Delete existing config files before conversion", default=False, action="store_true")
+        parser.add_argument(
+            "--add-include-files", 
+            help="Write out any source code text (Tasks, Functions, Procedures, Views) to separate files", 
+            default=False, 
+            action="store_true")
 
         # Logging
         parser.add_argument(
@@ -150,6 +155,9 @@ class ConvertApp(BaseApp):
 
         if self.args.get("ignore_ownership"):
             settings.ignore_ownership = True
+
+        if self.args.get("add_include_files"):
+            settings.add_include_files = True
 
         if self.args.get("max_workers"):
             settings.max_workers = int(self.args.get("max_workers"))
