@@ -91,9 +91,9 @@ class FunctionConverter(AbstractSchemaObjectConverter):
         return ConvertResult.EMPTY
 
     def _get_body_or_include(self, object_path: Path, name: str, row: dict):
-        body = row["body"] if "body" in row else None
-        if body is None:
-            raise RuntimeError(f"No resource text body found but required")
+        if "body" not in row:
+            return None
+        body = row["body"]
         if self.engine.settings.add_include_files:
             dir = row["language"].lower()
             suffix = dir
