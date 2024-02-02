@@ -7,7 +7,7 @@ from .sequence import SequenceConverter
 from .table import TableConverter
 from .task import TaskConverter
 from .view import ViewConverter
-
+from .function import FunctionConverter
 
 default_converter_sequence = [
     DatabaseConverter,
@@ -16,4 +16,5 @@ default_converter_sequence = [
     TableConverter,
     TaskConverter,
     ViewConverter,
+    FunctionConverter,
 ]
