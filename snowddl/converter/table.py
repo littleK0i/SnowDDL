@@ -77,7 +77,6 @@ class TableConverter(AbstractSchemaObjectConverter):
         object_path = (
             self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "table"
         )
-        object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
         self._dump_file(object_path / f"{self._normalise_name(row['name'])}.yaml", data, table_json_schema)
 

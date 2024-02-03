@@ -1,9 +1,10 @@
+from pathlib import Path
 from re import compile, DOTALL
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_converter import ConvertResult
 from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter
-from snowddl.converter._yaml import YamlLiteralStr
+from snowddl.converter._yaml import YamlLiteralStr, YamlIncludeStr
 from snowddl.parser.view import view_json_schema
 
 
@@ -42,16 +43,15 @@ class ViewConverter(AbstractSchemaObjectConverter):
         return existing_objects
 
     def dump_object(self, row):
+        object_path = (
+                self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "view"
+        )
+
         data = {
             "columns": self._get_columns(row),
-            "text": YamlLiteralStr(self._get_text(row)),
+            "text": self._get_text_or_include(object_path, row),
             "comment": row["comment"],
         }
-
-        object_path = (
-            self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "view"
-        )
-        object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
         if data:
             self._dump_file(object_path / f"{self._normalise_name(row['name'])}.yaml", data, view_json_schema)
@@ -76,7 +76,7 @@ class ViewConverter(AbstractSchemaObjectConverter):
 
         return cols
 
-    def _get_text(self, row):
+    def _get_text_or_include(self, object_path: Path, row: dict):
         # TODO: replace with better implementation when available
         cur = self.engine.execute_meta(
             "SELECT GET_DDL('VIEW', {ident}) AS view_ddl", {"ident": f"{row['database']}.{row['schema']}.{row['name']}"}
@@ -89,4 +89,10 @@ class ViewConverter(AbstractSchemaObjectConverter):
         # https://github.com/yaml/pyyaml/issues/411
         view_text = "\n".join(line.rstrip(" ") for line in view_text.split("\n"))
 
-        return view_text
+        if self.engine.settings.convert_view_text_to_file:
+            file_name = f"{self._normalise_name(row['name'])}.sql"
+            self._dump_code(object_path / "sql" / file_name, view_text)
+
+            return YamlIncludeStr(f"sql/{file_name}")
+
+        return YamlLiteralStr(view_text)

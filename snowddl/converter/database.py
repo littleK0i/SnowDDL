@@ -20,7 +20,6 @@ class DatabaseConverter(AbstractConverter):
             data["comment"] = row["comment"]
 
         object_path = self.base_path / self._normalise_name_with_prefix(row["database"])
-        object_path.mkdir(mode=0o755, parents=True, exist_ok=True)
 
         self._dump_file(object_path / "params.yaml", data, database_json_schema)
         return ConvertResult.DUMP

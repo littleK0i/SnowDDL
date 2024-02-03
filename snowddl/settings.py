@@ -25,5 +25,8 @@ class SnowDDLSettings(BaseModelWithConfig):
     include_object_types: List[ObjectType] = []
     include_databases: List[DatabaseIdent] = []
     ignore_ownership: bool = False
-    add_include_files: bool = False
     max_workers: int = 8
+
+    # Options specific for snowddl-convert
+    convert_function_body_to_file: bool = False
+    convert_view_text_to_file: bool = False

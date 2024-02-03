@@ -79,11 +79,6 @@ class ConvertApp(BaseApp):
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
         )
         parser.add_argument("--clean", help="Delete existing config files before conversion", default=False, action="store_true")
-        parser.add_argument(
-            "--add-include-files", 
-            help="Write out any source code text (Tasks, Functions, Procedures, Views) to separate files", 
-            default=False, 
-            action="store_true")
 
         # Logging
         parser.add_argument(
@@ -108,6 +103,20 @@ class ConvertApp(BaseApp):
             help="Ignore OWNERSHIP of databases and schemas during conversion process, makes it possible to convert objects owned by another role",
             default=False,
             action="store_true",
+        )
+
+        parser.add_argument(
+            "--convert-function-body-to-file",
+            help="Dump out FUNCTION body to separate files",
+            default=False,
+            action="store_true"
+        )
+
+        parser.add_argument(
+            "--convert-view-text-to-file",
+            help="Dump VIEW text to separate files",
+            default=False,
+            action="store_true"
         )
 
         return parser
@@ -161,6 +170,12 @@ class ConvertApp(BaseApp):
 
         if self.args.get("max_workers"):
             settings.max_workers = int(self.args.get("max_workers"))
+
+        if self.args.get("convert_function_body_to_file"):
+            settings.convert_function_body_to_file = True
+
+        if self.args.get("convert_view_text_to_file"):
+            settings.convert_view_text_to_file = True
 
         return settings
 

@@ -101,9 +101,19 @@ class AbstractConverter(ABC):
         # Validate JSON schema
         validate(data, json_schema)
 
+        # Create directory if not exist
+        file_path.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+
         # (Over)write file
         with file_path.open("w", encoding="utf-8") as f:
             dump_all([data], f, Dumper=SnowDDLDumper, sort_keys=False)
+
+    def _dump_code(self, file_path: Path, content: str):
+        # Create directory if not exist
+        file_path.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+
+        # Write data as plain text
+        file_path.write_text(content)
 
     def _normalise_name(self, name: str):
         return name.lower()
