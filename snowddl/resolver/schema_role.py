@@ -77,6 +77,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
 
         privileges_map = {
+            ObjectType.DYNAMIC_TABLE: ["MONITOR", "OPERATE", "SELECT"],
             ObjectType.STAGE: ["READ", "WRITE", "USAGE"],
         }
 
@@ -132,6 +133,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
         )
 
         privileges_map = {
+            ObjectType.DYNAMIC_TABLE: ["SELECT"],
             ObjectType.EXTERNAL_TABLE: ["SELECT", "REFERENCES"],
             ObjectType.FILE_FORMAT: ["USAGE"],
             ObjectType.FUNCTION: ["USAGE"],

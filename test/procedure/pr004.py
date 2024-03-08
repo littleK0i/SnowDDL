@@ -41,7 +41,7 @@ def test_step1(helper):
         "ARR ARRAY)"
     )
 
-    assert "[" in procedure_show["arguments"]
+    assert "DEFAULT" in procedure_show["arguments"]
 
 
 def test_step2(helper):
@@ -84,7 +84,7 @@ def test_step2(helper):
         "ARR ARRAY)"
     )
 
-    assert "[" in procedure_show["arguments"]
+    assert "DEFAULT" in procedure_show["arguments"]
 
 
 def test_step3(helper):

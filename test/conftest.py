@@ -383,6 +383,7 @@ class Helper:
         return self.edition >= Edition.BUSINESS_CRITICAL
 
     def dtypes_from_arguments(self, arguments):
+        arguments = arguments.replace("DEFAULT ", "")
         arguments = arguments.translate(str.maketrans("", "", "[] "))
 
         start_dtypes_idx = arguments.index("(")

@@ -46,7 +46,7 @@ def test_step1(helper):
     )
 
     assert function_desc["language"] == "SQL"
-    assert "[" in function_show["arguments"]
+    assert "DEFAULT" in function_show["arguments"]
 
 
 def test_step2(helper):
@@ -94,7 +94,7 @@ def test_step2(helper):
     )
 
     assert function_desc["language"] == "SQL"
-    assert "[" in function_show["arguments"]
+    assert "DEFAULT" in function_show["arguments"]
 
 
 def test_step3(helper):

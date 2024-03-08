@@ -29,6 +29,7 @@ def compare_dynamic_param_value(bp_value: Union[bool, int, float, str], existing
 
 
 def dtypes_from_arguments(arguments: str) -> str:
+    arguments = arguments.replace("DEFAULT ", "")
     arguments = arguments.translate(str.maketrans("", "", "[] "))
 
     start_dtypes_idx = arguments.index("(")

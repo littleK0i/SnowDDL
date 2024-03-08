@@ -28,12 +28,8 @@ class TableConverter(AbstractSchemaObjectConverter):
         )
 
         for r in cur:
-            # Skip external tables
-            if r["is_external"] == "Y":
-                continue
-
-            # Skip event tables
-            if r["is_event"] == "Y":
+            # Skip other table types
+            if r["is_external"] == "Y" or r["is_event"] == "Y" or r["is_hybrid"] == "Y" or r["is_iceberg"] == "Y":
                 continue
 
             full_name = f"{r['database_name']}.{r['schema_name']}.{r['name']}"

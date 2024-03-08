@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.23.2] - 2024-03-08
+
+- Skipped all new fancy table types while working on normal `TABLE` in resolver, converter and during cloning.
+- Added explicit `MONITOR`, `OPERATE` and `SELECT` privileges for `DYNAMIC_TABLE` for schema owner role.
+- Added explicit `SELECT` privilege for `DYNAMIC_TABLE` for schema read role.
+- Updated handling of metadata for optional arguments in `FUNCTION` and `PROCEDURE`. Snowflake replaced brackets-syntax `[, NUMBER]` with more traditional `, DEFAULT NUMBER`.
+
+You may have to run SnowDDL with flag `--refresh-future-grants` to apply new privileges to existing dynamic tables.
+
 ## [0.23.1] - 2024-01-17
 
 - Added `owner_integration_usage` parameter for `SCHEMA`. It grants usage privilege to schema owner role on integrations pre-configured outside SnowDDL.
