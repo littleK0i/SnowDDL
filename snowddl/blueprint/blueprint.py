@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Optional, List, Dict, Union, TypeVar
+from typing import Optional, List, Dict, Set, Union, TypeVar
 
 from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import DataType
@@ -19,7 +19,7 @@ from .ident import (
     TableConstraintIdent,
 )
 from .object_type import ObjectType
-from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
 
@@ -40,7 +40,7 @@ class RoleBlueprint(AbstractBlueprint):
 
 
 class DependsOnMixin(BaseModelWithConfig, ABC):
-    depends_on: List[AbstractIdent] = []
+    depends_on: Set[AbstractIdent] = set()
 
 
 class AccountParameterBlueprint(AbstractBlueprint):
@@ -150,6 +150,11 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     handler: Optional[str] = None
     external_access_integrations: Optional[List[AccountObjectIdent]] = None
     secrets: Optional[Dict[str, SchemaObjectIdent]] = None
+
+
+class HybridTableBlueprint(SchemaObjectBlueprint):
+    columns: List[TableColumn]
+    indexes: Optional[List[IndexReference]] = None
 
 
 class InboundShareBlueprint(AbstractBlueprint):

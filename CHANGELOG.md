@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.24.0] - 2024-03-11
+
+- Implemented `HYBRID_TABLE` object type using short hash.
+- Switched `depends_on` implementation from list to set, which should help to avoid deduplication problem entirely.
+- Added SQL comment with specific replace reasons when replace table is required.
+- Adjusted replace table logic to avoid unnecessary type casting when data type was not changed.
+- Added some tests for `HYBRID_TABLE`.
+
 ## [0.23.2] - 2024-03-08
 
 - Skipped all new fancy table types while working on normal `TABLE` in resolver, converter and during cloning.

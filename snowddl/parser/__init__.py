@@ -10,6 +10,7 @@ from .external_function import ExternalFunctionParser
 from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
 from .function import FunctionParser
+from .hybrid_table import HybridTableParser
 from .inbound_share import InboundShareParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
@@ -53,6 +54,7 @@ default_parser_sequence = [
     ProcedureParser,
     TableParser,
     EventTableParser,
+    HybridTableParser,
     DynamicTableParser,
     ExternalTableParser,
     StreamParser,
@@ -83,6 +85,7 @@ singledb_parser_sequence = [
     ProcedureParser,
     TableParser,
     EventTableParser,
+    HybridTableParser,
     DynamicTableParser,
     ExternalTableParser,
     StreamParser,

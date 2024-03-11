@@ -44,7 +44,7 @@ class ViewConverter(AbstractSchemaObjectConverter):
 
     def dump_object(self, row):
         object_path = (
-                self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "view"
+            self.base_path / self._normalise_name_with_prefix(row["database"]) / self._normalise_name(row["schema"]) / "view"
         )
 
         data = {

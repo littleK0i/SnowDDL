@@ -68,15 +68,15 @@ class TaskParser(AbstractParser):
     def process_task(self, f: ParsedFile):
         after = None
         finalize = None
-        depends_on = []
+        depends_on = set()
 
         if f.params.get("after"):
             after = [build_schema_object_ident(self.env_prefix, t, f.database, f.schema) for t in f.params.get("after")]
-            depends_on.extend(after)
+            depends_on.update(after)
 
         if f.params.get("finalize"):
             finalize = build_schema_object_ident(self.env_prefix, f.params.get("finalize"), f.database, f.schema)
-            depends_on.append(finalize)
+            depends_on.add(finalize)
 
         bp = TaskBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),

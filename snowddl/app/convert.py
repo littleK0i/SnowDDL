@@ -106,17 +106,11 @@ class ConvertApp(BaseApp):
         )
 
         parser.add_argument(
-            "--convert-function-body-to-file",
-            help="Dump out FUNCTION body to separate files",
-            default=False,
-            action="store_true"
+            "--convert-function-body-to-file", help="Dump out FUNCTION body to separate files", default=False, action="store_true"
         )
 
         parser.add_argument(
-            "--convert-view-text-to-file",
-            help="Dump VIEW text to separate files",
-            default=False,
-            action="store_true"
+            "--convert-view-text-to-file", help="Dump VIEW text to separate files", default=False, action="store_true"
         )
 
         return parser

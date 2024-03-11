@@ -16,6 +16,7 @@ from .blueprint import (
     FileFormatBlueprint,
     ForeignKeyBlueprint,
     FunctionBlueprint,
+    HybridTableBlueprint,
     MaterializedViewBlueprint,
     MaskingPolicyBlueprint,
     NetworkPolicyBlueprint,
@@ -73,5 +74,5 @@ from .ident_builder import (
 )
 
 from .object_type import ObjectType
-from .reference import MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath, StageUploadFile

@@ -51,9 +51,9 @@ class DynamicTableParser(AbstractParser):
             text=f.params["text"],
             target_lag=self.normalize_target_lag(f.params["target_lag"]),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]),
-            depends_on=[
+            depends_on=set(
                 build_schema_object_ident(self.env_prefix, d, f.database, f.schema) for d in f.params.get("depends_on", [])
-            ],
+            ),
             comment=f.params.get("comment"),
         )
 

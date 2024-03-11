@@ -78,6 +78,14 @@ class ObjectType(Enum):
         "blueprint_cls": "FunctionBlueprint",
     }
 
+    HYBRID_TABLE = {
+        "singular": "HYBRID TABLE",
+        "plural": "HYBRID TABLES",
+        "simplified": "TABLE",
+        "is_future_grant_supported": True,
+        "blueprint_cls": "FunctionBlueprint",
+    }
+
     # Technical object type, used for GRANTs only
     # There is no blueprint
     INTEGRATION = {

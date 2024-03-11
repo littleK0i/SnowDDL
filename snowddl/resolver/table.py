@@ -66,8 +66,7 @@ class TableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: TableBlueprint, row: dict):
         safe_alters = []
         unsafe_alters = []
-
-        is_replace_required = False
+        replace_reasons = []
 
         bp_cols = {str(c.name): c for c in bp.columns}
         snow_cols = self._get_existing_columns(bp)
@@ -145,15 +144,15 @@ class TableResolver(AbstractSchemaObjectResolver):
 
                 # All other DEFAULT changes are not supported
                 else:
-                    is_replace_required = True
+                    replace_reasons.append(f"Default for column {col_name} was changed")
 
             # Expression
             if snow_c.expression != bp_c.expression:
-                is_replace_required = True
+                replace_reasons.append(f"Expression for column {col_name} was changed")
 
             # Collate
             if snow_c.collate != bp_c.collate:
-                is_replace_required = True
+                replace_reasons.append(f"Collate for column {col_name} was changed")
 
             # Comments
             if snow_c.comment != bp_c.comment:
@@ -206,8 +205,8 @@ class TableResolver(AbstractSchemaObjectResolver):
 
                     continue
 
-            # All other transformations require full table replace
-            is_replace_required = True
+            # All other data type transformations require full table replace
+            replace_reasons.append(f"Data type for column {col_name} was changed from {snow_c.type} to {bp_c.type}")
 
         # Remaining column names exactly match initial part of blueprint column names
         if remaining_col_names == list(islice(bp_cols.keys(), 0, len(remaining_col_names))):
@@ -252,11 +251,13 @@ class TableResolver(AbstractSchemaObjectResolver):
                 safe_alters.append(query)
         else:
             # Reordering of columns is not supported
-            is_replace_required = True
+            replace_reasons.append("Order of columns was changed")
 
         # Changing TRANSIENT tables to permanent and back are not supported
-        if bp.is_transient != row["is_transient"]:
-            is_replace_required = True
+        if bp.is_transient is True and row["is_transient"] is False:
+            replace_reasons.append("Table type was changed to TRANSIENT")
+        elif bp.is_transient is False and row["is_transient"] is True:
+            replace_reasons.append("Table type was changed to no longer being TRANSIENT")
 
         # Retention time
         if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
@@ -306,10 +307,9 @@ class TableResolver(AbstractSchemaObjectResolver):
         # Apply changes
         result = ResolveResult.NOCHANGE
 
-        if is_replace_required:
-            self.engine.execute_unsafe_ddl(
-                self._build_create_table(bp, snow_cols), condition=self.engine.settings.execute_replace_table
-            )
+        if replace_reasons:
+            replace_query = "\n".join(f"-- {r}" for r in replace_reasons) + "\n" + str(self._build_create_table(bp, snow_cols))
+            self.engine.execute_unsafe_ddl(replace_query, condition=self.engine.settings.execute_replace_table)
 
             result = ResolveResult.REPLACE
 
@@ -481,16 +481,32 @@ class TableResolver(AbstractSchemaObjectResolver):
             query.append_nl("SELECT")
 
             for idx, c in enumerate(bp.columns):
-                if str(c.name) in snow_cols:
-                    query.append_nl(
-                        "    {comma:r}{col_name:i}::{col_type:r} AS {col_name:i}",
-                        {
-                            "comma": "  " if idx == 0 else ", ",
-                            "col_name": c.name,
-                            "col_type": c.type,
-                        },
-                    )
+                col_name = str(c.name)
+
+                if col_name in snow_cols:
+                    # Column already exist
+
+                    if c.type == snow_cols[col_name].type:
+                        # Column has the same type
+                        query.append_nl(
+                            "    {comma:r}{col_name:i} AS {col_name:i}",
+                            {
+                                "comma": "  " if idx == 0 else ", ",
+                                "col_name": c.name,
+                            },
+                        )
+                    else:
+                        # Column has a different type, add type cast
+                        query.append_nl(
+                            "    {comma:r}{col_name:i}::{col_type:r} AS {col_name:i}",
+                            {
+                                "comma": "  " if idx == 0 else ", ",
+                                "col_name": c.name,
+                                "col_type": c.type,
+                            },
+                        )
                 else:
+                    # Column does not exist, use default value with type cast
                     query.append_nl(
                         "    {comma:r}{col_val}::{col_type:r} AS {col_name:i}",
                         {

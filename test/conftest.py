@@ -376,6 +376,27 @@ class Helper:
 
         return {r["key"]: r for r in cur}
 
+    def show_hybrid_table(self, database, schema, name):
+        cur = self.execute(
+            "SHOW HYBRID TABLES LIKE {object_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "object_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
+
+    def show_indexes(self, database, schema, name):
+        cur = self.execute(
+            "SHOW INDEXES IN TABLE {table_name:i}",
+            {
+                "table_name": SchemaObjectIdent(self.env_prefix, database, schema, name),
+            },
+        )
+
+        return {r['name']: r for r in cur}
+
     def is_edition_enterprise(self):
         return self.edition >= Edition.ENTERPRISE
 

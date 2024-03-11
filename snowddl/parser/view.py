@@ -55,9 +55,9 @@ class ViewParser(AbstractParser):
             text=f.params["text"],
             columns=column_blueprints if column_blueprints else None,
             is_secure=f.params.get("is_secure", False),
-            depends_on=[
+            depends_on=set(
                 build_schema_object_ident(self.env_prefix, v, f.database, f.schema) for v in f.params.get("depends_on", [])
-            ],
+            ),
             comment=f.params.get("comment"),
         )
 

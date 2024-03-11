@@ -10,7 +10,6 @@ from snowddl.resolver._utils import dtypes_from_arguments
 
 
 class FunctionConverter(AbstractSchemaObjectConverter):
-
     def get_object_type(self) -> ObjectType:
         return ObjectType.FUNCTION
 
@@ -51,13 +50,13 @@ class FunctionConverter(AbstractSchemaObjectConverter):
 
         cur = self.engine.execute_meta(
             "DESC FUNCTION {database:i}.{schema:i}.{name:i}({dtypes:r})",
-                {
-                    "database": row["database"],
-                    "schema": row["schema"],
-                    "name": row["name"],
-                    "dtypes": dtypes,
-                }
-            )
+            {
+                "database": row["database"],
+                "schema": row["schema"],
+                "name": row["name"],
+                "dtypes": dtypes,
+            },
+        )
 
         desc_func_row = {r["property"]: r["value"] for r in cur}
 
@@ -151,10 +150,12 @@ class FunctionConverter(AbstractSchemaObjectConverter):
 
         for part in str(desc_func_row["imports"])[1:-1].split(", "):
             stage, path = part.split("/", 2)
-            imports.append({
-                "stage": stage[1:].lower(),
-                "path": path,
-            })
+            imports.append(
+                {
+                    "stage": stage[1:].lower(),
+                    "path": path,
+                }
+            )
 
         return imports
 

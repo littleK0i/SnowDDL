@@ -1,0 +1,49 @@
+columns:
+  num1: NUMBER(10,0)
+  num2: NUMBER(38,0)
+  num3: NUMBER(10,5)
+  num4: NUMBER(38,37)
+  dbl: FLOAT
+  bin1: BINARY(10)
+  bin2: BINARY(8388608)
+  var1: VARCHAR(255)
+  var2: VARCHAR(255)
+  dt1: DATE
+  tm1: TIME(0)
+  tm2: TIME(9)
+  ltz1: TIMESTAMP_LTZ(0)
+  ltz2: TIMESTAMP_LTZ(9)
+  ntz1: TIMESTAMP_NTZ(0)
+  ntz2: TIMESTAMP_NTZ(9)
+  tz1: TIMESTAMP_TZ(0)
+  tz2: TIMESTAMP_TZ(9)
+  var: VARIANT
+  obj: OBJECT
+  arr: ARRAY
+  geo1: GEOGRAPHY
+  geo2: GEOMETRY
+
+primary_key: [num1]
+
+unique_keys:
+  - [num2]
+  - [num3, num4, var1, var2]
+
+foreign_keys:
+  - columns: [num2]
+    ref_table: ht001_ht2
+    ref_columns: [id]
+
+  - columns: [var1, var2]
+    ref_table: ht001_ht2
+    ref_columns: [first_name, last_name]
+
+indexes:
+  - columns: [num2]
+
+  - columns: [num2, num3]
+
+  - columns: [num2, dt1]
+    include: [var1, var2, ntz1]
+
+comment: abc

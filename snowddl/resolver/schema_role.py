@@ -1,4 +1,11 @@
-from snowddl.blueprint import DatabaseIdent, SchemaRoleBlueprint, SchemaBlueprint, Grant, FutureGrant, build_role_ident
+from snowddl.blueprint import (
+    DatabaseIdent,
+    SchemaRoleBlueprint,
+    SchemaBlueprint,
+    Grant,
+    FutureGrant,
+    build_role_ident,
+)
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -91,12 +98,12 @@ class SchemaRoleResolver(AbstractRoleResolver):
                     )
                 )
 
-        depends_on = []
+        depends_on = set()
 
         for additional_grant in schema_bp.owner_additional_grants:
             # Dependency on another schema role
             if additional_grant.on == ObjectType.ROLE and str(additional_grant.name).endswith(self.get_role_suffix()):
-                depends_on.append(additional_grant.name)
+                depends_on.add(additional_grant.name)
 
             grants.append(additional_grant)
 
@@ -106,7 +113,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             ),
             grants=grants,
             future_grants=future_grants,
-            comment=None,
             depends_on=depends_on,
         )
 
@@ -161,8 +167,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             ),
             grants=grants,
             future_grants=future_grants,
-            comment=None,
-            depends_on=[],
         )
 
         return bp
@@ -209,8 +213,6 @@ class SchemaRoleResolver(AbstractRoleResolver):
             ),
             grants=grants,
             future_grants=future_grants,
-            comment=None,
-            depends_on=[],
         )
 
         return bp

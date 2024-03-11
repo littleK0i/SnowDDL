@@ -1,0 +1,10 @@
+columns:
+  id: NUMBER(38,0)
+  first_name: VARCHAR(255)
+  middle_name: VARCHAR(255)
+  last_name: VARCHAR(255)
+
+primary_key: [id]
+
+unique_keys:
+  - [first_name, last_name]
