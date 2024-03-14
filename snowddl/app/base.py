@@ -226,7 +226,7 @@ class BaseApp:
     def init_arguments(self):
         args = vars(self.arg_parser.parse_args())
 
-        if not args["a"] or not args["u"] or (not args["p"] and not args["k"]):
+        if not args["a"] or not args["u"]:
             self.arg_parser.print_help()
             exit(1)
 
@@ -404,8 +404,10 @@ class BaseApp:
                 format=serialization.PrivateFormat.PKCS8,
                 encryption_algorithm=serialization.NoEncryption(),
             )
-        else:
+        elif self.args.get("p"):
             options["password"] = self.args["p"]
+        else:
+            options["authenticator"] = "externalbrowser"
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {
