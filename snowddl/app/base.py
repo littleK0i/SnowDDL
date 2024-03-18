@@ -74,11 +74,6 @@ class BaseApp:
             metavar="PRIVATE_KEY",
             default=environ.get("SNOWFLAKE_PRIVATE_KEY_PATH"),
         )
-        parser.add_argument(
-            "--authenticator",
-            help="Authenticator: 'snowflake' or 'externalbrowser' (to use any IdP and a web browser) (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
-            default=environ.get("SNOWFLAKE_AUTHENTICATOR") or 'snowflake'
-        )
 
         # Role & warehouse
         parser.add_argument(
@@ -95,6 +90,11 @@ class BaseApp:
         )
 
         # Options
+        parser.add_argument(
+            "--authenticator",
+            help="Authenticator: 'snowflake' or 'externalbrowser' (to use any IdP and a web browser) (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
+            default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
+        )
         parser.add_argument(
             "--passphrase",
             help="Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)",
@@ -426,7 +426,7 @@ class BaseApp:
         elif self.args.get("authenticator") == "externalbrowser":
             options["authenticator"] = "externalbrowser"
         else:
-            raise ValueError("Only 'Snowflake' and 'externalbrowser' authenticators are supported")
+            raise ValueError("Only 'snowflake' and 'externalbrowser' authenticators are supported")
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {

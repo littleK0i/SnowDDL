@@ -96,6 +96,11 @@ class SingleDbApp(BaseApp):
 
         # Generic options
         parser.add_argument(
+            "--authenticator",
+            help="Authenticator: 'snowflake' or 'externalbrowser' (to use any IdP and a web browser) (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
+            default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
+        )
+        parser.add_argument(
             "--passphrase",
             help="Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)",
             default=environ.get("SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"),
