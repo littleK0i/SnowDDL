@@ -238,15 +238,14 @@ class BaseApp:
         return args
 
     def validate_auth_args(self, args):
-        match(args["authenticator"]):
-            case "snowflake":
-                if not args["a"] or not args["u"] or (not args["p"] and not args["k"]):
-                    return False
-            case "externalbrowser":
-                if not args["a"] or not args["u"]:
-                    return False
-            case _:
+        if args["authenticator"] == "snowflake":
+            if not args["a"] or not args["u"] or (not args["p"] and not args["k"]):
                 return False
+        elif args["authenticator"] == "externalbrowser":
+            if not args["a"] or not args["u"]:
+                return False
+        elif args["authenticator"] is not None:
+            return False
         return True
 
     def init_logger(self):
@@ -408,27 +407,26 @@ class BaseApp:
             "application": f"{self.application_name} {self.application_version}",
         }
 
-        match self.args.get("authenticator"):
-            case "snowflake":
-                if self.args.get("k"):
-                    from cryptography.hazmat.primitives import serialization
+        if self.args.get("authenticator") == "snowflake":
+            if self.args.get("k"):
+                from cryptography.hazmat.primitives import serialization
 
-                    key_path = Path(self.args.get("k"))
-                    key_password = str(self.args.get("passphrase")).encode("utf-8") if self.args.get("passphrase") else None
+                key_path = Path(self.args.get("k"))
+                key_password = str(self.args.get("passphrase")).encode("utf-8") if self.args.get("passphrase") else None
 
-                    pk = serialization.load_pem_private_key(data=key_path.read_bytes(), password=key_password)
+                pk = serialization.load_pem_private_key(data=key_path.read_bytes(), password=key_password)
 
-                    options["private_key"] = pk.private_bytes(
-                        encoding=serialization.Encoding.DER,
-                        format=serialization.PrivateFormat.PKCS8,
-                        encryption_algorithm=serialization.NoEncryption(),
-                    )
-                else:
-                    options["password"] = self.args["p"]
-            case "externalbrowser":
-                options["authenticator"] = "externalbrowser"
-            case _:
-                raise ValueError("Only 'Snowflake' and 'externalbrowser' authenticators are supported")
+                options["private_key"] = pk.private_bytes(
+                    encoding=serialization.Encoding.DER,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            else:
+                options["password"] = self.args["p"]
+        elif self.args.get("authenticator") == "externalbrowser":
+            options["authenticator"] = "externalbrowser"
+        else:
+            raise ValueError("Only 'Snowflake' and 'externalbrowser' authenticators are supported")
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {
