@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.25.0] - 2024-03-20
+
+- Added browser-based SSO authentication (thanks to Joseph Niblo).
+
 ## [0.24.0] - 2024-03-11
 
 - Implemented `HYBRID_TABLE` object type using short hash.
