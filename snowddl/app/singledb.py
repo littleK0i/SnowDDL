@@ -251,6 +251,37 @@ class SingleDbApp(BaseApp):
 
         return settings
 
+    def execute(self):
+        error_count = 0
+
+        with self.engine:
+            self.output_engine_context()
+
+            if self.args.get("action") == "destroy":
+                for resolver_cls in self.resolver_sequence:
+                    resolver = resolver_cls(self.engine)
+                    resolver.destroy()
+
+                    error_count += len(resolver.errors)
+
+            else:
+                for resolver_cls in self.resolver_sequence:
+                    resolver = resolver_cls(self.engine)
+                    resolver.resolve()
+
+                    error_count += len(resolver.errors)
+
+            self.engine.connection.close()
+            self.output_engine_stats()
+
+            if self.args.get("show_sql"):
+                self.output_executed_ddl()
+
+            self.output_suggested_ddl()
+
+            if error_count > 0:
+                exit(8)
+
 
 def entry_point():
     app = SingleDbApp()

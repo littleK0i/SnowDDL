@@ -77,10 +77,6 @@ class SchemaResolver(AbstractResolver):
 
         return ResolveResult.DROP
 
-    def destroy(self):
-        # Do nothing, all schemas are dropped automatically on DROP DATABASE
-        pass
-
     def _post_process(self):
         for result in self.resolved_objects.values():
             if result != ResolveResult.NOCHANGE:
