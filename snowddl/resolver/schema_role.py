@@ -17,9 +17,24 @@ class SchemaRoleResolver(AbstractRoleResolver):
         blueprints = []
 
         for schema in self.config.get_blueprints_by_type(SchemaBlueprint).values():
-            blueprints.append(self.get_blueprint_owner_role(schema))
-            blueprints.append(self.get_blueprint_read_role(schema))
-            blueprints.append(self.get_blueprint_write_role(schema))
+            if schema.schema_roles == False:
+                # don't generate any roles for this schema
+                continue
+            
+            # if schema_roles attribute is not specified, create all roles by default
+            if schema.schema_roles == []:
+                blueprints.append(self.get_blueprint_owner_role(schema))
+                blueprints.append(self.get_blueprint_read_role(schema))
+                blueprints.append(self.get_blueprint_write_role(schema))
+            # otherwise, create only specified roles
+            else:
+                for schema_role in schema.schema_roles:
+                    if schema_role.lower() == "owner":
+                        blueprints.append(self.get_blueprint_owner_role(schema))
+                    if schema_role.lower() == "read":
+                        blueprints.append(self.get_blueprint_read_role(schema))
+                    if schema_role.lower() == "write":
+                        blueprints.append(self.get_blueprint_write_role(schema))
 
         return {str(bp.full_name): bp for bp in blueprints}
 
