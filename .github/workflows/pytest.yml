@@ -1,11 +1,11 @@
 name: Pytest
 
 on:
-  push:
-    paths:
-      - "**.py"
-      - "**.yml"
-      - "**.yaml"
+  # push:
+  #   paths:
+  #     - "**.py"
+  #     - "**.yml"
+  #     - "**.yaml"
   workflow_dispatch:
 
 jobs:
