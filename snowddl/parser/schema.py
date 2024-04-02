@@ -16,6 +16,19 @@ schema_json_schema = {
         "is_sandbox": {
             "type": "boolean"
         },
+        "schema_roles": {
+            "anyOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "type": "boolean"
+                }
+            ],
+        },
         "owner_schema_read": {
             "type": "array",
             "items": {
@@ -84,6 +97,7 @@ class SchemaParser(AbstractParser):
                     retention_time=combined_params.get("retention_time", None),
                     is_sandbox=combined_params.get("is_sandbox", False),
                     owner_additional_grants=owner_additional_grants,
+                    schema_roles=schema_params.get("schema_roles", []),
                     comment=schema_params.get("comment", None),
                 )
 

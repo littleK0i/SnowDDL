@@ -252,6 +252,7 @@ class SchemaBlueprint(AbstractBlueprint):
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
     owner_additional_grants: List[Grant] = []
+    schema_roles: Union[List[str], bool] = []
 
 
 class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
