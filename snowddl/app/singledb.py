@@ -162,6 +162,20 @@ class SingleDbApp(BaseApp):
             action="store_true",
         )
 
+        # Refresh state of specific objects
+        parser.add_argument(
+            "--refresh-stage-encryption",
+            help="Additionally refresh stage encryption parameters for existing external stages",
+            default=False,
+            action="store_true",
+        )
+        parser.add_argument(
+            "--refresh-secrets",
+            help="Additionally refresh secrets",
+            default=False,
+            action="store_true",
+        )
+
         # Cloning
         parser.add_argument(
             "--clone-table",

@@ -1,9 +1,13 @@
 # Changelog
 
+## [0.25.2] - 2024-04-03
+
+- Added CLI options `--refresh-stage-encryption` and `--refresh-secrets` to SingleDB mode.
+
 ## [0.25.1] - 2024-03-21
 
-- Prevent SingleDB mode from asking for `--destroy-without-prefix` CLI option which is not possible to set on "destroy" action.
-- Make sure schemas are correctly "destroyed" even when `DatabaseResolver` is not present in resolver sequence. Most schema objects are still being ignored.
+- Prevented SingleDB mode from asking for `--destroy-without-prefix` CLI option which is not possible to set on "destroy" action.
+- Ensured schemas are correctly "destroyed" even when `DatabaseResolver` is not present in resolver sequence. Most schema objects are still being ignored.
 
 ## [0.25.0] - 2024-03-20
 
