@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.25.3] - 2024-04-11
+
+- Add explicit setting to destroy schemas. Use it in SingleDB mode only. Do not attempt to destroy schemas in normal mode.
+- Set `TARGET_DB` automatic placeholder earlier, but only if `--target-db` argument was specified.
+
 ## [0.25.2] - 2024-04-03
 
 - Added CLI options `--refresh-stage-encryption` and `--refresh-secrets` to SingleDB mode.

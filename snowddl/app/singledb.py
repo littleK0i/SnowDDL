@@ -219,9 +219,6 @@ class SingleDbApp(BaseApp):
         else:
             self.target_db = self.config_db
 
-        # Add placeholder for TARGET_DB
-        config.add_placeholder("TARGET_DB", str(self.target_db))
-
         return self.convert_config(config)
 
     def convert_config(self, original_config: SnowDDLConfig):
@@ -262,6 +259,7 @@ class SingleDbApp(BaseApp):
         settings = super().init_settings()
         settings.include_databases = [self.target_db]
         settings.ignore_ownership = True
+        settings.destroy_schemas = True
 
         return settings
 

@@ -77,6 +77,12 @@ class SchemaResolver(AbstractResolver):
 
         return ResolveResult.DROP
 
+    def destroy(self):
+        # Schemas are normally dropped automatically on DROP DATABASE
+        # But in some cases explicit DROP SCHEMA might be required, e.g. for SingleDB mode
+        if self.engine.settings.destroy_schemas:
+            super().destroy()
+
     def _post_process(self):
         for result in self.resolved_objects.values():
             if result != ResolveResult.NOCHANGE:

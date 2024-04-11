@@ -284,7 +284,7 @@ class BaseApp:
         placeholder_values = self.get_placeholder_values()
 
         parser = PlaceholderParser(config, self.config_path)
-        parser.load_placeholders(placeholder_path, placeholder_values)
+        parser.load_placeholders(placeholder_path, placeholder_values, self.args)
 
         if config.errors:
             self.output_config_errors(config)

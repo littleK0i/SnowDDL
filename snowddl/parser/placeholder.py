@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Optional
 
+from snowddl.blueprint import DatabaseIdent
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -19,11 +20,16 @@ class PlaceholderParser(AbstractParser):
         # This is a special parser that does not load any blueprints, but it loads placeholders instead
         pass
 
-    def load_placeholders(self, placeholder_path: Optional[Path] = None, placeholder_values: Optional[Dict] = None):
+    def load_placeholders(
+        self, placeholder_path: Optional[Path] = None, placeholder_values: Optional[Dict] = None, args: Optional[Dict] = None
+    ):
         # 1) Start with standard placeholders, always available
         placeholders = {
             "ENV_PREFIX": self.env_prefix,
         }
+
+        if args and args.get("target_db"):
+            placeholders["TARGET_DB"] = str(DatabaseIdent(self.env_prefix, args.get("target_db")))
 
         # 2) Merge with placeholders from normal config file
         placeholders.update(
