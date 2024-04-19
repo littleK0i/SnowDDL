@@ -1,6 +1,15 @@
 from re import compile
 
-from snowddl.blueprint import Ident, DataType, HybridTableBlueprint, SchemaObjectIdent, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint
+from snowddl.blueprint import (
+    Ident,
+    DataType,
+    HybridTableBlueprint,
+    SchemaObjectIdent,
+    TableColumn,
+    PrimaryKeyBlueprint,
+    UniqueKeyBlueprint,
+    ForeignKeyBlueprint,
+)
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")

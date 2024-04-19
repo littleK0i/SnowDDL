@@ -395,7 +395,7 @@ class Helper:
             },
         )
 
-        return {r['name']: r for r in cur}
+        return {r["name"]: r for r in cur}
 
     def is_edition_enterprise(self):
         return self.edition >= Edition.ENTERPRISE

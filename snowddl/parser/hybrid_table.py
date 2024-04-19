@@ -182,11 +182,14 @@ class HybridTableParser(AbstractParser):
             unique_keys = [[Ident(c) for c in columns] for columns in f.params.get("unique_keys")]
 
         if f.params.get("foreign_keys"):
-            foreign_keys = [ForeignKeyReference(
-                columns=[Ident(c) for c in fk["columns"]],
-                ref_table_name=build_schema_object_ident(self.env_prefix, fk["ref_table"], f.database, f.schema),
-                ref_columns=[Ident(c) for c in fk["ref_columns"]],
-            ) for fk in f.params.get("foreign_keys")]
+            foreign_keys = [
+                ForeignKeyReference(
+                    columns=[Ident(c) for c in fk["columns"]],
+                    ref_table_name=build_schema_object_ident(self.env_prefix, fk["ref_table"], f.database, f.schema),
+                    ref_columns=[Ident(c) for c in fk["ref_columns"]],
+                )
+                for fk in f.params.get("foreign_keys")
+            ]
 
             depends_on = set(fk.ref_table_name for fk in foreign_keys)
 

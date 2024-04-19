@@ -15,7 +15,11 @@ def test_step1(helper):
 
     assert 2 == len(foreign_keys)
     assert {"columns": ["NUM2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["ID"]} in foreign_keys
-    assert {"columns": ["VAR1", "VAR2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["FIRST_NAME", "LAST_NAME"]} in foreign_keys
+    assert {
+        "columns": ["VAR1", "VAR2"],
+        "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2",
+        "ref_columns": ["FIRST_NAME", "LAST_NAME"],
+    } in foreign_keys
 
     assert "SYS_INDEX_HT001_HT1_PRIMARY" in indexes
     assert "SYS_INDEX_HT001_HT1_UNIQUE_NUM2" in indexes
@@ -37,9 +41,9 @@ def test_step2(helper):
     # TODO: uncomment these checks when Snowflake fixes foreign keys for Hybrid Tables
     # As of 19 Apr 2024, it is no longer possible to add foreign key to existing Hybrid Table
 
-    #assert 2 == len(foreign_keys)
-    #assert {"columns": ["NUM2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["ID"]} in foreign_keys
-    #assert {"columns": ["VAR1", "VAR2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["FIRST_NAME", "LAST_NAME"]} in foreign_keys
+    # assert 2 == len(foreign_keys)
+    # assert {"columns": ["NUM2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["ID"]} in foreign_keys
+    # assert {"columns": ["VAR1", "VAR2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["FIRST_NAME", "LAST_NAME"]} in foreign_keys
 
 
 def test_step3(helper):

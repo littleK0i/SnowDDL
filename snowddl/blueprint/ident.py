@@ -161,6 +161,7 @@ class SchemaObjectIdent(AbstractIdentWithPrefix):
     def schema_full_name(self):
         return SchemaIdent(self.env_prefix, self.database, self.schema)
 
+
 class SchemaObjectIdentWithArgs(SchemaObjectIdent):
     def __init__(self, env_prefix, database, schema, name, data_types: List[BaseDataType]):
         super().__init__(env_prefix, database, schema, name)

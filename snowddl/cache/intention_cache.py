@@ -37,7 +37,9 @@ class IntentionCache:
         schema_object_name = ".".join(object_full_name_parts[:3])
 
         # All schemas and schema objects are implicitly dropped by DATABASE
-        if issubclass(blueprint_cls, (SchemaBlueprint, SchemaObjectBlueprint)) and (database_name in self.drop_intention[ObjectType.DATABASE]):
+        if issubclass(blueprint_cls, (SchemaBlueprint, SchemaObjectBlueprint)) and (
+            database_name in self.drop_intention[ObjectType.DATABASE]
+        ):
             return True
 
         # All schema objects are implicitly dropped by SCHEMA
@@ -50,9 +52,9 @@ class IntentionCache:
 
         # All table constraints are implicitly dropped by various TABLE types which support constraints
         if issubclass(blueprint_cls, (ForeignKeyBlueprint, PrimaryKeyBlueprint, UniqueKeyBlueprint)) and (
-                schema_object_name in self.drop_intention[ObjectType.TABLE] or
-                schema_object_name in self.drop_intention[ObjectType.EXTERNAL_TABLE] or
-                schema_object_name in self.drop_intention[ObjectType.HYBRID_TABLE]
+            schema_object_name in self.drop_intention[ObjectType.TABLE]
+            or schema_object_name in self.drop_intention[ObjectType.EXTERNAL_TABLE]
+            or schema_object_name in self.drop_intention[ObjectType.HYBRID_TABLE]
         ):
             return True
 
