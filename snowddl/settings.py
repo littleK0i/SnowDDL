@@ -25,7 +25,6 @@ class SnowDDLSettings(BaseModelWithConfig):
     include_object_types: List[ObjectType] = []
     include_databases: List[DatabaseIdent] = []
     ignore_ownership: bool = False
-    destroy_schemas: bool = False
     max_workers: int = 8
 
     # Options specific for snowddl-convert

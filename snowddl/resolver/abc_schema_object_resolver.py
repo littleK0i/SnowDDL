@@ -21,7 +21,7 @@ class AbstractSchemaObjectResolver(AbstractResolver):
         pass
 
     def destroy(self):
-        # Do nothing, all schema objects are dropped automatically on DROP DATABASE
+        # Do nothing, all schema objects are dropped automatically on DROP DATABASE or DROP SCHEMA
         pass
 
     def _resolve_drop(self):
@@ -30,6 +30,10 @@ class AbstractSchemaObjectResolver(AbstractResolver):
         for object_full_name in sorted(self.existing_objects):
             # Object exists in blueprints, should not be dropped
             if object_full_name in self.blueprints:
+                continue
+
+            # Parent object is going to be dropped
+            if self.engine.intention_cache.check_parent_drop_intention(self.object_type, object_full_name):
                 continue
 
             schema_full_name = ".".join(object_full_name.split(".")[:2])

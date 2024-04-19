@@ -34,9 +34,12 @@ def test_step2(helper):
     # and implicitly dropped foreign keys on "ht001_ht1"
     foreign_keys = helper.show_foreign_keys("db1", "sc1", "ht001_ht1")
 
-    assert 2 == len(foreign_keys)
-    assert {"columns": ["NUM2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["ID"]} in foreign_keys
-    assert {"columns": ["VAR1", "VAR2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["FIRST_NAME", "LAST_NAME"]} in foreign_keys
+    # TODO: uncomment these checks when Snowflake fixes foreign keys for Hybrid Tables
+    # As of 19 Apr 2024, it is no longer possible to add foreign key to existing Hybrid Table
+
+    #assert 2 == len(foreign_keys)
+    #assert {"columns": ["NUM2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["ID"]} in foreign_keys
+    #assert {"columns": ["VAR1", "VAR2"], "ref_table": f"{helper.env_prefix}DB1.SC1.HT001_HT2", "ref_columns": ["FIRST_NAME", "LAST_NAME"]} in foreign_keys
 
 
 def test_step3(helper):

@@ -259,7 +259,6 @@ class SingleDbApp(BaseApp):
         settings = super().init_settings()
         settings.include_databases = [self.target_db]
         settings.ignore_ownership = True
-        settings.destroy_schemas = True
 
         return settings
 

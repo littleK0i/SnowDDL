@@ -157,6 +157,9 @@ class SchemaObjectIdent(AbstractIdentWithPrefix):
     def database_full_name(self):
         return DatabaseIdent(self.env_prefix, self.database)
 
+    @property
+    def schema_full_name(self):
+        return SchemaIdent(self.env_prefix, self.database, self.schema)
 
 class SchemaObjectIdentWithArgs(SchemaObjectIdent):
     def __init__(self, env_prefix, database, schema, name, data_types: List[BaseDataType]):
@@ -177,6 +180,10 @@ class StageFileIdent(SchemaObjectIdent):
     def parts_for_format(self):
         return [f"{self.env_prefix}{self.database}", self.schema, self.name], [self.path]
 
+    @property
+    def stage_full_name(self):
+        return SchemaObjectIdent(self.env_prefix, self.database, self.schema, self.name)
+
 
 class TableConstraintIdent(SchemaObjectIdent):
     def __init__(self, env_prefix, database, schema, name, columns: List[Ident]):
@@ -186,3 +193,7 @@ class TableConstraintIdent(SchemaObjectIdent):
 
     def parts_for_format(self):
         return [f"{self.env_prefix}{self.database}", self.schema, self.name], [str(c) for c in self.columns]
+
+    @property
+    def table_full_name(self):
+        return SchemaObjectIdent(self.env_prefix, self.database, self.schema, self.name)

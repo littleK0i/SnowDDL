@@ -5,13 +5,13 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from snowflake.connector import DictCursor, SnowflakeConnection, Error
 
+from snowddl.cache import IntentionCache, SchemaCache
 from snowddl.config import SnowDDLConfig
 from snowddl.settings import SnowDDLSettings
 from snowddl.formatter import SnowDDLFormatter
 from snowddl.query_builder import SnowDDLQueryBuilder
 from snowddl.context import SnowDDLContext
 from snowddl.error import SnowDDLExecuteError
-from snowddl.schema_cache import SnowDDLSchemaCache
 
 
 logger = getLogger(__name__)
@@ -39,7 +39,8 @@ class SnowDDLEngine:
         self.context = SnowDDLContext(self)
         self.context.activate_role_with_prefix()
 
-        self.schema_cache = SnowDDLSchemaCache(self)
+        self.intention_cache = IntentionCache(self)
+        self.schema_cache = SchemaCache(self)
 
     def __enter__(self):
         return self

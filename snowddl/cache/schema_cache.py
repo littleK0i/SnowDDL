@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from snowddl.engine import SnowDDLEngine
 
 
-class SnowDDLSchemaCache:
+class SchemaCache:
     def __init__(self, engine: "SnowDDLEngine"):
         self.engine = engine
 

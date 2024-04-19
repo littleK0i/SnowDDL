@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.26.0] - 2024-04-16
+
+- Introduce the concept of "intention cache". Initially it will be used to store and check intentions to drop or replace parent objects, so child objects can be properly resolved during "plan" action. For example, `DROP TABLE` command implicitly drops all table constraints, so there is no need to generate SQL commands to drop constraints.
+- Revert explicit setting to destroy schemas in SingleDB. It should be handled automatically by "intention cache" checks.
+- Rework `HYBRID_TABLE` to apply all constraints on table creation. Wait for Snowflake to resolve `FOREIGN KEY` issues with Hybrid Tables.
+
 ## [0.25.3] - 2024-04-11
 
 - Add explicit setting to destroy schemas. Use it in SingleDB mode only. Do not attempt to destroy schemas in normal mode.

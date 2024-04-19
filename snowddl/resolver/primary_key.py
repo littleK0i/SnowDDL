@@ -19,6 +19,10 @@ class PrimaryKeyResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
+            # Constraint for Hybrid tables are handled separately
+            if r["comment"] == ObjectType.HYBRID_TABLE.name:
+                continue
+
             if r["constraint_name"] not in constraints_by_name:
                 constraints_by_name[r["constraint_name"]] = {
                     "database": r["database_name"],

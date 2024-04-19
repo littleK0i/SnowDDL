@@ -95,6 +95,10 @@ class AbstractResolver(ABC):
             if object_full_name in self.blueprints:
                 continue
 
+            # Parent object is going to be dropped
+            if self.engine.intention_cache.check_parent_drop_intention(self.object_type, object_full_name):
+                continue
+
             tasks[object_full_name] = (self.drop_object, self.existing_objects[object_full_name])
 
         self._process_tasks(tasks)
@@ -104,6 +108,10 @@ class AbstractResolver(ABC):
 
         # Drop all existing objects
         for full_name in sorted(self.existing_objects):
+            # Parent object is going to be dropped
+            if self.engine.intention_cache.check_parent_drop_intention(self.object_type, full_name):
+                continue
+
             tasks[full_name] = (self.drop_object, self.existing_objects[full_name])
 
         self._process_tasks(tasks)
@@ -119,6 +127,13 @@ class AbstractResolver(ABC):
 
             try:
                 result = f.result()
+
+                if result == ResolveResult.REPLACE:
+                    self.engine.intention_cache.add_replace_intention(self.object_type, full_name)
+
+                if result == ResolveResult.DROP:
+                    self.engine.intention_cache.add_drop_intention(self.object_type, full_name)
+
                 if result == ResolveResult.NOCHANGE:
                     self.engine.logger.debug(f"Resolved {self.object_type.name} [{full_name}]: {result.value}")
                 else:

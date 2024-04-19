@@ -74,5 +74,5 @@ from .ident_builder import (
 )
 
 from .object_type import ObjectType
-from .reference import IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath, StageUploadFile

@@ -19,7 +19,7 @@ from .ident import (
     TableConstraintIdent,
 )
 from .object_type import ObjectType
-from .reference import IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
 
@@ -152,8 +152,11 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     secrets: Optional[Dict[str, SchemaObjectIdent]] = None
 
 
-class HybridTableBlueprint(SchemaObjectBlueprint):
+class HybridTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     columns: List[TableColumn]
+    primary_key: List[Ident]
+    unique_keys: Optional[List[List[Ident]]] = None
+    foreign_keys: Optional[List[ForeignKeyReference]] = None
     indexes: Optional[List[IndexReference]] = None
 
 

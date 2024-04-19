@@ -4,13 +4,10 @@ from snowddl.blueprint import (
     HybridTableBlueprint,
     IndexReference,
     TableColumn,
-    PrimaryKeyBlueprint,
-    UniqueKeyBlueprint,
-    ForeignKeyBlueprint,
+    ForeignKeyReference,
     DataType,
     Ident,
     SchemaObjectIdent,
-    TableConstraintIdent,
     build_schema_object_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
@@ -175,6 +172,24 @@ class HybridTableParser(AbstractParser):
                 )
             )
 
+        primary_key = [Ident(c) for c in f.params.get("primary_key")]
+        unique_keys = None
+        foreign_keys = None
+        indexes = None
+        depends_on = set()
+
+        if f.params.get("unique_keys"):
+            unique_keys = [[Ident(c) for c in columns] for columns in f.params.get("unique_keys")]
+
+        if f.params.get("foreign_keys"):
+            foreign_keys = [ForeignKeyReference(
+                columns=[Ident(c) for c in fk["columns"]],
+                ref_table_name=build_schema_object_ident(self.env_prefix, fk["ref_table"], f.database, f.schema),
+                ref_columns=[Ident(c) for c in fk["ref_columns"]],
+            ) for fk in f.params.get("foreign_keys")]
+
+            depends_on = set(fk.ref_table_name for fk in foreign_keys)
+
         if f.params.get("indexes"):
             indexes = [
                 IndexReference(
@@ -183,49 +198,16 @@ class HybridTableParser(AbstractParser):
                 )
                 for idx in f.params.get("indexes")
             ]
-        else:
-            indexes = None
 
         bp = HybridTableBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             columns=column_blueprints,
+            primary_key=primary_key,
+            unique_keys=unique_keys,
+            foreign_keys=foreign_keys,
             indexes=indexes,
+            depends_on=depends_on,
             comment=f.params.get("comment"),
         )
 
         self.config.add_blueprint(bp)
-
-        # Constraints
-
-        if f.params.get("primary_key"):
-            bp = PrimaryKeyBlueprint(
-                full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-                columns=[Ident(c) for c in f.params.get("primary_key")],
-            )
-
-            self.config.add_blueprint(bp)
-
-        for columns in f.params.get("unique_keys", []):
-            bp = UniqueKeyBlueprint(
-                full_name=TableConstraintIdent(
-                    self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in columns]
-                ),
-                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-                columns=[Ident(c) for c in columns],
-            )
-
-            self.config.add_blueprint(bp)
-
-        for fk in f.params.get("foreign_keys", []):
-            bp = ForeignKeyBlueprint(
-                full_name=TableConstraintIdent(
-                    self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in fk["columns"]]
-                ),
-                table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-                columns=[Ident(c) for c in fk["columns"]],
-                ref_table_name=build_schema_object_ident(self.env_prefix, fk["ref_table"], f.database, f.schema),
-                ref_columns=[Ident(c) for c in fk["ref_columns"]],
-            )
-
-            self.config.add_blueprint(bp)

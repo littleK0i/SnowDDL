@@ -1,6 +1,6 @@
 from re import compile
 
-from snowddl.blueprint import Ident, DataType, HybridTableBlueprint, SchemaObjectIdent, TableColumn, PrimaryKeyBlueprint
+from snowddl.blueprint import Ident, DataType, HybridTableBlueprint, SchemaObjectIdent, TableColumn, PrimaryKeyBlueprint, UniqueKeyBlueprint, ForeignKeyBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
@@ -154,13 +154,38 @@ class HybridTableResolver(AbstractSchemaObjectResolver):
                     },
                 )
 
-        # Primary key for hybrid tables must be defined on table creation
+        # Primary key
         query.append_nl(
-            "    , PRIMARY KEY ({primary_key:i})",
+            "    , PRIMARY KEY ({columns:i}) COMMENT {comment}",
             {
-                "primary_key": self.config.get_blueprints_by_type(PrimaryKeyBlueprint)[str(bp.full_name)].columns,
+                "columns": bp.primary_key,
+                "comment": self.get_object_type().name,
             },
         )
+
+        # Unique keys
+        if bp.unique_keys:
+            for unique_key in bp.unique_keys:
+                query.append_nl(
+                    "    , UNIQUE ({columns:i}) COMMENT {comment}",
+                    {
+                        "columns": unique_key,
+                        "comment": self.get_object_type().name,
+                    },
+                )
+
+        # Foreign keys
+        if bp.foreign_keys:
+            for foreign_key in bp.foreign_keys:
+                query.append_nl(
+                    "    , FOREIGN KEY ({columns:i}) REFERENCES {ref_table_name:i} ({ref_columns:i}) COMMENT {comment}",
+                    {
+                        "columns": foreign_key.columns,
+                        "ref_table_name": foreign_key.ref_table_name,
+                        "ref_columns": foreign_key.ref_columns,
+                        "comment": self.get_object_type().name,
+                    },
+                )
 
         if bp.indexes:
             for idx in bp.indexes:

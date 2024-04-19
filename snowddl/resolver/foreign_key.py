@@ -19,6 +19,10 @@ class ForeignKeyResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
+            # Constraint for Hybrid tables are handled separately
+            if r["comment"] == ObjectType.HYBRID_TABLE.name:
+                continue
+
             if r["fk_name"] not in constraints_by_name:
                 constraints_by_name[r["fk_name"]] = {
                     "database": r["fk_database_name"],
