@@ -1,2 +1,8 @@
 owner_integration_usage:
   - test_notification_integration
+
+owner_warehouse_usage:
+  - al001_wh1
+  - dt001_wh1
+  - dt002_wh1
+  - ts001_wh1

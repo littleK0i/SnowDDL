@@ -35,7 +35,7 @@ class InboundShareRoleResolver(AbstractRoleResolver):
 
                 break
 
-        return role_name, grants, []
+        return role_name, grants, [], []
 
     def get_blueprints(self):
         blueprints = []

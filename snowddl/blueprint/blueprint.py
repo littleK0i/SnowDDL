@@ -3,7 +3,7 @@ from typing import Optional, List, Dict, Set, Union, TypeVar
 
 from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import DataType
-from .grant import Grant, FutureGrant
+from .grant import AccountGrant, Grant, FutureGrant
 from .ident import (
     AbstractIdent,
     Ident,
@@ -19,6 +19,7 @@ from .ident import (
     TableConstraintIdent,
 )
 from .object_type import ObjectType
+from .permission_model import PermissionModel
 from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
@@ -36,6 +37,7 @@ class SchemaObjectBlueprint(AbstractBlueprint, ABC):
 class RoleBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     grants: List[Grant] = []
+    account_grants: List[AccountGrant] = []
     future_grants: List[FutureGrant] = []
 
 
@@ -62,9 +64,16 @@ class BusinessRoleBlueprint(RoleBlueprint):
 
 class DatabaseBlueprint(AbstractBlueprint):
     full_name: DatabaseIdent
+    permission_model: PermissionModel
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
+    owner_additional_grants: List[Grant] = []
+    owner_additional_account_grants: List[AccountGrant] = []
+
+
+class DatabaseRoleBlueprint(RoleBlueprint, DependsOnMixin):
+    pass
 
 
 class DatabaseShareBlueprint(AbstractBlueprint):
@@ -251,10 +260,12 @@ class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
 
 class SchemaBlueprint(AbstractBlueprint):
     full_name: SchemaIdent
+    permission_model: PermissionModel
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
     owner_additional_grants: List[Grant] = []
+    owner_additional_account_grants: List[AccountGrant] = []
 
 
 class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
@@ -333,7 +344,7 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     error_integration: Optional[Ident] = None
 
 
-class TechRoleBlueprint(RoleBlueprint):
+class TechnicalRoleBlueprint(RoleBlueprint):
     pass
 
 

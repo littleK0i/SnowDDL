@@ -19,7 +19,7 @@ sakila_analyst:
 
 
 restricted_sakila_analyst:
-  tech_roles:
+  technical_roles:
     - restricted_sakila
   warehouse_usage:
     - sakila_analyst_wh

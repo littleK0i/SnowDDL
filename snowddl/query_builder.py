@@ -40,4 +40,4 @@ class SnowDDLQueryBuilder:
         return f"#{urlsafe_b64encode(sha1_digest[:12]).decode('ascii')}"
 
     def __str__(self):
-        return "\n".join([" ".join(line) for line in self.fragments])
+        return "\n".join(" ".join(line) for line in self.fragments)

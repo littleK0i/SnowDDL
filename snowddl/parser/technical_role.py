@@ -1,9 +1,9 @@
-from snowddl.blueprint import Grant, TechRoleBlueprint, ObjectType, build_role_ident
+from snowddl.blueprint import Grant, AccountGrant, TechnicalRoleBlueprint, ObjectType, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
 # fmt: off
-tech_role_json_schema = {
+technical_role_json_schema = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
@@ -18,28 +18,40 @@ tech_role_json_schema = {
                     "minItems": 1
                 }
             },
+            "account_grants": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
             "comment": {
                 "type": "string"
             }
         },
-        "required": ["grants"],
         "additionalProperties": False
     }
 }
 # fmt: on
 
 
-class TechRoleParser(AbstractParser):
+class TechnicalRoleParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "tech_role.yaml", tech_role_json_schema, self.process_tech_role)
+        path = self.base_path / "technical_role.yaml"
 
-    def process_tech_role(self, f: ParsedFile):
-        for tech_role_name, tech_role in f.params.items():
-            tech_role_ident = build_role_ident(self.env_prefix, tech_role_name, self.config.TECH_ROLE_SUFFIX)
+        if not path.exists():
+            # Backwards compatibility with configs before "tech role" renaming
+            path = self.base_path / "tech_role.yaml"
+
+        self.parse_single_file(path, technical_role_json_schema, self.process_technical_role)
+
+    def process_technical_role(self, f: ParsedFile):
+        for technical_role_name, technical_role in f.params.items():
+            technical_role_ident = build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX)
 
             grants = []
+            account_grants = []
 
-            for definition, pattern_list in tech_role["grants"].items():
+            for definition, pattern_list in technical_role.get("grants", {}).items():
                 on, privileges = definition.upper().split(":")
 
                 for p in privileges.split(","):
@@ -58,11 +70,14 @@ class TechRoleParser(AbstractParser):
                                 )
                             )
 
-            bp = TechRoleBlueprint(
-                full_name=tech_role_ident,
+            for privilege in technical_role.get("account_grants", []):
+                account_grants.append(AccountGrant(privilege=privilege))
+
+            bp = TechnicalRoleBlueprint(
+                full_name=technical_role_ident,
                 grants=grants,
-                future_grants=[],
-                comment=tech_role.get("comment"),
+                account_grants=account_grants,
+                comment=technical_role.get("comment"),
             )
 
             self.config.add_blueprint(bp)

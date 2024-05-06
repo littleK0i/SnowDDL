@@ -1,14 +1,34 @@
 # Changelog
 
+## [0.27.0] - 2024-05-06
+
+This is a major update to permissions and SnowDDL internals, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.27.0-may-2024).
+
+- Introduced a concept of "Permission model", which allows to customize create grants and future grants. Previously these grants were hardcoded.
+- Permission model can operate using default "schema owner" ruleset or new "database owner" ruleset, which is designed specifically for external ETL tools which try to create their own schemas, like Fivetran and Airbyte.
+- Changed `OWNERSHIP` of the following object types to schema owner role: `ALERT`, `DYNAMIC_TABLE`, `EVENT_TABLE`, `STAGE`. Previously these object types were owned by SnowDDL admin role.
+- Added new parameters for `SCHEMA` related to  permission management: `owner_warehouse_usage`, `owner_account_grants`, `owner_global_roles`.
+- Added new parameters for `DATABASE` related to permission management: `owner_integration_usage`, `owner_warehouse_usage`, `owner_account_grants`, `owner_global_roles`.
+- Added new parameters for `BUSINESS_ROLE` related to permission management: `database_owner`, `database_write`, `database_read`.
+- Renamed `TECH_ROLE` to `TECHNICAL_ROLE`. Old configs with `tech_roles` parameter are still supported, no need to change anything.
+- Introduced a concept of "account grants" - special type of grants on entire account. The main difference is lack of grant "name".
+- Added an option to set custom `account_grants` for `TECHNICAL_ROLE`.
+- Reworked internals regarding future grants. Future grants are now automatically applied to existing objects on creation. Future grants on `DATABASE` are now supported. Previously it was only supported on `SCHEMA`.
+- Reworked check for exotic table types in `TABLE` resolver. Now it should no longer fail when Snowflake keeps adding and removing columns about exotic table types in `SHOW TABLES` output.
+- When trying to revoke `OWNERSHIP`, it will be transferred to SnowDDL admin role instead of skipping this change altogether.
+- Fixed future grants for `ALERT` object type.
+- Fixed blueprint class reference for `HYBRID_TABLE`.
+- Added better error messages when trying to convert `TRANSIENT` `DATABASE` or `SCHEMA` to non-`TRANSIENT`, or vice versa.
+
 ## [0.26.0] - 2024-04-16
 
-- Introduce the concept of "intention cache". Initially it will be used to store and check intentions to drop or replace parent objects, so child objects can be properly resolved during "plan" action. For example, `DROP TABLE` command implicitly drops all table constraints, so there is no need to generate SQL commands to drop constraints.
-- Revert explicit setting to destroy schemas in SingleDB. It should be handled automatically by "intention cache" checks.
-- Rework `HYBRID_TABLE` to apply all constraints on table creation. Wait for Snowflake to resolve `FOREIGN KEY` issues with Hybrid Tables.
+- Introduced the concept of "intention cache". Initially it will be used to store and check intentions to drop or replace parent objects, so child objects can be properly resolved during "plan" action. For example, `DROP TABLE` command implicitly drops all table constraints, so there is no need to generate SQL commands to drop constraints.
+- Reverted explicit setting to destroy schemas in SingleDB. It should be handled automatically by "intention cache" checks.
+- Reworked `HYBRID_TABLE` to apply all constraints on table creation. Wait for Snowflake to resolve `FOREIGN KEY` issues with Hybrid Tables.
 
 ## [0.25.3] - 2024-04-11
 
-- Add explicit setting to destroy schemas. Use it in SingleDB mode only. Do not attempt to destroy schemas in normal mode.
+- Added explicit setting to destroy schemas. Use it in SingleDB mode only. Do not attempt to destroy schemas in normal mode.
 - Set `TARGET_DB` automatic placeholder earlier, but only if `--target-db` argument was specified.
 
 ## [0.25.2] - 2024-04-03

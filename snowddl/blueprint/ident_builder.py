@@ -52,10 +52,6 @@ def build_grant_name_ident_snowflake(grant_name, object_type: ObjectType):
     parts = [p.strip('"') for p in grant_name.split(".")]
     last_part = parts[-1]
 
-    # Remove object type component from future grant names
-    if last_part.startswith("<") and last_part.endswith(">"):
-        parts.pop()
-
     if len(parts) == 3:
         # Extract data types for arguments of functions and procedures
         if "(" in last_part:
@@ -81,6 +77,21 @@ def build_grant_name_ident_snowflake(grant_name, object_type: ObjectType):
             return DatabaseIdent(env_prefix, parts[0])
 
         return AccountObjectIdent(env_prefix, parts[0])
+
+    raise ValueError(f"Unexpected grant name format [{grant_name}] in Snowflake for object type [{object_type}]")
+
+
+def build_future_grant_name_ident_snowflake(grant_name):
+    env_prefix = ""
+
+    parts = [p.strip('"') for p in grant_name.split(".")]
+    parts.pop()  # Remove object type component from future grant names
+
+    if len(parts) == 2:
+        return SchemaIdent(env_prefix, parts[0], parts[1])
+
+    if len(parts) == 1:
+        return DatabaseIdent(env_prefix, parts[0])
 
     raise ValueError(f"Unexpected grant name format [{grant_name}] in Snowflake for object type [{object_type}]")
 

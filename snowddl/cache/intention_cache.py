@@ -28,6 +28,9 @@ class IntentionCache:
     def add_replace_intention(self, object_type: ObjectType, object_full_name: str):
         self.replace_intention[object_type].add(object_full_name)
 
+    def check_drop_intention(self, object_type: ObjectType, object_full_name: str):
+        return object_full_name in self.drop_intention[object_type]
+
     def check_parent_drop_intention(self, object_type: ObjectType, object_full_name: str):
         blueprint_cls = object_type.blueprint_cls
         object_full_name_parts = object_full_name.partition("(")[0].split(".")

@@ -11,7 +11,7 @@ from traceback import TracebackException
 from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig
 from snowddl.engine import SnowDDLEngine
-from snowddl.parser import default_parser_sequence, PlaceholderParser
+from snowddl.parser import default_parser_sequence, PermissionModelParser, PlaceholderParser
 from snowddl.resolver import default_resolver_sequence
 from snowddl.settings import SnowDDLSettings
 from snowddl.version import __version__
@@ -285,6 +285,14 @@ class BaseApp:
 
         parser = PlaceholderParser(config, self.config_path)
         parser.load_placeholders(placeholder_path, placeholder_values, self.args)
+
+        if config.errors:
+            self.output_config_errors(config)
+            exit(1)
+
+        # Permission models
+        parser = PermissionModelParser(config, self.config_path)
+        parser.load_permission_models()
 
         if config.errors:
             self.output_config_errors(config)

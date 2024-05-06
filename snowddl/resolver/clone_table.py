@@ -83,7 +83,13 @@ class CloneTableResolver(AbstractResolver):
 
         for r in cur:
             # Skip other table types
-            if r["is_external"] == "Y" or r["is_event"] == "Y" or r["is_hybrid"] == "Y" or r["is_iceberg"] == "Y":
+            if (
+                r.get("is_external") == "Y"
+                or r.get("is_event") == "Y"
+                or r.get("is_hybrid") == "Y"
+                or r.get("is_iceberg") == "Y"
+                or r.get("is_dynamic") == "Y"
+            ):
                 continue
 
             tables_for_clone[f"{self.config.env_prefix}{r['database_name']}.{r['schema_name']}.{r['name']}"] = {

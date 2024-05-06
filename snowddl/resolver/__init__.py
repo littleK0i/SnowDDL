@@ -6,6 +6,7 @@ from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
+from .database_role import DatabaseRoleResolver
 from .dynamic_table import DynamicTableResolver
 from .event_table import EventTableResolver
 from .external_access_integration import ExternalAccessIntegrationResolver
@@ -36,7 +37,7 @@ from .stage_file import StageFileResolver
 from .stream import StreamResolver
 from .table import TableResolver
 from .task import TaskResolver
-from .tech_role import TechRoleResolver
+from .technical_role import TechnicalRoleResolver
 from .view import ViewResolver
 from .unique_key import UniqueKeyResolver
 from .user import UserResolver
@@ -53,6 +54,7 @@ default_resolver_sequence = [
     WarehouseRoleResolver,
     DatabaseResolver,
     SchemaResolver,
+    DatabaseRoleResolver,
     SchemaRoleResolver,
     # InboundShareResolver,
     # InboundShareRoleResolver,
@@ -83,7 +85,7 @@ default_resolver_sequence = [
     MaskingPolicyResolver,
     RowAccessPolicyResolver,
     OutboundShareResolver,
-    TechRoleResolver,
+    TechnicalRoleResolver,
     BusinessRoleResolver,
     UserRoleResolver,
     UserResolver,

@@ -2,6 +2,13 @@ from enum import Enum
 
 
 class ObjectType(Enum):
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    ACCOUNT = {
+        "singular": "ACCOUNT",
+        "plural": "ACCOUNTS",
+    }
+
     ACCOUNT_PARAMETER = {
         "singular": "ACCOUNT PARAMETER",
         "plural": "ACCOUNT PARAMETERS",
@@ -11,6 +18,7 @@ class ObjectType(Enum):
     ALERT = {
         "singular": "ALERT",
         "plural": "ALERTS",
+        "is_future_grant_supported": True,
         "blueprint_cls": "AlertBlueprint",
     }
 
@@ -83,7 +91,7 @@ class ObjectType(Enum):
         "plural": "HYBRID TABLES",
         "simplified": "TABLE",
         "is_future_grant_supported": True,
-        "blueprint_cls": "FunctionBlueprint",
+        "blueprint_cls": "HybridTableBlueprint",
     }
 
     # Technical object type, used for GRANTs only

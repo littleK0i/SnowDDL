@@ -2,18 +2,27 @@ from collections import defaultdict
 from fnmatch import translate
 from pathlib import Path
 from re import compile
-from typing import List, Dict, Type, Union
+from typing import Dict, List, Type, Union
 
-from snowddl.blueprint import AbstractBlueprint, AbstractIdentWithPrefix, T_Blueprint
+from snowddl.blueprint import AbstractBlueprint, AbstractIdentWithPrefix, PermissionModel, T_Blueprint
 
 
 class SnowDDLConfig:
     BUSINESS_ROLE_SUFFIX = "B_ROLE"
+    DATABASE_ROLE_SUFFIX = "D_ROLE"
     INBOUND_SHARE_ROLE_SUFFIX = "IS_ROLE"
     SCHEMA_ROLE_SUFFIX = "S_ROLE"
-    TECH_ROLE_SUFFIX = "T_ROLE"
+    TECHNICAL_ROLE_SUFFIX = "T_ROLE"
     USER_ROLE_SUFFIX = "U_ROLE"
     WAREHOUSE_ROLE_SUFFIX = "W_ROLE"
+
+    OWNER_ROLE_TYPE = "OWNER"
+    WRITE_ROLE_TYPE = "WRITE"
+    READ_ROLE_TYPE = "READ"
+    USAGE_ROLE_TYPE = "USAGE"
+    MONITOR_ROLE_TYPE = "MONITOR"
+
+    DEFAULT_PERMISSION_MODEL = "DEFAULT"
 
     def __init__(self, env_prefix=None):
         self.env_prefix = self._init_env_prefix(env_prefix)
@@ -22,6 +31,7 @@ class SnowDDLConfig:
         self.errors: List[dict] = []
 
         self.placeholders: Dict[str, Union[bool, float, int, str]] = {}
+        self.permission_models: Dict[str, PermissionModel] = {}
 
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str, T_Blueprint]:
         return self.blueprints.get(cls, {})
@@ -52,6 +62,12 @@ class SnowDDLConfig:
 
         return self.placeholders[name]
 
+    def get_permission_model(self, name: str) -> PermissionModel:
+        if name not in self.permission_models:
+            raise ValueError(f"Unknown permission model [{name}]")
+
+        return self.permission_models[name]
+
     def add_blueprint(self, bp: AbstractBlueprint):
         self.blueprints[bp.__class__][str(bp.full_name)] = bp
 
@@ -69,6 +85,9 @@ class SnowDDLConfig:
 
     def add_placeholder(self, name: str, value: Union[bool, float, int, str]):
         self.placeholders[name] = value
+
+    def add_permission_model(self, name: str, permission_model: PermissionModel):
+        self.permission_models[name] = permission_model
 
     def _init_env_prefix(self, env_prefix):
         if env_prefix:

@@ -62,10 +62,6 @@ class SchemaCache:
         )
 
         for r in cur:
-            # Skip schemas created by other roles
-            if r["owner"] != self.engine.context.current_role and not self.engine.settings.ignore_ownership:
-                continue
-
             # Skip INFORMATION_SCHEMA
             if r["name"] == "INFORMATION_SCHEMA":
                 continue

@@ -17,6 +17,7 @@ from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
 from .network_rule import NetworkRuleParser
 from .outbound_share import OutboundShareParser
+from .permission_model import PermissionModelParser, default_permission_models
 from .pipe import PipeParser
 from .placeholder import PlaceholderParser
 from .procedure import ProcedureParser
@@ -29,7 +30,7 @@ from .stage import StageParser
 from .stream import StreamParser
 from .table import TableParser
 from .task import TaskParser
-from .tech_role import TechRoleParser
+from .technical_role import TechnicalRoleParser
 from .user import UserParser
 from .view import ViewParser
 from .warehouse import WarehouseParser
@@ -65,7 +66,7 @@ default_parser_sequence = [
     MaskingPolicyParser,
     RowAccessPolicyParser,
     OutboundShareParser,
-    TechRoleParser,
+    TechnicalRoleParser,
     BusinessRoleParser,
     UserParser,
     AlertParser,

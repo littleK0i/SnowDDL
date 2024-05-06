@@ -21,7 +21,8 @@ class SchemaResolver(AbstractResolver):
 
         query.append("SCHEMA {full_name:i}", {"full_name": bp.full_name})
 
-        query.append_nl("WITH MANAGED ACCESS")
+        if bp.permission_model.ruleset.create_managed_access_schema:
+            query.append_nl("WITH MANAGED ACCESS")
 
         if bp.retention_time is not None:
             query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
@@ -41,9 +42,9 @@ class SchemaResolver(AbstractResolver):
     def compare_object(self, bp: SchemaBlueprint, row: dict):
         if bp.is_transient != row["is_transient"]:
             if bp.is_transient:
-                raise SnowDDLUnsupportedError("Cannot change PERMANENT object into TRANSIENT object")
+                raise SnowDDLUnsupportedError(f"Cannot change PERMANENT schema [{bp.full_name}] into TRANSIENT schema")
             else:
-                raise SnowDDLUnsupportedError("Cannot change TRANSIENT object into PERMANENT object")
+                raise SnowDDLUnsupportedError(f"Cannot change TRANSIENT schema [{bp.full_name}] into PERMANENT schema")
 
         query = self.engine.query_builder()
 
@@ -54,17 +55,31 @@ class SchemaResolver(AbstractResolver):
             },
         )
 
+        result = ResolveResult.NOCHANGE
+
         if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
+            self.engine.execute_unsafe_ddl(
+                "ALTER SCHEMA {full_name:i} SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}",
+                {
+                    "full_name": bp.full_name,
+                    "retention_time": bp.retention_time,
+                },
+            )
+
+            result = ResolveResult.ALTER
 
         if bp.comment != row["comment"]:
-            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
+            self.engine.execute_safe_ddl(
+                "ALTER SCHEMA {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
 
-        if query.fragment_count() > 1:
-            self.engine.execute_unsafe_ddl(query)
-            return ResolveResult.ALTER
+            result = ResolveResult.ALTER
 
-        return ResolveResult.NOCHANGE
+        return result
 
     def drop_object(self, row: dict):
         self.engine.execute_unsafe_ddl(
