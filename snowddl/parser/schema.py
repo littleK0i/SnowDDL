@@ -43,13 +43,13 @@ schema_json_schema = {
                 "type": "string"
             }
         },
-        "owner_global_roles": {
+        "owner_account_grants": {
             "type": "array",
             "items": {
                 "type": "string"
             }
         },
-        "owner_account_grants": {
+        "owner_global_roles": {
             "type": "array",
             "items": {
                 "type": "string"
@@ -124,11 +124,11 @@ class SchemaParser(AbstractParser):
                 for warehouse_name in schema_params.get("owner_warehouse_usage", []):
                     owner_additional_grants.append(self.build_warehouse_role_grant(warehouse_name, self.config.USAGE_ROLE_TYPE))
 
-                for global_role_name in schema_params.get("owner_global_roles", []):
-                    owner_additional_grants.append(self.build_global_role_grant(global_role_name))
-
                 for account_grant in schema_params.get("owner_account_grants", []):
                     owner_additional_account_grants.append(self.build_account_grant(account_grant))
+
+                for global_role_name in schema_params.get("owner_global_roles", []):
+                    owner_additional_grants.append(self.build_global_role_grant(global_role_name))
 
                 bp = SchemaBlueprint(
                     full_name=SchemaIdent(self.env_prefix, database_name, schema_name),

@@ -1,0 +1,17 @@
+fivetran:
+  ruleset: DATABASE_OWNER
+
+  owner_create_grants:
+    - STAGE
+    - TABLE
+    - VIEW
+
+  owner_future_grants:
+    STAGE: [OWNERSHIP]
+    TABLE: [OWNERSHIP]
+    VIEW: [OWNERSHIP]
+
+  read_future_grants:
+    STAGE: [READ]
+    TABLE: [SELECT, REFERENCES]
+    VIEW: [SELECT, REFERENCES]
