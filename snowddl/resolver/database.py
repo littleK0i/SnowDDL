@@ -42,15 +42,6 @@ class DatabaseResolver(AbstractResolver):
         # Drop schema PUBLIC which is created automatically
         self.engine.execute_safe_ddl("DROP SCHEMA {database:i}.{schema:i}", {"database": bp.full_name, "schema": "PUBLIC"})
 
-        # Add a special FUTURE GRANT to ensure schemas are owned by SnowDDL admin role regardless of creation mechanism
-        self.engine.execute_safe_ddl(
-            "GRANT OWNERSHIP ON FUTURE SCHEMAS IN DATABASE {full_name:i} TO ROLE {current_role:i}",
-            {
-                "full_name": bp.full_name,
-                "current_role": self.engine.context.current_role,
-            },
-        )
-
         return ResolveResult.CREATE
 
     def compare_object(self, bp: DatabaseBlueprint, row: dict):

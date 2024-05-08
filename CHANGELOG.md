@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.27.1] - 2024-05-08
+
+- Grant schema OWNERSHIP privilege to DATABASE OWNER role. Unfortunately, it seems to be the only way to allow external tools to DROP schemas.
+
 ## [0.27.0] - 2024-05-06
 
 This is a major update to permissions and SnowDDL internals, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.27.0-may-2024).

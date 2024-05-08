@@ -2,6 +2,10 @@ dynamic_table_wh:
   size: XSMALL
   auto_suspend: 60
 
+fivetran_wh:
+  size: XSMALL
+  auto_suspend: 60
+
 task_wh:
   size: XSMALL
   auto_suspend: 60

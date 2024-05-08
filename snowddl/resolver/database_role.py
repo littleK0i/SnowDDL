@@ -53,16 +53,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
 
         future_grants.append(
             FutureGrant(
-                privilege="USAGE",
-                on_future=ObjectType.SCHEMA,
-                in_parent=ObjectType.DATABASE,
-                name=database_bp.full_name,
-            )
-        )
-
-        future_grants.append(
-            FutureGrant(
-                privilege="MODIFY",
+                privilege="OWNERSHIP",
                 on_future=ObjectType.SCHEMA,
                 in_parent=ObjectType.DATABASE,
                 name=database_bp.full_name,
