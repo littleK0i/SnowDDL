@@ -101,7 +101,7 @@ default_permission_models = {
             "FUNCTION": ["USAGE"],
             "MATERIALIZED_VIEW": ["SELECT", "REFERENCES"],
             "PROCEDURE": ["USAGE"],
-            "STAGE": ["READ"],
+            "STAGE": ["READ", "USAGE"],
             "STREAM": ["SELECT"],
             "TABLE": ["SELECT", "REFERENCES"],
             "VIEW": ["SELECT", "REFERENCES"],

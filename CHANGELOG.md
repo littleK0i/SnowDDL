@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.27.2] - 2024-05-09
+
+- Restore `USAGE` future grant on `STAGE` object type for default permission model. `READ` grant is still not enough to access external stages properly.
+
 ## [0.27.1] - 2024-05-08
 
 - Grant schema OWNERSHIP privilege to DATABASE OWNER role. Unfortunately, it seems to be the only way to allow external tools to DROP schemas.
