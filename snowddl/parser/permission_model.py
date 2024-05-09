@@ -90,7 +90,7 @@ default_permission_models = {
             "VIEW": ["OWNERSHIP"],
         },
         "write_future_grants": {
-            "STAGE": ["READ", "WRITE"],
+            "STAGE": ["READ", "WRITE", "USAGE"],
             "SEQUENCE": ["USAGE"],
             "TABLE": ["INSERT", "UPDATE", "DELETE", "TRUNCATE"],
         },
