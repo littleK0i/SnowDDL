@@ -6,6 +6,6 @@ us001_br1:
 
 us001_br2:
   schema_read:
-    - db1.sc1
+    - db1.*
   warehouse_usage:
     - us001_wh2

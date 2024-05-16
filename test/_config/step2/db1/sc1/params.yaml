@@ -4,4 +4,6 @@ owner_integration_usage:
 owner_warehouse_usage:
   - al001_wh2
   - dt001_wh1
+  - dt001_wh2
   - dt002_wh1
+  - dt003_wh1

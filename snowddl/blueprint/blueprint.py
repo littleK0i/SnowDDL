@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Optional, List, Dict, Set, Union, TypeVar
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
+from .column import DynamicTableColumn, ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import DataType
 from .grant import AccountGrant, Grant, FutureGrant
 from .ident import (
@@ -83,8 +83,14 @@ class DatabaseShareBlueprint(AbstractBlueprint):
 
 class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     text: str
+    columns: Optional[List[DynamicTableColumn]] = None
     target_lag: str
     warehouse: AccountObjectIdent
+    refresh_mode: Optional[str] = None
+    initialize: Optional[str] = None
+    cluster_by: Optional[List[str]] = None
+    is_transient: bool = False
+    retention_time: Optional[int] = None
 
 
 class EventTableBlueprint(SchemaObjectBlueprint):

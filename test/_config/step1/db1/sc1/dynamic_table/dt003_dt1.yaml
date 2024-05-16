@@ -1,0 +1,14 @@
+text: |-
+  SELECT type, sub_type, count(*) AS cnt
+  FROM ${{ env_prefix }}db1.sc1.dt003_tb1
+  GROUP BY 1,2
+
+is_transient: true
+
+warehouse: dt003_wh1
+target_lag: 1 minute
+
+refresh_mode: incremental
+initialize: on_schedule
+cluster_by: [type, sub_type]
+retention_time: 0

@@ -1,12 +1,17 @@
 # Changelog
 
+## [0.28.0] - 2024-05-16
+
+- Implemented more advanced pattern matching with wildcards, which is used primarily for business roles.
+- Added new parameters for `DYNAMIC_TABLE` which were introduced when this object type went into General Availability.
+
 ## [0.27.2] - 2024-05-09
 
-- Restore `USAGE` future grant on `STAGE` object type for default permission model. `READ` grant is still not enough to access external stages properly.
+- Restored `USAGE` future grant on `STAGE` object type for default permission model. `READ` grant is still not enough to access external stages properly.
 
 ## [0.27.1] - 2024-05-08
 
-- Grant schema OWNERSHIP privilege to DATABASE OWNER role. Unfortunately, it seems to be the only way to allow external tools to DROP schemas.
+- Granted schema OWNERSHIP privilege to DATABASE OWNER role. Unfortunately, it seems to be the only way to allow external tools to DROP schemas.
 
 ## [0.27.0] - 2024-05-06
 

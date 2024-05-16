@@ -46,7 +46,7 @@ from .blueprint import (
     T_Blueprint,
 )
 
-from .column import ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
+from .column import DynamicTableColumn, ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
 from .data_type import BaseDataType, DataType
 from .edition import Edition
 from .grant import Grant, AccountGrant, FutureGrant

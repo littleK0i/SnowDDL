@@ -1,0 +1,7 @@
+columns:
+  id: NUMBER(38,0)
+  name: VARCHAR(255)
+  type: VARCHAR(255)
+  sub_type: VARCHAR(255)
+
+change_tracking: true

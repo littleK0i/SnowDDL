@@ -10,6 +10,9 @@ dt001_wh2:
 dt002_wh1:
   size: XSMALL
 
+dt003_wh1:
+  size: XSMALL
+
 ts001_wh1:
   size: XSMALL
 

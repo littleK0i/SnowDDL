@@ -5,6 +5,11 @@ from .ident import Ident, SchemaObjectIdent
 from ..model import BaseModelWithConfig
 
 
+class DynamicTableColumn(BaseModelWithConfig):
+    name: Ident
+    comment: Optional[str] = None
+
+
 class ExternalTableColumn(BaseModelWithConfig):
     name: Ident
     type: DataType

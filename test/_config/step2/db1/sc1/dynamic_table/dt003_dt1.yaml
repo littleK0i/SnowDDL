@@ -1,0 +1,20 @@
+columns:
+  type: "Type"
+  sub_type: "Sub-Type"
+  cnt: null
+
+text: |-
+  SELECT type
+    , sub_type
+    , count(*) AS cnt
+  FROM ${{ env_prefix }}db1.sc1.dt003_tb1
+  GROUP BY 1,2
+
+is_transient: true
+
+warehouse: dt003_wh1
+target_lag: 1 minute
+
+refresh_mode: full
+initialize: on_create
+retention_time: 1

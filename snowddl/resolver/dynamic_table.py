@@ -43,8 +43,13 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
     def create_object(self, bp: DynamicTableBlueprint):
         query = self.engine.query_builder()
+        query.append("CREATE OR REPLACE")
+
+        if bp.is_transient:
+            query.append("TRANSIENT")
+
         query.append(
-            "CREATE DYNAMIC TABLE {full_name:i}",
+            "DYNAMIC TABLE {full_name:i}",
             {
                 "full_name": bp.full_name,
             },
@@ -61,8 +66,13 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
         if bp.text != row["text"]:
             query = self.engine.query_builder()
+            query.append("CREATE OR REPLACE")
+
+            if bp.is_transient:
+                query.append("TRANSIENT")
+
             query.append(
-                "CREATE OR REPLACE DYNAMIC TABLE {full_name:i}",
+                "DYNAMIC TABLE {full_name:i}",
                 {
                     "full_name": bp.full_name,
                 },
@@ -123,6 +133,28 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
     def _build_common_dynamic_table_sql(self, bp: DynamicTableBlueprint):
         query = self.engine.query_builder()
 
+        if bp.columns:
+            query.append_nl("(")
+
+            for idx, c in enumerate(bp.columns):
+                query.append_nl(
+                    "    {comma:r}{col_name:i}",
+                    {
+                        "comma": "  " if idx == 0 else ", ",
+                        "col_name": c.name,
+                    },
+                )
+
+                if c.comment:
+                    query.append(
+                        "COMMENT {col_comment}",
+                        {
+                            "col_comment": c.comment,
+                        },
+                    )
+
+            query.append_nl(")")
+
         query.append_nl(
             "TARGET_LAG = {target_lag}",
             {
@@ -136,6 +168,38 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 "warehouse": bp.warehouse,
             },
         )
+
+        if bp.refresh_mode:
+            query.append_nl(
+                "REFRESH_MODE = {refresh_mode}",
+                {
+                    "refresh_mode": bp.refresh_mode,
+                }
+            )
+
+        if bp.initialize:
+            query.append_nl(
+                "INITIALIZE = {initialize}",
+                {
+                    "initialize": bp.initialize,
+                }
+            )
+
+        if bp.cluster_by:
+            query.append_nl(
+                "CLUSTER BY ({cluster_by:r})",
+                {
+                    "cluster_by": bp.cluster_by,
+                },
+            )
+
+        if bp.retention_time is not None:
+            query.append_nl(
+                "DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}",
+                {
+                    "retention_time": bp.retention_time,
+                },
+            )
 
         if bp.comment:
             query.append_nl(

@@ -1,4 +1,4 @@
-from snowddl.blueprint import AccountObjectIdent, DynamicTableBlueprint, SchemaObjectIdent, build_schema_object_ident
+from snowddl.blueprint import AccountObjectIdent, DynamicTableBlueprint, SchemaObjectIdent, DynamicTableColumn, Ident, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -6,6 +6,12 @@ from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 dynamic_table_json_schema = {
     "type": "object",
     "properties": {
+        "columns": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["string", "null"]
+            }
+        },
         "text": {
             "type": "string"
         },
@@ -14,6 +20,24 @@ dynamic_table_json_schema = {
         },
         "warehouse": {
             "type": "string",
+        },
+        "refresh_mode": {
+            "type": "string",
+        },
+        "initialize": {
+            "type": "string",
+        },
+        "cluster_by": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "is_transient": {
+            "type": "boolean"
+        },
+        "retention_time": {
+            "type": "integer"
         },
         "depends_on": {
             "type": "array",
@@ -46,11 +70,27 @@ class DynamicTableParser(AbstractParser):
         self.parse_schema_object_files("dynamic_table", dynamic_table_json_schema, self.process_dynamic_table)
 
     def process_dynamic_table(self, f: ParsedFile):
+        column_blueprints = []
+
+        for col_name, col_comment in f.params.get("columns", {}).items():
+            column_blueprints.append(
+                DynamicTableColumn(
+                    name=Ident(col_name),
+                    comment=col_comment if col_comment else None,
+                )
+            )
+
         bp = DynamicTableBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             text=f.params["text"],
+            columns=column_blueprints if column_blueprints else None,
             target_lag=self.normalize_target_lag(f.params["target_lag"]),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]),
+            refresh_mode=f.params.get("refresh_mode").upper() if f.params.get("refresh_mode") else None,
+            initialize=f.params.get("initialize").upper() if f.params.get("initialize") else None,
+            cluster_by=f.params.get("cluster_by"),
+            is_transient=f.params.get("is_transient", False),
+            retention_time=f.params.get("retention_time"),
             depends_on=set(
                 build_schema_object_ident(self.env_prefix, d, f.database, f.schema) for d in f.params.get("depends_on", [])
             ),
