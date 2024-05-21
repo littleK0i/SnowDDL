@@ -21,7 +21,7 @@ class SchemaResolver(AbstractResolver):
 
         query.append("SCHEMA {full_name:i}", {"full_name": bp.full_name})
 
-        if bp.permission_model.ruleset.create_managed_access_schema:
+        if self.config.get_permission_model(bp.permission_model).ruleset.create_managed_access_schema:
             query.append_nl("WITH MANAGED ACCESS")
 
         if bp.retention_time is not None:

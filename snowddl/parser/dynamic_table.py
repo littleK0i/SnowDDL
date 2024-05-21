@@ -1,4 +1,11 @@
-from snowddl.blueprint import AccountObjectIdent, DynamicTableBlueprint, SchemaObjectIdent, DynamicTableColumn, Ident, build_schema_object_ident
+from snowddl.blueprint import (
+    AccountObjectIdent,
+    DynamicTableBlueprint,
+    SchemaObjectIdent,
+    DynamicTableColumn,
+    Ident,
+    build_schema_object_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 

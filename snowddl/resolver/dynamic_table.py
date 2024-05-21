@@ -174,7 +174,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 "REFRESH_MODE = {refresh_mode}",
                 {
                     "refresh_mode": bp.refresh_mode,
-                }
+                },
             )
 
         if bp.initialize:
@@ -182,7 +182,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 "INITIALIZE = {initialize}",
                 {
                     "initialize": bp.initialize,
-                }
+                },
             )
 
         if bp.cluster_by:

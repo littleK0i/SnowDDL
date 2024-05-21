@@ -91,11 +91,11 @@ class SchemaParser(AbstractParser):
                 database_name = database_path.name.upper()
                 schema_name = schema_path.name.upper()
 
-                database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL)
-                schema_permission_model_name = schema_params.get("permission_model", database_permission_model_name)
+                database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
+                schema_permission_model_name = schema_params.get("permission_model", database_permission_model_name).upper()
 
-                database_permission_model = self.config.get_permission_model(database_permission_model_name.upper())
-                schema_permission_model = self.config.get_permission_model(schema_permission_model_name.upper())
+                database_permission_model = self.config.get_permission_model(database_permission_model_name)
+                schema_permission_model = self.config.get_permission_model(schema_permission_model_name)
 
                 if database_permission_model.ruleset != schema_permission_model.ruleset:
                     raise ValueError(
@@ -132,7 +132,7 @@ class SchemaParser(AbstractParser):
 
                 bp = SchemaBlueprint(
                     full_name=SchemaIdent(self.env_prefix, database_name, schema_name),
-                    permission_model=schema_permission_model,
+                    permission_model=schema_permission_model_name,
                     is_transient=combined_params.get("is_transient", False),
                     retention_time=combined_params.get("retention_time", None),
                     is_sandbox=combined_params.get("is_sandbox", False),

@@ -19,13 +19,15 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         blueprints = []
 
         for database_bp in self.config.get_blueprints_by_type(DatabaseBlueprint).values():
-            if database_bp.permission_model.ruleset.create_database_owner_role:
+            database_permission_model = self.config.get_permission_model(database_bp.permission_model)
+
+            if database_permission_model.ruleset.create_database_owner_role:
                 blueprints.append(self.get_blueprint_owner_role(database_bp))
 
-            if database_bp.permission_model.ruleset.create_database_write_role:
+            if database_permission_model.ruleset.create_database_write_role:
                 blueprints.append(self.get_blueprint_write_role(database_bp))
 
-            if database_bp.permission_model.ruleset.create_database_read_role:
+            if database_permission_model.ruleset.create_database_read_role:
                 blueprints.append(self.get_blueprint_read_role(database_bp))
 
         return {str(bp.full_name): bp for bp in blueprints}
@@ -34,6 +36,8 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         grants = []
         account_grants = []
         future_grants = []
+
+        database_permission_model = self.config.get_permission_model(database_bp.permission_model)
 
         grants.append(
             Grant(
@@ -61,7 +65,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         )
 
         # Create grants
-        for model_create_grant in database_bp.permission_model.owner_create_grants:
+        for model_create_grant in database_permission_model.owner_create_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=f"CREATE {model_create_grant.on.singular}",
@@ -72,7 +76,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
             )
 
         # Future grants on DATABASE level
-        for model_future_grant in database_bp.permission_model.owner_future_grants:
+        for model_future_grant in database_permission_model.owner_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,
@@ -89,7 +93,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
             if database_bp.full_name != schema_bp.full_name.database_full_name:
                 continue
 
-            for model_future_grant in database_bp.permission_model.owner_future_grants:
+            for model_future_grant in database_permission_model.owner_future_grants:
                 future_grants.append(
                     FutureGrant(
                         privilege=model_future_grant.privilege,
@@ -128,6 +132,8 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         grants = []
         future_grants = []
 
+        database_permission_model = self.config.get_permission_model(database_bp.permission_model)
+
         grants.append(
             Grant(
                 privilege="USAGE",
@@ -146,7 +152,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         )
 
         # Future grants on DATABASE level
-        for model_future_grant in database_bp.permission_model.read_future_grants:
+        for model_future_grant in database_permission_model.read_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,
@@ -163,7 +169,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
             if database_bp.full_name != schema_bp.full_name.database_full_name:
                 continue
 
-            for model_future_grant in database_bp.permission_model.read_future_grants:
+            for model_future_grant in database_permission_model.read_future_grants:
                 future_grants.append(
                     FutureGrant(
                         privilege=model_future_grant.privilege,
@@ -187,6 +193,8 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         grants = []
         future_grants = []
 
+        database_permission_model = self.config.get_permission_model(database_bp.permission_model)
+
         grants.append(
             Grant(
                 privilege="USAGE",
@@ -205,7 +213,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         )
 
         # Future grants on DATABASE level
-        for model_future_grant in database_bp.permission_model.write_future_grants:
+        for model_future_grant in database_permission_model.write_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,
@@ -222,7 +230,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
             if database_bp.full_name != schema_bp.full_name.database_full_name:
                 continue
 
-            for model_future_grant in database_bp.permission_model.write_future_grants:
+            for model_future_grant in database_permission_model.write_future_grants:
                 future_grants.append(
                     FutureGrant(
                         privilege=model_future_grant.privilege,

@@ -61,12 +61,11 @@ class DatabaseParser(AbstractParser):
             if database_path.name.startswith("__"):
                 continue
 
+            database_name = database_path.name.upper()
             database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
 
-            database_name = database_path.name.upper()
-            database_permission_model = self.config.get_permission_model(
-                database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
-            )
+            databases_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
+            database_permission_model = self.config.get_permission_model(databases_permission_model_name)
 
             if not database_permission_model.ruleset.create_database_owner_role:
                 for k in database_params:
@@ -92,7 +91,7 @@ class DatabaseParser(AbstractParser):
 
             bp = DatabaseBlueprint(
                 full_name=DatabaseIdent(self.env_prefix, database_name),
-                permission_model=database_permission_model,
+                permission_model=databases_permission_model_name,
                 is_transient=database_params.get("is_transient", False),
                 retention_time=database_params.get("retention_time", None),
                 is_sandbox=database_params.get("is_sandbox", False),

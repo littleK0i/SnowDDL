@@ -161,7 +161,9 @@ class BusinessRoleParser(AbstractParser):
         grants = []
 
         for database_bp in self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, full_database_name).values():
-            if database_bp.permission_model.ruleset.create_database_owner_role:
+            database_permission_model = self.config.get_permission_model(database_bp.permission_model)
+
+            if database_permission_model.ruleset.create_database_owner_role:
                 # Databases with "database owner" permission model are assigned directly
                 grants.append(
                     Grant(
@@ -175,7 +177,7 @@ class BusinessRoleParser(AbstractParser):
                         ),
                     )
                 )
-            elif database_bp.permission_model.ruleset.create_schema_owner_role:
+            elif database_permission_model.ruleset.create_schema_owner_role:
                 # Databases with "schema owner" permission model are automatically expanded into individual schema roles
                 grants.extend(self.build_schema_role_grants(f"{database_bp.full_name.database}.*", grant_type))
 
@@ -188,7 +190,9 @@ class BusinessRoleParser(AbstractParser):
         grants = []
 
         for schema_bp in self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, full_schema_name).values():
-            if not schema_bp.permission_model.ruleset.create_schema_owner_role and grant_type == self.config.OWNER_ROLE_TYPE:
+            schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
+
+            if not schema_permission_model.ruleset.create_schema_owner_role and grant_type == self.config.OWNER_ROLE_TYPE:
                 raise ValueError(
                     f"Cannot use parameter [schema_owner] for schema [{schema_bp.full_name.database}.{schema_bp.full_name.schema}] due to permission model. "
                     f"Ownership can only be granted on database level via [database_owner] parameter"

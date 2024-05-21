@@ -2,9 +2,18 @@ from collections import defaultdict
 from fnmatch import translate
 from pathlib import Path
 from re import compile
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Type, Optional, Union
 
-from snowddl.blueprint import AbstractBlueprint, AbstractIdentWithPrefix, PermissionModel, T_Blueprint
+from snowddl.blueprint import (
+    AbstractBlueprint,
+    AbstractIdentWithPrefix,
+    ObjectType,
+    PermissionModel,
+    PermissionModelRuleset,
+    PermissionModelCreateGrant,
+    PermissionModelFutureGrant,
+    T_Blueprint,
+)
 
 
 class SnowDDLConfig:
@@ -31,7 +40,7 @@ class SnowDDLConfig:
         self.errors: List[dict] = []
 
         self.placeholders: Dict[str, Union[bool, float, int, str]] = {}
-        self.permission_models: Dict[str, PermissionModel] = {}
+        self.permission_models: Dict[str, PermissionModel] = self._init_permission_models()
 
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str, T_Blueprint]:
         return self.blueprints.get(cls, {})
@@ -78,8 +87,10 @@ class SnowDDLConfig:
 
         return self.placeholders[name]
 
-    def get_permission_model(self, name: str) -> PermissionModel:
-        if name not in self.permission_models:
+    def get_permission_model(self, name: Optional[str]) -> PermissionModel:
+        if name is None:
+            name = self.DEFAULT_PERMISSION_MODEL
+        elif name not in self.permission_models:
             raise ValueError(f"Unknown permission model [{name}]")
 
         return self.permission_models[name]
@@ -118,3 +129,61 @@ class SnowDDLConfig:
             return f"{env_prefix}__"
 
         return ""
+
+    def _init_permission_models(self):
+        return {
+            self.DEFAULT_PERMISSION_MODEL: PermissionModel(
+                ruleset=PermissionModelRuleset.SCHEMA_OWNER,
+                owner_create_grants=[
+                    PermissionModelCreateGrant(on=ObjectType.FILE_FORMAT),
+                    PermissionModelCreateGrant(on=ObjectType.FUNCTION),
+                    PermissionModelCreateGrant(on=ObjectType.PROCEDURE),
+                    PermissionModelCreateGrant(on=ObjectType.TABLE),
+                    PermissionModelCreateGrant(on=ObjectType.VIEW),
+                ],
+                owner_future_grants=[
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.ALERT),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.DYNAMIC_TABLE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.EVENT_TABLE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.EXTERNAL_TABLE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.FILE_FORMAT),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.FUNCTION),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.MATERIALIZED_VIEW),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.PIPE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.PROCEDURE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.SEQUENCE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.STREAM),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.TASK),
+                    PermissionModelFutureGrant(privilege="OWNERSHIP", on=ObjectType.VIEW),
+                ],
+                write_future_grants=[
+                    PermissionModelFutureGrant(privilege="READ", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="WRITE", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.SEQUENCE),
+                    PermissionModelFutureGrant(privilege="INSERT", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="UPDATE", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="DELETE", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="TRUNCATE", on=ObjectType.TABLE),
+                ],
+                read_future_grants=[
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.DYNAMIC_TABLE),
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.EXTERNAL_TABLE),
+                    PermissionModelFutureGrant(privilege="REFERENCES", on=ObjectType.EXTERNAL_TABLE),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.FILE_FORMAT),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.FUNCTION),
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.MATERIALIZED_VIEW),
+                    PermissionModelFutureGrant(privilege="REFERENCES", on=ObjectType.MATERIALIZED_VIEW),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.PROCEDURE),
+                    PermissionModelFutureGrant(privilege="READ", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="USAGE", on=ObjectType.STAGE),
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.STREAM),
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="REFERENCES", on=ObjectType.TABLE),
+                    PermissionModelFutureGrant(privilege="SELECT", on=ObjectType.VIEW),
+                    PermissionModelFutureGrant(privilege="REFERENCES", on=ObjectType.VIEW),
+                ],
+            )
+        }

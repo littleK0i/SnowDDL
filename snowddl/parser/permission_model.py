@@ -62,64 +62,12 @@ permission_model_json_schema = {
 }
 
 
-default_permission_models = {
-    "default": {
-        "ruleset": "SCHEMA_OWNER",
-        "owner_create_grants": [
-            "FILE_FORMAT",
-            "FUNCTION",
-            "PROCEDURE",
-            "TABLE",
-            "VIEW",
-        ],
-        "owner_future_grants": {
-            "ALERT": ["OWNERSHIP"],
-            "DYNAMIC_TABLE": ["OWNERSHIP"],
-            "EVENT_TABLE": ["OWNERSHIP"],
-            "EXTERNAL_TABLE": ["OWNERSHIP"],
-            "FILE_FORMAT":  ["OWNERSHIP"],
-            "FUNCTION": ["OWNERSHIP"],
-            "MATERIALIZED_VIEW": ["OWNERSHIP"],
-            "PIPE": ["OWNERSHIP"],
-            "PROCEDURE": ["OWNERSHIP"],
-            "SEQUENCE": ["OWNERSHIP"],
-            "STAGE": ["OWNERSHIP"],
-            "STREAM": ["OWNERSHIP"],
-            "TABLE": ["OWNERSHIP"],
-            "TASK": ["OWNERSHIP"],
-            "VIEW": ["OWNERSHIP"],
-        },
-        "write_future_grants": {
-            "STAGE": ["READ", "WRITE", "USAGE"],
-            "SEQUENCE": ["USAGE"],
-            "TABLE": ["INSERT", "UPDATE", "DELETE", "TRUNCATE"],
-        },
-        "read_future_grants": {
-            "DYNAMIC_TABLE": ["SELECT"],
-            "EXTERNAL_TABLE": ["SELECT", "REFERENCES"],
-            "FILE_FORMAT": ["USAGE"],
-            "FUNCTION": ["USAGE"],
-            "MATERIALIZED_VIEW": ["SELECT", "REFERENCES"],
-            "PROCEDURE": ["USAGE"],
-            "STAGE": ["READ", "USAGE"],
-            "STREAM": ["SELECT"],
-            "TABLE": ["SELECT", "REFERENCES"],
-            "VIEW": ["SELECT", "REFERENCES"],
-        },
-    },
-}
-# fmt: on
-
-
 class PermissionModelParser(AbstractParser):
     def load_blueprints(self):
         # This is a special parser that does not load any blueprints, but it loads permission models instead
         pass
 
     def load_permission_models(self):
-        for name, params in default_permission_models.items():
-            self.build_permission_model(name, params)
-
         custom_permission_models = self.parse_single_file(self.base_path / "permission_model.yaml", permission_model_json_schema)
 
         for name, params in custom_permission_models.items():

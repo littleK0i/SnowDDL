@@ -18,13 +18,15 @@ class SchemaRoleResolver(AbstractRoleResolver):
         blueprints = []
 
         for schema_bp in self.config.get_blueprints_by_type(SchemaBlueprint).values():
-            if schema_bp.permission_model.ruleset.create_schema_owner_role:
+            schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
+
+            if schema_permission_model.ruleset.create_schema_owner_role:
                 blueprints.append(self.get_blueprint_owner_role(schema_bp))
 
-            if schema_bp.permission_model.ruleset.create_schema_write_role:
+            if schema_permission_model.ruleset.create_schema_write_role:
                 blueprints.append(self.get_blueprint_write_role(schema_bp))
 
-            if schema_bp.permission_model.ruleset.create_schema_read_role:
+            if schema_permission_model.ruleset.create_schema_read_role:
                 blueprints.append(self.get_blueprint_read_role(schema_bp))
 
         return {str(bp.full_name): bp for bp in blueprints}
@@ -33,6 +35,8 @@ class SchemaRoleResolver(AbstractRoleResolver):
         grants = []
         account_grants = []
         future_grants = []
+
+        schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
 
         grants.append(
             Grant(
@@ -50,7 +54,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
         )
 
-        for model_create_grant in schema_bp.permission_model.owner_create_grants:
+        for model_create_grant in schema_permission_model.owner_create_grants:
             grants.append(
                 Grant(
                     privilege=f"CREATE {model_create_grant.on.singular}",
@@ -59,7 +63,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 )
             )
 
-        for model_future_grant in schema_bp.permission_model.owner_future_grants:
+        for model_future_grant in schema_permission_model.owner_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,
@@ -101,6 +105,8 @@ class SchemaRoleResolver(AbstractRoleResolver):
         grants = []
         future_grants = []
 
+        schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
+
         grants.append(
             Grant(
                 privilege="USAGE",
@@ -117,7 +123,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
         )
 
-        for model_future_grant in schema_bp.permission_model.read_future_grants:
+        for model_future_grant in schema_permission_model.read_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,
@@ -145,6 +151,8 @@ class SchemaRoleResolver(AbstractRoleResolver):
         grants = []
         future_grants = []
 
+        schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
+
         grants.append(
             Grant(
                 privilege="USAGE",
@@ -161,7 +169,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
         )
 
-        for model_future_grant in schema_bp.permission_model.write_future_grants:
+        for model_future_grant in schema_permission_model.write_future_grants:
             future_grants.append(
                 FutureGrant(
                     privilege=model_future_grant.privilege,

@@ -1,7 +1,15 @@
 from abc import ABC
 from typing import Optional, List, Dict, Set, Union, TypeVar
 
-from .column import DynamicTableColumn, ExternalTableColumn, TableColumn, ViewColumn, ArgumentWithType, NameWithType, SearchOptimizationItem
+from .column import (
+    DynamicTableColumn,
+    ExternalTableColumn,
+    TableColumn,
+    ViewColumn,
+    ArgumentWithType,
+    NameWithType,
+    SearchOptimizationItem,
+)
 from .data_type import DataType
 from .grant import AccountGrant, Grant, FutureGrant
 from .ident import (
@@ -19,7 +27,6 @@ from .ident import (
     TableConstraintIdent,
 )
 from .object_type import ObjectType
-from .permission_model import PermissionModel
 from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
@@ -64,7 +71,7 @@ class BusinessRoleBlueprint(RoleBlueprint):
 
 class DatabaseBlueprint(AbstractBlueprint):
     full_name: DatabaseIdent
-    permission_model: PermissionModel
+    permission_model: Optional[str] = None
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
@@ -266,7 +273,7 @@ class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
 
 class SchemaBlueprint(AbstractBlueprint):
     full_name: SchemaIdent
-    permission_model: PermissionModel
+    permission_model: Optional[str] = None
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.28.1] - 2024-05-21
+
+- Refactored default permission model to init into `Config` class directly. No longer depends on parser.
+- Refactored `DatabaseBlueprint` and `SchemaBlueprint` to make `permission_model` back to string and make it optional. It should help to simplify dynamic config generation scenarios when permission models do not matter.
+
 ## [0.28.0] - 2024-05-16
 
 - Implemented more advanced pattern matching with wildcards, which is used primarily for business roles.

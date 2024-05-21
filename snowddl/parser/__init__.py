@@ -17,7 +17,7 @@ from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
 from .network_rule import NetworkRuleParser
 from .outbound_share import OutboundShareParser
-from .permission_model import PermissionModelParser, default_permission_models
+from .permission_model import PermissionModelParser
 from .pipe import PipeParser
 from .placeholder import PlaceholderParser
 from .procedure import ProcedureParser
