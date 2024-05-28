@@ -8,7 +8,7 @@ from snowddl.converter._yaml import YamlLiteralStr, YamlIncludeStr
 from snowddl.parser.view import view_json_schema
 
 
-view_text_re = compile(r"^.*\n\)\sas(.*)$", DOTALL)
+view_text_re = compile(r"^.*\sas\n(.*)$", DOTALL)
 
 
 class ViewConverter(AbstractSchemaObjectConverter):

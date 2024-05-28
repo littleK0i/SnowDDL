@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.28.2] - 2024-05-28
+
+- Relax view parsing regexp in `VIEW` converter.
+
 ## [0.28.1] - 2024-05-21
 
 - Refactored default permission model to init into `Config` class directly. No longer depends on parser.
