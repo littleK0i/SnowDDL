@@ -22,11 +22,16 @@ class IntentionCache:
         self.drop_intention: Dict[ObjectType, Set[str]] = defaultdict(set)
         self.replace_intention: Dict[ObjectType, Set[str]] = defaultdict(set)
 
+        self.invalid_name_warning: Dict[ObjectType, Set[str]] = defaultdict(set)
+
     def add_drop_intention(self, object_type: ObjectType, object_full_name: str):
         self.drop_intention[object_type].add(object_full_name)
 
     def add_replace_intention(self, object_type: ObjectType, object_full_name: str):
         self.replace_intention[object_type].add(object_full_name)
+
+    def add_invalid_name_warning(self, object_type: ObjectType, object_full_name: str):
+        self.invalid_name_warning[object_type].add(object_full_name)
 
     def check_drop_intention(self, object_type: ObjectType, object_full_name: str):
         return object_full_name in self.drop_intention[object_type]

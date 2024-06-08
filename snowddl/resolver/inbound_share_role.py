@@ -29,7 +29,7 @@ class InboundShareRoleResolver(AbstractRoleResolver):
                     Grant(
                         privilege="IMPORTED PRIVILEGES",
                         on=ObjectType.DATABASE,
-                        name=build_grant_name_ident_snowflake(r["name"], ObjectType.DATABASE),
+                        name=build_grant_name_ident_snowflake(ObjectType.DATABASE, r["name"]),
                     )
                 )
 

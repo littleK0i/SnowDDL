@@ -284,6 +284,7 @@ class SingleDbApp(BaseApp):
 
             self.engine.connection.close()
             self.output_engine_stats()
+            self.output_engine_warnings()
 
             if self.args.get("show_sql"):
                 self.output_executed_ddl()

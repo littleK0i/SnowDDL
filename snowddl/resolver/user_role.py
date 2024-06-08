@@ -23,11 +23,19 @@ class UserRoleResolver(AbstractRoleResolver):
             if r["granted_on"] != "ROLE":
                 continue
 
+            object_type = ObjectType.ROLE
+
+            try:
+                grant_name = build_grant_name_ident_snowflake(object_type, r["name"])
+            except ValueError:
+                self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
+                continue
+
             grants.append(
                 Grant(
                     privilege=r["privilege"],
                     on=ObjectType[r["granted_on"]],
-                    name=build_grant_name_ident_snowflake(r["name"], ObjectType[r["granted_on"]]),
+                    name=grant_name,
                 )
             )
 

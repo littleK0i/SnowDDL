@@ -77,11 +77,17 @@ class AbstractRoleResolver(AbstractResolver):
             if object_type == ObjectType.ACCOUNT:
                 account_grants.append(AccountGrant(privilege=r["privilege"]))
             else:
+                try:
+                    grant_name = build_grant_name_ident_snowflake(object_type, r["name"])
+                except ValueError:
+                    self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
+                    continue
+
                 grants.append(
                     Grant(
                         privilege=r["privilege"],
                         on=object_type,
-                        name=build_grant_name_ident_snowflake(r["name"], object_type),
+                        name=grant_name,
                     )
                 )
 
@@ -100,14 +106,18 @@ class AbstractRoleResolver(AbstractResolver):
                 # Skip future grants on unknown object types
                 continue
 
-            name = build_future_grant_name_ident_snowflake(r["name"])
+            try:
+                grant_name = build_future_grant_name_ident_snowflake(object_type, r["name"])
+            except ValueError:
+                self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
+                continue
 
             future_grants.append(
                 FutureGrant(
                     privilege=r["privilege"],
                     on_future=object_type,
-                    in_parent=ObjectType.SCHEMA if isinstance(name, SchemaIdent) else ObjectType.DATABASE,
-                    name=name,
+                    in_parent=ObjectType.SCHEMA if isinstance(grant_name, SchemaIdent) else ObjectType.DATABASE,
+                    name=grant_name,
                 )
             )
 

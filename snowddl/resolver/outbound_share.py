@@ -164,7 +164,7 @@ class OutboundShareResolver(AbstractResolver):
                 Grant(
                     privilege=r["privilege"],
                     on=ObjectType[r["granted_on"]],
-                    name=build_grant_name_ident_snowflake(r["name"], ObjectType[r["granted_on"]]),
+                    name=build_grant_name_ident_snowflake(ObjectType[r["granted_on"]], r["name"]),
                 )
             )
 

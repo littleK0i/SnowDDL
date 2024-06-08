@@ -46,7 +46,7 @@ def build_role_ident(env_prefix, *args: Union[AccountObjectIdent, str]) -> Accou
     )
 
 
-def build_grant_name_ident_snowflake(grant_name, object_type: ObjectType):
+def build_grant_name_ident_snowflake(object_type: ObjectType, grant_name: str):
     env_prefix = ""
 
     parts = [p.strip('"') for p in grant_name.split(".")]
@@ -81,7 +81,7 @@ def build_grant_name_ident_snowflake(grant_name, object_type: ObjectType):
     raise ValueError(f"Unexpected grant name format [{grant_name}] in Snowflake for object type [{object_type}]")
 
 
-def build_future_grant_name_ident_snowflake(grant_name):
+def build_future_grant_name_ident_snowflake(object_type: ObjectType, grant_name: str):
     env_prefix = ""
 
     parts = [p.strip('"') for p in grant_name.split(".")]

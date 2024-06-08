@@ -469,6 +469,7 @@ class BaseApp:
 
             self.engine.connection.close()
             self.output_engine_stats()
+            self.output_engine_warnings()
 
             if self.args.get("show_sql"):
                 self.output_executed_ddl()
@@ -538,6 +539,12 @@ class BaseApp:
         self.logger.info(
             f"Executed {len(self.engine.executed_ddl)} DDL queries, Suggested {len(self.engine.suggested_ddl)} DDL queries"
         )
+
+    def output_engine_warnings(self):
+        for object_type, object_names in self.engine.intention_cache.invalid_name_warning.items():
+            for name in object_names:
+                self.logger.warning(f"Detected {object_type.name} with name [{name}] "
+                                    f"which does not conform to SnowDDL standards, please rename or drop it manually")
 
     def output_suggested_ddl(self):
         if self.engine.suggested_ddl:

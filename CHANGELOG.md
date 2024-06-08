@@ -1,8 +1,12 @@
 # Changelog
 
+## [0.28.3] - 2024-06-08
+
+- Implemented graceful warning when encounter identifier which does not conform to SnowDDL standards while processing existing role grants. Previously it caused SnowDDL to stop with hard error.
+
 ## [0.28.2] - 2024-05-28
 
-- Relax view parsing regexp in `VIEW` converter.
+- Relaxed view parsing regexp in `VIEW` converter.
 
 ## [0.28.1] - 2024-05-21
 
