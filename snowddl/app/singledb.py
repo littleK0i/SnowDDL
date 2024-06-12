@@ -153,7 +153,22 @@ class SingleDbApp(BaseApp):
             action="store_true",
         )
         parser.add_argument(
+            "--apply-all-policy", help="Additionally apply changes to all types of POLICIES", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--apply-aggregation-policy",
+            help="Additionally apply changes to AGGREGATION POLICIES",
+            default=False,
+            action="store_true",
+        )
+        parser.add_argument(
             "--apply-masking-policy", help="Additionally apply changes to MASKING POLICIES", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--apply-projection-policy",
+            help="Additionally apply changes to PROJECTION POLICIES",
+            default=False,
+            action="store_true",
         )
         parser.add_argument(
             "--apply-row-access-policy",

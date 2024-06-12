@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0] - 2024-06-12
+
+- Implemented `AGGREGATION_POLICY`, `PROJECTION_POLICY` object types.
+- Added property `exempt_other_policies` for `MASKING_POLICY`.
+- Added CLI option `--apply-all-policy` to execute SQL for all types of policies.
+- Prepared test objects for all types of policies.
+
 ## [0.28.3] - 2024-06-08
 
 - Implemented graceful warning when encounter identifier which does not conform to SnowDDL standards while processing existing role grants. Previously it caused SnowDDL to stop with hard error.

@@ -1,0 +1,23 @@
+arguments:
+  name: VARCHAR(255)
+  id: NUMBER(38,0)
+
+returns: VARCHAR(255)
+
+body: |-
+  CASE WHEN id > 100 THEN name
+       ELSE '*****'
+  END
+
+exempt_other_policies: true
+
+references:
+  - object_type: TABLE
+    object_name: mp001_tb1
+    columns: [name, id]
+
+  - object_type: VIEW
+    object_name: mp001_vw1
+    columns: [name, id]
+
+comment: cde

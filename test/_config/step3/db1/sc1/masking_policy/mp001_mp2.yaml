@@ -1,0 +1,7 @@
+arguments:
+  name: VARCHAR(255)
+
+returns: VARCHAR(255)
+
+body: |-
+  name

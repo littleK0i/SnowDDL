@@ -15,6 +15,12 @@ class ObjectType(Enum):
         "blueprint_cls": "AccountParameterBlueprint",
     }
 
+    AGGREGATION_POLICY = {
+        "singular": "AGGREGATION POLICY",
+        "plural": "AGGREGATION POLICIES",
+        "blueprint_cls": "AggregationPolicyBlueprint",
+    }
+
     ALERT = {
         "singular": "ALERT",
         "plural": "ALERTS",
@@ -140,6 +146,12 @@ class ObjectType(Enum):
         "plural": "PROCEDURES",
         "is_future_grant_supported": True,
         "blueprint_cls": "ProcedureBlueprint",
+    }
+
+    PROJECTION_POLICY = {
+        "singular": "PROJECTION POLICY",
+        "plural": "PROJECTION POLICIES",
+        "blueprint_cls": "ProjectionPolicyBlueprint",
     }
 
     RESOURCE_MONITOR = {

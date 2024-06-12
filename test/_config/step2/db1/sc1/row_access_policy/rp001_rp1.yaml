@@ -1,0 +1,12 @@
+arguments:
+  name: VARCHAR(255)
+
+body: |-
+  name LIKE '%Gill%'
+
+references:
+  - object_type: TABLE
+    object_name: rp001_tb1
+    columns: [name]
+
+comment: cde

@@ -158,7 +158,22 @@ class BaseApp:
             action="store_true",
         )
         parser.add_argument(
+            "--apply-all-policy", help="Additionally apply changes to all types of POLICIES", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--apply-aggregation-policy",
+            help="Additionally apply changes to AGGREGATION POLICIES",
+            default=False,
+            action="store_true",
+        )
+        parser.add_argument(
             "--apply-masking-policy", help="Additionally apply changes to MASKING POLICIES", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--apply-projection-policy",
+            help="Additionally apply changes to PROJECTION POLICIES",
+            default=False,
+            action="store_true",
         )
         parser.add_argument(
             "--apply-row-access-policy",
@@ -337,8 +352,21 @@ class BaseApp:
             if self.args.get("apply_replace_table"):
                 settings.execute_replace_table = True
 
+            if self.args.get("apply_all_policy"):
+                settings.execute_aggregation_policy = True
+                settings.execute_masking_policy = True
+                settings.execute_projection_policy = True
+                settings.execute_row_access_policy = True
+                settings.execute_network_policy = True
+
+            if self.args.get("apply_aggregation_policy"):
+                settings.execute_aggregation_policy = True
+
             if self.args.get("apply_masking_policy"):
                 settings.execute_masking_policy = True
+
+            if self.args.get("apply_projection_policy"):
+                settings.execute_projection_policy = True
 
             if self.args.get("apply_row_access_policy"):
                 settings.execute_row_access_policy = True
@@ -543,8 +571,10 @@ class BaseApp:
     def output_engine_warnings(self):
         for object_type, object_names in self.engine.intention_cache.invalid_name_warning.items():
             for name in object_names:
-                self.logger.warning(f"Detected {object_type.name} with name [{name}] "
-                                    f"which does not conform to SnowDDL standards, please rename or drop it manually")
+                self.logger.warning(
+                    f"Detected {object_type.name} with name [{name}] "
+                    f"which does not conform to SnowDDL standards, please rename or drop it manually"
+                )
 
     def output_suggested_ddl(self):
         if self.engine.suggested_ddl:

@@ -64,8 +64,10 @@ class DatabaseParser(AbstractParser):
             database_name = database_path.name.upper()
             database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
 
+            # fmt: off
             databases_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
             database_permission_model = self.config.get_permission_model(databases_permission_model_name)
+            # fmt: on
 
             if not database_permission_model.ruleset.create_database_owner_role:
                 for k in database_params:

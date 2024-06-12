@@ -4,6 +4,7 @@ from .blueprint import (
     DependsOnMixin,
     RoleBlueprint,
     AccountParameterBlueprint,
+    AggregationPolicyBlueprint,
     AlertBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
@@ -26,6 +27,7 @@ from .blueprint import (
     PipeBlueprint,
     PrimaryKeyBlueprint,
     ProcedureBlueprint,
+    ProjectionPolicyBlueprint,
     ResourceMonitorBlueprint,
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
@@ -85,5 +87,13 @@ from .ident_builder import (
 
 from .object_type import ObjectType
 from .permission_model import PermissionModel, PermissionModelCreateGrant, PermissionModelFutureGrant, PermissionModelRuleset
-from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import (
+    AggregationPolicyReference,
+    ForeignKeyReference,
+    IndexReference,
+    MaskingPolicyReference,
+    ProjectionPolicyReference,
+    RowAccessPolicyReference,
+    TagReference,
+)
 from .stage import StageWithPath, StageUploadFile

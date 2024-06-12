@@ -9,7 +9,9 @@ class SnowDDLSettings(BaseModelWithConfig):
     execute_safe_ddl: bool = False
     execute_unsafe_ddl: bool = False
     execute_replace_table: bool = False
+    execute_aggregation_policy: bool = False
     execute_masking_policy: bool = False
+    execute_projection_policy: bool = False
     execute_row_access_policy: bool = False
     execute_account_params: bool = False
     execute_network_policy: bool = False

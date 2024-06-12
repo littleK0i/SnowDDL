@@ -5,6 +5,12 @@ from .object_type import ObjectType
 from ..model import BaseModelWithConfig
 
 
+class AggregationPolicyReference(BaseModelWithConfig):
+    object_type: ObjectType
+    object_name: SchemaObjectIdent
+    columns: List[Ident]
+
+
 class ForeignKeyReference(BaseModelWithConfig):
     columns: List[Ident]
     ref_table_name: SchemaObjectIdent
@@ -20,6 +26,12 @@ class MaskingPolicyReference(BaseModelWithConfig):
     object_type: ObjectType
     object_name: SchemaObjectIdent
     columns: List[Ident]
+
+
+class ProjectionPolicyReference(BaseModelWithConfig):
+    object_type: ObjectType
+    object_name: SchemaObjectIdent
+    column: Ident
 
 
 class RowAccessPolicyReference(BaseModelWithConfig):

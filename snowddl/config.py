@@ -79,7 +79,11 @@ class SnowDDLConfig:
             else:
                 include_full_names.update(full_name for full_name in all_blueprints if regexp.match(full_name))
 
-        return {full_name: bp for full_name, bp in all_blueprints.items() if full_name in include_full_names and full_name not in exclude_full_names}
+        return {
+            full_name: bp
+            for full_name, bp in all_blueprints.items()
+            if full_name in include_full_names and full_name not in exclude_full_names
+        }
 
     def get_placeholder(self, name: str) -> Union[bool, float, int, str]:
         if name not in self.placeholders:

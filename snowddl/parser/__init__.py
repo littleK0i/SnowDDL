@@ -1,5 +1,6 @@
 from ._parsed_file import ParsedFile
 from .account_params import AccountParameterParser
+from .aggregation_policy import AggregationPolicyParser
 from .alert import AlertParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
@@ -21,6 +22,7 @@ from .permission_model import PermissionModelParser
 from .pipe import PipeParser
 from .placeholder import PlaceholderParser
 from .procedure import ProcedureParser
+from .projection_policy import ProjectionPolicyParser
 from .resource_monitor import ResourceMonitorParser
 from .row_access_policy import RowAccessPolicyParser
 from .schema import SchemaParser
@@ -63,7 +65,9 @@ default_parser_sequence = [
     ViewParser,
     PipeParser,
     TaskParser,
+    AggregationPolicyParser,
     MaskingPolicyParser,
+    ProjectionPolicyParser,
     RowAccessPolicyParser,
     OutboundShareParser,
     TechnicalRoleParser,
@@ -94,7 +98,9 @@ singledb_parser_sequence = [
     ViewParser,
     PipeParser,
     TaskParser,
+    AggregationPolicyParser,
     MaskingPolicyParser,
+    ProjectionPolicyParser,
     RowAccessPolicyParser,
     AlertParser,
 ]

@@ -1,0 +1,15 @@
+body: |-
+  CASE WHEN IS_ROLE_IN_SESSION('SYSADMIN') THEN PROJECTION_CONSTRAINT(ALLOW => true)
+       ELSE PROJECTION_CONSTRAINT(ALLOW => true)
+  END
+
+references:
+  - object_type: TABLE
+    object_name: pp001_tb1
+    column: id
+
+  - object_type: VIEW
+    object_name: pp001_vw1
+    column: id
+
+comment: cde

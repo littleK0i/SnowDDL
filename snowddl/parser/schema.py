@@ -91,8 +91,10 @@ class SchemaParser(AbstractParser):
                 database_name = database_path.name.upper()
                 schema_name = schema_path.name.upper()
 
+                # fmt: off
                 database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
                 schema_permission_model_name = schema_params.get("permission_model", database_permission_model_name).upper()
+                # fmt: on
 
                 database_permission_model = self.config.get_permission_model(database_permission_model_name)
                 schema_permission_model = self.config.get_permission_model(schema_permission_model_name)

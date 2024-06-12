@@ -2,6 +2,7 @@ from .abc_resolver import AbstractResolver, ResolveResult
 from .abc_role_resolver import AbstractRoleResolver
 from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
+from .aggregation_policy import AggregationPolicyResolver
 from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
@@ -26,6 +27,7 @@ from .outbound_share import OutboundShareResolver
 from .pipe import PipeResolver
 from .primary_key import PrimaryKeyResolver
 from .procedure import ProcedureResolver
+from .projection_policy import ProjectionPolicyResolver
 from .resource_monitor import ResourceMonitorResolver
 from .row_access_policy import RowAccessPolicyResolver
 from .sequence import SequenceResolver
@@ -82,7 +84,9 @@ default_resolver_sequence = [
     ViewResolver,
     PipeResolver,
     TaskResolver,
+    AggregationPolicyResolver,
     MaskingPolicyResolver,
+    ProjectionPolicyResolver,
     RowAccessPolicyResolver,
     OutboundShareResolver,
     TechnicalRoleResolver,
@@ -118,7 +122,9 @@ singledb_resolver_sequence = [
     ViewResolver,
     PipeResolver,
     TaskResolver,
+    AggregationPolicyResolver,
     MaskingPolicyResolver,
+    ProjectionPolicyResolver,
     RowAccessPolicyResolver,
     AlertResolver,
 ]

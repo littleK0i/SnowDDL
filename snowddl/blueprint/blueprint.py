@@ -27,7 +27,15 @@ from .ident import (
     TableConstraintIdent,
 )
 from .object_type import ObjectType
-from .reference import ForeignKeyReference, IndexReference, MaskingPolicyReference, RowAccessPolicyReference, TagReference
+from .reference import (
+    AggregationPolicyReference,
+    ForeignKeyReference,
+    IndexReference,
+    MaskingPolicyReference,
+    ProjectionPolicyReference,
+    RowAccessPolicyReference,
+    TagReference,
+)
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
 
@@ -55,6 +63,11 @@ class DependsOnMixin(BaseModelWithConfig, ABC):
 class AccountParameterBlueprint(AbstractBlueprint):
     full_name: Ident
     value: Union[bool, float, int, str]
+
+
+class AggregationPolicyBlueprint(SchemaObjectBlueprint):
+    body: str
+    references: List[AggregationPolicyReference]
 
 
 class AlertBlueprint(SchemaObjectBlueprint):
@@ -200,6 +213,7 @@ class MaskingPolicyBlueprint(SchemaObjectBlueprint):
     arguments: List[NameWithType]
     returns: DataType
     body: str
+    exempt_other_policies: bool = False
     references: List[MaskingPolicyReference]
 
 
@@ -256,6 +270,11 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
     handler: Optional[str] = None
     external_access_integrations: Optional[List[AccountObjectIdent]] = None
     secrets: Optional[Dict[str, SchemaObjectIdent]] = None
+
+
+class ProjectionPolicyBlueprint(SchemaObjectBlueprint):
+    body: str
+    references: List[ProjectionPolicyReference]
 
 
 class ResourceMonitorBlueprint(AbstractBlueprint):
