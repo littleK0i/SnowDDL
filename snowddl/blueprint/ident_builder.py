@@ -46,24 +46,25 @@ def build_role_ident(env_prefix, *args: Union[AccountObjectIdent, str]) -> Accou
     )
 
 
-def build_grant_name_ident_snowflake(object_type: ObjectType, grant_name: str):
+def build_grant_name_ident(object_type: ObjectType, grant_name: str):
     env_prefix = ""
 
     parts = [p.strip('"') for p in grant_name.split(".")]
     last_part = parts[-1]
 
     if len(parts) == 3:
-        # Extract data types for arguments of functions and procedures
-        if "(" in last_part:
+        # Extract data types from arguments of FUNCTION or PROCEDURE
+        if object_type.is_overloading_supported:
             start_dtypes_idx = last_part.index("(")
             finish_dtypes_idx = last_part.index(")")
 
             parts[-1] = last_part[0:start_dtypes_idx]
+            arguments_str = last_part[start_dtypes_idx + 1 : finish_dtypes_idx]
+            data_types = []
 
-            data_types_str = last_part[start_dtypes_idx + 1 : finish_dtypes_idx]
-            data_types = (
-                [BaseDataType[arg.strip(" ").split(" ")[1]] for arg in data_types_str.split(",")] if data_types_str else []
-            )
+            if arguments_str:
+                for arg in arguments_str.split(","):
+                    data_types.append(BaseDataType[arg.strip(" ").split(" ")[-1]])
 
             return SchemaObjectIdentWithArgs(env_prefix, parts[0], parts[1], parts[2], data_types=data_types)
 
@@ -81,7 +82,7 @@ def build_grant_name_ident_snowflake(object_type: ObjectType, grant_name: str):
     raise ValueError(f"Unexpected grant name format [{grant_name}] in Snowflake for object type [{object_type}]")
 
 
-def build_future_grant_name_ident_snowflake(object_type: ObjectType, grant_name: str):
+def build_future_grant_name_ident(object_type: ObjectType, grant_name: str):
     env_prefix = ""
 
     parts = [p.strip('"') for p in grant_name.split(".")]

@@ -1,4 +1,4 @@
-from snowddl.blueprint import RoleBlueprint, DatabaseShareBlueprint, Grant, build_role_ident, build_grant_name_ident_snowflake
+from snowddl.blueprint import RoleBlueprint, DatabaseShareBlueprint, Grant, build_role_ident, build_grant_name_ident
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -29,7 +29,7 @@ class InboundShareRoleResolver(AbstractRoleResolver):
                     Grant(
                         privilege="IMPORTED PRIVILEGES",
                         on=ObjectType.DATABASE,
-                        name=build_grant_name_ident_snowflake(ObjectType.DATABASE, r["name"]),
+                        name=build_grant_name_ident(ObjectType.DATABASE, r["name"]),
                     )
                 )
 

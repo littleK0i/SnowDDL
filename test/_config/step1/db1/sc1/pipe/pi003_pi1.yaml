@@ -1,0 +1,15 @@
+copy:
+  table: pi003_tb1
+  stage: pi003_st1
+  file_format: pi003_ff1
+
+  match_by_column_name: case_sensitive
+
+  include_metadata:
+    metadata_file_name: METADATA$FILENAME
+    metadata_file_row_number: METADATA$FILE_ROW_NUMBER
+    metadata_file_content_key: METADATA$FILE_CONTENT_KEY
+    metadata_file_last_modified: METADATA$FILE_LAST_MODIFIED
+    metadata_file_start_scan_time: METADATA$START_SCAN_TIME
+
+auto_ingest: false

@@ -215,6 +215,29 @@ class PipeResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.copy_match_by_column_name:
+            query.append_nl(
+                "MATCH_BY_COLUMN_NAME = {match_by_column_name}",
+                {
+                    "match_by_column_name": bp.copy_match_by_column_name.upper(),
+                },
+            )
+
+        if bp.copy_include_metadata:
+            query.append_nl("INCLUDE_METADATA = (")
+
+            for idx, (table_col_name, metadata_col_name) in enumerate(bp.copy_include_metadata.items()):
+                query.append_nl(
+                    "    {comma:r}{table_col_name:i} = {metadata_col_name:i}",
+                    {
+                        "comma": "  " if idx == 0 else ", ",
+                        "table_col_name": table_col_name,
+                        "metadata_col_name": metadata_col_name,
+                    },
+                )
+
+            query.append_nl(")")
+
         if bp.copy_options:
             for k, v in bp.copy_options.items():
                 query.append_nl(

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.29.1] - 2024-07-08
+
+- Implemented parameters `match_by_column_name` and `include_metadata` for `PIPE` object type.
+- Adjusted grant name parsing logic to extract arguments only from object types which support overloading.
+- Included currently unknown data types to graceful warning logic for non-conforming identifiers. It should prevent SnowDDL from terminating with exception in case of encountering manually created `FUNCTION` or `PROCEDURE` with data type like `VECTOR` or `MAP`.
+
 ## [0.29.0] - 2024-06-12
 
 - Implemented `AGGREGATION_POLICY`, `PROJECTION_POLICY` object types.

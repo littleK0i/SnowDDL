@@ -24,6 +24,15 @@ pipe_json_schema = {
                 "file_format": {
                     "type": "string"
                 },
+                "match_by_column_name": {
+                    "type": "string"
+                },
+                "include_metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "transform": {
                     "type": "object",
                     "additionalProperties": {
@@ -67,12 +76,16 @@ class PipeParser(AbstractParser):
         self.parse_schema_object_files("pipe", pipe_json_schema, self.process_pipe)
 
     def process_pipe(self, f: ParsedFile):
+        file_format = None
+        include_metadata = None
+
         copy = f.params["copy"]
 
         if copy.get("file_format"):
             file_format = build_schema_object_ident(self.env_prefix, copy.get("file_format"), f.database, f.schema)
-        else:
-            file_format = None
+
+        if copy.get("include_metadata"):
+            include_metadata = {Ident(k): Ident(v) for k, v in copy.get("include_metadata").items()}
 
         bp = PipeBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
@@ -83,6 +96,8 @@ class PipeParser(AbstractParser):
             copy_pattern=copy.get("pattern"),
             copy_transform=self.normalise_params_dict(copy.get("transform")),
             copy_file_format=file_format,
+            copy_match_by_column_name=copy.get("match_by_column_name"),
+            copy_include_metadata=include_metadata,
             copy_options=self.normalise_params_dict(copy.get("options")),
             aws_sns_topic=f.params.get("aws_sns_topic"),
             integration=Ident(f.params["integration"]) if f.params.get("integration") else None,

@@ -1,4 +1,4 @@
-from snowddl.blueprint import RoleBlueprint, UserBlueprint, Grant, build_role_ident, build_grant_name_ident_snowflake
+from snowddl.blueprint import RoleBlueprint, UserBlueprint, Grant, build_role_ident, build_grant_name_ident
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
@@ -26,8 +26,8 @@ class UserRoleResolver(AbstractRoleResolver):
             object_type = ObjectType.ROLE
 
             try:
-                grant_name = build_grant_name_ident_snowflake(object_type, r["name"])
-            except ValueError:
+                grant_name = build_grant_name_ident(object_type, r["name"])
+            except (KeyError, ValueError):
                 self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                 continue
 

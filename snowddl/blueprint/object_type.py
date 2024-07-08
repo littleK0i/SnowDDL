@@ -89,6 +89,7 @@ class ObjectType(Enum):
         "singular": "FUNCTION",
         "plural": "FUNCTIONS",
         "is_future_grant_supported": True,
+        "is_overloading_supported": True,
         "blueprint_cls": "FunctionBlueprint",
     }
 
@@ -145,6 +146,7 @@ class ObjectType(Enum):
         "singular": "PROCEDURE",
         "plural": "PROCEDURES",
         "is_future_grant_supported": True,
+        "is_overloading_supported": True,
         "blueprint_cls": "ProcedureBlueprint",
     }
 
@@ -300,6 +302,10 @@ class ObjectType(Enum):
     @property
     def is_future_grant_supported(self) -> bool:
         return self.value.get("is_future_grant_supported", False)
+
+    @property
+    def is_overloading_supported(self) -> bool:
+        return self.value.get("is_overloading_supported", False)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}.{super().name}>"

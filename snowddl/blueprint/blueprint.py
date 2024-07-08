@@ -244,6 +244,8 @@ class PipeBlueprint(SchemaObjectBlueprint):
     copy_pattern: Optional[str] = None
     copy_transform: Optional[Dict[str, str]] = None
     copy_file_format: Optional[SchemaObjectIdent] = None
+    copy_match_by_column_name: Optional[str] = None
+    copy_include_metadata: Optional[Dict[Ident,Ident]] = None
     copy_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     aws_sns_topic: Optional[str] = None
     integration: Optional[Ident] = None

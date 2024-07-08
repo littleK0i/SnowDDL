@@ -80,8 +80,8 @@ from .ident import (
 from .ident_builder import (
     build_schema_object_ident,
     build_role_ident,
-    build_grant_name_ident_snowflake,
-    build_future_grant_name_ident_snowflake,
+    build_grant_name_ident,
+    build_future_grant_name_ident,
     build_default_namespace_ident,
 )
 

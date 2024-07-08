@@ -1,4 +1,4 @@
-from snowddl.blueprint import OutboundShareBlueprint, Grant, build_grant_name_ident_snowflake
+from snowddl.blueprint import OutboundShareBlueprint, Grant, build_grant_name_ident
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
 
@@ -164,7 +164,7 @@ class OutboundShareResolver(AbstractResolver):
                 Grant(
                     privilege=r["privilege"],
                     on=ObjectType[r["granted_on"]],
-                    name=build_grant_name_ident_snowflake(ObjectType[r["granted_on"]], r["name"]),
+                    name=build_grant_name_ident(ObjectType[r["granted_on"]], r["name"]),
                 )
             )
 

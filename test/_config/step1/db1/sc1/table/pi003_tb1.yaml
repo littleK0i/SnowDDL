@@ -1,0 +1,8 @@
+columns:
+  id: NUMBER(38,0)
+  name: VARCHAR(255)
+  metadata_file_name: VARCHAR(100000)
+  metadata_file_row_number: NUMBER(38,0)
+  metadata_file_content_key: VARCHAR(100000)
+  metadata_file_last_modified: TIMESTAMP_NTZ(9)
+  metadata_file_start_scan_time: TIMESTAMP_LTZ(9)

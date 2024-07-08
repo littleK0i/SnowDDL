@@ -7,8 +7,8 @@ from snowddl.blueprint import (
     FutureGrant,
     SchemaIdent,
     SchemaObjectIdent,
-    build_grant_name_ident_snowflake,
-    build_future_grant_name_ident_snowflake,
+    build_grant_name_ident,
+    build_future_grant_name_ident,
 )
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
@@ -78,8 +78,8 @@ class AbstractRoleResolver(AbstractResolver):
                 account_grants.append(AccountGrant(privilege=r["privilege"]))
             else:
                 try:
-                    grant_name = build_grant_name_ident_snowflake(object_type, r["name"])
-                except ValueError:
+                    grant_name = build_grant_name_ident(object_type, r["name"])
+                except (KeyError, ValueError) as e:
                     self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                     continue
 
@@ -107,7 +107,7 @@ class AbstractRoleResolver(AbstractResolver):
                 continue
 
             try:
-                grant_name = build_future_grant_name_ident_snowflake(object_type, r["name"])
+                grant_name = build_future_grant_name_ident(object_type, r["name"])
             except ValueError:
                 self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                 continue
