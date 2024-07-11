@@ -200,6 +200,8 @@ class ProcedureParser(AbstractParser):
 
     def get_secrets(self, f: ParsedFile):
         if f.params.get("secrets"):
-            return {k: build_schema_object_ident(self.env_prefix, v, f.database, f.schema) for k, v in f.params.get("secrets")}
+            return {
+                k: build_schema_object_ident(self.env_prefix, v, f.database, f.schema) for k, v in f.params.get("secrets").items()
+            }
 
         return None

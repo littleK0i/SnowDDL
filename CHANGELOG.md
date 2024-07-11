@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.29.2] - 2024-07-11
+
+- Fix parsing error of `secrets` parameter for `PROCEDURE`.
+
 ## [0.29.1] - 2024-07-08
 
 - Implemented parameters `match_by_column_name` and `include_metadata` for `PIPE` object type.
