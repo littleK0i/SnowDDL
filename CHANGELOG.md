@@ -1,8 +1,15 @@
 # Changelog
 
+## [0.30.0] - 2024-07-14
+
+- Introduced built-in Fernet encryption for values in YAML configs, which is mostly useful for user passwords and various secrets.
+- Added YAML tags `!encrypt` and `!decrypt`.
+- Added ability to rotate keys for all config values encrypted with Fernet.
+- Made `business_roles` optional for `USER` object type.
+
 ## [0.29.2] - 2024-07-11
 
-- Fix parsing error of `secrets` parameter for `PROCEDURE`.
+- Fixed parsing error of `secrets` parameter for `PROCEDURE`.
 
 ## [0.29.1] - 2024-07-08
 

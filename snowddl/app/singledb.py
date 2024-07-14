@@ -30,6 +30,7 @@ class SingleDbApp(BaseApp):
 
     def init_arguments_parser(self):
         formatter = lambda prog: HelpFormatter(prog, max_help_position=32)
+
         parser = ArgumentParser(
             prog="snowddl-singledb",
             description="Special SnowDDL mode to process schema objects of single database only",

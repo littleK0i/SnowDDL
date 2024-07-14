@@ -75,7 +75,7 @@ class UserParser(AbstractParser):
             business_roles = []
             default_warehouse = user.get("default_warehouse")
 
-            for business_role_name in user["business_roles"]:
+            for business_role_name in user.get("business_roles", []):
                 business_roles.append(build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX))
 
                 if default_warehouse is None:

@@ -13,8 +13,9 @@ from snowddl.settings import SnowDDLSettings
 class ConvertApp(BaseApp):
     def init_arguments_parser(self):
         formatter = lambda prog: HelpFormatter(prog, max_help_position=32)
+
         parser = ArgumentParser(
-            prog="snowddlconv",
+            prog="snowddl-convert",
             description="Convert existing objects in Snowflake account to SnowDDL config",
             formatter_class=formatter,
         )

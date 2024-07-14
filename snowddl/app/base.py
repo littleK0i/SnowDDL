@@ -37,6 +37,7 @@ class BaseApp:
 
     def init_arguments_parser(self):
         formatter = lambda prog: HelpFormatter(prog, max_help_position=36)
+
         parser = ArgumentParser(
             prog="snowddl", description="Object management automation tool for Snowflake", formatter_class=formatter
         )
