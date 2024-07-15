@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.30.1] - 2024-07-15
+
+- Add missing `__init__.py` to `fernet` package. Make sure this package is included by `find:` during build process.
+
 ## [0.30.0] - 2024-07-14
 
 - Introduced built-in Fernet encryption for values in YAML configs, which is mostly useful for user passwords and various secrets.
