@@ -4,7 +4,7 @@ from typing import List, Optional
 
 
 class FernetWrapper:
-    ENV_ENCRYPTION_KEYS = "SNOWFLAKE_CONFIG_ENCRYPTION_KEYS"
+    ENV_ENCRYPTION_KEYS = "SNOWFLAKE_CONFIG_FERNET_KEYS"
 
     def __init__(self, explicit_encryption_keys: Optional[str] = None):
         self.key_sequence: List[str] = []
