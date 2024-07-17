@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, HelpFormatter
+from cryptography.hazmat.primitives import serialization
 from importlib.util import module_from_spec, spec_from_file_location
 from json import loads as json_loads
 from json.decoder import JSONDecodeError
@@ -255,7 +256,7 @@ class BaseApp:
 
     def validate_auth_args(self, args):
         if args["authenticator"] == "snowflake":
-            if not args["a"] or not args["u"] or (not args["p"] and not args["k"]):
+            if not args["a"] or not args["u"] or (not args["p"] and not args["k"] and "SNOWFLAKE_PRIVATE_KEY" not in environ):
                 return False
         elif args["authenticator"] == "externalbrowser":
             if not args["a"] or not args["u"]:
@@ -445,13 +446,21 @@ class BaseApp:
         }
 
         if self.args.get("authenticator") == "snowflake":
+            key_bytes = None
+
             if self.args.get("k"):
-                from cryptography.hazmat.primitives import serialization
-
                 key_path = Path(self.args.get("k"))
-                key_password = str(self.args.get("passphrase")).encode("utf-8") if self.args.get("passphrase") else None
 
-                pk = serialization.load_pem_private_key(data=key_path.read_bytes(), password=key_password)
+                if not key_path.is_file():
+                    raise ValueError(f"Private key file [{key_path}] does not exist or not a file")
+
+                key_bytes = key_path.read_bytes()
+            elif "SNOWFLAKE_PRIVATE_KEY" in environ:
+                key_bytes = str(environ["SNOWFLAKE_PRIVATE_KEY"]).encode("utf-8")
+
+            if key_bytes:
+                key_password = str(self.args.get("passphrase")).encode("utf-8") if self.args.get("passphrase") else None
+                pk = serialization.load_pem_private_key(data=key_bytes, password=key_password)
 
                 options["private_key"] = pk.private_bytes(
                     encoding=serialization.Encoding.DER,

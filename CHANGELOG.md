@@ -1,8 +1,12 @@
 # Changelog
 
+## [0.30.2] - 2024-07-17
+
+- Allowed passing raw private key with `SNOWFLAKE_PRIVATE_KEY` environment variable for convenience of GitHub actions. This is an addition to original `SNOWFLAKE_PRIVATE_KEY_PATH`, but does not require creation of file.
+
 ## [0.30.1] - 2024-07-15
 
-- Add missing `__init__.py` to `fernet` package. Make sure this package is included by `find:` during build process.
+- Added missing `__init__.py` to `fernet` package. Make sure this package is included by `find:` during build process.
 
 ## [0.30.0] - 2024-07-14
 
