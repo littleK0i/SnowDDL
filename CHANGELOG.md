@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.30.3] - 2024-07-17
+
+- Added `NOTEBOOK` object type, so now it can be used for grants.
+
 ## [0.30.2] - 2024-07-17
 
 - Allowed passing raw private key with `SNOWFLAKE_PRIVATE_KEY` environment variable for convenience of GitHub actions. This is an addition to original `SNOWFLAKE_PRIVATE_KEY_PATH`, but does not require creation of file.

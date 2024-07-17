@@ -135,6 +135,11 @@ class ObjectType(Enum):
         "blueprint_cls": "NetworkRuleBlueprint",
     }
 
+    NOTEBOOK = {
+        "singular": "NOTEBOOK",
+        "plural": "NOTEBOOKS",
+    }
+
     PIPE = {
         "singular": "PIPE",
         "plural": "PIPES",

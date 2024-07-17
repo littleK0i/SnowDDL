@@ -5,6 +5,7 @@ fivetran:
     - STAGE
     - TABLE
     - VIEW
+    - NOTEBOOK
 
   owner_future_grants:
     STAGE: [OWNERSHIP]
