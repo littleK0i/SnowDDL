@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.30.4] - 2024-08-05
+
+- Added logic to actually remove blueprints from config on `remove_blueprint()` call.
+
 ## [0.30.3] - 2024-07-17
 
 - Added `NOTEBOOK` object type, so now it can be used for grants.
