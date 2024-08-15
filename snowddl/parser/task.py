@@ -52,6 +52,12 @@ task_json_schema = {
         "error_integration": {
             "type": "string"
         },
+        "task_auto_retry_attempts": {
+            "type": "integer"
+        },
+        "user_task_minimum_trigger_interval_in_seconds": {
+            "type": "integer"
+        },
         "comment": {
             "type": "string"
         }
@@ -94,6 +100,8 @@ class TaskParser(AbstractParser):
             user_task_timeout_ms=f.params.get("user_task_timeout_ms"),
             suspend_task_after_num_failures=f.params.get("suspend_task_after_num_failures"),
             error_integration=Ident(f.params.get("error_integration")) if f.params.get("error_integration") else None,
+            task_auto_retry_attempts=f.params.get("task_auto_retry_attempts"),
+            user_task_minimum_trigger_interval_in_seconds=f.params.get("user_task_minimum_trigger_interval_in_seconds"),
             comment=f.params.get("comment"),
         )
 

@@ -107,16 +107,6 @@ class DatabaseIdent(AbstractIdentWithPrefix):
         return [f"{self.env_prefix}{self.database}"], None
 
 
-class InboundShareIdent(AbstractIdent):
-    def __init__(self, organization, account, share):
-        self.organization = self._validate_part(organization)
-        self.account = self._validate_part(account)
-        self.share = self._validate_part(share)
-
-    def parts_for_format(self):
-        return [self.organization, self.account, self.share], None
-
-
 class OutboundShareIdent(AbstractIdentWithPrefix):
     def __init__(self, env_prefix, share):
         super().__init__(env_prefix)

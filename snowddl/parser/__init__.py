@@ -12,7 +12,6 @@ from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
 from .function import FunctionParser
 from .hybrid_table import HybridTableParser
-from .inbound_share import InboundShareParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
@@ -48,7 +47,6 @@ default_parser_sequence = [
     SecretParser,
     NetworkRuleParser,
     ExternalAccessIntegrationParser,
-    # InboundShareParser,
     FileFormatParser,
     StageParser,
     SequenceParser,

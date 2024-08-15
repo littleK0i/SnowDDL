@@ -163,6 +163,22 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.task_auto_retry_attempts:
+            query.append_nl(
+                "TASK_AUTO_RETRY_ATTEMPTS = {task_auto_retry_attempts:d}",
+                {
+                    "task_auto_retry_attempts": bp.task_auto_retry_attempts,
+                },
+            )
+
+        if bp.user_task_minimum_trigger_interval_in_seconds:
+            query.append_nl(
+                "USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = {user_task_minimum_trigger_interval_in_seconds:d}",
+                {
+                    "user_task_minimum_trigger_interval_in_seconds": bp.user_task_minimum_trigger_interval_in_seconds,
+                },
+            )
+
         if bp.session_params:
             for param_name, param_value in bp.session_params.items():
                 query.append_nl(

@@ -18,7 +18,6 @@ from .ident import (
     AccountObjectIdent,
     DatabaseIdent,
     AccountIdent,
-    InboundShareIdent,
     OutboundShareIdent,
     SchemaIdent,
     SchemaObjectIdent,
@@ -94,11 +93,6 @@ class DatabaseBlueprint(AbstractBlueprint):
 
 class DatabaseRoleBlueprint(RoleBlueprint, DependsOnMixin):
     pass
-
-
-class DatabaseShareBlueprint(AbstractBlueprint):
-    full_name: DatabaseIdent
-    share_name: InboundShareIdent
 
 
 class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
@@ -193,13 +187,6 @@ class HybridTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     unique_keys: Optional[List[List[Ident]]] = None
     foreign_keys: Optional[List[ForeignKeyReference]] = None
     indexes: Optional[List[IndexReference]] = None
-
-
-class InboundShareBlueprint(AbstractBlueprint):
-    full_name: DatabaseIdent
-    accounts: List[AccountIdent] = []
-    share_restrictions: bool = False
-    grants: List[Grant] = []
 
 
 class MaterializedViewBlueprint(SchemaObjectBlueprint):
@@ -376,6 +363,8 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     user_task_timeout_ms: Optional[int] = None
     suspend_task_after_num_failures: Optional[int] = None
     error_integration: Optional[Ident] = None
+    task_auto_retry_attempts: Optional[int] = None
+    user_task_minimum_trigger_interval_in_seconds: Optional[int] = None
 
 
 class TechnicalRoleBlueprint(RoleBlueprint):

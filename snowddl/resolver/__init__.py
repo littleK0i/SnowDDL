@@ -17,8 +17,6 @@ from .file_format import FileFormatResolver
 from .foreign_key import ForeignKeyResolver
 from .function import FunctionResolver
 from .hybrid_table import HybridTableResolver
-from .inbound_share import InboundShareResolver
-from .inbound_share_role import InboundShareRoleResolver
 from .masking_policy import MaskingPolicyResolver
 from .materialized_view import MaterializedViewResolver
 from .network_policy import NetworkPolicyResolver
@@ -58,8 +56,6 @@ default_resolver_sequence = [
     SchemaResolver,
     DatabaseRoleResolver,
     SchemaRoleResolver,
-    # InboundShareResolver,
-    # InboundShareRoleResolver,
     SecretResolver,
     NetworkRuleResolver,
     ExternalAccessIntegrationResolver,

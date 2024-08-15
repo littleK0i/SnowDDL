@@ -192,7 +192,6 @@ class BaseApp:
         parser.add_argument(
             "--apply-resource-monitor", help="Additionally apply changes to RESOURCE MONITORS", default=False, action="store_true"
         )
-        # parser.add_argument('--apply-inbound-share', help="Additionally apply changes to INBOUND SHARES", default=False, action='store_true')
         parser.add_argument(
             "--apply-outbound-share", help="Additionally apply changes to OUTBOUND SHARES", default=False, action="store_true"
         )
@@ -381,9 +380,6 @@ class BaseApp:
 
             if self.args.get("apply_resource_monitor"):
                 settings.execute_resource_monitor = True
-
-            if self.args.get("apply_inbound_share"):
-                settings.execute_inbound_share = True
 
             if self.args.get("apply_outbound_share"):
                 settings.execute_outbound_share = True
