@@ -19,8 +19,7 @@ class FunctionResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
-            # Skip external functions
-            if r["is_external_function"] == "Y":
+            if r["is_external_function"] == "Y" or r["is_data_metric"] == "Y":
                 continue
 
             full_name = f"{r['catalog_name']}.{r['schema_name']}.{r['name']}({dtypes_from_arguments(r['arguments'])})"

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.30.5] - 2024-08-15
+
+- Added missing parameters for `TASK`.
+- Removed unused code and objects related to inbound `SHARES`. Such shares should be created manually by `ACCOUNTADMIN` and granted to business roles via `global_roles`.
+- Skipped data metric functions when reading metadata of existing `FUNCTIONS`.
+
 ## [0.30.4] - 2024-08-05
 
 - Added logic to actually remove blueprints from config on `remove_blueprint()` call.
