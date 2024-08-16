@@ -6,9 +6,6 @@ from snowddl.blueprint import (
     HybridTableBlueprint,
     SchemaObjectIdent,
     TableColumn,
-    PrimaryKeyBlueprint,
-    UniqueKeyBlueprint,
-    ForeignKeyBlueprint,
 )
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 

@@ -128,10 +128,7 @@ def build_parser():
     )
 
     # Action: config-encrypt
-    config_encrypt_subparser = subparsers.add_parser(
-        "config-encrypt",
-        help="Encrypy all values in config"
-    )
+    config_encrypt_subparser = subparsers.add_parser("config-encrypt", help="Encrypy all values in config")
 
     config_encrypt_subparser.add_argument(
         "-k",
@@ -148,10 +145,7 @@ def build_parser():
     )
 
     # Action: config-decrypt
-    config_decrypt_subparser = subparsers.add_parser(
-        "config-decrypt",
-        help="Decrypt all values in config"
-    )
+    config_decrypt_subparser = subparsers.add_parser("config-decrypt", help="Decrypt all values in config")
 
     config_decrypt_subparser.add_argument(
         "-k",
@@ -168,10 +162,7 @@ def build_parser():
     )
 
     # Action: config-rotate
-    config_rotate_subparser = subparsers.add_parser(
-        "config-rotate",
-        help="Rotate all values in config"
-    )
+    config_rotate_subparser = subparsers.add_parser("config-rotate", help="Rotate all values in config")
 
     config_rotate_subparser.add_argument(
         "-k",
@@ -233,7 +224,7 @@ def action_config_decrypt(args, wrapper: FernetWrapper):
 
     for file in get_config_files_generator(args):
         original_text = file.read_text(encoding="utf-8")
-        updated_text, number_of_sub = regexp.subn(lambda m: f"!encrypt \"{wrapper.decrypt(m[1])}\"\n", original_text)
+        updated_text, number_of_sub = regexp.subn(lambda m: f'!encrypt "{wrapper.decrypt(m[1])}"\n', original_text)
 
         if number_of_sub > 0:
             file.write_text(updated_text, encoding="utf-8")

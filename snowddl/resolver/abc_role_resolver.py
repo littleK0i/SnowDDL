@@ -6,7 +6,6 @@ from snowddl.blueprint import (
     AccountGrant,
     FutureGrant,
     SchemaIdent,
-    SchemaObjectIdent,
     build_grant_name_ident,
     build_future_grant_name_ident,
 )
@@ -79,7 +78,7 @@ class AbstractRoleResolver(AbstractResolver):
             else:
                 try:
                     grant_name = build_grant_name_ident(object_type, r["name"])
-                except (KeyError, ValueError) as e:
+                except (KeyError, ValueError):
                     self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                     continue
 

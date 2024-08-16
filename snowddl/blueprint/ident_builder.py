@@ -5,7 +5,6 @@ from .ident import (
     AccountObjectIdent,
     DatabaseIdent,
     DatabaseRoleIdent,
-    Ident,
     SchemaIdent,
     SchemaObjectIdent,
     SchemaObjectIdentWithArgs,

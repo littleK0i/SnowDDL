@@ -115,7 +115,7 @@ class AbstractParser(ABC):
                     on=ObjectType.DATABASE,
                     name=Ident(share_name),
                 ),
-            ]
+            ],
         )
 
     def build_warehouse_role_grant(self, warehouse_name, grant_type):
