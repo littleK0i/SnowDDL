@@ -29,6 +29,7 @@ from .projection_policy import ProjectionPolicyResolver
 from .resource_monitor import ResourceMonitorResolver
 from .row_access_policy import RowAccessPolicyResolver
 from .sequence import SequenceResolver
+from .share_role import ShareRoleResolver
 from .schema import SchemaResolver
 from .schema_role import SchemaRoleResolver
 from .secret import SecretResolver
@@ -54,6 +55,7 @@ default_resolver_sequence = [
     WarehouseRoleResolver,
     DatabaseResolver,
     SchemaResolver,
+    ShareRoleResolver,
     DatabaseRoleResolver,
     SchemaRoleResolver,
     SecretResolver,

@@ -107,6 +107,21 @@ class DatabaseIdent(AbstractIdentWithPrefix):
         return [f"{self.env_prefix}{self.database}"], None
 
 
+class DatabaseRoleIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, database, name):
+        super().__init__(env_prefix)
+
+        self.database = self._validate_part(database)
+        self.name = self._validate_part(name)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.database}", self.name], None
+
+    @property
+    def database_full_name(self):
+        return DatabaseIdent(self.env_prefix, self.database)
+
+
 class OutboundShareIdent(AbstractIdentWithPrefix):
     def __init__(self, env_prefix, share):
         super().__init__(env_prefix)

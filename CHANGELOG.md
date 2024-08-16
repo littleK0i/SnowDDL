@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.31.0] - 2024-08-16
+
+- Implemented `share_read` parameter for `BUSINESS ROLE` and `owner_share_read` parameter for `DATABASE` and `SCHEMA`.
+- Using `share_read` parameter now automatically generates `SHARE_ROLES` with `IMPORTED_PRIVILEGE` on specific share.
+- `global_roles` parameter can now accept database roles in addition to normal roles, e.g. `SNOWFLAKE.OBJECT_VIEWER`.
+
 ## [0.30.5] - 2024-08-15
 
 - Added missing parameters for `TASK`.

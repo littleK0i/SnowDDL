@@ -2,7 +2,6 @@ from snowddl.blueprint import (
     DatabaseBlueprint,
     Grant,
     BusinessRoleBlueprint,
-    Ident,
     ObjectType,
     SchemaBlueprint,
     build_role_ident,
@@ -40,13 +39,19 @@ business_role_json_schema = {
                     "type": "string"
                 }
             },
+            "schema_write": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
             "schema_read": {
                 "type": "array",
                 "items": {
                     "type": "string"
                 }
             },
-            "schema_write": {
+            "share_read": {
                 "type": "array",
                 "items": {
                     "type": "string"
@@ -122,6 +127,11 @@ class BusinessRoleParser(AbstractParser):
             for full_schema_name in business_role.get("schema_write", []):
                 grants.extend(self.build_schema_role_grants(full_schema_name, "WRITE"))
 
+            # Share roles
+            for share_name in business_role.get("share_read", []):
+                grants.append(self.build_share_role_grant(share_name))
+                self.config.add_blueprint(self.build_share_role_blueprint(share_name))
+
             # Warehouse roles
             for warehouse_name in business_role.get("warehouse_usage", []):
                 grants.append(self.build_warehouse_role_grant(warehouse_name, "USAGE"))
@@ -131,23 +141,11 @@ class BusinessRoleParser(AbstractParser):
 
             # Technical roles
             for technical_role_name in business_role.get("technical_roles", []) + business_role.get("tech_roles", []):
-                grants.append(
-                    Grant(
-                        privilege="USAGE",
-                        on=ObjectType.ROLE,
-                        name=build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX),
-                    )
-                )
+                grants.append(self.build_technical_role_grant(technical_role_name))
 
             # Global roles
             for global_role_name in business_role.get("global_roles", []):
-                grants.append(
-                    Grant(
-                        privilege="USAGE",
-                        on=ObjectType.ROLE,
-                        name=Ident(global_role_name),
-                    )
-                )
+                grants.append(self.build_global_role_grant(global_role_name))
 
             bp = BusinessRoleBlueprint(
                 full_name=business_role_ident,
@@ -216,10 +214,3 @@ class BusinessRoleParser(AbstractParser):
             raise ValueError(f"No {ObjectType.SCHEMA.plural} matched wildcard grant with pattern [{full_schema_name}]")
 
         return grants
-
-    def build_warehouse_role_grant(self, warehouse_name, grant_type):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, warehouse_name, grant_type, self.config.WAREHOUSE_ROLE_SUFFIX),
-        )

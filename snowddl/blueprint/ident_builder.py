@@ -4,6 +4,8 @@ from .data_type import BaseDataType
 from .ident import (
     AccountObjectIdent,
     DatabaseIdent,
+    DatabaseRoleIdent,
+    Ident,
     SchemaIdent,
     SchemaObjectIdent,
     SchemaObjectIdentWithArgs,
@@ -71,6 +73,9 @@ def build_grant_name_ident(object_type: ObjectType, grant_name: str):
         return SchemaObjectIdent(env_prefix, parts[0], parts[1], parts[2])
 
     if len(parts) == 2:
+        if object_type == ObjectType.DATABASE_ROLE:
+            return DatabaseRoleIdent(env_prefix, parts[0], parts[1])
+
         return SchemaIdent(env_prefix, parts[0], parts[1])
 
     if len(parts) == 1:

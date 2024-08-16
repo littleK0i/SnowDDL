@@ -237,10 +237,11 @@ class AbstractRoleResolver(AbstractResolver):
         return ResolveResult.DROP
 
     def create_grant(self, role_name, grant: Grant):
-        if grant.privilege == "USAGE" and grant.on == ObjectType.ROLE:
+        if grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.DATABASE_ROLE):
             self.engine.execute_safe_ddl(
-                "GRANT ROLE {name:i} TO ROLE {role_name:i}",
+                "GRANT {on:r} {name:i} TO ROLE {role_name:i}",
                 {
+                    "on": grant.on.singular,
                     "name": grant.name,
                     "role_name": role_name,
                 },
@@ -269,10 +270,11 @@ class AbstractRoleResolver(AbstractResolver):
                     "current_role": self.engine.context.current_role,
                 },
             )
-        elif grant.privilege == "USAGE" and grant.on == ObjectType.ROLE:
+        elif grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.DATABASE_ROLE):
             self.engine.execute_safe_ddl(
-                "REVOKE ROLE {name:i} FROM ROLE {role_name:i}",
+                "REVOKE {on:r} {name:i} FROM ROLE {role_name:i}",
                 {
+                    "on": grant.on.singular,
                     "name": grant.name,
                     "role_name": role_name,
                 },

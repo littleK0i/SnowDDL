@@ -304,6 +304,16 @@ class SecretBlueprint(SchemaObjectBlueprint):
     secret_string: Optional[str] = None
 
 
+class SequenceBlueprint(SchemaObjectBlueprint):
+    start: int
+    interval: int
+    is_ordered: Optional[bool] = None
+
+
+class ShareRoleBlueprint(RoleBlueprint):
+    pass
+
+
 class StageBlueprint(SchemaObjectBlueprint):
     url: Optional[str] = None
     storage_integration: Optional[Ident] = None
@@ -319,12 +329,6 @@ class StageFileBlueprint(SchemaObjectBlueprint):
     local_path: str
     stage_name: SchemaObjectIdent
     stage_path: str
-
-
-class SequenceBlueprint(SchemaObjectBlueprint):
-    start: int
-    interval: int
-    is_ordered: Optional[bool] = None
 
 
 class StreamBlueprint(SchemaObjectBlueprint):

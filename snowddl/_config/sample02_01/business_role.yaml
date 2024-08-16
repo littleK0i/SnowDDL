@@ -3,3 +3,11 @@ fivetran:
     - fivetran_db
   warehouse_usage:
     - fivetran_wh
+
+snowflake_full_access:
+  share_read:
+    - snowflake
+
+snowflake_object_viewer:
+  global_roles:
+    - snowflake.object_viewer

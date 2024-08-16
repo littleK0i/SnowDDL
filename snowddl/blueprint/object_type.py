@@ -40,6 +40,13 @@ class ObjectType(Enum):
         "blueprint_cls": "DatabaseBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    DATABASE_ROLE = {
+        "singular": "DATABASE ROLE",
+        "plural": "DATABASE ROLES",
+    }
+
     DYNAMIC_TABLE = {
         "singular": "DYNAMIC TABLE",
         "plural": "DYNAMIC TABLES",
