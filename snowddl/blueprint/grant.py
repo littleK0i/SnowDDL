@@ -10,6 +10,21 @@ class Grant(BaseModelWithConfig):
     on: ObjectType
     name: AbstractIdent
 
+    def __eq__(self, other):
+        if not isinstance(other, Grant):
+            raise NotImplementedError
+
+        if self.privilege != other.privilege:
+            return False
+
+        if self.on.singular_for_grant != other.on.singular_for_grant:
+            return False
+
+        if self.name != other.name:
+            return False
+
+        return True
+
 
 class AccountGrant(BaseModelWithConfig):
     privilege: str

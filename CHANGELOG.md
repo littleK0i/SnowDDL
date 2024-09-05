@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.31.2] - 2024-09-05
+
+- Implemented custom `__eq__` method to check `Grants`. It helps to take into account edge case for `INTEGRATION` object grants not returning specific integration type from `SHOW GRANTS` command.
+
 ## [0.31.1] - 2024-09-05
 
 - Fixed grants on `EXTERNAL ACCESS INTEGRATION` trying to use full object name instead of simplified object name.
