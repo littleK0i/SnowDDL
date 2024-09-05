@@ -145,7 +145,7 @@ class AggregationPolicyResolver(AbstractSchemaObjectResolver):
             query.append(
                 "ALTER {object_type:r} {object_name:i} SET AGGREGATION POLICY {policy_name:i}",
                 {
-                    "object_type": ref.object_type.simplified,
+                    "object_type": ref.object_type.singular_for_ref,
                     "object_name": ref.object_name,
                     "policy_name": bp.full_name,
                 },

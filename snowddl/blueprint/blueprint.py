@@ -112,6 +112,7 @@ class EventTableBlueprint(SchemaObjectBlueprint):
 
 
 class ExternalAccessIntegrationBlueprint(AbstractBlueprint):
+    full_name: AccountObjectIdent
     allowed_network_rules: List[SchemaObjectIdent]
     allowed_api_authentication_integrations: Optional[List[Ident]] = None
     allowed_authentication_secrets: Optional[List[SchemaObjectIdent]] = None

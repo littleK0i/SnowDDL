@@ -1,0 +1,4 @@
+eai001_tr1:
+  grants:
+    EXTERNAL_ACCESS_INTEGRATION:USAGE:
+      - eai001_eai1

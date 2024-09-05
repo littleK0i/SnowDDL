@@ -137,7 +137,7 @@ class ProjectionPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {object_name:i} MODIFY COLUMN {column:i} SET PROJECTION POLICY {policy_name:i} FORCE",
                 {
-                    "object_type": ref.object_type.simplified,
+                    "object_type": ref.object_type.singular_for_ref,
                     "object_name": ref.object_name,
                     "column": ref.column,
                     "policy_name": bp.full_name,

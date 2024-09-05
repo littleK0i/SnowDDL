@@ -170,7 +170,7 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
                 self.engine.execute_unsafe_ddl(
                     "ALTER {object_type:r} {object_name:i} DROP ROW ACCESS POLICY {policy_name:i}",
                     {
-                        "object_type": ref.object_type.simplified,
+                        "object_type": ref.object_type.singular_for_ref,
                         "object_name": ref.object_name,
                         "policy_name": bp.full_name,
                     },
@@ -181,7 +181,7 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {object_name:i} ADD ROW ACCESS POLICY {policy_name:i} ON ({columns:i})",
                 {
-                    "object_type": ref.object_type.simplified,
+                    "object_type": ref.object_type.singular_for_ref,
                     "object_name": ref.object_name,
                     "policy_name": bp.full_name,
                     "columns": ref.columns,

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.1] - 2024-09-05
+
+- Fixed grants on `EXTERNAL ACCESS INTEGRATION` trying to use full object name instead of simplified object name.
+- Reworked how simplified object type names are implemented internally. Now we have normal `singular` name, `singular_for_ref` used in context of policy references, `singular_for_grant` used in context of granting permissions.
+- Added more specific identifier type for `ExternalAccessIntegrationBlueprint.full_name` to prevent issues with env prefix and testing.
+- Fixed test for `TASK` related to Snowflake changing minimum value of `USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS` parameter.
+
 ## [0.31.0] - 2024-08-16
 
 - Implemented `share_read` parameter for `BUSINESS ROLE` and `owner_share_read` parameter for `DATABASE` and `SCHEMA`.

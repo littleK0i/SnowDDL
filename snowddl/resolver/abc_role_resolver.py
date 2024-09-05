@@ -240,7 +240,7 @@ class AbstractRoleResolver(AbstractResolver):
             self.engine.execute_safe_ddl(
                 "GRANT {on:r} {name:i} TO ROLE {role_name:i}",
                 {
-                    "on": grant.on.singular,
+                    "on": grant.on.singular_for_grant,
                     "name": grant.name,
                     "role_name": role_name,
                 },
@@ -250,7 +250,7 @@ class AbstractRoleResolver(AbstractResolver):
                 "GRANT {privilege:r} ON {on:r} {name:i} TO ROLE {role_name:i}",
                 {
                     "privilege": grant.privilege,
-                    "on": grant.on.singular,
+                    "on": grant.on.singular_for_grant,
                     "name": grant.name,
                     "role_name": role_name,
                 },
@@ -264,7 +264,7 @@ class AbstractRoleResolver(AbstractResolver):
                 "GRANT {privilege:r} ON {on:r} {name:i} TO ROLE {current_role:i} COPY CURRENT GRANTS",
                 {
                     "privilege": grant.privilege,
-                    "on": grant.on.singular,
+                    "on": grant.on.singular_for_grant,
                     "name": grant.name,
                     "current_role": self.engine.context.current_role,
                 },
@@ -273,7 +273,7 @@ class AbstractRoleResolver(AbstractResolver):
             self.engine.execute_safe_ddl(
                 "REVOKE {on:r} {name:i} FROM ROLE {role_name:i}",
                 {
-                    "on": grant.on.singular,
+                    "on": grant.on.singular_for_grant,
                     "name": grant.name,
                     "role_name": role_name,
                 },
@@ -283,7 +283,7 @@ class AbstractRoleResolver(AbstractResolver):
                 "REVOKE {privilege:r} ON {on:r} {name:i} FROM ROLE {role_name:i}",
                 {
                     "privilege": grant.privilege,
-                    "on": grant.on.singular,
+                    "on": grant.on.singular_for_grant,
                     "name": grant.name,
                     "role_name": role_name,
                 },
