@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, HelpFormatter
+from contextlib import contextmanager
 from cryptography.hazmat.primitives import serialization
 from importlib.util import module_from_spec, spec_from_file_location
 from json import loads as json_loads
@@ -7,6 +8,7 @@ from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
 from pathlib import Path
 from snowflake.connector import connect
+from time import perf_counter
 from traceback import TracebackException
 
 from snowddl.blueprint import Ident, ObjectType
@@ -26,15 +28,20 @@ class BaseApp:
     resolver_sequence = default_resolver_sequence
 
     def __init__(self):
+        self.elapsed_timers = {}
+
         self.arg_parser = self.init_arguments_parser()
         self.args = self.init_arguments()
         self.logger = self.init_logger()
 
         self.config_path = self.init_config_path()
-        self.config = self.init_config()
         self.settings = self.init_settings()
 
-        self.engine = self.init_engine()
+        with self.measure_elapsed_time("InitConfig"):
+            self.config = self.init_config()
+
+        with self.measure_elapsed_time("InitEngine"):
+            self.engine = self.init_engine()
 
     def init_arguments_parser(self):
         formatter = lambda prog: HelpFormatter(prog, max_help_position=36)
@@ -126,6 +133,7 @@ class BaseApp:
             "--log-level", help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO"
         )
         parser.add_argument("--show-sql", help="Show executed DDL queries", default=False, action="store_true")
+        parser.add_argument("--show-timers", help="Show debug timers", default=False, action="store_true")
 
         # Placeholders
         parser.add_argument(
@@ -488,22 +496,27 @@ class BaseApp:
                     raise ValueError("Argument --env-prefix is required for [destroy] action")
 
                 for resolver_cls in self.resolver_sequence:
-                    resolver = resolver_cls(self.engine)
-                    resolver.destroy()
+                    with self.measure_elapsed_time(resolver_cls.__name__):
+                        resolver = resolver_cls(self.engine)
+                        resolver.destroy()
 
                     error_count += len(resolver.errors)
 
                 self.engine.context.destroy_role_with_prefix()
             else:
                 for resolver_cls in self.resolver_sequence:
-                    resolver = resolver_cls(self.engine)
-                    resolver.resolve()
+                    with self.measure_elapsed_time(resolver_cls.__name__):
+                        resolver = resolver_cls(self.engine)
+                        resolver.resolve()
 
                     error_count += len(resolver.errors)
 
             self.engine.connection.close()
             self.output_engine_stats()
             self.output_engine_warnings()
+
+            if self.args.get("show_timers"):
+                self.output_app_timers()
 
             if self.args.get("show_sql"):
                 self.output_executed_ddl()
@@ -582,6 +595,10 @@ class BaseApp:
                     f"which does not conform to SnowDDL standards, please rename or drop it manually"
                 )
 
+    def output_app_timers(self):
+        for timer_name, timer_value in self.elapsed_timers.items():
+            self.logger.info(f"Timer [{timer_name}] elapsed time is {timer_value:.3f}s")
+
     def output_suggested_ddl(self):
         if self.engine.suggested_ddl:
             print("--- Suggested DDL ---\n")
@@ -595,6 +612,15 @@ class BaseApp:
 
         for sql in self.engine.executed_ddl:
             print(f"{sql};\n")
+
+    @contextmanager
+    def measure_elapsed_time(self, timer_name: str):
+        start_counter = perf_counter()
+
+        try:
+            yield
+        finally:
+            self.elapsed_timers[timer_name] = perf_counter() - start_counter
 
 
 def entry_point():

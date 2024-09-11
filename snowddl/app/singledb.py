@@ -120,6 +120,7 @@ class SingleDbApp(BaseApp):
             "--log-level", help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO"
         )
         parser.add_argument("--show-sql", help="Show executed DDL queries", default=False, action="store_true")
+        parser.add_argument("--show-timers", help="Show debug timers", default=False, action="store_true")
 
         # Placeholders
         parser.add_argument(
@@ -286,21 +287,26 @@ class SingleDbApp(BaseApp):
 
             if self.args.get("action") == "destroy":
                 for resolver_cls in self.resolver_sequence:
-                    resolver = resolver_cls(self.engine)
-                    resolver.destroy()
+                    with self.measure_elapsed_time(resolver_cls.__name__):
+                        resolver = resolver_cls(self.engine)
+                        resolver.destroy()
 
                     error_count += len(resolver.errors)
 
             else:
                 for resolver_cls in self.resolver_sequence:
-                    resolver = resolver_cls(self.engine)
-                    resolver.resolve()
+                    with self.measure_elapsed_time(resolver_cls.__name__):
+                        resolver = resolver_cls(self.engine)
+                        resolver.resolve()
 
                     error_count += len(resolver.errors)
 
             self.engine.connection.close()
             self.output_engine_stats()
             self.output_engine_warnings()
+
+            if self.args.get("show_timers"):
+                self.output_app_timers()
 
             if self.args.get("show_sql"):
                 self.output_executed_ddl()

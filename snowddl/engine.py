@@ -1,5 +1,5 @@
 from logging import getLogger, NullHandler
-from threading import get_ident
+from threading import get_ident as threading_get_ident
 
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -96,7 +96,7 @@ class SnowDDLEngine:
             raise SnowDDLExecuteError(e, sql)
 
         if not is_meta:
-            self._executed_ddl_buffer[get_ident()].append(sql)
+            self._executed_ddl_buffer[threading_get_ident()].append(sql)
 
         return result
 
@@ -112,4 +112,4 @@ class SnowDDLEngine:
 
     def _suggest(self, sql, params):
         sql = self.format(sql, params)
-        self._suggested_ddl_buffer[get_ident()].append(sql)
+        self._suggested_ddl_buffer[threading_get_ident()].append(sql)
