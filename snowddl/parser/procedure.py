@@ -6,6 +6,7 @@ from snowddl.blueprint import (
     ArgumentWithType,
     NameWithType,
     DataType,
+    BaseDataType,
     StageWithPath,
     build_schema_object_ident,
 )
@@ -163,13 +164,16 @@ class ProcedureParser(AbstractParser):
             if isinstance(arg, str):
                 arg = {"type": arg}
 
-            arguments.append(
-                ArgumentWithType(
-                    name=Ident(arg_name),
-                    type=DataType(arg["type"]),
-                    default=str(arg["default"]) if "default" in arg else None,
-                )
+            arg_with_type = ArgumentWithType(
+                name=Ident(arg_name),
+                type=DataType(arg["type"]),
+                default=str(arg["default"]) if "default" in arg else None,
             )
+
+            if arg_with_type.type.base_type == BaseDataType.VECTOR:
+                raise NotImplemented("Argument data type VECTOR is currently not supported for PROCEDURE object type")
+
+            arguments.append(arg_with_type)
 
         return arguments
 

@@ -14,7 +14,7 @@ from snowddl.blueprint import (
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
-col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
+col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+|int|float)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
 
 # fmt: off
 external_table_json_schema = table_json_schema = {

@@ -501,6 +501,16 @@ class TableResolver(AbstractSchemaObjectResolver):
                                 "col_name": c.name,
                             },
                         )
+                    elif c.type.base_type == BaseDataType.VECTOR and snow_cols[col_name].type.base_type == BaseDataType.VECTOR:
+                        # Change to another VECTOR type requires intermediate ARRAY
+                        query.append_nl(
+                            "    {comma:r}{col_name:i}::ARRAY::{col_type:r} AS {col_name:i}",
+                            {
+                                "comma": "  " if idx == 0 else ", ",
+                                "col_name": c.name,
+                                "col_type": c.type,
+                            },
+                        )
                     else:
                         # Column has a different type, add type cast
                         query.append_nl(

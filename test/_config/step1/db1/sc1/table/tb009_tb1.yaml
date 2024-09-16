@@ -1,0 +1,5 @@
+columns:
+  vec1: VECTOR(INT,16)
+  vec2: VECTOR(INT,4096)
+  vec3: VECTOR(FLOAT,32)
+  vec4: VECTOR(FLOAT,4096)

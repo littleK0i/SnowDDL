@@ -94,6 +94,12 @@ class BaseDataType(Enum):
         "default_properties": [],
     }
 
+    VECTOR = {
+        "base_name": "VECTOR",
+        "number_of_properties": 2,
+        "default_properties": [],
+    }
+
     @property
     def number_of_properties(self) -> int:
         return self.value["number_of_properties"]
@@ -107,7 +113,7 @@ class BaseDataType(Enum):
 
 
 class DataType:
-    data_type_re = compile(r"^(?P<base_type>[a-z0-9_]+)(\((?P<val1>\d+)(,(?P<val2>\d+))?\))?$", IGNORECASE)
+    data_type_re = compile(r"^(?P<base_type>[a-z0-9_]+)(\((?P<val1>\d+)(,(?P<val2>\d+))?\)|\((?P<val1_vector>int|float),\s?(?P<val2_vector>\d+)\))?$", IGNORECASE)
 
     def __init__(self, data_type_str):
         m = self.data_type_re.match(data_type_str)
@@ -120,8 +126,12 @@ class DataType:
         except KeyError:
             raise ValueError(f"Invalid base data type [{m['base_type']}] in type string [{data_type_str}]")
 
-        self.val1 = int(m["val1"]) if self.base_type.number_of_properties >= 1 else None
-        self.val2 = int(m["val2"]) if self.base_type.number_of_properties >= 2 else None
+        if self.base_type == BaseDataType.VECTOR:
+            self.val1 = str(m["val1_vector"]).upper()
+            self.val2 = int(m["val2_vector"])
+        else:
+            self.val1 = int(m["val1"]) if self.base_type.number_of_properties >= 1 else None
+            self.val2 = int(m["val2"]) if self.base_type.number_of_properties >= 2 else None
 
     @staticmethod
     def from_base_type(base_type: BaseDataType):

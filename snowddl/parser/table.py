@@ -19,7 +19,7 @@ from snowddl.config import SnowDDLConfig
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.schema import database_json_schema, schema_json_schema
 
-col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
+col_type_re = compile(r"^(?P<type>[a-z0-9_]+(\((\d+|int|float)(,(\d+))?\))?)" r"(?P<not_null> NOT NULL)?$", IGNORECASE)
 
 
 # fmt: off
