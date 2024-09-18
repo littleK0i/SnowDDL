@@ -34,11 +34,10 @@ class BaseApp:
         self.args = self.init_arguments()
         self.logger = self.init_logger()
 
-        self.config_path = self.init_config_path()
-        self.settings = self.init_settings()
-
         with self.measure_elapsed_time("InitConfig"):
+            self.config_path = self.init_config_path()
             self.config = self.init_config()
+            self.settings = self.init_settings()
 
         with self.measure_elapsed_time("InitEngine"):
             self.engine = self.init_engine()
