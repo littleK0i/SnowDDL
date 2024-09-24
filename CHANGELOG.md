@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.0] - 2024-09-24
+
+- Introduced basic "elapsed timers" for performance debugging. Can be enabled with `--show-timers` CLI parameter.
+- Added basic support for `VECTOR` type. It can be used for `TABLE`, but not for `FUNCTION` or `PROCEDURE` due to issues with overloading.
+- Converting tables with auto-increment now recognizes `ORDER` and `NOORDER` flags.
+- Converting views without newline after `AS` is now possible.
+
 ## [0.31.2] - 2024-09-05
 
 - Implemented custom `__eq__` method to check `Grants`. It helps to take into account edge case for `INTEGRATION` object grants not returning specific integration type from `SHOW GRANTS` command.

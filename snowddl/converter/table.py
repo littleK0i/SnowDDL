@@ -9,8 +9,7 @@ from snowddl.parser.table import table_json_schema
 
 cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
 collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
-identity_re = compile(r"^IDENTITY START (\d+) INCREMENT (\d+)$")
-
+identity_re = compile(r"^IDENTITY START (\d+) INCREMENT (\d+) (ORDER|NOORDER)$")
 
 class TableConverter(AbstractSchemaObjectConverter):
     def get_object_type(self) -> ObjectType:
@@ -132,6 +131,7 @@ class TableConverter(AbstractSchemaObjectConverter):
                     identities[sequence_name] = {
                         "start": int(i.group(1)),
                         "interval": int(i.group(2)),
+                        "is_ordered": i.group(3) == "ORDER",
                     }
                 elif str(c["default"]).upper().endswith(".NEXTVAL"):
                     col["default_sequence"] = self._normalise_name_with_prefix(str(c["default"])[:-8])

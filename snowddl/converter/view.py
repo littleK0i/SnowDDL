@@ -8,7 +8,7 @@ from snowddl.converter._yaml import YamlLiteralStr, YamlIncludeStr
 from snowddl.parser.view import view_json_schema
 
 
-view_text_re = compile(r"^.*\sas\n(.*)$", DOTALL)
+view_text_re = compile(r"^.*\sas(\n|\s)+(.*)$", DOTALL)
 
 
 class ViewConverter(AbstractSchemaObjectConverter):
@@ -83,7 +83,7 @@ class ViewConverter(AbstractSchemaObjectConverter):
         )
 
         view_ddl = cur.fetchone()["VIEW_DDL"]
-        view_text = view_text_re.sub(r"\1", view_ddl).strip(" \n\r\t()")
+        view_text = view_text_re.sub(r"\2", view_ddl).rstrip(";").strip(" \n\r\t()")
 
         # Remove trailing spaces from each line to prevent output formatting issues
         # https://github.com/yaml/pyyaml/issues/411
