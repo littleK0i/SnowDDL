@@ -33,8 +33,10 @@ class UserResolver(AbstractResolver):
                 "default_warehouse": r["default_warehouse"] if r["default_warehouse"] else None,
                 "default_namespace": r["default_namespace"] if r["default_namespace"] else None,
                 "default_role": r["default_role"] if r["default_role"] else None,
+                "type": r["type"] if r["type"] else None,
                 "has_password": r["has_password"] == "true",
                 "has_rsa_public_key": r["has_rsa_public_key"] == "true",
+                "has_mfa": r["has_mfa"] == "true",
                 "comment": r["comment"] if r["comment"] else None,
             }
 
@@ -53,31 +55,48 @@ class UserResolver(AbstractResolver):
             },
         )
 
+        # Common properties
+        query.append_nl("LOGIN_NAME = {login_name}", {"login_name": bp.login_name})
+        query.append_nl("DISPLAY_NAME = {display_name}", {"display_name": bp.display_name})
+
+        if bp.disabled:
+            query.append_nl("DISABLED = {disabled:b}", {"disabled": bp.disabled})
+
+        if bp.first_name:
+            query.append_nl("FIRST_NAME = {first_name}", {"first_name": bp.first_name})
+
+        if bp.last_name:
+            query.append_nl("LAST_NAME = {last_name}", {"last_name": bp.last_name})
+
+        if bp.email:
+            query.append_nl("EMAIL = {email}", {"email": bp.email})
+
+        if bp.default_warehouse:
+            query.append_nl("DEFAULT_WAREHOUSE = {default_warehouse}", {"default_warehouse": bp.default_warehouse})
+
+        if bp.default_namespace:
+            query.append_nl("DEFAULT_NAMESPACE = {default_namespace}", {"default_namespace": bp.default_namespace})
+
+        query.append_nl("DEFAULT_ROLE = {default_role:i}", {"default_role": self._get_user_role_ident(bp)})
+
+        if bp.comment:
+            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
+
+        # Security properties
         if bp.password:
-            query.append_nl(
-                "PASSWORD = {password}",
-                {
-                    "password": bp.password,
-                },
-            )
+            query.append_nl("PASSWORD = {password}", {"password": bp.password})
 
         if bp.rsa_public_key:
-            query.append_nl(
-                "RSA_PUBLIC_KEY = {rsa_public_key}",
-                {
-                    "rsa_public_key": bp.rsa_public_key,
-                },
-            )
+            query.append_nl("RSA_PUBLIC_KEY = {rsa_public_key}", {"rsa_public_key": bp.rsa_public_key})
 
         if bp.rsa_public_key_2:
-            query.append_nl(
-                "RSA_PUBLIC_KEY_2 = {rsa_public_key_2}",
-                {
-                    "rsa_public_key_2": bp.rsa_public_key_2,
-                },
-            )
+            query.append_nl("RSA_PUBLIC_KEY_2 = {rsa_public_key_2}", {"rsa_public_key_2": bp.rsa_public_key_2})
 
-        query.append(self._build_common_properties(bp))
+        # User type
+        if bp.type:
+            query.append_nl("TYPE = {type}", {"type": bp.type})
+
+        # Object and session parameters
         query.append(self._build_common_parameters(bp))
 
         self.engine.execute_safe_ddl(query)
@@ -98,16 +117,19 @@ class UserResolver(AbstractResolver):
         if self._compare_properties(bp, row):
             result = ResolveResult.ALTER
 
+        if self._compare_password(bp, row):
+            result = ResolveResult.ALTER
+
         if self._compare_public_keys(bp, row):
+            result = ResolveResult.ALTER
+
+        if self._compare_type(bp, row):
             result = ResolveResult.ALTER
 
         if self._compare_parameters(bp):
             result = ResolveResult.ALTER
 
         if self._check_user_role_grant(bp):
-            result = ResolveResult.ALTER
-
-        if self.engine.settings.refresh_user_passwords and self._refresh_password(bp, row):
             result = ResolveResult.ALTER
 
         return result
@@ -121,25 +143,6 @@ class UserResolver(AbstractResolver):
         )
 
         return ResolveResult.DROP
-
-    def _build_common_properties(self, bp: UserBlueprint):
-        query = self.engine.query_builder()
-
-        query.append_nl("LOGIN_NAME = {login_name}", {"login_name": bp.login_name})
-        query.append_nl("DISPLAY_NAME = {display_name}", {"display_name": bp.display_name})
-
-        query.append_nl("DISABLED = {disabled:b}", {"disabled": bp.disabled})
-        query.append_nl("FIRST_NAME = {first_name}", {"first_name": bp.first_name})
-        query.append_nl("LAST_NAME = {last_name}", {"last_name": bp.last_name})
-        query.append_nl("EMAIL = {email}", {"email": bp.email})
-
-        query.append_nl("DEFAULT_WAREHOUSE = {default_warehouse}", {"default_warehouse": bp.default_warehouse})
-        query.append_nl("DEFAULT_NAMESPACE = {default_namespace}", {"default_namespace": bp.default_namespace})
-        query.append_nl("DEFAULT_ROLE = {default_role:i}", {"default_role": self._get_user_role_ident(bp)})
-
-        query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
-
-        return query
 
     def _build_common_parameters(self, bp: UserBlueprint):
         query = self.engine.query_builder()
@@ -156,26 +159,6 @@ class UserResolver(AbstractResolver):
         return query
 
     def _compare_properties(self, bp: UserBlueprint, row: dict):
-        if (
-            bp.login_name == row["login_name"]
-            and bp.display_name == row["display_name"]
-            and bp.first_name == row["first_name"]
-            and bp.last_name == row["last_name"]
-            and bp.email == row["email"]
-            and bp.disabled == row["disabled"]
-            and (
-                (bp.default_warehouse is None and row["default_warehouse"] is None)
-                or str(bp.default_warehouse) == row["default_warehouse"]
-            )
-            and (
-                (bp.default_namespace is None and row["default_namespace"] is None)
-                or str(bp.default_namespace) == row["default_namespace"]
-            )
-            and str(self._get_user_role_ident(bp)) == row["default_role"]
-            and bp.comment == row["comment"]
-        ):
-            return False
-
         query = self.engine.query_builder()
 
         query.append(
@@ -185,11 +168,73 @@ class UserResolver(AbstractResolver):
             },
         )
 
-        query.append(self._build_common_properties(bp))
+        if bp.login_name != row["login_name"]:
+            query.append_nl("LOGIN_NAME = {login_name}", {"login_name": bp.login_name})
 
-        self.engine.execute_safe_ddl(query)
+        if bp.display_name != row["display_name"]:
+            query.append_nl("DISPLAY_NAME = {display_name}", {"display_name": bp.display_name})
 
-        return True
+        if bp.disabled != row["disabled"]:
+            query.append_nl("DISABLED = {disabled:b}", {"disabled": bp.disabled})
+
+        if bp.first_name != row["first_name"]:
+            query.append_nl("FIRST_NAME = {first_name}", {"first_name": bp.first_name})
+
+        if bp.last_name != row["last_name"]:
+            query.append_nl("LAST_NAME = {last_name}", {"last_name": bp.last_name})
+
+        if bp.email != row["email"]:
+            query.append_nl("EMAIL = {email}", {"email": bp.email})
+
+        if bp.default_warehouse != row["default_warehouse"]:
+            query.append_nl("DEFAULT_WAREHOUSE = {default_warehouse}", {"default_warehouse": bp.default_warehouse})
+
+        if bp.default_namespace != row["default_namespace"]:
+            query.append_nl("DEFAULT_NAMESPACE = {default_namespace}", {"default_namespace": bp.default_namespace})
+
+        if str(self._get_user_role_ident(bp)) != row["default_role"]:
+            query.append_nl("DEFAULT_ROLE = {default_role:i}", {"default_role": self._get_user_role_ident(bp)})
+
+        if bp.comment != row["comment"]:
+            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
+
+        if query.fragment_count() > 1:
+            self.engine.execute_safe_ddl(query)
+            return True
+
+        return False
+
+    def _compare_password(self, bp: UserBlueprint, row: dict):
+        if bp.password and (not row["has_password"] or self.engine.settings.refresh_user_passwords):
+            try:
+                self.engine.execute_safe_ddl(
+                    "ALTER USER {name:i} SET PASSWORD = {password}",
+                    {
+                        "name": bp.full_name,
+                        "password": bp.password,
+                    },
+                )
+            except SnowDDLExecuteError as e:
+                # Password rejected due to 'PRIOR_USE'
+                # Not an error, skip such user
+                if e.snow_exc.errno == 3002:
+                    return False
+                else:
+                    raise
+
+            return True
+
+        if not bp.password and row["has_password"]:
+            self.engine.execute_safe_ddl(
+                "ALTER USER {name:i} UNSET PASSWORD",
+                {
+                    "name": bp.full_name,
+                },
+            )
+
+            return True
+
+        return False
 
     def _compare_public_keys(self, bp: UserBlueprint, row: dict):
         if not bp.rsa_public_key and not bp.rsa_public_key_2 and not row["has_rsa_public_key"]:
@@ -215,16 +260,36 @@ class UserResolver(AbstractResolver):
         if bp.rsa_public_key == existing_public_key and bp.rsa_public_key_2 == existing_public_key_2:
             return False
 
-        self.engine.execute_safe_ddl(
-            "ALTER USER {name:i} SET rsa_public_key = {rsa_public_key}, rsa_public_key_2={rsa_public_key_2}",
+        query = self.engine.query_builder()
+
+        query.append(
+            "ALTER USER {name:i} SET",
             {
                 "name": bp.full_name,
-                "rsa_public_key": bp.rsa_public_key,
-                "rsa_public_key_2": bp.rsa_public_key_2,
             },
         )
 
+        query.append_nl("RSA_PUBLIC_KEY = {rsa_public_key}", {"rsa_public_key": bp.rsa_public_key})
+        query.append_nl("RSA_PUBLIC_KEY_2 = {rsa_public_key_2}", {"rsa_public_key_2": bp.rsa_public_key_2})
+
+        self.engine.execute_safe_ddl(query)
+
         return True
+
+    def _compare_type(self, bp: UserBlueprint, row: dict):
+        if bp.type != row["type"]:
+            # Type is processed separately, since changing TYPE property impacts visibility of other properties
+            self.engine.execute_safe_ddl(
+                "ALTER USER {name:i} SET TYPE = {type}",
+                {
+                    "name": bp.full_name,
+                    "type": bp.type,
+                },
+            )
+
+            return True
+
+        return False
 
     def _compare_parameters(self, bp: UserBlueprint):
         existing_params = self._get_existing_user_parameters(bp)
@@ -290,38 +355,6 @@ class UserResolver(AbstractResolver):
         )
 
         return True
-
-    def _refresh_password(self, bp: UserBlueprint, row: dict):
-        if bp.password:
-            try:
-                self.engine.execute_safe_ddl(
-                    "ALTER USER {name:i} SET PASSWORD = {password}",
-                    {
-                        "name": bp.full_name,
-                        "password": bp.password,
-                    },
-                )
-            except SnowDDLExecuteError as e:
-                # Password rejected due to 'PRIOR_USE'
-                # Not an error, skip such user
-                if e.snow_exc.errno == 3002:
-                    return False
-                else:
-                    raise
-
-            return True
-
-        if row["has_password"]:
-            self.engine.execute_safe_ddl(
-                "ALTER USER {name:i} UNSET PASSWORD",
-                {
-                    "name": bp.full_name,
-                },
-            )
-
-            return True
-
-        return False
 
     def _get_user_role_ident(self, bp: UserBlueprint):
         return build_role_ident(self.config.env_prefix, bp.full_name, self.config.USER_ROLE_SUFFIX)

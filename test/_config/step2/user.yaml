@@ -12,3 +12,8 @@ us001_us1:
   business_roles:
     - us001_br2
   comment: abc
+
+us002_us1:
+  disabled: true
+  type: legacy_service
+  password: YQYAtgqkbS5h

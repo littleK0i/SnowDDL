@@ -394,6 +394,7 @@ class UserBlueprint(AbstractBlueprint):
     password: Optional[str] = None
     rsa_public_key: Optional[str] = None
     rsa_public_key_2: Optional[str] = None
+    type: Optional[str] = None
     default_warehouse: Optional[AccountObjectIdent] = None
     default_namespace: Optional[Union[DatabaseIdent, SchemaIdent]] = None
     session_params: Optional[Dict[str, Union[bool, float, int, str]]] = None

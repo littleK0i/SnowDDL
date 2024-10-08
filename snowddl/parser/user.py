@@ -35,6 +35,9 @@ user_json_schema = {
             "rsa_public_key_2": {
                 "type": "string"
             },
+            "type": {
+                "type": "string",
+            },
             "default_warehouse": {
                 "type": "string"
             },
@@ -106,6 +109,7 @@ class UserParser(AbstractParser):
                 password=user.get("password"),
                 rsa_public_key=user.get("rsa_public_key").replace(" ", "") if user.get("rsa_public_key") else None,
                 rsa_public_key_2=user.get("rsa_public_key_2").replace(" ", "") if user.get("rsa_public_key_2") else None,
+                type=str(user.get("type")).upper() if user.get("type") else None,
                 default_warehouse=AccountObjectIdent(self.env_prefix, default_warehouse) if default_warehouse else None,
                 default_namespace=build_default_namespace_ident(self.env_prefix, user.get("default_namespace"))
                 if user.get("default_namespace")
@@ -115,6 +119,7 @@ class UserParser(AbstractParser):
                 comment=user.get("comment"),
             )
 
+            self.validate_user_type_properties(bp)
             self.config.add_blueprint(bp)
 
     def get_default_warehouse_map(self):
@@ -129,3 +134,15 @@ class UserParser(AbstractParser):
             default_warehouse_map[business_role_name] = business_role["warehouse_usage"][0]
 
         return default_warehouse_map
+
+    def validate_user_type_properties(self, bp: UserBlueprint):
+        if bp.type in ("SERVICE", "LEGACY_SERVICE"):
+            if bp.first_name:
+                raise ValueError(f"Property [FIRST_NAME] is not allowed for user [{bp.full_name}] with type [{bp.type}]")
+
+            if bp.last_name:
+                raise ValueError(f"Property [LAST_NAME] is not allowed for user [{bp.full_name}] with type [{bp.type}]")
+
+        if bp.type == "SERVICE":
+            if bp.password:
+                raise ValueError(f"Property [PASSWORD] is not allowed for user [{bp.full_name}] with type [{bp.type}]")

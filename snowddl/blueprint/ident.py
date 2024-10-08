@@ -31,10 +31,16 @@ class AbstractIdent(ABC):
         return f"<{self.__class__.__name__}={str(self)}>"
 
     def __eq__(self, other):
-        if not isinstance(other, AbstractIdent):
-            raise NotImplementedError
+        if isinstance(other, AbstractIdent):
+            return str(self) == str(other)
 
-        return str(self) == str(other)
+        if isinstance(other, str):
+            return str(self) == other
+
+        if other is None:
+            return False
+
+        raise NotImplementedError
 
     def _validate_part(self, val):
         val = str(val)

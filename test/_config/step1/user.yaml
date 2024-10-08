@@ -28,3 +28,11 @@ us001_us1:
   default_namespace: db1.sc1
   business_roles:
     - us001_br1
+
+us002_us1:
+  first_name: Jane
+  last_name: Doe
+  email: jane@example.com
+  disabled: true
+  type: person
+  password: YQYAtgqkbS5h
