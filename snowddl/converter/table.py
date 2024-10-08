@@ -138,6 +138,9 @@ class TableConverter(AbstractSchemaObjectConverter):
                 else:
                     col["default"] = str(c["default"])
 
+            if c["expression"]:
+                col["expression"] = c["expression"]
+
             if c["comment"]:
                 col["comment"] = c["comment"]
 
