@@ -1,3 +1,6 @@
 text: |-
   SELECT * FROM ap001_tb1
 
+aggregation_policy:
+  policy_name: ap001_ap1
+  columns: [id]

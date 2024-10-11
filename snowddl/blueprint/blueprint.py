@@ -31,6 +31,7 @@ from .reference import (
     ForeignKeyReference,
     IndexReference,
     MaskingPolicyReference,
+    NetworkPolicyReference,
     ProjectionPolicyReference,
     RowAccessPolicyReference,
     TagReference,
@@ -66,7 +67,7 @@ class AccountParameterBlueprint(AbstractBlueprint):
 
 class AggregationPolicyBlueprint(SchemaObjectBlueprint):
     body: str
-    references: List[AggregationPolicyReference]
+    references: List[AggregationPolicyReference] = []
 
 
 class AlertBlueprint(SchemaObjectBlueprint):
@@ -202,13 +203,16 @@ class MaskingPolicyBlueprint(SchemaObjectBlueprint):
     returns: DataType
     body: str
     exempt_other_policies: bool = False
-    references: List[MaskingPolicyReference]
+    references: List[MaskingPolicyReference] = []
 
 
 class NetworkPolicyBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
+    allowed_network_rule_list: List[SchemaObjectIdent] = []
+    blocked_network_rule_list: List[SchemaObjectIdent] = []
     allowed_ip_list: List[str] = []
     blocked_ip_list: List[str] = []
+    references: List[NetworkPolicyReference] = []
 
 
 class NetworkRuleBlueprint(SchemaObjectBlueprint):
@@ -264,7 +268,7 @@ class ProcedureBlueprint(SchemaObjectBlueprint):
 
 class ProjectionPolicyBlueprint(SchemaObjectBlueprint):
     body: str
-    references: List[ProjectionPolicyReference]
+    references: List[ProjectionPolicyReference] = []
 
 
 class ResourceMonitorBlueprint(AbstractBlueprint):
@@ -277,7 +281,7 @@ class ResourceMonitorBlueprint(AbstractBlueprint):
 class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
     arguments: List[NameWithType]
     body: str
-    references: List[RowAccessPolicyReference]
+    references: List[RowAccessPolicyReference] = []
 
 
 class SchemaBlueprint(AbstractBlueprint):

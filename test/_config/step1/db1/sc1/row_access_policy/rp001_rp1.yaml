@@ -4,13 +4,13 @@ arguments:
 body: |-
   name LIKE '%John%'
 
-references:
-  - object_type: TABLE
-    object_name: rp001_tb1
-    columns: [name]
-
-  - object_type: VIEW
-    object_name: rp001_vw1
-    columns: [name]
+#references:
+#  - object_type: TABLE
+#    object_name: rp001_tb1
+#    columns: [name]
+#
+#  - object_type: VIEW
+#    object_name: rp001_vw1
+#    columns: [name]
 
 comment: abc

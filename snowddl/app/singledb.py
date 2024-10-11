@@ -14,13 +14,14 @@ from snowddl.blueprint import (
     SchemaObjectBlueprint,
 )
 from snowddl.config import SnowDDLConfig
-from snowddl.parser import singledb_parser_sequence
-from snowddl.resolver import singledb_resolver_sequence
+from snowddl.parser import singledb_parse_sequence
+from snowddl.resolver import singledb_resolve_sequence, singledb_destroy_sequence
 
 
 class SingleDbApp(BaseApp):
-    parser_sequence = singledb_parser_sequence
-    resolver_sequence = singledb_resolver_sequence
+    parse_sequence = singledb_parse_sequence
+    resolve_sequence = singledb_resolve_sequence
+    destroy_sequence = singledb_destroy_sequence
 
     def __init__(self):
         self.config_db: Optional[DatabaseIdent] = None
@@ -286,7 +287,7 @@ class SingleDbApp(BaseApp):
             self.output_engine_context()
 
             if self.args.get("action") == "destroy":
-                for resolver_cls in self.resolver_sequence:
+                for resolver_cls in self.destroy_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
                         resolver = resolver_cls(self.engine)
                         resolver.destroy()
@@ -294,7 +295,7 @@ class SingleDbApp(BaseApp):
                     error_count += len(resolver.errors)
 
             else:
-                for resolver_cls in self.resolver_sequence:
+                for resolver_cls in self.resolve_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
                         resolver = resolver_cls(self.engine)
                         resolver.resolve()

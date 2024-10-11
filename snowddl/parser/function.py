@@ -178,7 +178,7 @@ class FunctionParser(AbstractParser):
             )
 
             if arg_with_type.type.base_type == BaseDataType.VECTOR:
-                raise NotImplemented("Argument data type VECTOR is currently not supported for FUNCTION object type")
+                raise NotImplementedError("Argument data type VECTOR is currently not supported for FUNCTION object type")
 
             arguments.append(arg_with_type)
 

@@ -3,13 +3,13 @@ body: |-
        ELSE AGGREGATION_CONSTRAINT(MIN_ROW_COUNT => 5, MIN_ENTITY_COUNT => 2)
   END
 
-references:
-  - object_type: TABLE
-    object_name: ap001_tb1
-    columns: [id]
-
-  - object_type: VIEW
-    object_name: ap001_vw1
-    columns: [id]
+#references:
+#  - object_type: TABLE
+#    object_name: ap001_tb1
+#    columns: [id]
+#
+#  - object_type: VIEW
+#    object_name: ap001_vw1
+#    columns: [id]
 
 comment: cde

@@ -3,17 +3,17 @@ body: |-
        ELSE PROJECTION_CONSTRAINT(ALLOW => false)
   END
 
-references:
-  - object_type: TABLE
-    object_name: pp001_tb1
-    column: id
-
-  - object_type: TABLE
-    object_name: pp001_tb1
-    column: name
-
-  - object_type: VIEW
-    object_name: pp001_vw1
-    column: id
+#references:
+#  - object_type: TABLE
+#    object_name: pp001_tb1
+#    column: id
+#
+#  - object_type: TABLE
+#    object_name: pp001_tb1
+#    column: name
+#
+#  - object_type: VIEW
+#    object_name: pp001_vw1
+#    column: id
 
 comment: abc

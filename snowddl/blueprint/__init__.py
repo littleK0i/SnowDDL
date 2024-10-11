@@ -88,10 +88,12 @@ from .ident_builder import (
 from .object_type import ObjectType
 from .permission_model import PermissionModel, PermissionModelCreateGrant, PermissionModelFutureGrant, PermissionModelRuleset
 from .reference import (
+    AbstractPolicyReference,
     AggregationPolicyReference,
     ForeignKeyReference,
     IndexReference,
     MaskingPolicyReference,
+    NetworkPolicyReference,
     ProjectionPolicyReference,
     RowAccessPolicyReference,
     TagReference,

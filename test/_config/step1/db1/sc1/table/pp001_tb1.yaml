@@ -1,3 +1,10 @@
 columns:
   id: NUMBER(38,0)
   name: VARCHAR(255)
+
+projection_policies:
+  - policy_name: pp001_pp1
+    column: id
+
+  - policy_name: pp001_pp1
+    column: name

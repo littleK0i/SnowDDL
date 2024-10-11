@@ -1,11 +1,16 @@
+from abc import ABC
 from typing import List, Optional
 
-from .ident import Ident, SchemaObjectIdent
+from .ident import AbstractIdent, Ident, SchemaObjectIdent
 from .object_type import ObjectType
 from ..model import BaseModelWithConfig
 
 
-class AggregationPolicyReference(BaseModelWithConfig):
+class AbstractPolicyReference(BaseModelWithConfig, ABC):
+    pass
+
+
+class AggregationPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
     object_name: SchemaObjectIdent
     columns: List[Ident]
@@ -22,19 +27,24 @@ class IndexReference(BaseModelWithConfig):
     include: Optional[List[Ident]]
 
 
-class MaskingPolicyReference(BaseModelWithConfig):
+class MaskingPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
     object_name: SchemaObjectIdent
     columns: List[Ident]
 
 
-class ProjectionPolicyReference(BaseModelWithConfig):
+class NetworkPolicyReference(AbstractPolicyReference):
+    object_type: ObjectType
+    object_name: Optional[AbstractIdent]
+
+
+class ProjectionPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
     object_name: SchemaObjectIdent
     column: Ident
 
 
-class RowAccessPolicyReference(BaseModelWithConfig):
+class RowAccessPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
     object_name: SchemaObjectIdent
     columns: List[Ident]

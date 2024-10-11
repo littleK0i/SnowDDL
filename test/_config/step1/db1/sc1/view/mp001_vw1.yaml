@@ -1,2 +1,6 @@
 text: |-
   SELECT * FROM mp001_tb1
+
+masking_policies:
+  - policy_name: mp001_mp1
+    columns: [name, id]

@@ -1,2 +1,6 @@
 text: |-
   SELECT * FROM pp001_tb1
+
+projection_policies:
+  - policy_name: pp001_pp1
+    column: id

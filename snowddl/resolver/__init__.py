@@ -47,9 +47,8 @@ from .warehouse import WarehouseResolver
 from .warehouse_role import WarehouseRoleResolver
 
 
-default_resolver_sequence = [
+default_resolve_sequence = [
     AccountParameterResolver,
-    NetworkPolicyResolver,
     ResourceMonitorResolver,
     WarehouseResolver,
     WarehouseRoleResolver,
@@ -82,20 +81,46 @@ default_resolver_sequence = [
     ViewResolver,
     PipeResolver,
     TaskResolver,
-    AggregationPolicyResolver,
-    MaskingPolicyResolver,
-    ProjectionPolicyResolver,
-    RowAccessPolicyResolver,
+    AlertResolver,
+    # --
     OutboundShareResolver,
     TechnicalRoleResolver,
     BusinessRoleResolver,
     UserRoleResolver,
     UserResolver,
-    AlertResolver,
+    # --
+    AggregationPolicyResolver,
+    MaskingPolicyResolver,
+    NetworkPolicyResolver,
+    ProjectionPolicyResolver,
+    RowAccessPolicyResolver,
 ]
 
 
-singledb_resolver_sequence = [
+default_destroy_sequence = [
+    AccountParameterResolver,
+    ResourceMonitorResolver,
+    WarehouseResolver,
+    WarehouseRoleResolver,
+    # --
+    NetworkPolicyResolver,
+    ExternalAccessIntegrationResolver,
+    # --
+    DatabaseResolver,
+    SchemaResolver,
+    ShareRoleResolver,
+    DatabaseRoleResolver,
+    SchemaRoleResolver,
+    # --
+    OutboundShareResolver,
+    TechnicalRoleResolver,
+    BusinessRoleResolver,
+    UserRoleResolver,
+    UserResolver,
+]
+
+
+singledb_resolve_sequence = [
     SchemaResolver,
     SecretResolver,
     NetworkRuleResolver,
@@ -120,9 +145,15 @@ singledb_resolver_sequence = [
     ViewResolver,
     PipeResolver,
     TaskResolver,
+    AlertResolver,
+    # --
     AggregationPolicyResolver,
     MaskingPolicyResolver,
     ProjectionPolicyResolver,
     RowAccessPolicyResolver,
-    AlertResolver,
+]
+
+
+singledb_destroy_sequence = [
+    SchemaResolver,
 ]

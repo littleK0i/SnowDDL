@@ -36,3 +36,7 @@ us002_us1:
   disabled: true
   type: person
   password: YQYAtgqkbS5h
+
+np001_us1:
+  disabled: true
+  network_policy: np001_np1

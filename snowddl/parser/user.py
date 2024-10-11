@@ -1,4 +1,12 @@
-from snowddl.blueprint import UserBlueprint, AccountObjectIdent, build_role_ident, build_default_namespace_ident
+from snowddl.blueprint import (
+    UserBlueprint,
+    AccountObjectIdent,
+    NetworkPolicyBlueprint,
+    NetworkPolicyReference,
+    ObjectType,
+    build_role_ident,
+    build_default_namespace_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema
 
@@ -59,7 +67,10 @@ user_json_schema = {
             },
             "comment": {
                 "type": "string"
-            }
+            },
+            "network_policy": {
+                "type": "string",
+            },
         },
         "additionalProperties": False
     }
@@ -121,6 +132,22 @@ class UserParser(AbstractParser):
 
             self.validate_user_type_properties(bp)
             self.config.add_blueprint(bp)
+
+            # Network policy
+            if user.get("network_policy"):
+                policy_name = AccountObjectIdent(self.env_prefix, user.get("network_policy"))
+
+                ref = NetworkPolicyReference(
+                    object_type=ObjectType.USER,
+                    object_name=full_user_name,
+                )
+
+                self.config.add_policy_reference(NetworkPolicyBlueprint, policy_name, ref)
+
+            if "NETWORK_POLICY" in bp.session_params:
+                raise ValueError(
+                    "NETWORK_POLICY in session_params of USER is no longer supported. Please use dedicated [network_policy] parameter instead. Read more: https://docs.snowddl.com/breaking-changes-log/0.33.0-october-2024"
+                )
 
     def get_default_warehouse_map(self):
         default_warehouse_map = {}

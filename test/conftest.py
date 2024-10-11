@@ -113,6 +113,22 @@ class Helper:
 
         return result
 
+    def get_network_policy_refs(self, policy_name):
+        cur = self.execute(
+            "SELECT * FROM TABLE(snowflake.information_schema.policy_references(policy_name => {policy_name}, policy_kind => {policy_kind}))",
+            {
+                "policy_name": AccountObjectIdent(self.env_prefix, policy_name),
+                "policy_kind": "NETWORK_POLICY",
+            },
+        )
+
+        refs = []
+
+        for r in cur:
+            refs.append(r)
+
+        return refs
+
     def show_alert(self, database, schema, name):
         cur = self.execute(
             "SHOW ALERTS LIKE {alert_name:lf} IN SCHEMA {schema_name:i}",

@@ -113,7 +113,10 @@ class BaseDataType(Enum):
 
 
 class DataType:
-    data_type_re = compile(r"^(?P<base_type>[a-z0-9_]+)(\((?P<val1>\d+)(,(?P<val2>\d+))?\)|\((?P<val1_vector>int|float),\s?(?P<val2_vector>\d+)\))?$", IGNORECASE)
+    data_type_re = compile(
+        r"^(?P<base_type>[a-z0-9_]+)(\((?P<val1>\d+)(,(?P<val2>\d+))?\)|\((?P<val1_vector>int|float),\s?(?P<val2_vector>\d+)\))?$",
+        IGNORECASE,
+    )
 
     def __init__(self, data_type_str):
         m = self.data_type_re.match(data_type_str)

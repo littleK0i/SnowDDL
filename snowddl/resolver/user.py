@@ -370,6 +370,10 @@ class UserResolver(AbstractResolver):
         )
 
         for r in cur:
+            # Network policy is managed via POLICY_REFERENCES in NetworkPolicyResolver
+            if r["key"] == "NETWORK_POLICY":
+                continue
+
             existing_params[r["key"]] = r
 
         return existing_params

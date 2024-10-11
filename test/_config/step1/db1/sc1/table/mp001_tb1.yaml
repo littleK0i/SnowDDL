@@ -1,3 +1,7 @@
 columns:
   id: NUMBER(38,0)
   name: VARCHAR(255)
+
+masking_policies:
+  - policy_name: mp001_mp1
+    columns: [name, id]

@@ -1,3 +1,7 @@
 columns:
   id: NUMBER(38,0)
   name: VARCHAR(255)
+
+aggregation_policy:
+  policy_name: ap001_ap1
+  columns: [id]

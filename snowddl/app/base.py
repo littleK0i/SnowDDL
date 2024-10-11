@@ -14,8 +14,8 @@ from traceback import TracebackException
 from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig
 from snowddl.engine import SnowDDLEngine
-from snowddl.parser import default_parser_sequence, PermissionModelParser, PlaceholderParser
-from snowddl.resolver import default_resolver_sequence
+from snowddl.parser import default_parse_sequence, PermissionModelParser, PlaceholderParser
+from snowddl.resolver import default_resolve_sequence, default_destroy_sequence
 from snowddl.settings import SnowDDLSettings
 from snowddl.version import __version__
 
@@ -24,8 +24,9 @@ class BaseApp:
     application_name = "SnowDDL"
     application_version = __version__
 
-    parser_sequence = default_parser_sequence
-    resolver_sequence = default_resolver_sequence
+    parse_sequence = default_parse_sequence
+    resolve_sequence = default_resolve_sequence
+    destroy_sequence = default_destroy_sequence
 
     def __init__(self):
         self.elapsed_timers = {}
@@ -167,7 +168,13 @@ class BaseApp:
             action="store_true",
         )
         parser.add_argument(
-            "--apply-all-policy", help="Additionally apply changes to all types of POLICIES", default=False, action="store_true"
+            "--apply-all-policy", help="Additionally apply changes for all types of policies", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--apply-account-level-policy",
+            help="Additionally apply changes for ACCOUNT-level policies",
+            default=False,
+            action="store_true",
         )
         parser.add_argument(
             "--apply-aggregation-policy",
@@ -322,7 +329,7 @@ class BaseApp:
             exit(1)
 
         # Blueprints
-        for parser_cls in self.parser_sequence:
+        for parser_cls in self.parse_sequence:
             parser = parser_cls(config, self.config_path)
             parser.load_blueprints()
 
@@ -361,11 +368,15 @@ class BaseApp:
                 settings.execute_replace_table = True
 
             if self.args.get("apply_all_policy"):
+                settings.execute_account_level_policy = True
                 settings.execute_aggregation_policy = True
                 settings.execute_masking_policy = True
                 settings.execute_projection_policy = True
                 settings.execute_row_access_policy = True
                 settings.execute_network_policy = True
+
+            if self.args.get("apply_account_level_policy"):
+                settings.execute_account_level_policy = True
 
             if self.args.get("apply_aggregation_policy"):
                 settings.execute_aggregation_policy = True
@@ -494,7 +505,7 @@ class BaseApp:
                 if not self.args.get("env_prefix") and not self.args.get("destroy_without_prefix"):
                     raise ValueError("Argument --env-prefix is required for [destroy] action")
 
-                for resolver_cls in self.resolver_sequence:
+                for resolver_cls in self.destroy_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
                         resolver = resolver_cls(self.engine)
                         resolver.destroy()
@@ -503,7 +514,7 @@ class BaseApp:
 
                 self.engine.context.destroy_role_with_prefix()
             else:
-                for resolver_cls in self.resolver_sequence:
+                for resolver_cls in self.resolve_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
                         resolver = resolver_cls(self.engine)
                         resolver.resolve()

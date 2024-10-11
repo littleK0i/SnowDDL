@@ -1,4 +1,4 @@
-from snowddl.blueprint import NetworkRuleBlueprint
+from snowddl.blueprint import NetworkRuleBlueprint, SchemaObjectIdent, Ident
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 
@@ -60,43 +60,57 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
         )
 
         desc = cur.fetchone()
-        is_replace_required = False
 
-        if (
-            bp.type != row["type"]
-            or bp.mode != row["mode"]
-            or bp.value_list != desc["value_list"].split(",")
-            or bp.comment != row["comment"]
-        ):
-            is_replace_required = True
+        if bp.type != row["type"] or bp.mode != row["mode"]:
+            # Changing TYPE or MODE is only possible via full REPLACE
+            self._drop_network_rule_refs(bp.full_name)
 
-        if not is_replace_required:
-            return ResolveResult.NOCHANGE
+            common_query = self._build_common_network_rule_sql(bp)
+            replace_query = self.engine.query_builder()
 
-        common_query = self._build_common_network_rule_sql(bp)
-        replace_query = self.engine.query_builder()
+            replace_query.append(
+                "CREATE OR REPLACE NETWORK RULE {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
-        replace_query.append(
-            "CREATE OR REPLACE NETWORK RULE {full_name:i}",
-            {
-                "full_name": bp.full_name,
-            },
-        )
+            replace_query.append(common_query)
+            self.engine.execute_unsafe_ddl(replace_query)
 
-        replace_query.append(common_query)
-        self.engine.execute_safe_ddl(replace_query)
+            return ResolveResult.REPLACE
 
-        return ResolveResult.REPLACE
+        result = ResolveResult.NOCHANGE
+
+        if bp.value_list != desc["value_list"].split(","):
+            self.engine.execute_safe_ddl(
+                "ALTER NETWORK RULE {full_name:i} SET VALUE_LIST = ({value_list})",
+                {
+                    "full_name": bp.full_name,
+                    "value_list": bp.value_list,
+                },
+            )
+
+            result = ResolveResult.ALTER
+
+        if bp.comment != row["comment"]:
+            self.engine.execute_safe_ddl(
+                "ALTER NETWORK RULE {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
+
+            result = ResolveResult.ALTER
+
+        return result
 
     def drop_object(self, row: dict):
-        self.engine.execute_safe_ddl(
-            "DROP NETWORK RULE {database:i}.{schema:i}.{name:i}",
-            {
-                "database": row["database"],
-                "schema": row["schema"],
-                "name": row["name"],
-            },
-        )
+        network_rule_name = SchemaObjectIdent("", row["database"], row["schema"], row["name"])
+
+        self._drop_network_rule_refs(network_rule_name)
+        self._drop_network_rule(network_rule_name)
 
         return ResolveResult.DROP
 
@@ -133,3 +147,41 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
             )
 
         return query
+
+    def _drop_network_rule(self, network_rule_name: SchemaObjectIdent):
+        self.engine.execute_unsafe_ddl(
+            "DROP NETWORK RULE {full_name:i}",
+            {
+                "full_name": network_rule_name,
+            },
+        )
+
+    def _drop_network_rule_refs(self, network_rule_name: SchemaObjectIdent):
+        cur = self.engine.execute_meta(
+            "SELECT * FROM TABLE(snowflake.information_schema.network_rule_references(network_rule_name => {network_rule_name}))",
+            {
+                "network_rule_name": network_rule_name,
+            },
+        )
+
+        for r in cur:
+            if r["CONTAINER_TYPE"] == "NETWORK_POLICY":
+                self.engine.execute_unsafe_ddl(
+                    "-- Required to drop NETWORK RULE\n"
+                    "ALTER NETWORK POLICY {policy_name:i} REMOVE {list_type:r} = ({network_rule_name:i})",
+                    {
+                        "policy_name": Ident(r["CONTAINER_NAME"]),
+                        "list_type": "ALLOWED_NETWORK_RULE_LIST" if r["ACTION_TYPE"] == "ALLOW" else "BLOCKED_NETWORK_RULE_LIST",
+                        "network_rule_name": network_rule_name,
+                    },
+                )
+            elif r["CONTAINER_TYPE"] == "INTEGRATION":
+                # Since INTEGRATION does not support easy removal of individual rules, we have to reset all rules completely (for now)
+                self.engine.execute_unsafe_ddl(
+                    "-- Required to drop NETWORK RULE\n"
+                    "ALTER EXTERNAL ACCESS INTEGRATION {integration_name:i} UNSET ALLOWED_NETWORK_RULES",
+                    {
+                        "integration_name": Ident(r["CONTAINER_NAME"]),
+                        "network_rule_name": network_rule_name,
+                    },
+                )

@@ -9,13 +9,13 @@ body: |-
        ELSE '*****'
   END
 
-references:
-  - object_type: TABLE
-    object_name: mp001_tb1
-    columns: [name, id]
-
-  - object_type: VIEW
-    object_name: mp001_vw1
-    columns: [name, id]
+#references:
+#  - object_type: TABLE
+#    object_name: mp001_tb1
+#    columns: [name, id]
+#
+#  - object_type: VIEW
+#    object_name: mp001_vw1
+#    columns: [name, id]
 
 comment: abc

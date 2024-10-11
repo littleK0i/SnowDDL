@@ -8,3 +8,9 @@ np001_np1:
 np001_np2:
   allowed_ip_list:
     - 0.0.0.0/0
+
+np002_np1:
+  allowed_network_rule_list:
+    - db1.sc1.np002_nr1
+  blocked_network_rule_list:
+    - db1.sc1.np002_nr3

@@ -24,4 +24,9 @@ class AccountParameterParser(AbstractParser):
                 comment=None,
             )
 
+            if str(bp.full_name) == "NETWORK_POLICY":
+                raise ValueError(
+                    "NETWORK_POLICY in account_params.yaml is no longer supported. Please use account_policy.yaml instead. Read more: https://docs.snowddl.com/breaking-changes-log/0.33.0-october-2024"
+                )
+
             self.config.add_blueprint(bp)

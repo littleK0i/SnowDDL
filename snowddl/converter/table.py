@@ -11,6 +11,7 @@ cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
 collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
 identity_re = compile(r"^IDENTITY START (\d+) INCREMENT (\d+) (ORDER|NOORDER)$")
 
+
 class TableConverter(AbstractSchemaObjectConverter):
     def get_object_type(self) -> ObjectType:
         return ObjectType.TABLE

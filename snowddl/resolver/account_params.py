@@ -15,6 +15,10 @@ class AccountParameterResolver(AbstractResolver):
         cur = self.engine.execute_meta("SHOW PARAMETERS FOR ACCOUNT")
 
         for r in cur:
+            # Network policy for ACCOUNT is managed via POLICY_REFERENCES in NetworkPolicyResolver
+            if r["key"] == "NETWORK_POLICY":
+                continue
+
             existing_objects[r["key"]] = {
                 "key": r["key"],
                 "value": r["value"],
