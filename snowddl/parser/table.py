@@ -308,17 +308,17 @@ class TableParser(AbstractParser):
         # Constraints
 
         if f.params.get("primary_key"):
-            bp = PrimaryKeyBlueprint(
+            key_bp = PrimaryKeyBlueprint(
                 full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 table_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
                 columns=[Ident(c) for c in f.params.get("primary_key")],
                 comment=None,
             )
 
-            self.config.add_blueprint(bp)
+            self.config.add_blueprint(key_bp)
 
         for columns in f.params.get("unique_keys", []):
-            bp = UniqueKeyBlueprint(
+            key_bp = UniqueKeyBlueprint(
                 full_name=TableConstraintIdent(
                     self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in columns]
                 ),
@@ -327,10 +327,10 @@ class TableParser(AbstractParser):
                 comment=None,
             )
 
-            self.config.add_blueprint(bp)
+            self.config.add_blueprint(key_bp)
 
         for fk in f.params.get("foreign_keys", []):
-            bp = ForeignKeyBlueprint(
+            key_bp = ForeignKeyBlueprint(
                 full_name=TableConstraintIdent(
                     self.env_prefix, f.database, f.schema, f.name, columns=[Ident(c) for c in fk["columns"]]
                 ),
@@ -341,7 +341,7 @@ class TableParser(AbstractParser):
                 comment=None,
             )
 
-            self.config.add_blueprint(bp)
+            self.config.add_blueprint(key_bp)
 
         # Policies
 
