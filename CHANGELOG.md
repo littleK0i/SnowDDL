@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.33.0] - 2024-10-11
+
+This is a major update to policies, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.33.0-october-2024).
+
+- Introduced `ACCOUNT_POLICY` config to set ACCOUNT-level policies. Currently only `NETWORK_POLICY` is supported, but more policy types will be added in the future.
+- Reworked `NETWORK_POLICY` object type. Now it behaves similarly to other policies.
+- Setting `NETWORK_POLICY` on `ACCOUNT` now requires `account_policy.yaml`. Setting it via `account_params.yaml` no longer works.
+- Setting `NETWORK_POLICY` on `USER` now requires explicit `network_policy` parameter. Setting it via `session_params` no longer works.
+- It is now possible (and recommended) to assign `AGGREGATION_POLICY`, `MASKING_POLICY`, `PROJECTION_POLICY`, `ROW_ACCESS_POLICY` via config of specific `TABLE` or `VIEW` instead of mentioning all references in policy config. Old `references` will keep working, but marked as "deprecated" in documentation.
+- Introduced separate sequence for "destroy" action. Previously we used "apply" sequence for "destroy", but it may cause issues with some policies. Also, "destroy" sequence is much shorter overall.
+- Introduced logic to remove `NETWORK_RULE` references before dropping object itself. Rule cannot be dropped if it still has references.
+- `NETWORK_RULE` can now be ALTER-ed if only VALUES_LIST was changed. Previously network rules were always REPLACED.
+
 ## [0.32.0] - 2024-09-24
 
 - Introduced basic "elapsed timers" for performance debugging. Can be enabled with `--show-timers` CLI parameter.
