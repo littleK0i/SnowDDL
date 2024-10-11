@@ -16,3 +16,7 @@ location:
   file_format: test_parquet_format
 
 partition_by: [dt]
+
+row_access_policy:
+  policy_name: test_row_policy_2
+  columns: [value]

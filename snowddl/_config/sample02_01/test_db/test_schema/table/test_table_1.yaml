@@ -4,3 +4,7 @@ columns:
   status: VARCHAR(255)
 
 change_tracking: true
+
+masking_policies:
+  - policy_name: test_masking_policy_1
+    columns: [name]

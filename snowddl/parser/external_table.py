@@ -8,8 +8,11 @@ from snowddl.blueprint import (
     ForeignKeyBlueprint,
     DataType,
     Ident,
+    ObjectType,
     SchemaObjectIdent,
     TableConstraintIdent,
+    RowAccessPolicyBlueprint,
+    RowAccessPolicyReference,
     build_schema_object_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
@@ -130,7 +133,24 @@ external_table_json_schema = table_json_schema = {
                 "additionalProperties": False
             },
             "minItems": 1
-        }
+        },
+        "row_access_policy": {
+            "type": "object",
+            "properties": {
+                "policy_name": {
+                    "type": "string"
+                },
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
+            },
+            "required": ["policy_name", "columns"],
+            "additionalProperties": False
+        },
     },
     "required": ["location"],
     "additionalProperties": False
@@ -223,3 +243,18 @@ class ExternalTableParser(AbstractParser):
             )
 
             self.config.add_blueprint(bp)
+
+        # Policies
+
+        if f.params.get("row_access_policy"):
+            policy_name = build_schema_object_ident(
+                self.env_prefix, f.params["row_access_policy"]["policy_name"], f.database, f.schema
+            )
+
+            ref = RowAccessPolicyReference(
+                object_type=ObjectType.EXTERNAL_TABLE,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in f.params["row_access_policy"]["columns"]],
+            )
+
+            self.config.add_policy_reference(RowAccessPolicyBlueprint, policy_name, ref)

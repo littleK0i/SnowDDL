@@ -2,3 +2,11 @@ columns:
   id: NUMBER(38,0)
   name: VARCHAR(255)
   status: VARCHAR(255)
+
+masking_policies:
+  - policy_name: test_masking_policy_2
+    columns: [name, status]
+
+row_access_policy:
+  policy_name: test_row_policy_1
+  columns: [status]

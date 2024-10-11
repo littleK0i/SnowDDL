@@ -4,7 +4,7 @@ arguments:
 body: |-
   GET(value, 'status') = 'Active'
 
-references:
-  - object_type: EXTERNAL_TABLE
-    object_name: test_ext_table_2
-    columns: [value]
+#references:
+#  - object_type: EXTERNAL_TABLE
+#    object_name: test_ext_table_2
+#    columns: [value]

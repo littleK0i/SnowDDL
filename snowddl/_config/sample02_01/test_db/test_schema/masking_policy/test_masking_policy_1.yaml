@@ -6,7 +6,7 @@ returns: VARCHAR(255)
 body: |-
   REPLACE(name, 'A', '*')
 
-references:
-  - object_type: TABLE
-    object_name: test_table_1
-    columns: [name]
+#references:
+#  - object_type: TABLE
+#    object_name: test_table_1
+#    columns: [name]

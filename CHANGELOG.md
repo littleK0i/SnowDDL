@@ -12,6 +12,7 @@ This is a major update to policies, which introduces some breaking changes. [Rea
 - Introduced separate sequence for "destroy" action. Previously we used "apply" sequence for "destroy", but it may cause issues with some policies. Also, "destroy" sequence is much shorter overall.
 - Introduced logic to remove `NETWORK_RULE` references before dropping object itself. Rule cannot be dropped if it still has references.
 - `NETWORK_RULE` can now be ALTER-ed if only VALUES_LIST was changed. Previously network rules were always REPLACED.
+- Added `type` parameter for `USER`.
 
 ## [0.32.0] - 2024-09-24
 
