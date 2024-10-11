@@ -110,15 +110,13 @@ class SnowDDLConfig:
         del self.blueprints[bp.__class__][str(bp.full_name)]
 
     def add_policy_reference(self, cls: Type[T_Blueprint], policy_name: AbstractIdentWithPrefix, ref: AbstractPolicyReference):
-        all_blueprints = self.blueprints.get(cls, {})
-
         if "references" not in cls.model_fields:
             raise ValueError(f"{cls.__name__} does not have field [references], probably not a policy")
 
-        if str(policy_name) not in all_blueprints:
+        if str(policy_name) not in self.blueprints[cls]:
             raise ValueError(f"{cls.__name__} with name [{policy_name}] does not exist or was not defined yet")
 
-        all_blueprints[str(policy_name)].references.append(ref)
+        self.blueprints[cls][str(policy_name)].references.append(ref)
 
     def add_error(self, path: Path, e: Exception):
         self.errors.append(

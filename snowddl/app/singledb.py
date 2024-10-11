@@ -250,10 +250,12 @@ class SingleDbApp(BaseApp):
         return singledb_config
 
     def convert_blueprint(self, bp: AbstractBlueprint):
-        for field_name, field_value in bp:
-            self.convert_object_recursive(getattr(bp, field_name))
+        converted_bp = bp.model_copy(deep=True)
 
-        return bp
+        for field_name, field_value in converted_bp:
+            self.convert_object_recursive(getattr(converted_bp, field_name))
+
+        return converted_bp
 
     def convert_object_recursive(self, obj):
         if isinstance(obj, BaseModel):
