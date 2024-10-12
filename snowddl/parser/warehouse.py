@@ -44,6 +44,9 @@ warehouse_json_schema = {
                     "type": ["boolean", "number", "string"]
                 }
             },
+            "resource_constraint": {
+                "type": "string"
+            },
             "comment": {
                 "type": "string"
             }
@@ -61,7 +64,13 @@ class WarehouseParser(AbstractParser):
 
     def process_warehouse(self, f: ParsedFile):
         for warehouse_name, warehouse in f.params.items():
+            warehouse_type = warehouse.get("type", "STANDARD").upper()
+
+            resource_constraint = None
             resource_monitor = None
+
+            if warehouse_type == "SNOWPARK-OPTIMIZED":
+                resource_constraint = warehouse.get("resource_constraint", "MEMORY_16X")
 
             if warehouse.get("resource_monitor"):
                 resource_monitor = AccountObjectIdent(self.env_prefix, warehouse["resource_monitor"])
@@ -71,16 +80,17 @@ class WarehouseParser(AbstractParser):
 
             bp = WarehouseBlueprint(
                 full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
-                type=warehouse.get("type", "STANDARD"),
+                type=warehouse_type,
                 size=warehouse["size"],
                 auto_suspend=warehouse.get("auto_suspend", 60),
-                min_cluster_count=warehouse.get("min_cluster_count"),
-                max_cluster_count=warehouse.get("max_cluster_count"),
-                scaling_policy=warehouse.get("scaling_policy"),
+                min_cluster_count=warehouse.get("min_cluster_count", 1),
+                max_cluster_count=warehouse.get("max_cluster_count", 1),
+                scaling_policy=warehouse.get("scaling_policy", "STANDARD").upper(),
                 resource_monitor=resource_monitor,
                 enable_query_acceleration=warehouse.get("enable_query_acceleration", False),
-                query_acceleration_max_scale_factor=warehouse.get("query_acceleration_max_scale_factor"),
+                query_acceleration_max_scale_factor=warehouse.get("query_acceleration_max_scale_factor", 8),
                 warehouse_params=self.normalise_params_dict(warehouse.get("warehouse_params", {})),
+                resource_constraint=resource_constraint,
                 comment=warehouse.get("comment"),
             )
 

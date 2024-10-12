@@ -32,3 +32,8 @@ wh001_wh1:
 wh002_wh1:
   size: XSMALL
   resource_monitor: wh002_rm2
+
+wh003_wh1:
+  size: XSMALL
+  type: SNOWPARK-OPTIMIZED
+  resource_constraint: MEMORY_1X

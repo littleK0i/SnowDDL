@@ -1,6 +1,6 @@
 from snowddl.blueprint import WarehouseBlueprint
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType, Edition
-from snowddl.resolver._utils import coalesce, compare_dynamic_param_value
+from snowddl.resolver._utils import compare_dynamic_param_value
 
 
 class WarehouseResolver(AbstractResolver):
@@ -33,6 +33,7 @@ class WarehouseResolver(AbstractResolver):
                 "resource_monitor": r["resource_monitor"] if r["resource_monitor"] != "null" else None,
                 "enable_query_acceleration": r.get("enable_query_acceleration") == "true",
                 "query_acceleration_max_scale_factor": r.get("query_acceleration_max_scale_factor"),
+                "resource_constraint": r.get("resource_constraint"),
                 "comment": r["comment"] if r["comment"] else None,
             }
 
@@ -51,10 +52,34 @@ class WarehouseResolver(AbstractResolver):
             },
         )
 
-        query.append_nl(self._build_common_properties(bp))
-        query.append_nl(self._build_common_parameters(bp))
+        query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
+        query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
+        query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
         query.append_nl("AUTO_RESUME = TRUE")
         query.append_nl("INITIALLY_SUSPENDED = TRUE")
+
+        if bp.resource_constraint:
+            query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
+
+        if self.engine.context.edition >= Edition.ENTERPRISE:
+            query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
+            query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
+            query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
+
+            if bp.enable_query_acceleration:
+                query.append_nl(
+                    "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
+                    {"enable_query_acceleration": bp.enable_query_acceleration},
+                )
+
+            if bp.query_acceleration_max_scale_factor:
+                query.append_nl(
+                    "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
+                    {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
+                )
+
+        query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
+        query.append_nl(self._build_common_parameters(bp))
 
         self.engine.execute_safe_ddl(query)
 
@@ -95,34 +120,57 @@ class WarehouseResolver(AbstractResolver):
         return ResolveResult.DROP
 
     def _compare_properties(self, bp: WarehouseBlueprint, row: dict):
-        if (
-            self._normalise_warehouse_size(bp.size) == self._normalise_warehouse_size(row["size"])
-            and bp.type == row["type"]
-            and bp.auto_suspend == row["auto_suspend"]
-            and bp.comment == row["comment"]
-            and (row["min_cluster_count"] is None or coalesce(bp.min_cluster_count, 1) == row["min_cluster_count"])
-            and (row["max_cluster_count"] is None or coalesce(bp.max_cluster_count, 1) == row["max_cluster_count"])
-            and (row["scaling_policy"] is None or coalesce(bp.scaling_policy, "STANDARD") == row["scaling_policy"])
-            and (
-                row["enable_query_acceleration"] is None
-                or coalesce(bp.enable_query_acceleration, False) == row["enable_query_acceleration"]
-            )
-            and (
-                row["query_acceleration_max_scale_factor"] is None
-                or coalesce(bp.query_acceleration_max_scale_factor, 8) == row["query_acceleration_max_scale_factor"]
-            )
-        ):
-            return False
-
         query = self.engine.query_builder()
 
-        query.append("ALTER WAREHOUSE {full_name:i} SET", {"full_name": bp.full_name})
+        query.append(
+            "ALTER WAREHOUSE {name:i} SET",
+            {
+                "name": bp.full_name,
+            },
+        )
 
-        query.append(self._build_common_properties(bp))
+        if bp.type != row["type"]:
+            query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
 
-        self.engine.execute_safe_ddl(query)
+        if self._normalise_warehouse_size(bp.size) != self._normalise_warehouse_size(row["size"]):
+            query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
 
-        return True
+        if bp.auto_suspend != row["auto_suspend"]:
+            query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
+
+        if bp.resource_constraint != row["resource_constraint"]:
+            query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
+
+        if self.engine.context.edition >= Edition.ENTERPRISE:
+            if bp.min_cluster_count != row["min_cluster_count"]:
+                query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
+
+            if bp.max_cluster_count != row["max_cluster_count"]:
+                query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
+
+            if bp.scaling_policy != row["scaling_policy"]:
+                query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
+
+            if bp.enable_query_acceleration != row["enable_query_acceleration"]:
+                query.append_nl(
+                    "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
+                    {"enable_query_acceleration": bp.enable_query_acceleration},
+                )
+
+            if bp.query_acceleration_max_scale_factor != row["query_acceleration_max_scale_factor"]:
+                query.append_nl(
+                    "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
+                    {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
+                )
+
+        if bp.comment != row["comment"]:
+            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
+
+        if query.fragment_count() > 1:
+            self.engine.execute_safe_ddl(query)
+            return True
+
+        return False
 
     def _compare_parameters(self, bp: WarehouseBlueprint):
         existing_params = self._get_existing_warehouse_parameters(bp)
@@ -190,31 +238,6 @@ class WarehouseResolver(AbstractResolver):
             return True
 
         return False
-
-    def _build_common_properties(self, bp: WarehouseBlueprint):
-        query = self.engine.query_builder()
-
-        query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
-        query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
-        query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
-
-        if self.engine.context.edition >= Edition.ENTERPRISE:
-            query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": coalesce(bp.min_cluster_count, 1)})
-            query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": coalesce(bp.max_cluster_count, 1)})
-            query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": coalesce(bp.scaling_policy, "STANDARD")})
-
-            query.append_nl(
-                "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
-                {"enable_query_acceleration": coalesce(bp.enable_query_acceleration, False)},
-            )
-            query.append_nl(
-                "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
-                {"query_acceleration_max_scale_factor": coalesce(bp.query_acceleration_max_scale_factor, 8)},
-            )
-
-        query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
-
-        return query
 
     def _build_common_parameters(self, bp: WarehouseBlueprint):
         query = self.engine.query_builder()

@@ -414,14 +414,15 @@ class WarehouseBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     type: str
     size: str
-    auto_suspend: int
-    min_cluster_count: Optional[int] = None
-    max_cluster_count: Optional[int] = None
-    scaling_policy: Optional[str] = None
+    auto_suspend: int = 60
+    min_cluster_count: int = 1
+    max_cluster_count: int = 1
+    scaling_policy: str = "STANDARD"
     resource_monitor: Optional[Union[Ident, AccountObjectIdent]] = None
     enable_query_acceleration: bool = False
-    query_acceleration_max_scale_factor: Optional[int] = None
+    query_acceleration_max_scale_factor: int = 8
     warehouse_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
+    resource_constraint: Optional[str] = None
 
 
 T_Blueprint = TypeVar("T_Blueprint", bound=AbstractBlueprint)

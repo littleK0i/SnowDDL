@@ -12,3 +12,7 @@ us001_wh2:
 
 wh002_wh1:
   size: XSMALL
+
+wh003_wh1:
+  size: MEDIUM
+  type: SNOWPARK-OPTIMIZED

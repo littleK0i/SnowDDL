@@ -19,7 +19,7 @@ snowddl -c _config/step1 --apply-unsafe --apply-resource-monitor --apply-all-pol
 pytest -k "step1" --tb=short */*.py
 
 # Apply step2
-snowddl -c _config/step2 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-all-policy --refresh-stage-encryption --refresh-secrets apply
+`snowddl -c _config/step2 --apply-unsafe --apply-replace-table --apply-resource-monitor --apply-all-policy --refresh-stage-encryption --refresh-secrets apply`
 
 # Run test step2
 pytest -k "step2" --tb=short */*.py
