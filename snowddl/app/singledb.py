@@ -113,6 +113,12 @@ class SingleDbApp(BaseApp):
             default=environ.get("SNOWFLAKE_ENV_PREFIX"),
         )
         parser.add_argument(
+            "--env-prefix-separator",
+            help="Custom separator for Env prefix (supported values are: '__', '_', '$')",
+            choices=["__", "_", "$"],
+            default=environ.get("SNOWFLAKE_ENV_PREFIX_SEPARATOR", "__"),
+        )
+        parser.add_argument(
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
         )
 
@@ -240,7 +246,7 @@ class SingleDbApp(BaseApp):
         return self.convert_config(config)
 
     def convert_config(self, original_config: SnowDDLConfig):
-        singledb_config = SnowDDLConfig(self.args.get("env_prefix"))
+        singledb_config = SnowDDLConfig(self.env_prefix)
 
         for bp_dict in original_config.blueprints.values():
             for bp in bp_dict.values():

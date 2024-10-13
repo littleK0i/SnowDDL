@@ -8,6 +8,7 @@ from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
 from pathlib import Path
 from snowflake.connector import connect
+from string import ascii_uppercase, digits
 from time import perf_counter
 from traceback import TracebackException
 
@@ -36,6 +37,7 @@ class BaseApp:
         self.logger = self.init_logger()
 
         with self.measure_elapsed_time("InitConfig"):
+            self.env_prefix = self.init_env_prefix()
             self.config_path = self.init_config_path()
             self.config = self.init_config()
             self.settings = self.init_settings()
@@ -113,6 +115,12 @@ class BaseApp:
             "--env-prefix",
             help="Env prefix added to global object names, used to separate environments (e.g. DEV, PROD)",
             default=environ.get("SNOWFLAKE_ENV_PREFIX"),
+        )
+        parser.add_argument(
+            "--env-prefix-separator",
+            help="Custom separator for Env prefix (supported values are: '__', '_', '$')",
+            choices=["__", "_", "$"],
+            default=environ.get("SNOWFLAKE_ENV_PREFIX_SEPARATOR", "__"),
         )
         parser.add_argument(
             "--env-admin-role",
@@ -298,6 +306,31 @@ class BaseApp:
 
         return logger
 
+    def init_env_prefix(self):
+        env_prefix_value = self.args.get("env_prefix")
+        env_prefix_separator = self.args.get("env_prefix_separator")
+
+        allowed_env_prefix_value_chars = set(ascii_uppercase + digits + "_")
+
+        if env_prefix_value:
+            env_prefix_value = str(env_prefix_value).upper()
+
+            for char in env_prefix_value:
+                if char not in allowed_env_prefix_value_chars:
+                    raise ValueError(
+                        f"Character [{char}] in not allowed in env prefix [{env_prefix_value}], only ASCII letters, digits and single underscores are accepted"
+                    )
+
+            if env_prefix_separator in env_prefix_value:
+                raise ValueError(f"Env prefix [{env_prefix_value}] cannot contain env prefix separator [{env_prefix_separator}]")
+
+            if env_prefix_value.endswith("_"):
+                raise ValueError(f"Env prefix [{env_prefix_value}] cannot end with [_] underscore")
+
+            return f"{env_prefix_value}{env_prefix_separator}"
+
+        return ""
+
     def init_config_path(self):
         config_path = Path(self.args["c"])
 
@@ -313,7 +346,7 @@ class BaseApp:
         return config_path.resolve()
 
     def init_config(self):
-        config = SnowDDLConfig(self.args.get("env_prefix"))
+        config = SnowDDLConfig(self.env_prefix)
 
         # Placeholders
         placeholder_path = self.get_placeholder_path()

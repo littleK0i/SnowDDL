@@ -70,8 +70,8 @@ class AbstractIdentWithPrefix(AbstractIdent, ABC):
                     f"Character [{char}] in not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted"
                 )
 
-        if val and not val.endswith("__"):
-            raise ValueError(f"Env prefix [{val}] in identifier must end with [__] double underscore")
+        if val and not val.endswith(("__", "_", "$")):
+            raise ValueError(f"Env prefix [{val}] in identifier must end with valid separator like [__] double underscore, [_] single underscore or [$] dollar")
 
         return val.upper()
 

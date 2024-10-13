@@ -82,6 +82,12 @@ class ConvertApp(BaseApp):
             default=environ.get("SNOWFLAKE_ENV_PREFIX"),
         )
         parser.add_argument(
+            "--env-prefix-separator",
+            help="Custom separator for Env prefix (supported values are: '__', '_', '$')",
+            choices=["__", "_", "$"],
+            default=environ.get("SNOWFLAKE_ENV_PREFIX_SEPARATOR", "__"),
+        )
+        parser.add_argument(
             "--max-workers", help="Maximum number of workers to resolve objects in parallel", default=None, type=int
         )
         parser.add_argument("--clean", help="Delete existing config files before conversion", default=False, action="store_true")
@@ -136,7 +142,7 @@ class ConvertApp(BaseApp):
         return config_path
 
     def init_config(self):
-        return SnowDDLConfig(self.args.get("env_prefix"))
+        return SnowDDLConfig(self.env_prefix)
 
     def init_settings(self):
         settings = SnowDDLSettings()
