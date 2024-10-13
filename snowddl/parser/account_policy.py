@@ -5,7 +5,7 @@ from snowddl.blueprint import (
     NetworkPolicyBlueprint,
     NetworkPolicyReference,
     ObjectType,
-    SchemaObjectIdent
+    SchemaObjectIdent,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 

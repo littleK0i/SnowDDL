@@ -71,35 +71,35 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
             "AUTHENTICATION_METHODS = ({authentication_methods})",
             {
                 "authentication_methods": bp.authentication_methods,
-            }
+            },
         )
 
         query.append_nl(
             "MFA_AUTHENTICATION_METHODS = ({mfa_authentication_methods})",
             {
                 "mfa_authentication_methods": bp.mfa_authentication_methods,
-            }
+            },
         )
 
         query.append_nl(
             "MFA_ENROLLMENT = {mfa_enrollment}",
             {
                 "mfa_enrollment": bp.mfa_enrollment,
-            }
+            },
         )
 
         query.append_nl(
             "CLIENT_TYPES = ({client_types})",
             {
                 "client_types": bp.client_types,
-            }
+            },
         )
 
         query.append_nl(
             "SECURITY_INTEGRATIONS = ({security_integrations})",
             {
                 "security_integrations": bp.security_integrations,
-            }
+            },
         )
 
         query.append_nl(
@@ -246,7 +246,8 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
                     self.engine.execute_unsafe_ddl(
                         "-- Previous policy must be removed before setting a new policy\n"
                         "ALTER ACCOUNT UNSET AUTHENTICATION POLICY",
-                        condition=self.engine.settings.execute_authentication_policy and self.engine.settings.execute_account_level_policy,
+                        condition=self.engine.settings.execute_authentication_policy
+                        and self.engine.settings.execute_account_level_policy,
                     )
 
                 self.engine.execute_unsafe_ddl(
@@ -254,7 +255,8 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
                     {
                         "policy_name": bp.full_name,
                     },
-                    condition=self.engine.settings.execute_authentication_policy and self.engine.settings.execute_account_level_policy,
+                    condition=self.engine.settings.execute_authentication_policy
+                    and self.engine.settings.execute_account_level_policy,
                 )
             else:
                 # Apply new policy for USER (and other object types in future?)
@@ -287,7 +289,8 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
             if existing_ref["object_type"] == ObjectType.ACCOUNT.name:
                 self.engine.execute_unsafe_ddl(
                     "ALTER ACCOUNT UNSET AUTHENTICATION POLICY",
-                    condition=self.engine.settings.execute_authentication_policy and self.engine.settings.execute_account_level_policy,
+                    condition=self.engine.settings.execute_authentication_policy
+                    and self.engine.settings.execute_account_level_policy,
                 )
             else:
                 self.engine.execute_unsafe_ddl(
@@ -310,7 +313,8 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
             if existing_ref["object_type"] == ObjectType.ACCOUNT.name:
                 self.engine.execute_unsafe_ddl(
                     "ALTER ACCOUNT UNSET AUTHENTICATION POLICY",
-                    condition=self.engine.settings.execute_authentication_policy and self.engine.settings.execute_account_level_policy,
+                    condition=self.engine.settings.execute_authentication_policy
+                    and self.engine.settings.execute_account_level_policy,
                 )
             else:
                 self.engine.execute_unsafe_ddl(

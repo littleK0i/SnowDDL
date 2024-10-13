@@ -9,7 +9,6 @@ from snowddl.blueprint import (
     SchemaObjectIdent,
     build_role_ident,
     build_default_namespace_ident,
-    build_schema_object_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema

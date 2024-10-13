@@ -71,7 +71,9 @@ class AbstractIdentWithPrefix(AbstractIdent, ABC):
                 )
 
         if val and not val.endswith(("__", "_", "$")):
-            raise ValueError(f"Env prefix [{val}] in identifier must end with valid separator like [__] double underscore, [_] single underscore or [$] dollar")
+            raise ValueError(
+                f"Env prefix [{val}] in identifier must end with valid separator like [__] double underscore, [_] single underscore or [$] dollar"
+            )
 
         return val.upper()
 

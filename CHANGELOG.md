@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.34.0] - 2024-10-13
+
+- Introduced CLI option `--env-prefix-separator` which allows to choose separator for env prefix from one of three pre-defined variants: `__`, `_`, `$`. Default is `__`.
+- Implemented `AUTHENTICATION_POLICY` object type. It can be referenced from `ACCOUNT_POLICY` and `USER` configs.
+- Reworked `WAREHOUSE` resolver, implemented `resource_constraint` parameter for Snowpark-optimized warehouses.
+
 ## [0.33.0] - 2024-10-11
 
 This is a major update to policies, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.33.0-october-2024).

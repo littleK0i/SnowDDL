@@ -1,8 +1,4 @@
-from snowddl.blueprint import (
-    AuthenticationPolicyBlueprint,
-    Ident,
-    SchemaObjectIdent,
-)
+from snowddl.blueprint import AuthenticationPolicyBlueprint, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -52,7 +48,9 @@ authentication_policy_json_schema = {
 
 class AuthenticationPolicyParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_schema_object_files("authentication_policy", authentication_policy_json_schema, self.process_authentication_policy)
+        self.parse_schema_object_files(
+            "authentication_policy", authentication_policy_json_schema, self.process_authentication_policy
+        )
 
     def process_authentication_policy(self, f: ParsedFile):
         # As of Oct 2024, no easy way around hardcoding defaults
@@ -60,11 +58,17 @@ class AuthenticationPolicyParser(AbstractParser):
         # https://docs.snowflake.com/en/sql-reference/sql/create-authentication-policy
         bp = AuthenticationPolicyBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            authentication_methods=self.normalise_params_list(f.params.get("authentication_methods")) if f.params.get("authentication_methods") else ["ALL"],
-            mfa_authentication_methods=self.normalise_params_list(f.params.get("mfa_authentication_methods")) if f.params.get("mfa_authentication_methods") else ["PASSWORD", "SAML"],
+            authentication_methods=self.normalise_params_list(f.params.get("authentication_methods"))
+            if f.params.get("authentication_methods")
+            else ["ALL"],
+            mfa_authentication_methods=self.normalise_params_list(f.params.get("mfa_authentication_methods"))
+            if f.params.get("mfa_authentication_methods")
+            else ["PASSWORD", "SAML"],
             mfa_enrollment=f.params.get("mfa_enrollment").upper() if f.params.get("mfa_enrollment") else "OPTIONAL",
             client_types=self.normalise_params_list(f.params.get("client_types")) if f.params.get("client_types") else ["ALL"],
-            security_integrations=self.normalise_params_list(f.params.get("security_integrations")) if f.params.get("security_integrations") else ["ALL"],
+            security_integrations=self.normalise_params_list(f.params.get("security_integrations"))
+            if f.params.get("security_integrations")
+            else ["ALL"],
             comment=f.params.get("comment"),
         )
 

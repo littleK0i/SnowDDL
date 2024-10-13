@@ -136,7 +136,9 @@ class SnowDDLConfig:
         if env_prefix:
             # Protects from code trying to use Config object and pass env prefix without separator at the end
             if not env_prefix.endswith(("__", "_", "$")):
-                raise ValueError(f"Env prefix [{env_prefix}] in identifier must end with valid separator like [__] double underscore, [_] single underscore or [$] dollar")
+                raise ValueError(
+                    f"Env prefix [{env_prefix}] in identifier must end with valid separator like [__] double underscore, [_] single underscore or [$] dollar"
+                )
 
             return env_prefix
 
