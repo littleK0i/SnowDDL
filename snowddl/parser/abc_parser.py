@@ -49,6 +49,15 @@ class AbstractParser(ABC):
             except Exception as e:
                 self.config.add_error(path, e)
 
+    def normalise_params_list(self, params):
+        if params is None:
+            return None
+
+        if isinstance(params, list):
+            return [p.upper() for p in params]
+
+        raise ValueError(f"Value is neither None, nor list [{params}]")
+
     def normalise_params_dict(self, params):
         if params is None:
             return None

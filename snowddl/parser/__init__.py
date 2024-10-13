@@ -3,6 +3,7 @@ from .account_params import AccountParameterParser
 from .account_policy import AccountPolicyParser
 from .aggregation_policy import AggregationPolicyParser
 from .alert import AlertParser
+from .authentication_policy import AuthenticationPolicyParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
 from .dynamic_table import DynamicTableParser
@@ -42,6 +43,7 @@ default_parse_sequence = [
     AccountParameterParser,
     # --
     AggregationPolicyParser,
+    AuthenticationPolicyParser,
     MaskingPolicyParser,
     NetworkPolicyParser,
     ProjectionPolicyParser,

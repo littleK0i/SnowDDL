@@ -20,10 +20,6 @@ class AbstractSchemaObjectResolver(AbstractResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         pass
 
-    def destroy(self):
-        # Do nothing, all schema objects are dropped automatically on DROP DATABASE or DROP SCHEMA
-        pass
-
     def _resolve_drop(self):
         tasks = {}
 

@@ -11,6 +11,7 @@ class SnowDDLSettings(BaseModelWithConfig):
     execute_replace_table: bool = False
     execute_account_level_policy: bool = False
     execute_aggregation_policy: bool = False
+    execute_authentication_policy: bool = False
     execute_masking_policy: bool = False
     execute_projection_policy: bool = False
     execute_row_access_policy: bool = False

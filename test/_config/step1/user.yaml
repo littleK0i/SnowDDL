@@ -40,3 +40,7 @@ us002_us1:
 np001_us1:
   disabled: true
   network_policy: np001_np1
+
+aup001_us1:
+  disabled: true
+  authentication_policy: db1.sc1.aup001_aup1

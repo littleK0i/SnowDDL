@@ -16,6 +16,11 @@ class AggregationPolicyReference(AbstractPolicyReference):
     columns: List[Ident]
 
 
+class AuthenticationPolicyReference(AbstractPolicyReference):
+    object_type: ObjectType
+    object_name: Optional[AbstractIdent]
+
+
 class ForeignKeyReference(BaseModelWithConfig):
     columns: List[Ident]
     ref_table_name: SchemaObjectIdent

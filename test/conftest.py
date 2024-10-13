@@ -90,6 +90,16 @@ class Helper:
 
         return {r["property"]: r for r in cur}
 
+    def desc_authentication_policy(self, database, schema, name):
+        cur = self.execute("DESC AUTHENTICATION POLICY {name:i}", {"name": SchemaObjectIdent(self.env_prefix, database, schema, name)})
+
+        result = {}
+
+        for r in cur:
+            result[r["property"]] = r
+
+        return result
+
     def desc_network_policy(self, name):
         cur = self.execute("DESC NETWORK POLICY {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)})
 
@@ -112,6 +122,21 @@ class Helper:
             result[r["parent_property"]][r["property"]] = r
 
         return result
+
+    def get_policy_refs(self, database, schema, policy_name):
+        cur = self.execute(
+            "SELECT * FROM TABLE(snowflake.information_schema.policy_references(policy_name => {policy_name}))",
+            {
+                "policy_name": SchemaObjectIdent(self.env_prefix, database, schema, policy_name),
+            },
+        )
+
+        refs = []
+
+        for r in cur:
+            refs.append(r)
+
+        return refs
 
     def get_network_policy_refs(self, policy_name):
         cur = self.execute(
@@ -331,6 +356,17 @@ class Helper:
             )
 
         return fk
+
+    def show_authentication_policy(self, database, schema, name):
+        cur = self.execute(
+            "SHOW AUTHENTICATION POLICIES LIKE {object_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "object_name": Ident(name),
+            }
+        )
+
+        return cur.fetchone()
 
     def show_network_policy(self, name):
         # SHOW NETWORK POLICIES does not support LIKE natively

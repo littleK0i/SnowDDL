@@ -28,6 +28,12 @@ class ObjectType(Enum):
         "blueprint_cls": "AlertBlueprint",
     }
 
+    AUTHENTICATION_POLICY = {
+        "singular": "AUTHENTICATION POLICY",
+        "plural": "AUTHENTICATION POLICIES",
+        "blueprint_cls": "AuthenticationPolicyBlueprint",
+    }
+
     CLONE_TABLE = {
         "singular": "CLONE TABLE",
         "plural": "CLONE TABLES",

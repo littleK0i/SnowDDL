@@ -12,3 +12,6 @@ us002_us1:
 
 np001_us1:
   disabled: true
+
+aup001_us1:
+  disabled: true

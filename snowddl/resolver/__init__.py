@@ -3,6 +3,7 @@ from .abc_role_resolver import AbstractRoleResolver
 from .abc_schema_object_resolver import AbstractSchemaObjectResolver
 from .account_params import AccountParameterResolver
 from .aggregation_policy import AggregationPolicyResolver
+from .authentication_policy import AuthenticationPolicyResolver
 from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
@@ -90,6 +91,7 @@ default_resolve_sequence = [
     UserResolver,
     # --
     AggregationPolicyResolver,
+    AuthenticationPolicyResolver,
     MaskingPolicyResolver,
     NetworkPolicyResolver,
     ProjectionPolicyResolver,
@@ -104,6 +106,7 @@ default_destroy_sequence = [
     WarehouseRoleResolver,
     # --
     NetworkPolicyResolver,
+    AuthenticationPolicyResolver,
     ExternalAccessIntegrationResolver,
     # --
     DatabaseResolver,

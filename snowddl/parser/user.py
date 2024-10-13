@@ -1,11 +1,15 @@
 from snowddl.blueprint import (
     UserBlueprint,
     AccountObjectIdent,
+    AuthenticationPolicyBlueprint,
+    AuthenticationPolicyReference,
     NetworkPolicyBlueprint,
     NetworkPolicyReference,
     ObjectType,
+    SchemaObjectIdent,
     build_role_ident,
     build_default_namespace_ident,
+    build_schema_object_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.business_role import business_role_json_schema
@@ -67,6 +71,9 @@ user_json_schema = {
             },
             "comment": {
                 "type": "string"
+            },
+            "authentication_policy": {
+                "type": "string",
             },
             "network_policy": {
                 "type": "string",
@@ -132,6 +139,24 @@ class UserParser(AbstractParser):
 
             self.validate_user_type_properties(bp)
             self.config.add_blueprint(bp)
+
+            # Authentication policy
+            if user.get("authentication_policy"):
+                policy_name_parts = user.get("authentication_policy").split(".")
+
+                if len(policy_name_parts) != 3:
+                    raise ValueError(
+                        f"Authentication policy [{user.get('authentication_policy')}] should use fully-qualified identifier <database>.<schema>.<name> for user [{full_user_name}]"
+                    )
+
+                policy_name = SchemaObjectIdent(self.env_prefix, *policy_name_parts)
+
+                ref = AuthenticationPolicyReference(
+                    object_type=ObjectType.USER,
+                    object_name=full_user_name,
+                )
+
+                self.config.add_policy_reference(AuthenticationPolicyBlueprint, policy_name, ref)
 
             # Network policy
             if user.get("network_policy"):

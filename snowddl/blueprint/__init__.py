@@ -6,6 +6,7 @@ from .blueprint import (
     AccountParameterBlueprint,
     AggregationPolicyBlueprint,
     AlertBlueprint,
+    AuthenticationPolicyBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
     DatabaseRoleBlueprint,
@@ -90,6 +91,7 @@ from .permission_model import PermissionModel, PermissionModelCreateGrant, Permi
 from .reference import (
     AbstractPolicyReference,
     AggregationPolicyReference,
+    AuthenticationPolicyReference,
     ForeignKeyReference,
     IndexReference,
     MaskingPolicyReference,

@@ -28,6 +28,7 @@ from .ident import (
 from .object_type import ObjectType
 from .reference import (
     AggregationPolicyReference,
+    AuthenticationPolicyReference,
     ForeignKeyReference,
     IndexReference,
     MaskingPolicyReference,
@@ -76,6 +77,15 @@ class AlertBlueprint(SchemaObjectBlueprint):
     schedule: str
     condition: str
     action: str
+
+
+class AuthenticationPolicyBlueprint(SchemaObjectBlueprint):
+    authentication_methods: List[str]
+    mfa_authentication_methods: List[str]
+    mfa_enrollment: str
+    client_types: List[str]
+    security_integrations: List[str]
+    references: List[AuthenticationPolicyReference] = []
 
 
 class BusinessRoleBlueprint(RoleBlueprint):

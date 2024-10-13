@@ -1,0 +1,2 @@
+mfa_enrollment: REQUIRED
+mfa_authentication_methods: [PASSWORD]
