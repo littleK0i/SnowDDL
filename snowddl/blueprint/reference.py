@@ -18,7 +18,7 @@ class AggregationPolicyReference(AbstractPolicyReference):
 
 class AuthenticationPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
-    object_name: Optional[AbstractIdent]
+    object_name: Optional[AbstractIdent] = None
 
 
 class ForeignKeyReference(BaseModelWithConfig):
@@ -40,7 +40,7 @@ class MaskingPolicyReference(AbstractPolicyReference):
 
 class NetworkPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
-    object_name: Optional[AbstractIdent]
+    object_name: Optional[AbstractIdent] = None
 
 
 class ProjectionPolicyReference(AbstractPolicyReference):

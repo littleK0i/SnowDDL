@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.34.1] - 2024-10-14
+
+- Fixed issue with ACCOUNT-level policy references.
+
 ## [0.34.0] - 2024-10-13
 
 - Introduced CLI option `--env-prefix-separator` which allows to choose separator for env prefix from one of three pre-defined variants: `__`, `_`, `$`. Default is `__`.
