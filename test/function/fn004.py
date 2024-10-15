@@ -7,7 +7,7 @@ def test_step1(helper):
     assert function_show["language"] == "PYTHON"
     assert function_show["arguments"] == "FN004_FN1(VARCHAR, NUMBER, NUMBER) RETURN TABLE (SYMBOL VARCHAR, TOTAL NUMBER)"
 
-    assert function_desc["runtime_version"] == "3.8"
+    assert function_desc["runtime_version"] == "3.11"
     assert function_desc["handler"] == "StockSaleSum"
 
     assert "StockSaleSum" in function_desc["body"]
@@ -24,7 +24,7 @@ def test_step2(helper):
     assert function_show["language"] == "PYTHON"
     assert function_show["arguments"] == "FN004_FN1(VARCHAR, NUMBER, NUMBER) RETURN TABLE (SYMBOL VARCHAR, TOTAL NUMBER)"
 
-    assert function_desc["runtime_version"] == "3.8"
+    assert function_desc["runtime_version"] == "3.11"
     assert function_desc["handler"] == "fn004_stock.StockSaleSum"
 
     assert not function_desc["body"]

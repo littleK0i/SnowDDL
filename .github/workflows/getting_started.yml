@@ -17,8 +17,8 @@ jobs:
           - env-prefix: PY38_BC
             python-version: 3.8
 
-          - env-prefix: PY311_BC
-            python-version: 3.11
+          - env-prefix: PY312_BC
+            python-version: 3.12
 
     runs-on: ubuntu-latest
     timeout-minutes: 20

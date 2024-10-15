@@ -1,5 +1,5 @@
 language: python
-runtime_version: 3.8
+runtime_version: "3.11"
 handler: addone_py
 
 arguments:

@@ -7,7 +7,7 @@ def test_step1(helper):
     assert function_show["language"] == "PYTHON"
     assert function_show["arguments"] == "FN003_FN1(NUMBER) RETURN NUMBER"
 
-    assert function_desc["runtime_version"] == "3.8"
+    assert function_desc["runtime_version"] == "3.11"
     assert function_desc["handler"] == "addone_py"
 
     assert "addone_py" in function_desc["body"]
@@ -24,7 +24,7 @@ def test_step2(helper):
     assert function_show["language"] == "PYTHON"
     assert function_show["arguments"] == "FN003_FN1(NUMBER) RETURN NUMBER"
 
-    assert function_desc["runtime_version"] == "3.8"
+    assert function_desc["runtime_version"] == "3.11"
     assert function_desc["handler"] == "fn003_addone.addone_py"
 
     assert not function_desc["body"]
