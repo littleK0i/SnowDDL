@@ -116,6 +116,15 @@ class ObjectType(Enum):
     }
 
     # Technical object type, used for GRANTs only
+    # Currently there is no blueprint
+    ICEBERG_TABLE = {
+        "singular": "ICEBERG TABLE",
+        "plural": "ICEBERG TABLES",
+        "singular_for_ref": "TABLE",
+        "is_future_grant_supported": True,
+    }
+
+    # Technical object type, used for GRANTs only
     # There is no blueprint
     INTEGRATION = {
         "singular": "INTEGRATION",

@@ -133,8 +133,6 @@ class DatabaseParser(AbstractParser):
                 comment=database_params.get("comment", None),
             )
 
-            print(bp.full_name)
-
             self.config.add_blueprint(bp)
 
     def build_database_role_grant(self, database_name, role_type):
