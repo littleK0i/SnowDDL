@@ -1,4 +1,4 @@
-from snowddl.blueprint import DatabaseBlueprint, DatabaseIdent
+from snowddl.blueprint import DatabaseBlueprint, DatabaseIdent, Grant, ObjectType, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -17,6 +17,18 @@ database_json_schema = {
         },
         "is_sandbox": {
             "type": "boolean"
+        },
+        "owner_database_read": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "owner_database_write": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "owner_share_read": {
             "share_read": {
@@ -81,11 +93,18 @@ class DatabaseParser(AbstractParser):
                 for k in database_params:
                     if k.startswith("owner_"):
                         raise ValueError(
-                            f"Cannot use parameter [{k}] for database [{database_name}], it should be configured on schema level"
+                            f"Cannot use parameter [{k}] for database [{database_name}] due to schema-level permission model. "
+                            f"This parameter should be configured on schema level"
                         )
 
             owner_additional_grants = []
             owner_additional_account_grants = []
+
+            for grant_database_name in database_params.get("owner_database_read", []):
+                owner_additional_grants.append(self.build_database_role_grant(grant_database_name, self.config.READ_ROLE_TYPE))
+
+            for grant_database_name in database_params.get("owner_database_write", []):
+                owner_additional_grants.append(self.build_database_role_grant(grant_database_name, self.config.WRITE_ROLE_TYPE))
 
             for share_name in database_params.get("owner_share_read", []):
                 owner_additional_grants.append(self.build_share_role_grant(share_name))
@@ -114,4 +133,13 @@ class DatabaseParser(AbstractParser):
                 comment=database_params.get("comment", None),
             )
 
+            print(bp.full_name)
+
             self.config.add_blueprint(bp)
+
+    def build_database_role_grant(self, database_name, role_type):
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.ROLE,
+            name=build_role_ident(self.env_prefix, database_name, role_type, self.config.DATABASE_ROLE_SUFFIX),
+        )

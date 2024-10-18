@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.34.2] - 2024-10-18
+
+- Added parameters `owner_database_read`, `owner_database_write` to `DATABASE` config. It only works if both current database and target database has permission model with `database_owner` ruleset.
+
 ## [0.34.1] - 2024-10-14
 
 - Fixed issue with ACCOUNT-level policy references.
