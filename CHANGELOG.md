@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.34.4] - 2024-11-03
+
+- Added missing conversion logic for `DatabaseBlueprint` when operating in SingleDB mode. It no longer prevents schemas from being dropped in this mode.
+
 ## [0.34.3] - 2024-10-18
 
 - Added `ICEBERG_TABLE` object type to make it available for grants and permission models.

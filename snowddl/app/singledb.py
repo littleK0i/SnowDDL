@@ -250,6 +250,9 @@ class SingleDbApp(BaseApp):
 
         for bp_dict in original_config.blueprints.values():
             for bp in bp_dict.values():
+                if isinstance(bp, DatabaseBlueprint) and bp.full_name == self.config_db:
+                    singledb_config.add_blueprint(self.convert_blueprint(bp))
+
                 if isinstance(bp, (SchemaBlueprint, SchemaObjectBlueprint)) and bp.full_name.database_full_name == self.config_db:
                     singledb_config.add_blueprint(self.convert_blueprint(bp))
 
@@ -276,7 +279,7 @@ class SingleDbApp(BaseApp):
             for item in obj.values():
                 self.convert_object_recursive(item)
 
-        if isinstance(obj, (SchemaIdent, SchemaObjectIdent)):
+        if isinstance(obj, (DatabaseIdent, SchemaIdent, SchemaObjectIdent)):
             obj.database = self.target_db.database
 
         return obj
