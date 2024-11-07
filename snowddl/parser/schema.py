@@ -1,7 +1,12 @@
-from snowddl.blueprint import SchemaBlueprint, SchemaIdent, Grant, ObjectType, build_role_ident
+from snowddl.blueprint import (
+    Grant,
+    ObjectType,
+    SchemaBlueprint,
+    SchemaIdent,
+    build_role_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
-
 
 # fmt: off
 schema_json_schema = {
@@ -93,7 +98,7 @@ class SchemaParser(AbstractParser):
                 combined_params = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
-                    "is_sandbox": database_params.get("is_sandbox", False) or schema_params.get("is_sandbox", False),
+                    "is_sandbox": schema_params.get("is_sandbox", False) or database_params.get("is_sandbox", False),
                 }
 
                 database_name = database_path.name.upper()
