@@ -1,12 +1,7 @@
-from snowddl.blueprint import (
-    Grant,
-    ObjectType,
-    SchemaBlueprint,
-    SchemaIdent,
-    build_role_ident,
-)
+from snowddl.blueprint import SchemaBlueprint, SchemaIdent, Grant, ObjectType, build_role_ident
 from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
+
 
 # fmt: off
 schema_json_schema = {
