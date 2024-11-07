@@ -90,10 +90,14 @@ class SchemaParser(AbstractParser):
 
                 schema_params = self.parse_single_file(schema_path / "params.yaml", schema_json_schema)
 
+                is_schema_sandbox = schema_params.get("is_sandbox")
+                if is_schema_sandbox == None:
+                    is_schema_sandbox = database_params.get("is_sandbox", False)
+
                 combined_params = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
-                    "is_sandbox": schema_params.get("is_sandbox", False) or database_params.get("is_sandbox", False),
+                    "is_sandbox": is_schema_sandbox,
                 }
 
                 database_name = database_path.name.upper()
