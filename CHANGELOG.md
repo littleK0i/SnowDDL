@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.35.0] - 2024-11-08
+
+- Added explicit notice when `CREATE OR REPLACE TABLE` is about to drop a column from table.
+- It is now possible to set `is_sandbox: false` on schema level when `is_sandbox: true` on database level.
+- Fixed ENV variable name `SNOWFLAKE_ROLE`.
+
 ## [0.34.4] - 2024-11-03
 
 - Added missing conversion logic for `DatabaseBlueprint` when operating in SingleDB mode. It no longer prevents schemas from being dropped in this mode.

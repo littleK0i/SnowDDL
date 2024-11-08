@@ -72,7 +72,9 @@ class TableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: TableBlueprint, row: dict):
         safe_alters = []
         unsafe_alters = []
+
         replace_reasons = []
+        replace_notices = []
 
         bp_cols = {str(c.name): c for c in bp.columns}
         snow_cols = self._get_existing_columns(bp)
@@ -92,6 +94,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 )
 
                 remaining_col_names.remove(col_name)
+                replace_notices.append(f"Column {col_name} is about to be dropped")
                 continue
 
             bp_c = bp_cols[col_name]
@@ -314,7 +317,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         result = ResolveResult.NOCHANGE
 
         if replace_reasons:
-            replace_query = "\n".join(f"-- {r}" for r in replace_reasons) + "\n" + str(self._build_create_table(bp, snow_cols))
+            replace_query = "\n".join(f"-- {r}" for r in replace_reasons + replace_notices) + "\n" + str(self._build_create_table(bp, snow_cols))
             self.engine.execute_unsafe_ddl(replace_query, condition=self.engine.settings.execute_replace_table)
 
             result = ResolveResult.REPLACE

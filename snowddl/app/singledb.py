@@ -77,7 +77,7 @@ class SingleDbApp(BaseApp):
             "-r",
             help="Snowflake active role (default: SNOWFLAKE_ROLE env variable)",
             metavar="ROLE",
-            default=environ.get("SNOWFlAKE_ROLE"),
+            default=environ.get("SNOWFLAKE_ROLE"),
         )
         parser.add_argument(
             "-w",
