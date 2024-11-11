@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.35.1] - 2024-11-11
+
+- Added skip for stage DIRECTORY property `DIRECTORY_NOTIFICATION_CHANNEL`. It is an informational property, should not be compared.
+
 ## [0.35.0] - 2024-11-08
 
 - Added explicit notice when `CREATE OR REPLACE TABLE` is about to drop a column from table.
