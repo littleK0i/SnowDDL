@@ -1,7 +1,15 @@
 -- SQL script to set up a new Snowflake account for tests and GitHub workflows
 -- Replace replace <password> placeholder statement with an actual password of your choice
 
-SET PASSWORD = '<password>';  -- replace with actual password of your choice
+SET PASSWORD = '<password>';
+
+-- Follow instructions to set up AWS role ARN: https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration
+-- You may use UUID for EXTERNAL_ID
+
+SET STORAGE_AWS_ROLE_ARN = '<aws_role_arn>';         -- replace with AWS role ARN for STORAGE INTEGRATION
+SET STORAGE_AWS_EXTERNAL_ID = '<aws_external_id>';   -- replace with randomly generated EXTERNAL_ID
+
+---
 
 USE ROLE ACCOUNTADMIN;
 
@@ -51,13 +59,25 @@ GRANT OVERRIDE SHARE RESTRICTIONS ON ACCOUNT TO ROLE SNOWDDL_ADMIN;
 
 ---
 
-CREATE STORAGE INTEGRATION TEST_STORAGE_INTEGRATION
+CREATE STORAGE INTEGRATION TEST_STORAGE_INTEGRATION_AWS
 TYPE = EXTERNAL_STAGE
-STORAGE_PROVIDER = GCS
+STORAGE_PROVIDER = 'S3'
+ENABLED = TRUE
+STORAGE_AWS_ROLE_ARN = $STORAGE_AWS_ROLE_ARN
+STORAGE_ALLOWED_LOCATIONS = ('*')
+;
+
+GRANT USAGE ON INTEGRATION TEST_STORAGE_INTEGRATION_AWS TO ROLE SNOWDDL_ADMIN;
+
+---
+
+CREATE STORAGE INTEGRATION TEST_STORAGE_INTEGRATION_GCP
+TYPE = EXTERNAL_STAGE
+STORAGE_PROVIDER = 'GCS'
 ENABLED = TRUE
 STORAGE_ALLOWED_LOCATIONS = ('*');
 
-GRANT USAGE ON INTEGRATION TEST_STORAGE_INTEGRATION TO ROLE SNOWDDL_ADMIN;
+GRANT USAGE ON INTEGRATION TEST_STORAGE_INTEGRATION_GCP TO ROLE SNOWDDL_ADMIN;
 
 ---
 

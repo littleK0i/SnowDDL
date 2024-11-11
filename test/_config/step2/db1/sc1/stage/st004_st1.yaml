@@ -1,5 +1,5 @@
 url: gcs://test-bucket1
-storage_integration: test_storage_integration
+storage_integration: test_storage_integration_gcp
 
 encryption:
   type: NONE
