@@ -45,8 +45,7 @@ external_access_integration_json_schema = {
 
 class ExternalAccessIntegrationParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(
-            self.base_path / "external_access_integration.yaml",
+        self.parse_single_file("external_access_integration",
             external_access_integration_json_schema,
             self.process_external_access_integration,
         )

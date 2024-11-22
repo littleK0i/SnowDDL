@@ -73,16 +73,8 @@ database_json_schema = {
 
 class DatabaseParser(AbstractParser):
     def load_blueprints(self):
-        for database_path in self.base_path.iterdir():
-            if not database_path.is_dir():
-                continue
-
-            # Skip special sub-directories
-            if database_path.name.startswith("__"):
-                continue
-
-            database_name = database_path.name.upper()
-            database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
+        for database_name in self.get_database_names():
+            database_params = self.parse_single_file(f"{database_name}/params", database_json_schema)
 
             # fmt: off
             databases_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()

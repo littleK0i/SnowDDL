@@ -48,7 +48,7 @@ network_policy_json_schema = {
 
 class NetworkPolicyParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "network_policy.yaml", network_policy_json_schema, self.process_network_policy)
+        self.parse_single_file("network_policy", network_policy_json_schema, self.process_network_policy)
 
     def process_network_policy(self, file: ParsedFile):
         for policy_name, policy in file.params.items():

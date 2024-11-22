@@ -60,7 +60,7 @@ warehouse_json_schema = {
 
 class WarehouseParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "warehouse.yaml", warehouse_json_schema, self.process_warehouse)
+        self.parse_single_file("warehouse", warehouse_json_schema, self.process_warehouse)
 
     def process_warehouse(self, f: ParsedFile):
         for warehouse_name, warehouse in f.params.items():

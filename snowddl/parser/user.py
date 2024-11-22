@@ -86,7 +86,7 @@ user_json_schema = {
 
 class UserParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "user.yaml", user_json_schema, self.process_user)
+        self.parse_single_file("user", user_json_schema, self.process_user)
 
     def process_user(self, f: ParsedFile):
         default_warehouse_map = self.get_default_warehouse_map()
@@ -176,7 +176,7 @@ class UserParser(AbstractParser):
     def get_default_warehouse_map(self):
         default_warehouse_map = {}
 
-        business_role_config = self.parse_single_file(self.base_path / "business_role.yaml", business_role_json_schema)
+        business_role_config = self.parse_single_file("business_role", business_role_json_schema)
 
         for business_role_name, business_role in business_role_config.items():
             if "warehouse_usage" not in business_role:

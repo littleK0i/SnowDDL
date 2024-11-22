@@ -19,7 +19,7 @@ class ParsedFile:
         self.parser = parser
 
         self.path = path
-        self.name = path.stem
+        self.name = path.stem.upper()
         self.json_schema = json_schema
 
         self.database = None
@@ -33,15 +33,15 @@ class ParsedFile:
 
     def _guess_database_schema_from_path(self):
         try:
-            relative_path = self.path.relative_to(self.parser.base_path)
+            relative_path = self.path.relative_to(self.parser.scanner.base_path)
         except ValueError:
             return
 
         if len(relative_path.parts) > 1:
-            self.database = relative_path.parts[0]
+            self.database = relative_path.parts[0].upper()
 
         if len(relative_path.parts) > 2:
-            self.schema = relative_path.parts[1]
+            self.schema = relative_path.parts[1].upper()
 
     def _load_params(self):
         with self.path.open("r", encoding="utf-8") as f:

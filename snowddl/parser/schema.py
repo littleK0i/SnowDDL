@@ -74,30 +74,17 @@ schema_json_schema = {
 
 class SchemaParser(AbstractParser):
     def load_blueprints(self):
-        for database_path in self.base_path.iterdir():
-            if not database_path.is_dir():
-                continue
+        for database_name in self.get_database_names():
+            database_params = self.parse_single_file(f"{database_name}/params", database_json_schema)
 
-            # Skip special sub-directories
-            if database_path.name.startswith("__"):
-                continue
-
-            database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
-
-            for schema_path in database_path.iterdir():
-                if not schema_path.is_dir():
-                    continue
-
-                schema_params = self.parse_single_file(schema_path / "params.yaml", schema_json_schema)
+            for schema_name in self.get_schema_names_in_database(database_name):
+                schema_params = self.parse_single_file(f"{database_name}/{schema_name}/params", schema_json_schema)
 
                 combined_params = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
                     "is_sandbox": schema_params.get("is_sandbox", database_params.get("is_sandbox", False)),
                 }
-
-                database_name = database_path.name.upper()
-                schema_name = schema_path.name.upper()
 
                 # fmt: off
                 database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()

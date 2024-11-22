@@ -39,7 +39,7 @@ outbound_share_json_schema = {
 
 class OutboundShareParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "outbound_share.yaml", outbound_share_json_schema, self.process_outbound_share)
+        self.parse_single_file("outbound_share", outbound_share_json_schema, self.process_outbound_share)
 
     def process_outbound_share(self, f: ParsedFile):
         for share_name, share in f.params.items():

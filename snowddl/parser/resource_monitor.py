@@ -30,9 +30,7 @@ resource_monitor_json_schema = {
 
 class ResourceMonitorParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(
-            self.base_path / "resource_monitor.yaml", resource_monitor_json_schema, self.process_resource_monitor
-        )
+        self.parse_single_file("resource_monitor", resource_monitor_json_schema, self.process_resource_monitor)
 
     def process_resource_monitor(self, f: ParsedFile):
         for name, monitor in f.params.items():

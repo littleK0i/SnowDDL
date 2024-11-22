@@ -1,4 +1,4 @@
-from pathlib import Path
+from functools import partial
 from re import compile, IGNORECASE
 from typing import Dict, List, Union
 
@@ -229,37 +229,25 @@ table_json_schema = {
 
 
 class TableParser(AbstractParser):
-    def __init__(self, config: SnowDDLConfig, base_path: Path):
-        super().__init__(config, base_path)
-        self.combined_params = self.init_combined_params()
 
-    def init_combined_params(self):
+    def load_blueprints(self):
         combined_params = {}
 
-        for database_path in self.base_path.iterdir():
-            if not database_path.is_dir():
-                continue
+        for database_name in self.get_database_names():
+            database_params = self.parse_single_file(f"{database_name}/params", database_json_schema)
+            combined_params[database_name] = {}
 
-            database_params = self.parse_single_file(database_path / "params.yaml", database_json_schema)
-            combined_params[database_path.name] = {}
+            for schema_name in self.get_schema_names_in_database(database_name):
+                schema_params = self.parse_single_file(f"{database_name}/{schema_name}/params", schema_json_schema)
 
-            for schema_path in database_path.iterdir():
-                if not schema_path.is_dir():
-                    continue
-
-                schema_params = self.parse_single_file(schema_path / "params.yaml", schema_json_schema)
-
-                combined_params[database_path.name][schema_path.name] = {
+                combined_params[database_name][schema_name] = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
                 }
 
-        return combined_params
+        self.parse_schema_object_files("table", table_json_schema, partial(self.process_table, combined_params=combined_params))
 
-    def load_blueprints(self):
-        self.parse_schema_object_files("table", table_json_schema, self.process_table)
-
-    def process_table(self, f: ParsedFile):
+    def process_table(self, f: ParsedFile, combined_params: dict):
         column_blueprints = []
 
         for col_name, col in f.params["columns"].items():
@@ -296,8 +284,8 @@ class TableParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             columns=column_blueprints,
             cluster_by=f.params.get("cluster_by", None),
-            is_transient=f.params.get("is_transient", self.combined_params[f.database][f.schema].get("is_transient", False)),
-            retention_time=f.params.get("retention_time", self.combined_params[f.database][f.schema].get("retention_time", None)),
+            is_transient=f.params.get("is_transient", combined_params[f.database][f.schema].get("is_transient", False)),
+            retention_time=f.params.get("retention_time", combined_params[f.database][f.schema].get("retention_time", None)),
             change_tracking=f.params.get("change_tracking", False),
             search_optimization=self.get_search_optimization(f.params.get("search_optimization", False)),
             comment=f.params.get("comment"),

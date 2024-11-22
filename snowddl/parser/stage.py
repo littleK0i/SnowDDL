@@ -54,7 +54,7 @@ class StageParser(AbstractParser):
         self.parse_schema_object_files("stage", stage_json_schema, self.process_stage)
 
     def process_stage(self, f: ParsedFile):
-        stage_files_dir = f.path.parent / f.name
+        stage_files_dir = f.path.with_suffix("")
 
         if stage_files_dir.is_dir() and f.params.get("url"):
             raise ValueError("External stage cannot have managed stage files")

@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from snowddl.blueprint import DatabaseIdent
+from snowddl.parser._parsed_file import ParsedFile
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -32,13 +33,11 @@ class PlaceholderParser(AbstractParser):
             placeholders["TARGET_DB"] = str(DatabaseIdent(self.env_prefix, args.get("target_db")))
 
         # 2) Merge with placeholders from normal config file
-        placeholders.update(
-            self.normalise_params_dict(self.parse_single_file(self.base_path / "placeholder.yaml", placeholder_json_schema))
-        )
+        placeholders.update(self.normalise_params_dict(self.parse_single_file("placeholder", placeholder_json_schema)))
 
         # 3) Merge with placeholders from override config file
         if placeholder_path:
-            placeholders.update(self.normalise_params_dict(self.parse_single_file(placeholder_path, placeholder_json_schema)))
+            placeholders.update(self.normalise_params_dict(self.parse_external_file(placeholder_path, placeholder_json_schema)))
 
         # 4) Merge with explicit placeholder values
         if placeholder_values:

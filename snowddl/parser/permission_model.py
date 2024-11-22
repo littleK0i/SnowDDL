@@ -68,7 +68,7 @@ class PermissionModelParser(AbstractParser):
         pass
 
     def load_permission_models(self):
-        custom_permission_models = self.parse_single_file(self.base_path / "permission_model.yaml", permission_model_json_schema)
+        custom_permission_models = self.parse_single_file("permission_model", permission_model_json_schema)
 
         for name, params in custom_permission_models.items():
             self.build_permission_model(name, params)

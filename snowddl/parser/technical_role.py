@@ -36,13 +36,11 @@ technical_role_json_schema = {
 
 class TechnicalRoleParser(AbstractParser):
     def load_blueprints(self):
-        path = self.base_path / "technical_role.yaml"
+        # Current config name
+        self.parse_single_file("technical_role", technical_role_json_schema, self.process_technical_role)
 
-        if not path.exists():
-            # Backwards compatibility with configs before "tech role" renaming
-            path = self.base_path / "tech_role.yaml"
-
-        self.parse_single_file(path, technical_role_json_schema, self.process_technical_role)
+        # Backwards compatible name
+        self.parse_single_file("tech_role", technical_role_json_schema, self.process_technical_role)
 
     def process_technical_role(self, f: ParsedFile):
         for technical_role_name, technical_role in f.params.items():

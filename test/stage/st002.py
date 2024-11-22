@@ -6,7 +6,7 @@ def test_step1(helper):
     assert stage_show["comment"] == "abc"
 
     assert stage_show["url"] == "gcs://test-bucket1"
-    assert stage_show["storage_integration"] == "TEST_STORAGE_INTEGRATION"
+    assert stage_show["storage_integration"] == "TEST_STORAGE_INTEGRATION_GCP"
 
     assert "ST002_FF1" in stage_desc["STAGE_FILE_FORMAT"]["FORMAT_NAME"]["property_value"]
 
@@ -26,7 +26,7 @@ def test_step2(helper):
     assert stage_show["comment"] == "cde"
 
     assert stage_show["url"] == "gcs://test-bucket2"
-    assert stage_show["storage_integration"] == "TEST_STORAGE_INTEGRATION"
+    assert stage_show["storage_integration"] == "TEST_STORAGE_INTEGRATION_GCP"
 
     assert "FORMAT_NAME" not in stage_desc["STAGE_FILE_FORMAT"]
 

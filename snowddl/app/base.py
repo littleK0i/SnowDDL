@@ -15,7 +15,7 @@ from traceback import TracebackException
 from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig
 from snowddl.engine import SnowDDLEngine
-from snowddl.parser import default_parse_sequence, PermissionModelParser, PlaceholderParser
+from snowddl.parser import default_parse_sequence, DirectoryScanner, PermissionModelParser, PlaceholderParser
 from snowddl.resolver import default_resolve_sequence, default_destroy_sequence
 from snowddl.settings import SnowDDLSettings
 from snowddl.version import __version__
@@ -140,8 +140,15 @@ class BaseApp:
         parser.add_argument(
             "--log-level", help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO"
         )
-        parser.add_argument("--show-sql", help="Show executed DDL queries", default=False, action="store_true")
-        parser.add_argument("--show-timers", help="Show debug timers", default=False, action="store_true")
+        parser.add_argument(
+            "--show-sql", help="Show executed DDL queries", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--show-timers", help="Show debug timers", default=False, action="store_true"
+        )
+        parser.add_argument(
+            "--show-unused-files", help="Show warnings for unused config files", default=False, action="store_true"
+        )
 
         # Placeholders
         parser.add_argument(
@@ -347,12 +354,13 @@ class BaseApp:
 
     def init_config(self):
         config = SnowDDLConfig(self.env_prefix)
+        scanner = DirectoryScanner(self.config_path)
 
         # Placeholders
         placeholder_path = self.get_placeholder_path()
         placeholder_values = self.get_placeholder_values()
 
-        parser = PlaceholderParser(config, self.config_path)
+        parser = PlaceholderParser(config, scanner)
         parser.load_placeholders(placeholder_path, placeholder_values, self.args)
 
         if config.errors:
@@ -360,7 +368,7 @@ class BaseApp:
             exit(1)
 
         # Permission models
-        parser = PermissionModelParser(config, self.config_path)
+        parser = PermissionModelParser(config, scanner)
         parser.load_permission_models()
 
         if config.errors:
@@ -369,7 +377,7 @@ class BaseApp:
 
         # Blueprints
         for parser_cls in self.parse_sequence:
-            parser = parser_cls(config, self.config_path)
+            parser = parser_cls(config, scanner)
             parser.load_blueprints()
 
         if config.errors:
@@ -391,6 +399,9 @@ class BaseApp:
         if config.errors:
             self.output_config_errors(config)
             exit(1)
+
+        if self.args.get("show_unused_files"):
+            self.output_unused_file_warnings(scanner.get_unused_file_paths())
 
         return config
 
@@ -647,6 +658,10 @@ class BaseApp:
                     f"Detected {object_type.name} with name [{name}] "
                     f"which does not conform to SnowDDL standards, please rename or drop it manually"
                 )
+
+    def output_unused_file_warnings(self, unused_file_paths):
+        for file_path in unused_file_paths.values():
+            self.logger.warning(f"Detected possibly unused config file [{file_path}]")
 
     def output_app_timers(self):
         for timer_name, timer_value in self.elapsed_timers.items():

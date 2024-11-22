@@ -15,12 +15,13 @@ from snowddl.blueprint import (
     build_role_ident,
 )
 from snowddl.parser._parsed_file import ParsedFile
+from snowddl.parser._scanner import DirectoryScanner
 
 
 class AbstractParser(ABC):
-    def __init__(self, config: SnowDDLConfig, base_path: Path):
+    def __init__(self, config: SnowDDLConfig, scanner: DirectoryScanner):
         self.config = config
-        self.base_path = base_path
+        self.scanner = scanner
 
         self.env_prefix = config.env_prefix
 
@@ -28,7 +29,36 @@ class AbstractParser(ABC):
     def load_blueprints(self):
         pass
 
-    def parse_single_file(self, path: Path, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
+    def get_database_names(self):
+        return [database_name.upper() for database_name in self.scanner.get_database_dir_paths()]
+
+    def get_schema_names_in_database(self, database_name):
+        return [schema_name.upper() for schema_name in self.scanner.get_schema_dir_paths(database_name)]
+
+    def parse_single_file(self, file_key: str, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
+        if not callback:
+            callback = lambda f: f.params
+
+        path = self.scanner.get_single_file_path(file_key)
+
+        if path:
+            try:
+                file = ParsedFile(self, path, json_schema)
+                return callback(file)
+            except Exception as e:
+                self.config.add_error(path, e)
+
+        return {}
+
+    def parse_schema_object_files(self, object_type: str, json_schema: dict, callback: Callable[[ParsedFile], None]):
+        for path in self.scanner.get_schema_object_file_paths(object_type).values():
+            try:
+                file = ParsedFile(self, path, json_schema)
+                callback(file)
+            except Exception as e:
+                self.config.add_error(path, e)
+
+    def parse_external_file(self, path: Path, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
         if not callback:
             callback = lambda f: f.params
 
@@ -40,14 +70,6 @@ class AbstractParser(ABC):
                 self.config.add_error(path, e)
 
         return {}
-
-    def parse_schema_object_files(self, object_type: str, json_schema: dict, callback: Callable[[ParsedFile], None]):
-        for path in self.base_path.glob(f"*/*/{object_type}/*.yaml"):
-            try:
-                file = ParsedFile(self, path, json_schema)
-                callback(file)
-            except Exception as e:
-                self.config.add_error(path, e)
 
     def normalise_params_list(self, params):
         if params is None:

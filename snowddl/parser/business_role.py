@@ -99,7 +99,7 @@ business_role_json_schema = {
 
 class BusinessRoleParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(self.base_path / "business_role.yaml", business_role_json_schema, self.process_business_role)
+        self.parse_single_file("business_role", business_role_json_schema, self.process_business_role)
 
     def process_business_role(self, file: ParsedFile):
         for business_role_name, business_role in file.params.items():
