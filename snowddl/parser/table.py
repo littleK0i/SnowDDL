@@ -24,7 +24,6 @@ from snowddl.blueprint import (
     RowAccessPolicyBlueprint,
     RowAccessPolicyReference,
 )
-from snowddl.config import SnowDDLConfig
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 from snowddl.parser.schema import database_json_schema, schema_json_schema
 
@@ -229,7 +228,6 @@ table_json_schema = {
 
 
 class TableParser(AbstractParser):
-
     def load_blueprints(self):
         combined_params = {}
 

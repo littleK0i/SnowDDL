@@ -317,8 +317,10 @@ class TableResolver(AbstractSchemaObjectResolver):
         result = ResolveResult.NOCHANGE
 
         if replace_reasons:
+            # fmt: off
             replace_query = "\n".join(f"-- {r}" for r in replace_reasons + replace_notices) + "\n" + str(self._build_create_table(bp, snow_cols))
             self.engine.execute_unsafe_ddl(replace_query, condition=self.engine.settings.execute_replace_table)
+            # fmt: on
 
             result = ResolveResult.REPLACE
 

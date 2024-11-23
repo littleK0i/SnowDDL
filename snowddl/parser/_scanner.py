@@ -66,8 +66,10 @@ class DirectoryScanner:
                     database_key = self._normalise_key(relative_item_path.parts[0])
 
                     if database_key in self.database_dir_paths:
-                        raise ValueError(f"Detected config database directories with similar names: "
-                                         f"[{item_path}] and [{self.database_dir_paths[database_key]}]")
+                        raise ValueError(
+                            f"Detected config database directories with similar names: "
+                            f"[{item_path}] and [{self.database_dir_paths[database_key]}]"
+                        )
 
                     self.database_dir_paths[database_key] = item_path
 
@@ -77,8 +79,10 @@ class DirectoryScanner:
                     schema_key = self._normalise_key(relative_item_path.parts[1])
 
                     if database_key in self.schema_dir_paths and schema_key in self.schema_dir_paths[database_key]:
-                        raise ValueError(f"Detected config schema directories with similar names: "
-                                         f"[{item_path}] and [{self.schema_dir_paths[database_key][schema_key]}]")
+                        raise ValueError(
+                            f"Detected config schema directories with similar names: "
+                            f"[{item_path}] and [{self.schema_dir_paths[database_key][schema_key]}]"
+                        )
 
                     self.schema_dir_paths[database_key][schema_key] = item_path
 
@@ -96,8 +100,9 @@ class DirectoryScanner:
                 file_key = self._normalise_key(str(relative_item_path.with_suffix("")))
 
                 if file_key in self.all_file_paths:
-                    raise ValueError(f"Detected config files with similar names: "
-                                     f"[{item_path}] and [{self.all_file_paths[file_key]}]")
+                    raise ValueError(
+                        f"Detected config files with similar names: " f"[{item_path}] and [{self.all_file_paths[file_key]}]"
+                    )
 
                 if relative_item_level == 4:
                     object_type = self._normalise_key(relative_item_path.parts[2])

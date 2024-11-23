@@ -140,12 +140,14 @@ class BaseApp:
         parser.add_argument(
             "--log-level", help="Log level (possible values: DEBUG, INFO, WARNING; default: INFO)", default="INFO"
         )
+        # fmt: off
         parser.add_argument(
             "--show-sql", help="Show executed DDL queries", default=False, action="store_true"
         )
         parser.add_argument(
             "--show-timers", help="Show debug timers", default=False, action="store_true"
         )
+        # fmt: on
         parser.add_argument(
             "--show-unused-files", help="Show warnings for unused config files", default=False, action="store_true"
         )
