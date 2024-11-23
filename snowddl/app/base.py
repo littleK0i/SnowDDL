@@ -19,6 +19,7 @@ from snowddl.parser import default_parse_sequence, DirectoryScanner, PermissionM
 from snowddl.resolver import default_resolve_sequence, default_destroy_sequence
 from snowddl.settings import SnowDDLSettings
 from snowddl.version import __version__
+from snowddl.validator import default_validate_sequence
 
 
 class BaseApp:
@@ -28,6 +29,7 @@ class BaseApp:
     parse_sequence = default_parse_sequence
     resolve_sequence = default_resolve_sequence
     destroy_sequence = default_destroy_sequence
+    validate_sequence = default_validate_sequence
 
     def __init__(self):
         self.elapsed_timers = {}
@@ -397,6 +399,17 @@ class BaseApp:
                 module.handler(config)
             except Exception as e:
                 config.add_error(module_path, e)
+
+        if config.errors:
+            self.output_config_errors(config)
+            exit(1)
+
+        for validator_cls in self.validate_sequence:
+            try:
+                validator = validator_cls(config)
+                validator.validate()
+            except Exception as e:
+                config.add_error(None, e)
 
         if config.errors:
             self.output_config_errors(config)
