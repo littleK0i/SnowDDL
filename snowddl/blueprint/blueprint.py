@@ -164,7 +164,7 @@ class ExternalTableBlueprint(SchemaObjectBlueprint):
 
 class FileFormatBlueprint(SchemaObjectBlueprint):
     type: str
-    format_options: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
+    format_options: Dict[str, Union[bool, float, int, str, list]] = {}
 
 
 class ForeignKeyBlueprint(SchemaObjectBlueprint):
@@ -411,7 +411,7 @@ class UserBlueprint(AbstractBlueprint):
     type: Optional[str] = None
     default_warehouse: Optional[AccountObjectIdent] = None
     default_namespace: Optional[Union[DatabaseIdent, SchemaIdent]] = None
-    session_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
+    session_params: Dict[str, Union[bool, float, int, str]] = {}
 
 
 class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
@@ -431,7 +431,7 @@ class WarehouseBlueprint(AbstractBlueprint):
     resource_monitor: Optional[Union[Ident, AccountObjectIdent]] = None
     enable_query_acceleration: bool = False
     query_acceleration_max_scale_factor: int = 8
-    warehouse_params: Optional[Dict[str, Union[bool, float, int, str]]] = None
+    warehouse_params: Dict[str, Union[bool, float, int, str]] = {}
     resource_constraint: Optional[str] = None
 
 
