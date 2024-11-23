@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from snowddl.blueprint import DatabaseIdent
-from snowddl.parser._parsed_file import ParsedFile
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -10,7 +9,17 @@ from snowddl.parser.abc_parser import AbstractParser
 placeholder_json_schema = {
     "type": "object",
     "additionalProperties": {
-        "type": ["boolean", "number", "string"]
+        "anyOf": [
+            {
+                "type": ["boolean", "number", "string"]
+            },
+            {
+                "type": "array",
+                "items": {
+                    "type": ["boolean", "number", "string"]
+                },
+            },
+        ]
     }
 }
 # fmt: on

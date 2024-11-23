@@ -5,3 +5,8 @@ default_wh_suspend: 60
 # Stages
 external_bucket_path: gcs://test-bucket
 default_enforce_length: true
+
+# Network policy
+internal_network_ip_list:
+  - 192.168.1.1
+  - 192.168.1.2

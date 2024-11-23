@@ -633,9 +633,16 @@ class BaseApp:
                 raise ValueError(f"Placeholder values [{self.args.get('placeholder_values')}] are not JSON encoded dict")
 
             for k, v in placeholder_values.items():
-                if not isinstance(v, (bool, float, int, str)):
+                if isinstance(v, list):
+                    for item in v:
+                        if not isinstance(item, (bool, float, int, str)):
+                            raise ValueError(
+                                f"Invalid type [{type(item).__name__}] of placeholder [{k.upper()}] item, supported types are: bool, float, int, str"
+                            )
+
+                elif not isinstance(v, (bool, float, int, str)):
                     raise ValueError(
-                        f"Invalid type [{type(v)}] of placeholder [{k.upper()}] value, supported types are: bool, float, int, str"
+                        f"Invalid type [{type(v).__name__}] of placeholder [{k.upper()}], supported types are scalars or lists of: bool, float, int, str"
                     )
 
             return placeholder_values

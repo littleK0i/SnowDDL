@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0] - 2024-11-23
+
+- Introduced support for both `.yml` and `.yaml` config file extensions. Previously it was only `.yaml`.
+- Implemented lists as possible placeholder values. Previously only scalar values were supported.
+- Changed default values for `FileFormat.format_options`, `User.session_params`, `Warehouse.warehouse_params` from `None` to `{}`. It should help to prevent errors when blueprints are created dynamically in code.
+- Removed `.grep()` calls and improved performance of config directory traversing.
+
 ## [0.35.1] - 2024-11-11
 
 - Added skip for stage DIRECTORY property `DIRECTORY_NOTIFICATION_CHANNEL`. It is an informational property, should not be compared.

@@ -86,7 +86,7 @@ class SnowDDLConfig:
             if full_name in include_full_names and full_name not in exclude_full_names
         }
 
-    def get_placeholder(self, name: str) -> Union[bool, float, int, str]:
+    def get_placeholder(self, name: str) -> Union[bool, float, int, str, List[Union[bool, float, int, str]]]:
         if name not in self.placeholders:
             raise ValueError(f"Unknown placeholder [{name}]")
 
@@ -126,7 +126,7 @@ class SnowDDLConfig:
             }
         )
 
-    def add_placeholder(self, name: str, value: Union[bool, float, int, str]):
+    def add_placeholder(self, name: str, value: Union[bool, float, int, str, List[Union[bool, float, int, str]]]):
         self.placeholders[name] = value
 
     def add_permission_model(self, name: str, permission_model: PermissionModel):
