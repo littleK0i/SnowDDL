@@ -97,7 +97,7 @@ class DirectoryScanner:
                 if relative_item_level not in self.allowed_file_levels:
                     continue
 
-                file_key = self._normalise_key(str(relative_item_path.with_suffix("")))
+                file_key = self._normalise_key(relative_item_path.with_suffix("").as_posix())
 
                 if file_key in self.all_file_paths:
                     raise ValueError(

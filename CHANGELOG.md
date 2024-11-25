@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.36.1] - 2024-11-25
+
+- Attempted to fix directory separator issues inside `DirectoryScanneer` on Windows.
+
 ## [0.36.0] - 2024-11-23
 
 - Introduced support for both `.yml` and `.yaml` config file extensions. Previously it was only `.yaml`.
