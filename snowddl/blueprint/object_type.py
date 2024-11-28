@@ -40,6 +40,12 @@ class ObjectType(Enum):
         "blueprint_cls": "TableBlueprint",
     }
 
+    CORTEX_SEARCH_SERVICE = {
+        "singular": "CORTEX SEARCH SERVICE",
+        "plural": "CORTEX SEARCH SERVICES",
+        "is_future_grant_supported": True,
+    }
+
     DATABASE = {
         "singular": "DATABASE",
         "plural": "DATABASES",

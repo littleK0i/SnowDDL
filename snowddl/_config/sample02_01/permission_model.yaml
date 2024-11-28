@@ -6,11 +6,13 @@ fivetran:
     - TABLE
     - VIEW
     - NOTEBOOK
+    - CORTEX_SEARCH_SERVICE
 
   owner_future_grants:
     STAGE: [OWNERSHIP]
     TABLE: [OWNERSHIP]
     VIEW: [OWNERSHIP]
+    CORTEX_SEARCH_SERVICE: [OWNERSHIP]
 
   read_future_grants:
     STAGE: [READ]
