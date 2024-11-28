@@ -491,7 +491,8 @@ class TableResolver(AbstractSchemaObjectResolver):
             query.append_nl("AS")
             query.append_nl("SELECT")
 
-            for idx, c in enumerate(bp.columns):
+            # Skip virtual columns before enumeration
+            for idx, c in enumerate(c for c in bp.columns if c.expression is None):
                 col_name = str(c.name)
 
                 if col_name in snow_cols:

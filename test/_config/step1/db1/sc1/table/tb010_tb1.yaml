@@ -1,0 +1,6 @@
+columns:
+  id: NUMBER(38,0)
+  name: VARCHAR(255)
+  name_length:
+    type: NUMBER(38,0)
+    expression: LENGTH(NAME)
