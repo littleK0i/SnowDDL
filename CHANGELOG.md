@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.36.2] - 2024-11-28
+
+- Added `CORTEX_SEARCH_SERVICE` object types for grants.
+- Added skip logic for virtual columns when replacing table with CTAS.
+
 ## [0.36.1] - 2024-11-25
 
 - Attempted to fix directory separator issues inside `DirectoryScanneer` on Windows.
