@@ -39,19 +39,18 @@ outbound_share_json_schema = {
 
 class OutboundShareParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file("outbound_share", outbound_share_json_schema, self.process_outbound_share)
+        self.parse_multi_entity_file("outbound_share", outbound_share_json_schema, self.process_outbound_share)
 
-    def process_outbound_share(self, f: ParsedFile):
-        for share_name, share in f.params.items():
-            bp = OutboundShareBlueprint(
-                full_name=OutboundShareIdent(self.env_prefix, share_name),
-                accounts=self.get_share_accounts(share),
-                share_restrictions=share.get("share_restrictions", False),
-                grants=self.get_share_grants(share),
-                comment=share.get("comment"),
-            )
+    def process_outbound_share(self, share_name, share_params):
+        bp = OutboundShareBlueprint(
+            full_name=OutboundShareIdent(self.env_prefix, share_name),
+            accounts=self.get_share_accounts(share_params),
+            share_restrictions=share_params.get("share_restrictions", False),
+            grants=self.get_share_grants(share_params),
+            comment=share_params.get("comment"),
+        )
 
-            self.config.add_blueprint(bp)
+        self.config.add_blueprint(bp)
 
     def get_share_accounts(self, share):
         share_accounts = []

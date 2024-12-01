@@ -14,7 +14,7 @@ account_params_json_schema = {
 
 class AccountParameterParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file("account_params", account_params_json_schema, self.process_account_params)
+        self.parse_single_entity_file("account_params", account_params_json_schema, self.process_account_params)
 
     def process_account_params(self, f: ParsedFile):
         for name, value in f.params.items():

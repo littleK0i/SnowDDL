@@ -45,39 +45,38 @@ external_access_integration_json_schema = {
 
 class ExternalAccessIntegrationParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file(
+        self.parse_multi_entity_file(
             "external_access_integration",
             external_access_integration_json_schema,
             self.process_external_access_integration,
         )
 
-    def process_external_access_integration(self, file: ParsedFile):
-        for integration_name, integration in file.params.items():
-            allowed_network_rules = [
-                SchemaObjectIdent(self.env_prefix, *network_rule.split("."))
-                for network_rule in integration.get("allowed_network_rules")
+    def process_external_access_integration(self, integration_name, integration_params):
+        allowed_network_rules = [
+            SchemaObjectIdent(self.env_prefix, *network_rule.split("."))
+            for network_rule in integration_params.get("allowed_network_rules")
+        ]
+        allowed_api_authentication_integrations = None
+        allowed_authentication_secrets = None
+
+        if integration_params.get("allowed_api_authentication_integrations"):
+            allowed_api_authentication_integrations = [
+                Ident(api_integration) for api_integration in integration_params.get("allowed_api_authentication_integrations")
             ]
-            allowed_api_authentication_integrations = None
-            allowed_authentication_secrets = None
 
-            if integration.get("allowed_api_authentication_integrations"):
-                allowed_api_authentication_integrations = [
-                    Ident(api_integration) for api_integration in integration.get("allowed_api_authentication_integrations")
-                ]
+        if integration_params.get("allowed_authentication_secrets"):
+            allowed_authentication_secrets = [
+                SchemaObjectIdent(self.env_prefix, *secret_name.split("."))
+                for secret_name in integration_params.get("allowed_authentication_secrets")
+            ]
 
-            if integration.get("allowed_authentication_secrets"):
-                allowed_authentication_secrets = [
-                    SchemaObjectIdent(self.env_prefix, *secret_name.split("."))
-                    for secret_name in integration.get("allowed_authentication_secrets")
-                ]
+        bp = ExternalAccessIntegrationBlueprint(
+            full_name=AccountObjectIdent(self.env_prefix, integration_name),
+            allowed_network_rules=allowed_network_rules,
+            allowed_api_authentication_integrations=allowed_api_authentication_integrations,
+            allowed_authentication_secrets=allowed_authentication_secrets,
+            enabled=integration_params.get("enabled", True),
+            comment=integration_params.get("comment"),
+        )
 
-            bp = ExternalAccessIntegrationBlueprint(
-                full_name=AccountObjectIdent(self.env_prefix, integration_name),
-                allowed_network_rules=allowed_network_rules,
-                allowed_api_authentication_integrations=allowed_api_authentication_integrations,
-                allowed_authentication_secrets=allowed_authentication_secrets,
-                enabled=integration.get("enabled", True),
-                comment=integration.get("comment"),
-            )
-
-            self.config.add_blueprint(bp)
+        self.config.add_blueprint(bp)

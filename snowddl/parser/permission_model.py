@@ -68,12 +68,9 @@ class PermissionModelParser(AbstractParser):
         pass
 
     def load_permission_models(self):
-        custom_permission_models = self.parse_single_file("permission_model", permission_model_json_schema)
+        self.parse_multi_entity_file("permission_model", permission_model_json_schema, self.process_permission_model)
 
-        for name, params in custom_permission_models.items():
-            self.build_permission_model(name, params)
-
-    def build_permission_model(self, name, params):
+    def process_permission_model(self, name, params):
         # Possibly inherit model from another model to reduce code repetition
         if params.get("inherit_from"):
             model = self.config.get_permission_model(params.get("inherit_from").upper()).model_copy(deep=True)

@@ -1,5 +1,6 @@
 from ._parsed_file import ParsedFile
 from ._scanner import DirectoryScanner
+from .abc_parser import AbstractParser
 from .account_params import AccountParameterParser
 from .account_policy import AccountPolicyParser
 from .aggregation_policy import AggregationPolicyParser

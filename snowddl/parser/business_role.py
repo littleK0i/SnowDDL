@@ -99,66 +99,63 @@ business_role_json_schema = {
 
 class BusinessRoleParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file("business_role", business_role_json_schema, self.process_business_role)
+        self.parse_multi_entity_file("business_role", business_role_json_schema, self.process_business_role)
 
-    def process_business_role(self, file: ParsedFile):
-        for business_role_name, business_role in file.params.items():
-            business_role_ident = build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX)
-
-            grants = []
-
-            # Database roles
-            for full_schema_name in business_role.get("database_owner", []):
-                grants.extend(self.build_database_role_grants(full_schema_name, "OWNER"))
-
-            for full_schema_name in business_role.get("database_read", []):
-                grants.extend(self.build_database_role_grants(full_schema_name, "READ"))
-
-            for full_schema_name in business_role.get("database_write", []):
-                grants.extend(self.build_database_role_grants(full_schema_name, "WRITE"))
-
-            # Schema roles
-            for full_schema_name in business_role.get("schema_owner", []):
-                grants.extend(self.build_schema_role_grants(full_schema_name, "OWNER"))
-
-            for full_schema_name in business_role.get("schema_read", []):
-                grants.extend(self.build_schema_role_grants(full_schema_name, "READ"))
-
-            for full_schema_name in business_role.get("schema_write", []):
-                grants.extend(self.build_schema_role_grants(full_schema_name, "WRITE"))
-
-            # Share roles
-            for share_name in business_role.get("share_read", []):
-                grants.append(self.build_share_role_grant(share_name))
-                self.config.add_blueprint(self.build_share_role_blueprint(share_name))
-
-            # Warehouse roles
-            for warehouse_name in business_role.get("warehouse_usage", []):
-                grants.append(self.build_warehouse_role_grant(warehouse_name, "USAGE"))
-
-            for warehouse_name in business_role.get("warehouse_monitor", []):
-                grants.append(self.build_warehouse_role_grant(warehouse_name, "MONITOR"))
-
-            # Technical roles
-            for technical_role_name in business_role.get("technical_roles", []) + business_role.get("tech_roles", []):
-                grants.append(self.build_technical_role_grant(technical_role_name))
-
-            # Global roles
-            for global_role_name in business_role.get("global_roles", []):
-                grants.append(self.build_global_role_grant(global_role_name))
-
-            bp = BusinessRoleBlueprint(
-                full_name=business_role_ident,
-                grants=grants,
-                comment=business_role.get("comment"),
-            )
-
-            self.config.add_blueprint(bp)
-
-    def build_database_role_grants(self, full_database_name, grant_type):
+    def process_business_role(self, business_role_name, business_role_params):
         grants = []
 
-        for database_bp in self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, full_database_name).values():
+        # Database roles
+        for database_name_pattern in business_role_params.get("database_owner", []):
+            grants.extend(self.build_database_role_grants(database_name_pattern, "OWNER"))
+
+        for database_name_pattern in business_role_params.get("database_read", []):
+            grants.extend(self.build_database_role_grants(database_name_pattern, "READ"))
+
+        for database_name_pattern in business_role_params.get("database_write", []):
+            grants.extend(self.build_database_role_grants(database_name_pattern, "WRITE"))
+
+        # Schema roles
+        for schema_name_pattern in business_role_params.get("schema_owner", []):
+            grants.extend(self.build_schema_role_grants(schema_name_pattern, "OWNER"))
+
+        for schema_name_pattern in business_role_params.get("schema_read", []):
+            grants.extend(self.build_schema_role_grants(schema_name_pattern, "READ"))
+
+        for schema_name_pattern in business_role_params.get("schema_write", []):
+            grants.extend(self.build_schema_role_grants(schema_name_pattern, "WRITE"))
+
+        # Share roles
+        for share_name in business_role_params.get("share_read", []):
+            grants.append(self.build_share_role_grant(share_name))
+            self.config.add_blueprint(self.build_share_role_blueprint(share_name))
+
+        # Warehouse roles
+        for warehouse_name in business_role_params.get("warehouse_usage", []):
+            grants.append(self.build_warehouse_role_grant(warehouse_name, "USAGE"))
+
+        for warehouse_name in business_role_params.get("warehouse_monitor", []):
+            grants.append(self.build_warehouse_role_grant(warehouse_name, "MONITOR"))
+
+        # Technical roles
+        for technical_role_name in business_role_params.get("technical_roles", []) + business_role_params.get("tech_roles", []):
+            grants.append(self.build_technical_role_grant(technical_role_name))
+
+        # Global roles
+        for global_role_name in business_role_params.get("global_roles", []):
+            grants.append(self.build_global_role_grant(global_role_name))
+
+        bp = BusinessRoleBlueprint(
+            full_name=build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX),
+            grants=grants,
+            comment=business_role_params.get("comment"),
+        )
+
+        self.config.add_blueprint(bp)
+
+    def build_database_role_grants(self, database_name_pattern, grant_type):
+        grants = []
+
+        for database_bp in self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern).values():
             database_permission_model = self.config.get_permission_model(database_bp.permission_model)
 
             if database_permission_model.ruleset.create_database_owner_role:
@@ -180,7 +177,7 @@ class BusinessRoleParser(AbstractParser):
                 grants.extend(self.build_schema_role_grants(f"{database_bp.full_name.database}.*", grant_type))
 
         if not grants:
-            raise ValueError(f"No {ObjectType.DATABASE.plural} matched wildcard grant with pattern [{full_database_name}]")
+            raise ValueError(f"No {ObjectType.DATABASE.plural} matched wildcard grant with pattern [{database_name_pattern}]")
 
         return grants
 

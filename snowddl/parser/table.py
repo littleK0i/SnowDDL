@@ -232,11 +232,11 @@ class TableParser(AbstractParser):
         combined_params = {}
 
         for database_name in self.get_database_names():
-            database_params = self.parse_single_file(f"{database_name}/params", database_json_schema)
+            database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
             combined_params[database_name] = {}
 
             for schema_name in self.get_schema_names_in_database(database_name):
-                schema_params = self.parse_single_file(f"{database_name}/{schema_name}/params", schema_json_schema)
+                schema_params = self.parse_single_entity_file(f"{database_name}/{schema_name}/params", schema_json_schema)
 
                 combined_params[database_name][schema_name] = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),

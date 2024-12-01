@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from logging import getLogger, NullHandler
 from pathlib import Path
-from typing import Callable, Dict, List, Union
+from traceback import TracebackException
+from typing import Callable, Dict, List, Optional, Union
 
 from snowddl.config import SnowDDLConfig
 from snowddl.blueprint import (
@@ -18,10 +20,17 @@ from snowddl.parser._parsed_file import ParsedFile
 from snowddl.parser._scanner import DirectoryScanner
 
 
+logger = getLogger(__name__)
+logger.addHandler(NullHandler())
+
+
 class AbstractParser(ABC):
     def __init__(self, config: SnowDDLConfig, scanner: DirectoryScanner):
         self.config = config
         self.scanner = scanner
+
+        self.logger = logger
+        self.errors: Dict[str, Exception] = {}
 
         self.env_prefix = config.env_prefix
 
@@ -35,7 +44,7 @@ class AbstractParser(ABC):
     def get_schema_names_in_database(self, database_name):
         return [schema_name.upper() for schema_name in self.scanner.get_schema_dir_paths(database_name)]
 
-    def parse_single_file(self, file_key: str, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
+    def parse_single_entity_file(self, file_key: str, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
         if not callback:
             callback = lambda f: f.params
 
@@ -46,9 +55,25 @@ class AbstractParser(ABC):
                 file = ParsedFile(self, path, json_schema)
                 return callback(file)
             except Exception as e:
-                self.config.add_error(path, e)
+                self.add_error(e, path)
 
         return {}
+
+    def parse_multi_entity_file(self, file_key: str, json_schema: dict, callback: Callable[[str, Dict], None]):
+        path = self.scanner.get_single_file_path(file_key)
+
+        if path:
+            try:
+                file = ParsedFile(self, path, json_schema)
+            except Exception as e:
+                self.add_error(e, path)
+                return
+
+            for entity_name, entity_params in file.params.items():
+                try:
+                    callback(entity_name, entity_params)
+                except Exception as e:
+                    self.add_error(e, path, entity_name)
 
     def parse_schema_object_files(self, object_type: str, json_schema: dict, callback: Callable[[ParsedFile], None]):
         for path in self.scanner.get_schema_object_file_paths(object_type).values():
@@ -56,7 +81,7 @@ class AbstractParser(ABC):
                 file = ParsedFile(self, path, json_schema)
                 callback(file)
             except Exception as e:
-                self.config.add_error(path, e)
+                self.add_error(e, path)
 
     def parse_external_file(self, path: Path, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
         if not callback:
@@ -67,9 +92,21 @@ class AbstractParser(ABC):
                 file = ParsedFile(self, path, json_schema)
                 return callback(file)
             except Exception as e:
-                self.config.add_error(path, e)
+                self.add_error(e, path)
 
         return {}
+
+    def add_error(self, exc: Exception, path: Path, entity_name: Optional[str] = None):
+        traceback = "".join(TracebackException.from_exception(exc).format())
+
+        if entity_name:
+            self.logger.warning(f"Failed to parse [{entity_name}] in config file [{path}]\n{traceback}")
+            error_key = f"{path}:{entity_name}"
+        else:
+            self.logger.warning(f"Failed to parse config file [{path}]\n{traceback}")
+            error_key = str(path)
+
+        self.errors[error_key] = exc
 
     def normalise_params_list(self, params):
         if params is None:

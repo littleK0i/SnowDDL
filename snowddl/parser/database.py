@@ -74,7 +74,7 @@ database_json_schema = {
 class DatabaseParser(AbstractParser):
     def load_blueprints(self):
         for database_name in self.get_database_names():
-            database_params = self.parse_single_file(f"{database_name}/params", database_json_schema)
+            database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
 
             # fmt: off
             databases_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()

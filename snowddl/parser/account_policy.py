@@ -28,7 +28,7 @@ account_policy_json_schema = {
 
 class AccountPolicyParser(AbstractParser):
     def load_blueprints(self):
-        self.parse_single_file("account_policy", account_policy_json_schema, self.process_account_policy)
+        self.parse_single_entity_file("account_policy", account_policy_json_schema, self.process_account_policy)
 
     def process_account_policy(self, f: ParsedFile):
         if self.env_prefix:

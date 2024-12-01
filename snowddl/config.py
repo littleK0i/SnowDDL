@@ -38,8 +38,6 @@ class SnowDDLConfig:
         self.env_prefix = self._init_env_prefix(env_prefix)
 
         self.blueprints: Dict[Type[T_Blueprint], Dict[str, T_Blueprint]] = defaultdict(dict)
-        self.errors: List[dict] = []
-
         self.placeholders: Dict[str, Union[bool, float, int, str]] = {}
         self.permission_models: Dict[str, PermissionModel] = self._init_permission_models()
 
@@ -117,14 +115,6 @@ class SnowDDLConfig:
             raise ValueError(f"{cls.__name__} with name [{policy_name}] does not exist or was not defined yet")
 
         self.blueprints[cls][str(policy_name)].references.append(ref)
-
-    def add_error(self, path: Path, e: Exception):
-        self.errors.append(
-            {
-                "path": path,
-                "error": e,
-            }
-        )
 
     def add_placeholder(self, name: str, value: Union[bool, float, int, str, List[Union[bool, float, int, str]]]):
         self.placeholders[name] = value

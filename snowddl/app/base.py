@@ -10,7 +10,7 @@ from pathlib import Path
 from snowflake.connector import connect
 from string import ascii_uppercase, digits
 from time import perf_counter
-from traceback import TracebackException
+from typing import Dict
 
 from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig
@@ -365,25 +365,29 @@ class BaseApp:
         parser = PlaceholderParser(config, scanner)
         parser.load_placeholders(placeholder_path, placeholder_values, self.args)
 
-        if config.errors:
-            self.output_config_errors(config)
+        if parser.errors:
+            self.logger.error(f"Execution halted due to [{len(parser.errors)}] error(s) in placeholders parser")
             exit(1)
 
         # Permission models
         parser = PermissionModelParser(config, scanner)
         parser.load_permission_models()
 
-        if config.errors:
-            self.output_config_errors(config)
+        if parser.errors:
+            self.logger.error(f"Execution halted due to [{len(parser.errors)}] error(s) in permission models parser")
             exit(1)
 
-        # Blueprints
+        # All blueprints
+        total_error_count = 0
+
         for parser_cls in self.parse_sequence:
             parser = parser_cls(config, scanner)
             parser.load_blueprints()
 
-        if config.errors:
-            self.output_config_errors(config)
+            total_error_count += len(parser.errors)
+
+        if total_error_count:
+            self.logger.error(f"Execution halted due to [{total_error_count}] error(s) in config parsers")
             exit(1)
 
         # Custom programmatically generated blueprints and config adjustments
@@ -396,11 +400,9 @@ class BaseApp:
 
                 module.handler(config)
             except Exception as e:
-                config.add_error(module_path, e)
-
-        if config.errors:
-            self.output_config_errors(config)
-            exit(1)
+                self.logger.warning(f"[{module_path}]: {''.join(TracebackException.from_exception(exc).format())}")
+                self.logger.error("Execution halted due to error in programmatic config")
+                exit(1)
 
         if self.args.get("show_unused_files"):
             self.output_unused_file_warnings(scanner.get_unused_file_paths())
@@ -552,7 +554,7 @@ class BaseApp:
         return connect(**options)
 
     def execute(self):
-        error_count = 0
+        total_error_count = 0
 
         with self.engine:
             self.output_engine_context()
@@ -566,7 +568,7 @@ class BaseApp:
                         resolver = resolver_cls(self.engine)
                         resolver.destroy()
 
-                    error_count += len(resolver.errors)
+                    total_error_count += len(resolver.errors)
 
                 self.engine.context.destroy_role_with_prefix()
             else:
@@ -575,7 +577,7 @@ class BaseApp:
                         resolver = resolver_cls(self.engine)
                         resolver.resolve()
 
-                    error_count += len(resolver.errors)
+                    total_error_count += len(resolver.errors)
 
             self.engine.connection.close()
             self.output_engine_stats()
@@ -589,7 +591,7 @@ class BaseApp:
 
             self.output_suggested_ddl()
 
-            if error_count > 0:
+            if total_error_count > 0:
                 exit(8)
 
     def output_engine_context(self):
@@ -650,10 +652,6 @@ class BaseApp:
             return placeholder_values
 
         return None
-
-    def output_config_errors(self, config):
-        for e in config.errors:
-            self.logger.warning(f"[{e['path']}]: {''.join(TracebackException.from_exception(e['error']).format())}")
 
     def output_engine_stats(self):
         self.logger.info(
