@@ -12,7 +12,7 @@ from snowddl.blueprint import (
     build_role_ident,
     build_default_namespace_ident,
 )
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.business_role import business_role_json_schema
 
 

@@ -70,7 +70,7 @@ class IdentPattern:
         val = str(val)
 
         if not val:
-            raise ValueError(f"Pattern cannot be empty")
+            raise ValueError("Pattern cannot be empty")
 
         for char in val:
             if char not in self.allowed_chars_pattern:

@@ -1,18 +1,4 @@
-from typing import Union
-
-from snowddl.blueprint import (
-    AccountObjectIdent,
-    BusinessRoleBlueprint,
-    DatabaseBlueprint,
-    DatabaseRoleIdent,
-    Ident,
-    IdentPattern,
-    Grant,
-    ObjectType,
-    RoleBlueprint,
-    SchemaBlueprint,
-    build_role_ident,
-)
+from snowddl.blueprint import BusinessRoleBlueprint, RoleBlueprint
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver
 
 

@@ -11,7 +11,6 @@ from snowflake.connector import connect
 from string import ascii_uppercase, digits
 from time import perf_counter
 from traceback import TracebackException
-from typing import Dict
 
 from snowddl.blueprint import Ident, ObjectType
 from snowddl.config import SnowDDLConfig

@@ -1,5 +1,5 @@
 from snowddl.blueprint import WarehouseBlueprint, Ident, AccountObjectIdent
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.parser.abc_parser import AbstractParser
 
 
 # fmt: off
