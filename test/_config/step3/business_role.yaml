@@ -1,3 +1,6 @@
+pm001_br1: {}
+pm002_br1: {}
+
 us001_br1:
   schema_read:
     - db1.sc1

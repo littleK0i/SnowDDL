@@ -1,3 +1,27 @@
+pm001_br1:
+  schema_owner:
+    - pm001_db1.sc2
+  schema_read:
+    - pm001_db1.sc1
+  schema_write:
+    - pm001_db1.sc3
+  share_read:
+    - snowflake
+    - snowflake.usage_viewer
+  warehouse_usage:
+    - pm001_wh1
+  global_roles:
+    - test_global_role_2
+    - test_global_role_3
+
+pm002_br1:
+  database_owner:
+    - pm002_db2
+  database_read:
+    - pm002_db1
+  database_write:
+    - pm002_db1
+
 us001_br1:
   schema_read:
     - db1.sc1
