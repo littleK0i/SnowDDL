@@ -1,0 +1,7 @@
+database_owner_model:
+  inherit_from: default
+  ruleset: DATABASE_OWNER
+
+schema_owner_model:
+  inherit_from: default
+  ruleset: SCHEMA_OWNER

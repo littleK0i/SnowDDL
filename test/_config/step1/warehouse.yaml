@@ -13,6 +13,18 @@ dt002_wh1:
 dt003_wh1:
   size: XSMALL
 
+pm001_wh1:
+  size: XSMALL
+
+pm001_wh2:
+  size: XSMALL
+
+pm002_wh1:
+  size: XSMALL
+
+pm002_wh2:
+  size: XSMALL
+
 ts001_wh1:
   size: XSMALL
 

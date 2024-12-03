@@ -1,0 +1,31 @@
+owner_database_write:
+  - pm001_db2
+
+owner_database_read:
+  - pm001_db2
+
+owner_schema_read:
+  - pm001_db1.sc*
+
+owner_schema_write:
+  - pm001_db1.sc2
+
+owner_warehouse_usage:
+  - pm001_wh1
+  - pm001_wh2
+
+owner_integration_usage:
+  - test_storage_integration_gcp
+  - test_notification_integration
+
+owner_account_grants:
+  - EXECUTE TASK
+  - EXECUTE ALERT
+
+owner_share_read:
+  - snowflake
+  - snowflake.object_viewer
+
+owner_global_roles:
+  - test_global_role_1
+  - test_global_role_2

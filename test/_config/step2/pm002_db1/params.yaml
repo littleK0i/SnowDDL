@@ -1,0 +1,27 @@
+permission_model: database_owner_model
+is_sandbox: true
+
+owner_database_write:
+  - pm002_db2
+
+owner_database_read:
+  - pm002_db2
+
+owner_warehouse_usage:
+  - pm002_wh1
+
+owner_integration_usage:
+  - test_storage_integration_aws
+  - test_notification_integration
+
+owner_account_grants:
+  - EXECUTE MANAGED TASK
+  - EXECUTE MANAGED ALERT
+
+owner_share_read:
+  - snowflake
+  - snowflake.usage_viewer
+
+owner_global_roles:
+  - test_global_role_2
+  - test_global_role_3
