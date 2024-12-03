@@ -9,8 +9,7 @@ class BusinessRoleResolver(AbstractRoleResolver):
     def get_blueprints(self):
         return {
             full_name: self.transform_blueprint(business_role_bp)
-            for full_name, business_role_bp
-            in self.config.get_blueprints_by_type(BusinessRoleBlueprint).items()
+            for full_name, business_role_bp in self.config.get_blueprints_by_type(BusinessRoleBlueprint).items()
         }
 
     def transform_blueprint(self, business_role_bp: BusinessRoleBlueprint) -> RoleBlueprint:

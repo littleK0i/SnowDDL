@@ -102,6 +102,7 @@ class BusinessRoleParser(AbstractParser):
         self.parse_multi_entity_file("business_role", business_role_json_schema, self.process_business_role)
 
     def process_business_role(self, business_role_name, business_role_params):
+        # fmt: off
         bp = BusinessRoleBlueprint(
             full_name=build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX),
             database_owner=[IdentPattern(p) for p in business_role_params.get("database_owner", [])],
@@ -117,5 +118,6 @@ class BusinessRoleParser(AbstractParser):
             global_roles=[Ident(global_role_name) for global_role_name in business_role_params.get("global_roles", [])],
             comment=business_role_params.get("comment"),
         )
+        # fmt: on
 
         self.config.add_blueprint(bp)

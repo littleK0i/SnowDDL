@@ -88,11 +88,11 @@ user_json_schema = {
 
 class UserParser(AbstractParser):
     def load_blueprints(self):
-        default_warehouse_map = self.get_default_warehouse_map()
+        default_wh_map = self.get_default_warehouse_map()
 
-        self.parse_multi_entity_file("user", user_json_schema, partial(self.process_user, default_warehouse_map=default_warehouse_map))
+        self.parse_multi_entity_file("user", user_json_schema, partial(self.process_user, default_wh_map=default_wh_map))
 
-    def process_user(self, user_name, user_params, default_warehouse_map):
+    def process_user(self, user_name, user_params, default_wh_map):
         business_roles = []
         default_warehouse = user_params.get("default_warehouse")
 
@@ -100,7 +100,7 @@ class UserParser(AbstractParser):
             business_roles.append(build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX))
 
             if default_warehouse is None:
-                default_warehouse = default_warehouse_map.get(business_role_name)
+                default_warehouse = default_wh_map.get(business_role_name)
 
         full_user_name = AccountObjectIdent(self.env_prefix, user_name)
 
@@ -116,6 +116,7 @@ class UserParser(AbstractParser):
         else:
             display_name = str(full_user_name)
 
+        # fmt: off
         bp = UserBlueprint(
             full_name=full_user_name,
             login_name=login_name,
@@ -129,13 +130,12 @@ class UserParser(AbstractParser):
             rsa_public_key_2=user_params.get("rsa_public_key_2").replace(" ", "") if user_params.get("rsa_public_key_2") else None,
             type=str(user_params.get("type")).upper() if user_params.get("type") else None,
             default_warehouse=AccountObjectIdent(self.env_prefix, default_warehouse) if default_warehouse else None,
-            default_namespace=build_default_namespace_ident(self.env_prefix, user_params.get("default_namespace"))
-            if user_params.get("default_namespace")
-            else None,
+            default_namespace=build_default_namespace_ident(self.env_prefix, user_params.get("default_namespace")) if user_params.get("default_namespace") else None,
             session_params=self.normalise_params_dict(user_params.get("session_params", {})),
             business_roles=business_roles,
             comment=user_params.get("comment"),
         )
+        # fmt: on
 
         self.validate_user_type_properties(bp)
         self.config.add_blueprint(bp)

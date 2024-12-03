@@ -127,6 +127,7 @@ class SchemaParser(AbstractParser):
                                 f"This parameter should be configured on database level"
                             )
 
+                # fmt: off
                 bp = SchemaBlueprint(
                     full_name=SchemaIdent(self.env_prefix, database_name, schema_name),
                     permission_model=schema_permission_model_name,
@@ -144,5 +145,6 @@ class SchemaParser(AbstractParser):
                     owner_global_roles=[Ident(global_role_name) for global_role_name in schema_params.get("owner_global_roles", [])],
                     comment=schema_params.get("comment", None),
                 )
+                # fmt: on
 
                 self.config.add_blueprint(bp)

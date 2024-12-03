@@ -413,12 +413,7 @@ class AbstractRoleResolver(AbstractResolver):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=build_role_ident(
-                self.config.env_prefix,
-                warehouse_name.name,
-                role_type,
-                self.config.WAREHOUSE_ROLE_SUFFIX
-            ),
+            name=build_role_ident(self.config.env_prefix, warehouse_name.name, role_type, self.config.WAREHOUSE_ROLE_SUFFIX),
         )
 
     def build_share_read_grant(self, share_name: Union[Ident, DatabaseRoleIdent]) -> Grant:

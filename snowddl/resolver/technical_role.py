@@ -9,15 +9,16 @@ class TechnicalRoleResolver(AbstractRoleResolver):
     def get_blueprints(self):
         return {
             full_name: self.transform_blueprint(business_role_bp)
-            for full_name, business_role_bp
-            in self.config.get_blueprints_by_type(TechnicalRoleBlueprint).items()
+            for full_name, business_role_bp in self.config.get_blueprints_by_type(TechnicalRoleBlueprint).items()
         }
 
     def transform_blueprint(self, technical_role_bp: TechnicalRoleBlueprint):
         grants = []
 
         for grant_pattern in technical_role_bp.grant_patterns:
-            for obj_bp in self.config.get_blueprints_by_type_and_pattern(grant_pattern.on.blueprint_cls, grant_pattern.pattern).values():
+            for obj_bp in self.config.get_blueprints_by_type_and_pattern(
+                grant_pattern.on.blueprint_cls, grant_pattern.pattern
+            ).values():
                 grants.append(
                     Grant(
                         privilege=grant_pattern.privilege,

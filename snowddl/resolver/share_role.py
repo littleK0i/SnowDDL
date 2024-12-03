@@ -61,7 +61,7 @@ class ShareRoleResolver(AbstractRoleResolver):
             Grant(
                 privilege="IMPORTED PRIVILEGES",
                 on=ObjectType.DATABASE,
-                name=Ident(role_name[len(self.config.env_prefix):-len(self.get_role_suffix())-2]),
+                name=Ident(role_name[len(self.config.env_prefix) : -len(self.get_role_suffix()) - 2]),
             )
         ]
 

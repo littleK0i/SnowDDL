@@ -51,13 +51,7 @@ class TechnicalRoleParser(AbstractParser):
 
             for p in privileges.split(","):
                 for pattern in pattern_list:
-                    grant_patterns.append(
-                        GrantPattern(
-                            privilege=p,
-                            on=ObjectType[on],
-                            pattern=IdentPattern(pattern)
-                        )
-                    )
+                    grant_patterns.append(GrantPattern(privilege=p, on=ObjectType[on], pattern=IdentPattern(pattern)))
 
         for privilege in technical_role_params.get("account_grants", []):
             account_grants.append(AccountGrant(privilege=privilege))

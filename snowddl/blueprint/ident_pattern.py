@@ -46,8 +46,10 @@ class IdentPattern:
         str_ident_without_prefix = self._get_str_ident_without_prefix(ident)
 
         if self.is_complex_pattern:
-            return (any(regexp.match(str_ident_without_prefix) for regexp in self.include_regexp) and
-                    not any(regexp.match(str_ident_without_prefix) for regexp in self.exclude_regexp))
+            is_match_include = any(regexp.match(str_ident_without_prefix) for regexp in self.include_regexp)
+            is_match_exclude = any(regexp.match(str_ident_without_prefix) for regexp in self.exclude_regexp)
+
+            return is_match_include and not is_match_exclude
 
         return str_ident_without_prefix == self.pattern
 
@@ -62,7 +64,7 @@ class IdentPattern:
         str_ident = str(ident)
 
         if ident.env_prefix:
-            str_ident =  str_ident[len(ident.env_prefix):]
+            str_ident = str_ident[len(ident.env_prefix) :]
 
         return str_ident
 

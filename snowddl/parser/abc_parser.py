@@ -34,7 +34,9 @@ class AbstractParser(ABC):
     def get_schema_names_in_database(self, database_name):
         return [schema_name.upper() for schema_name in self.scanner.get_schema_dir_paths(database_name)]
 
-    def parse_single_entity_file(self, file_key: str, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None):
+    def parse_single_entity_file(
+        self, file_key: str, json_schema: dict, callback: Callable[[ParsedFile], Union[None, Dict]] = None
+    ):
         if not callback:
             callback = lambda f: f.params
 
