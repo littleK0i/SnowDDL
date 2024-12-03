@@ -1,6 +1,7 @@
 from typing import Union
 
 from .ident import AbstractIdent, DatabaseIdent, SchemaIdent
+from .ident_pattern import IdentPattern
 from .object_type import ObjectType
 from ..model import BaseModelWithConfig
 
@@ -35,3 +36,9 @@ class FutureGrant(BaseModelWithConfig):
     on_future: ObjectType
     in_parent: ObjectType
     name: Union[DatabaseIdent, SchemaIdent]
+
+
+class GrantPattern(BaseModelWithConfig):
+    privilege: str
+    on: ObjectType
+    pattern: IdentPattern

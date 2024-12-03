@@ -1,4 +1,12 @@
-from snowddl.blueprint import DatabaseBlueprint, DatabaseIdent, Grant, ObjectType, build_role_ident
+from snowddl.blueprint import (
+    AccountGrant,
+    AccountObjectIdent,
+    DatabaseBlueprint,
+    DatabaseIdent,
+    Ident,
+    IdentPattern,
+    build_share_read_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -89,47 +97,20 @@ class DatabaseParser(AbstractParser):
                             f"This parameter should be configured on schema level"
                         )
 
-            owner_additional_grants = []
-            owner_additional_account_grants = []
-
-            for grant_database_name in database_params.get("owner_database_read", []):
-                owner_additional_grants.append(self.build_database_role_grant(grant_database_name, self.config.READ_ROLE_TYPE))
-
-            for grant_database_name in database_params.get("owner_database_write", []):
-                owner_additional_grants.append(self.build_database_role_grant(grant_database_name, self.config.WRITE_ROLE_TYPE))
-
-            for share_name in database_params.get("owner_share_read", []):
-                owner_additional_grants.append(self.build_share_role_grant(share_name))
-                self.config.add_blueprint(self.build_share_role_blueprint(share_name))
-
-            for integration_name in database_params.get("owner_integration_usage", []):
-                owner_additional_grants.append(self.build_integration_usage_grant(integration_name))
-
-            for warehouse_name in database_params.get("owner_warehouse_usage", []):
-                owner_additional_grants.append(self.build_warehouse_role_grant(warehouse_name, self.config.USAGE_ROLE_TYPE))
-
-            for account_grant in database_params.get("owner_account_grants", []):
-                owner_additional_account_grants.append(self.build_account_grant(account_grant))
-
-            for global_role_name in database_params.get("owner_global_roles", []):
-                owner_additional_grants.append(self.build_global_role_grant(global_role_name))
-
             bp = DatabaseBlueprint(
                 full_name=DatabaseIdent(self.env_prefix, database_name),
                 permission_model=databases_permission_model_name,
                 is_transient=database_params.get("is_transient", False),
                 retention_time=database_params.get("retention_time", None),
                 is_sandbox=database_params.get("is_sandbox", False),
-                owner_additional_grants=owner_additional_grants,
-                owner_additional_account_grants=owner_additional_account_grants,
+                owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],
+                owner_database_read=[IdentPattern(p) for p in database_params.get("owner_database_read", [])],
+                owner_integration_usage=[Ident(integration_name) for integration_name in database_params.get("owner_integration_usage", [])],
+                owner_share_read=[build_share_read_ident(share_name) for share_name in database_params.get("owner_share_read", [])],
+                owner_warehouse_usage=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in database_params.get("owner_warehouse_usage", [])],
+                owner_account_grants=[AccountGrant(privilege=privilege) for privilege in database_params.get("owner_account_grants", [])],
+                owner_global_roles=[Ident(global_role_name) for global_role_name in database_params.get("owner_global_roles", [])],
                 comment=database_params.get("comment", None),
             )
 
             self.config.add_blueprint(bp)
-
-    def build_database_role_grant(self, database_name, role_type):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, database_name, role_type, self.config.DATABASE_ROLE_SUFFIX),
-        )

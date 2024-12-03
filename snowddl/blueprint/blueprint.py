@@ -11,12 +11,13 @@ from .column import (
     SearchOptimizationItem,
 )
 from .data_type import DataType
-from .grant import AccountGrant, Grant, FutureGrant
+from .grant import AccountGrant, Grant, FutureGrant, GrantPattern
 from .ident import (
     AbstractIdent,
     Ident,
     AccountObjectIdent,
     DatabaseIdent,
+    DatabaseRoleIdent,
     AccountIdent,
     OutboundShareIdent,
     SchemaIdent,
@@ -25,6 +26,7 @@ from .ident import (
     StageFileIdent,
     TableConstraintIdent,
 )
+from .ident_pattern import IdentPattern
 from .object_type import ObjectType
 from .reference import (
     AggregationPolicyReference,
@@ -41,6 +43,10 @@ from .stage import StageWithPath
 from ..model import BaseModelWithConfig
 
 
+class DependsOnMixin(BaseModelWithConfig, ABC):
+    depends_on: Set[AbstractIdent] = set()
+
+
 class AbstractBlueprint(BaseModelWithConfig, ABC):
     full_name: AbstractIdent
     comment: Optional[str] = None
@@ -50,15 +56,11 @@ class SchemaObjectBlueprint(AbstractBlueprint, ABC):
     full_name: SchemaObjectIdent
 
 
-class RoleBlueprint(AbstractBlueprint):
+class RoleBlueprint(AbstractBlueprint, DependsOnMixin):
     full_name: AccountObjectIdent
     grants: List[Grant] = []
     account_grants: List[AccountGrant] = []
     future_grants: List[FutureGrant] = []
-
-
-class DependsOnMixin(BaseModelWithConfig, ABC):
-    depends_on: Set[AbstractIdent] = set()
 
 
 class AccountParameterBlueprint(AbstractBlueprint):
@@ -88,8 +90,19 @@ class AuthenticationPolicyBlueprint(SchemaObjectBlueprint):
     references: List[AuthenticationPolicyReference] = []
 
 
-class BusinessRoleBlueprint(RoleBlueprint):
-    pass
+class BusinessRoleBlueprint(AbstractBlueprint):
+    full_name: AccountObjectIdent
+    database_owner: List[IdentPattern] = []
+    database_write: List[IdentPattern] = []
+    database_read: List[IdentPattern] = []
+    schema_owner: List[IdentPattern] = []
+    schema_write: List[IdentPattern] = []
+    schema_read: List[IdentPattern] = []
+    share_read: List[Union[Ident, DatabaseRoleIdent]] = []
+    warehouse_usage: List[AccountObjectIdent] = []
+    warehouse_monitor: List[AccountObjectIdent] = []
+    technical_roles: List[AccountObjectIdent] = []
+    global_roles: List[Ident] = []
 
 
 class DatabaseBlueprint(AbstractBlueprint):
@@ -98,12 +111,13 @@ class DatabaseBlueprint(AbstractBlueprint):
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
-    owner_additional_grants: List[Grant] = []
-    owner_additional_account_grants: List[AccountGrant] = []
-
-
-class DatabaseRoleBlueprint(RoleBlueprint, DependsOnMixin):
-    pass
+    owner_database_write: List[IdentPattern] = []
+    owner_database_read: List[IdentPattern] = []
+    owner_integration_usage: List[Ident] = []
+    owner_share_read: List[Union[Ident, DatabaseRoleIdent]] = []
+    owner_warehouse_usage: List[AccountObjectIdent] = []
+    owner_account_grants: List[AccountGrant] = []
+    owner_global_roles: List[Ident] = []
 
 
 class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
@@ -300,12 +314,15 @@ class SchemaBlueprint(AbstractBlueprint):
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
     is_sandbox: Optional[bool] = None
-    owner_additional_grants: List[Grant] = []
-    owner_additional_account_grants: List[AccountGrant] = []
-
-
-class SchemaRoleBlueprint(RoleBlueprint, DependsOnMixin):
-    pass
+    owner_database_write: List[IdentPattern] = []
+    owner_database_read: List[IdentPattern] = []
+    owner_schema_write: List[IdentPattern] = []
+    owner_schema_read: List[IdentPattern] = []
+    owner_integration_usage: List[Ident] = []
+    owner_warehouse_usage: List[AccountObjectIdent] = []
+    owner_share_read: List[Union[Ident, DatabaseRoleIdent]] = []
+    owner_account_grants: List[AccountGrant] = []
+    owner_global_roles: List[Ident] = []
 
 
 class SecretBlueprint(SchemaObjectBlueprint):
@@ -323,10 +340,6 @@ class SequenceBlueprint(SchemaObjectBlueprint):
     start: int
     interval: int
     is_ordered: Optional[bool] = None
-
-
-class ShareRoleBlueprint(RoleBlueprint):
-    pass
 
 
 class StageBlueprint(SchemaObjectBlueprint):
@@ -386,8 +399,10 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     user_task_minimum_trigger_interval_in_seconds: Optional[int] = None
 
 
-class TechnicalRoleBlueprint(RoleBlueprint):
-    pass
+class TechnicalRoleBlueprint(AbstractBlueprint):
+    full_name: AccountObjectIdent
+    grant_patterns: List[GrantPattern] = []
+    account_grants: List[AccountGrant] = []
 
 
 class UniqueKeyBlueprint(SchemaObjectBlueprint):

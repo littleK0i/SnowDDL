@@ -10,6 +10,7 @@ from pathlib import Path
 from snowflake.connector import connect
 from string import ascii_uppercase, digits
 from time import perf_counter
+from traceback import TracebackException
 from typing import Dict
 
 from snowddl.blueprint import Ident, ObjectType
@@ -327,7 +328,7 @@ class BaseApp:
             for char in env_prefix_value:
                 if char not in allowed_env_prefix_value_chars:
                     raise ValueError(
-                        f"Character [{char}] in not allowed in env prefix [{env_prefix_value}], only ASCII letters, digits and single underscores are accepted"
+                        f"Character [{char}] is not allowed in env prefix [{env_prefix_value}], only ASCII letters, digits and single underscores are accepted"
                     )
 
             if env_prefix_separator in env_prefix_value:
@@ -400,7 +401,7 @@ class BaseApp:
 
                 module.handler(config)
             except Exception as e:
-                self.logger.warning(f"[{module_path}]: {''.join(TracebackException.from_exception(exc).format())}")
+                self.logger.warning(f"[{module_path}]: {''.join(TracebackException.from_exception(e).format())}")
                 self.logger.error("Execution halted due to error in programmatic config")
                 exit(1)
 

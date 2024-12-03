@@ -2,9 +2,11 @@ from typing import Union
 
 from .data_type import BaseDataType
 from .ident import (
+    AbstractIdent,
     AccountObjectIdent,
     DatabaseIdent,
     DatabaseRoleIdent,
+    Ident,
     SchemaIdent,
     SchemaObjectIdent,
     SchemaObjectIdentWithArgs,
@@ -41,10 +43,8 @@ def build_schema_object_ident(env_prefix, object_name, context_database_name, co
     return SchemaObjectIdent(env_prefix, parts[0], parts[1], parts[2])
 
 
-def build_role_ident(env_prefix, *args: Union[AccountObjectIdent, str]) -> AccountObjectIdent:
-    return AccountObjectIdent(
-        env_prefix, f"{'__'.join(str(a.name) if isinstance(a, AccountObjectIdent) else str(a) for a in args)}"
-    )
+def build_role_ident(env_prefix, *args: Union[AbstractIdent, str]) -> AccountObjectIdent:
+    return AccountObjectIdent(env_prefix, f"{'__'.join(str(a) for a in args)}")
 
 
 def build_grant_name_ident(object_type: ObjectType, grant_name: str):
@@ -106,3 +106,12 @@ def build_default_namespace_ident(env_prefix, default_namespace):
         return SchemaIdent(env_prefix, *default_namespace.split(".", 1))
 
     return DatabaseIdent(env_prefix, default_namespace)
+
+
+def build_share_read_ident(share_name: str) -> Union[Ident, DatabaseRoleIdent]:
+    if "." in share_name:
+        # Shares are global, so database roles inside shares are global as well
+        # No env prefix for global objects
+        return DatabaseRoleIdent("", *share_name.split(".", 2))
+    else:
+        return Ident(share_name)

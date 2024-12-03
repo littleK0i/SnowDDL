@@ -9,7 +9,6 @@ from .blueprint import (
     AuthenticationPolicyBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
-    DatabaseRoleBlueprint,
     DynamicTableBlueprint,
     EventTableBlueprint,
     ExternalAccessIntegrationBlueprint,
@@ -31,10 +30,8 @@ from .blueprint import (
     ResourceMonitorBlueprint,
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
-    SchemaRoleBlueprint,
     SecretBlueprint,
     SequenceBlueprint,
-    ShareRoleBlueprint,
     StageBlueprint,
     StageFileBlueprint,
     StreamBlueprint,
@@ -60,7 +57,7 @@ from .column import (
 )
 from .data_type import BaseDataType, DataType
 from .edition import Edition
-from .grant import Grant, AccountGrant, FutureGrant
+from .grant import Grant, AccountGrant, FutureGrant, GrantPattern
 
 from .ident import (
     AbstractIdent,
@@ -84,7 +81,9 @@ from .ident_builder import (
     build_grant_name_ident,
     build_future_grant_name_ident,
     build_default_namespace_ident,
+    build_share_read_ident,
 )
+from .ident_pattern import IdentPattern
 
 from .object_type import ObjectType
 from .permission_model import PermissionModel, PermissionModelCreateGrant, PermissionModelFutureGrant, PermissionModelRuleset

@@ -1,11 +1,11 @@
 from snowddl.blueprint import (
-    DatabaseRoleBlueprint,
     DatabaseBlueprint,
+    FutureGrant,
+    Grant,
+    RoleBlueprint,
     SchemaBlueprint,
     SchemaIdent,
     SchemaObjectIdent,
-    Grant,
-    FutureGrant,
     build_role_ident,
 )
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
@@ -36,6 +36,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
         grants = []
         account_grants = []
         future_grants = []
+        depends_on = set()
 
         database_permission_model = self.config.get_permission_model(database_bp.permission_model)
 
@@ -75,6 +76,28 @@ class DatabaseRoleResolver(AbstractRoleResolver):
                 )
             )
 
+        # Owner-specific grants
+        for database_name_pattern in database_bp.owner_database_write:
+            grants.extend(self.build_database_role_grants(database_name_pattern, self.config.WRITE_ROLE_TYPE))
+
+        for database_name_pattern in database_bp.owner_database_read:
+            grants.extend(self.build_database_role_grants(database_name_pattern, self.config.READ_ROLE_TYPE))
+
+        for integration_name in database_bp.owner_integration_usage:
+            grants.append(self.build_integration_grant(integration_name))
+
+        for share_name in database_bp.owner_share_read:
+            grants.append(self.build_share_read_grant(share_name))
+
+        for warehouse_name in database_bp.owner_warehouse_usage:
+            grants.append(self.build_warehouse_role_grant(warehouse_name, self.config.USAGE_ROLE_TYPE))
+
+        for account_grant in database_bp.owner_account_grants:
+            account_grants.append(account_grant)
+
+        for global_role_name in database_bp.owner_global_roles:
+            grants.append(self.build_global_role_grant(global_role_name))
+
         # Future grants on DATABASE level
         for model_future_grant in database_permission_model.owner_future_grants:
             future_grants.append(
@@ -87,7 +110,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
             )
 
         # Future grants for each known schema on SCHEMA level
-        # It is required to alleviate SCHEMA level grants overriding DATABASE level
+        # It is required to alleviate SCHEMA level grants overriding DATABASE level grants
         # https://docs.snowflake.com/en/sql-reference/sql/grant-privilege#future-grants-on-database-or-schema-objects
         for schema_bp in self.config.get_blueprints_by_type(SchemaBlueprint).values():
             if database_bp.full_name != schema_bp.full_name.database_full_name:
@@ -103,20 +126,12 @@ class DatabaseRoleResolver(AbstractRoleResolver):
                     )
                 )
 
-        # Additional grants
-        depends_on = set()
+        # Add explicit dependencies on other database roles
+        for g in grants:
+            if g.on == ObjectType.ROLE and str(g.name).endswith(self.get_role_suffix()):
+                depends_on.add(g.name)
 
-        for additional_grant in database_bp.owner_additional_grants:
-            grants.append(additional_grant)
-
-            # Dependency on another database role
-            if additional_grant.on == ObjectType.ROLE and str(additional_grant.name).endswith(self.get_role_suffix()):
-                depends_on.add(additional_grant.name)
-
-        for additional_account_grant in database_bp.owner_additional_account_grants:
-            account_grants.append(additional_account_grant)
-
-        bp = DatabaseRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix, database_bp.full_name.database, self.config.OWNER_ROLE_TYPE, self.get_role_suffix()
             ),
@@ -179,7 +194,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
                     )
                 )
 
-        bp = DatabaseRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix, database_bp.full_name.database, self.config.READ_ROLE_TYPE, self.get_role_suffix()
             ),
@@ -240,7 +255,7 @@ class DatabaseRoleResolver(AbstractRoleResolver):
                     )
                 )
 
-        bp = DatabaseRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix, database_bp.full_name.database, self.config.WRITE_ROLE_TYPE, self.get_role_suffix()
             ),

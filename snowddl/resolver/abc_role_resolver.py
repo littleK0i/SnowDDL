@@ -1,11 +1,19 @@
 from abc import abstractmethod
+from typing import List, Union
 
 from snowddl.blueprint import (
-    RoleBlueprint,
-    Grant,
     AccountGrant,
+    AccountObjectIdent,
+    DatabaseBlueprint,
+    DatabaseRoleIdent,
     FutureGrant,
+    Ident,
+    IdentPattern,
+    Grant,
+    RoleBlueprint,
+    SchemaBlueprint,
     SchemaIdent,
+    build_role_ident,
     build_grant_name_ident,
     build_future_grant_name_ident,
 )
@@ -352,3 +360,98 @@ class AbstractRoleResolver(AbstractResolver):
         # Overloaded in Database and Schema role resolvers
         # Other role types are not expected to utilize furue grants
         return None
+
+    def build_database_role_grants(self, database_name_pattern: IdentPattern, role_type: str) -> List[Grant]:
+        grants = []
+
+        for database_bp in self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern).values():
+            database_permission_model = self.config.get_permission_model(database_bp.permission_model)
+
+            if database_permission_model.ruleset.create_database_owner_role:
+                # Databases with "database owner" permission model are assigned directly
+                grants.append(
+                    Grant(
+                        privilege="USAGE",
+                        on=ObjectType.ROLE,
+                        name=build_role_ident(
+                            self.config.env_prefix,
+                            database_bp.full_name.database,
+                            role_type,
+                            self.config.DATABASE_ROLE_SUFFIX,
+                        ),
+                    )
+                )
+
+            elif database_permission_model.ruleset.create_schema_owner_role:
+                # Databases with "schema owner" permission model are automatically expanded into individual schema roles
+                schema_name_pattern = IdentPattern(self.config.env_prefix, f"{database_bp.full_name.database}.*")
+                grants.extend(self.build_schema_role_grants(schema_name_pattern, role_type))
+
+        return grants
+
+    def build_schema_role_grants(self, schema_name_pattern: IdentPattern, role_type: str) -> List[Grant]:
+        grants = []
+
+        for schema_bp in self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, schema_name_pattern).values():
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.ROLE,
+                    name=build_role_ident(
+                        self.config.env_prefix,
+                        schema_bp.full_name.database,
+                        schema_bp.full_name.schema,
+                        role_type,
+                        self.config.SCHEMA_ROLE_SUFFIX,
+                    ),
+                )
+            )
+
+        return grants
+
+    def build_warehouse_role_grant(self, warehouse_name: AccountObjectIdent, role_type) -> Grant:
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.ROLE,
+            name=build_role_ident(
+                self.config.env_prefix,
+                warehouse_name.name,
+                role_type,
+                self.config.WAREHOUSE_ROLE_SUFFIX
+            ),
+        )
+
+    def build_share_read_grant(self, share_name: Union[Ident, DatabaseRoleIdent]) -> Grant:
+        if isinstance(share_name, DatabaseRoleIdent):
+            return Grant(
+                privilege="USAGE",
+                on=ObjectType.DATABASE_ROLE,
+                name=share_name,
+            )
+        else:
+            return Grant(
+                privilege="USAGE",
+                on=ObjectType.ROLE,
+                name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ROLE_SUFFIX),
+            )
+
+    def build_technical_role_grant(self, technical_role_name: AccountObjectIdent) -> Grant:
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.ROLE,
+            name=technical_role_name,
+        )
+
+    def build_global_role_grant(self, global_role_name: Ident) -> Grant:
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.ROLE,
+            name=global_role_name,
+        )
+
+    def build_integration_grant(self, integration_name: Ident) -> Grant:
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.INTEGRATION,
+            name=integration_name,
+        )

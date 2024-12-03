@@ -1,5 +1,5 @@
-from snowddl.blueprint import Grant, AccountGrant, TechnicalRoleBlueprint, ObjectType, build_role_ident
-from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.blueprint import GrantPattern, AccountGrant, TechnicalRoleBlueprint, ObjectType, IdentPattern, build_role_ident
+from snowddl.parser.abc_parser import AbstractParser
 
 
 # fmt: off
@@ -43,7 +43,7 @@ class TechnicalRoleParser(AbstractParser):
         self.parse_multi_entity_file("tech_role", technical_role_json_schema, self.process_technical_role)
 
     def process_technical_role(self, technical_role_name, technical_role_params):
-        grants = []
+        grant_patterns = []
         account_grants = []
 
         for definition, pattern_list in technical_role_params.get("grants", {}).items():
@@ -51,26 +51,20 @@ class TechnicalRoleParser(AbstractParser):
 
             for p in privileges.split(","):
                 for pattern in pattern_list:
-                    blueprints = self.config.get_blueprints_by_type_and_pattern(ObjectType[on].blueprint_cls, pattern)
-
-                    if not blueprints:
-                        raise ValueError(f"No {ObjectType[on].plural} matched wildcard grant with pattern [{pattern}]")
-
-                    for object_bp in blueprints.values():
-                        grants.append(
-                            Grant(
-                                privilege=p,
-                                on=ObjectType[on],
-                                name=object_bp.full_name,
-                            )
+                    grant_patterns.append(
+                        GrantPattern(
+                            privilege=p,
+                            on=ObjectType[on],
+                            pattern=IdentPattern(pattern)
                         )
+                    )
 
         for privilege in technical_role_params.get("account_grants", []):
             account_grants.append(AccountGrant(privilege=privilege))
 
         bp = TechnicalRoleBlueprint(
             full_name=build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX),
-            grants=grants,
+            grant_patterns=grant_patterns,
             account_grants=account_grants,
             comment=technical_role_params.get("comment"),
         )

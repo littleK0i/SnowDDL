@@ -5,17 +5,7 @@ from traceback import TracebackException
 from typing import Callable, Dict, List, Optional, Union
 
 from snowddl.config import SnowDDLConfig
-from snowddl.blueprint import (
-    AccountGrant,
-    BaseDataType,
-    DatabaseRoleIdent,
-    Grant,
-    Ident,
-    NameWithType,
-    ObjectType,
-    ShareRoleBlueprint,
-    build_role_ident,
-)
+from snowddl.blueprint import BaseDataType, NameWithType
 from snowddl.parser._parsed_file import ParsedFile
 from snowddl.parser._scanner import DirectoryScanner
 
@@ -166,60 +156,3 @@ class AbstractParser(ABC):
                 )
 
         return base_name
-
-    def build_share_role_grant(self, share_name):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, share_name, self.config.SHARE_ROLE_SUFFIX),
-        )
-
-    def build_share_role_blueprint(self, share_name):
-        return ShareRoleBlueprint(
-            full_name=build_role_ident(self.env_prefix, share_name, self.config.SHARE_ROLE_SUFFIX),
-            grants=[
-                Grant(
-                    privilege="IMPORTED PRIVILEGES",
-                    on=ObjectType.DATABASE,
-                    name=Ident(share_name),
-                ),
-            ],
-        )
-
-    def build_warehouse_role_grant(self, warehouse_name, grant_type):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, warehouse_name, grant_type, self.config.WAREHOUSE_ROLE_SUFFIX),
-        )
-
-    def build_technical_role_grant(self, technical_role_name):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX),
-        )
-
-    def build_account_grant(self, privilege):
-        return AccountGrant(privilege=privilege.upper())
-
-    def build_global_role_grant(self, global_role_name):
-        if "." in global_role_name:
-            return Grant(
-                privilege="USAGE",
-                on=ObjectType.DATABASE_ROLE,
-                name=DatabaseRoleIdent("", *global_role_name.split(".", 2)),
-            )
-
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.ROLE,
-            name=Ident(global_role_name),
-        )
-
-    def build_integration_usage_grant(self, integration_name):
-        return Grant(
-            privilege="USAGE",
-            on=ObjectType.INTEGRATION,
-            name=Ident(integration_name),
-        )

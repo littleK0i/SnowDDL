@@ -62,10 +62,8 @@ class UserRoleResolver(AbstractRoleResolver):
             )
 
         bp = RoleBlueprint(
-            full_name=build_role_ident(self.config.env_prefix, user.full_name, self.get_role_suffix()),
+            full_name=build_role_ident(self.config.env_prefix, user.full_name.name, self.get_role_suffix()),
             grants=grants,
-            future_grants=[],
-            comment=None,
         )
 
         return bp

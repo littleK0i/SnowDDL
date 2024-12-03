@@ -8,6 +8,7 @@ from snowddl.blueprint import (
     AbstractBlueprint,
     AbstractIdentWithPrefix,
     AbstractPolicyReference,
+    IdentPattern,
     ObjectType,
     PermissionModel,
     PermissionModelRuleset,
@@ -44,45 +45,8 @@ class SnowDDLConfig:
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str, T_Blueprint]:
         return self.blueprints.get(cls, {})
 
-    def get_blueprints_by_type_and_pattern(self, cls: Type[T_Blueprint], pattern: str) -> Dict[str, T_Blueprint]:
-        pattern = pattern.upper()
-        all_blueprints = self.blueprints.get(cls, {})
-
-        # Simple search by blueprint name for patterns without any special chars
-        if not any(special_char in pattern for special_char in ["|", "!", "*", "?", "[", "]"]):
-            # Add env prefix to pattern IF blueprint type supports it
-            if "full_name" in cls.model_fields and issubclass(cls.model_fields["full_name"].annotation, AbstractIdentWithPrefix):
-                pattern = f"{self.env_prefix}{pattern}"
-
-            return {pattern: all_blueprints[pattern]} if pattern in all_blueprints else {}
-
-        include_full_names = set()
-        exclude_full_names = set()
-
-        for sub_pattern in pattern.split("|"):
-            is_exclude = False
-
-            # Exclude sub-pattern
-            if sub_pattern.startswith("!"):
-                is_exclude = True
-                sub_pattern = sub_pattern[1:]
-
-            # Add env prefix to sub-pattern IF blueprint type supports it
-            if "full_name" in cls.model_fields and issubclass(cls.model_fields["full_name"].annotation, AbstractIdentWithPrefix):
-                sub_pattern = f"{self.env_prefix}{sub_pattern}"
-
-            regexp = compile(translate(sub_pattern))
-
-            if is_exclude:
-                exclude_full_names.update(full_name for full_name in all_blueprints if regexp.match(full_name))
-            else:
-                include_full_names.update(full_name for full_name in all_blueprints if regexp.match(full_name))
-
-        return {
-            full_name: bp
-            for full_name, bp in all_blueprints.items()
-            if full_name in include_full_names and full_name not in exclude_full_names
-        }
+    def get_blueprints_by_type_and_pattern(self, cls: Type[T_Blueprint], pattern: IdentPattern) -> Dict[str, T_Blueprint]:
+        return {full_name: bp for full_name, bp in self.blueprints.get(cls, {}).items() if pattern.is_match_ident(bp.full_name)}
 
     def get_placeholder(self, name: str) -> Union[bool, float, int, str, List[Union[bool, float, int, str]]]:
         if name not in self.placeholders:

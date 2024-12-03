@@ -51,7 +51,7 @@ class AbstractIdent(ABC):
         for char in val:
             if char not in self.allowed_chars:
                 raise ValueError(
-                    f"Character [{char}] in not allowed in identifier [{val}], only ASCII letters, digits and single underscores are accepted"
+                    f"Character [{char}] is not allowed in identifier [{val}], only ASCII letters, digits and single underscores are accepted"
                 )
 
         return val.upper()
@@ -67,7 +67,7 @@ class AbstractIdentWithPrefix(AbstractIdent, ABC):
         for char in val:
             if char not in self.allowed_chars:
                 raise ValueError(
-                    f"Character [{char}] in not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted"
+                    f"Character [{char}] is not allowed in env prefix [{val}], only ASCII letters, digits and single underscores are accepted"
                 )
 
         if val and not val.endswith(("__", "_", "$")):

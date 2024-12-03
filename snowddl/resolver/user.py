@@ -357,7 +357,7 @@ class UserResolver(AbstractResolver):
         return True
 
     def _get_user_role_ident(self, bp: UserBlueprint):
-        return build_role_ident(self.config.env_prefix, bp.full_name, self.config.USER_ROLE_SUFFIX)
+        return build_role_ident(self.config.env_prefix, bp.full_name.name, self.config.USER_ROLE_SUFFIX)
 
     def _get_existing_user_parameters(self, bp: UserBlueprint):
         existing_params = {}

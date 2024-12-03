@@ -1,10 +1,10 @@
 from snowddl.blueprint import (
     DatabaseIdent,
-    SchemaRoleBlueprint,
+    FutureGrant,
+    Grant,
+    RoleBlueprint,
     SchemaBlueprint,
     SchemaObjectIdent,
-    Grant,
-    FutureGrant,
     build_role_ident,
 )
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
@@ -35,6 +35,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
         grants = []
         account_grants = []
         future_grants = []
+        depends_on = set()
 
         schema_permission_model = self.config.get_permission_model(schema_bp.permission_model)
 
@@ -54,6 +55,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
         )
 
+        # Create grants
         for model_create_grant in schema_permission_model.owner_create_grants:
             grants.append(
                 Grant(
@@ -63,6 +65,35 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 )
             )
 
+        # Owner-specific grants
+        for database_name_pattern in schema_bp.owner_database_write:
+            grants.extend(self.build_database_role_grants(database_name_pattern, self.config.WRITE_ROLE_TYPE))
+
+        for database_name_pattern in schema_bp.owner_database_read:
+            grants.extend(self.build_database_role_grants(database_name_pattern, self.config.READ_ROLE_TYPE))
+
+        for schema_name_pattern in schema_bp.owner_schema_write:
+            grants.extend(self.build_schema_role_grants(schema_name_pattern, self.config.WRITE_ROLE_TYPE))
+
+        for schema_name_pattern in schema_bp.owner_schema_read:
+            grants.extend(self.build_schema_role_grants(schema_name_pattern, self.config.READ_ROLE_TYPE))
+
+        for integration_name in schema_bp.owner_integration_usage:
+            grants.append(self.build_integration_grant(integration_name))
+
+        for share_name in schema_bp.owner_share_read:
+            grants.append(self.build_share_read_grant(share_name))
+
+        for warehouse_name in schema_bp.owner_warehouse_usage:
+            grants.append(self.build_warehouse_role_grant(warehouse_name, self.config.USAGE_ROLE_TYPE))
+
+        for account_grant in schema_bp.owner_account_grants:
+            account_grants.append(account_grant)
+
+        for global_role_name in schema_bp.owner_global_roles:
+            grants.append(self.build_global_role_grant(global_role_name))
+
+        # Future grants on SCHEMA level
         for model_future_grant in schema_permission_model.owner_future_grants:
             future_grants.append(
                 FutureGrant(
@@ -73,19 +104,12 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 )
             )
 
-        depends_on = set()
+        # Add explicit dependencies on other schema roles
+        for g in grants:
+            if g.on == ObjectType.ROLE and str(g.name).endswith(self.get_role_suffix()):
+                depends_on.add(g.name)
 
-        for additional_grant in schema_bp.owner_additional_grants:
-            grants.append(additional_grant)
-
-            # Dependency on another schema role
-            if additional_grant.on == ObjectType.ROLE and str(additional_grant.name).endswith(self.get_role_suffix()):
-                depends_on.add(additional_grant.name)
-
-        for additional_account_grant in schema_bp.owner_additional_account_grants:
-            account_grants.append(additional_account_grant)
-
-        bp = SchemaRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix,
                 schema_bp.full_name.database,
@@ -133,7 +157,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 )
             )
 
-        bp = SchemaRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix,
                 schema_bp.full_name.database,
@@ -179,7 +203,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
                 )
             )
 
-        bp = SchemaRoleBlueprint(
+        bp = RoleBlueprint(
             full_name=build_role_ident(
                 self.config.env_prefix,
                 schema_bp.full_name.database,
