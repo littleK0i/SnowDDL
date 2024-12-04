@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.37.0] - 2024-12-04
+
+This is a major update to config parsing and validation, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.37.0-december-2024).
+
+- Moved parsing errors from `SnowDDLConfig` class into individual `Parser` classes, now works similar to `Resolvers`.
+- Introduced a concept of `IdentPattern`. It is a special class used to define patterns to match object names in config.
+- Introduced a concept of `GrantPattern`. It is a special class used to define grants for objects defined by `IdentPattern`.
+- Significantly reworked `BusinessRoleBlueprint`, `TechnicalRoleBlueprint`, `DatabaseBlueprint`, `SchemaBlueprint`. Moved grant generation logic from parsers to resolvers. Programmatic config update is required.
+- Introduced concept of `Validators` running after all parsers and programmatic config to validate an entire config.
+- Moved some validations from existing parsers to validators.
+- Improved error handling while parsing config files with multiple entities. Now each entity is processed separately and may raise a separate exception.
+- Switched all calls of `information_schema.policy_references()` table function to `SNOWFLAKE` database. Other databases may not exist, especially during very first `plan` action.
+
 ## [0.36.2] - 2024-11-28
 
 - Added `CORTEX_SEARCH_SERVICE` object types for grants.
