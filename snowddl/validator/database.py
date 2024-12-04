@@ -54,8 +54,10 @@ class DatabaseValidator(AbstractValidator):
             target_blueprints = self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern)
 
             if not target_blueprints:
-                raise ValueError(f"Database [{bp.full_name}] owner_database_write pattern [{database_name_pattern}] "
-                                 f"does not match any databases")
+                raise ValueError(
+                    f"Database [{bp.full_name}] owner_database_write pattern [{database_name_pattern}] "
+                    f"does not match any databases"
+                )
 
             for target_bp in target_blueprints.values():
                 target_db_permission_model = self.config.get_permission_model(target_bp.permission_model)
@@ -70,8 +72,10 @@ class DatabaseValidator(AbstractValidator):
             target_blueprints = self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern)
 
             if not target_blueprints:
-                raise ValueError(f"Database [{bp.full_name}] owner_database_read pattern [{database_name_pattern}] "
-                                 f"does not match any databases")
+                raise ValueError(
+                    f"Database [{bp.full_name}] owner_database_read pattern [{database_name_pattern}] "
+                    f"does not match any databases"
+                )
 
             for target_bp in target_blueprints.values():
                 target_db_permission_model = self.config.get_permission_model(target_bp.permission_model)

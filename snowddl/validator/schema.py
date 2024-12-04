@@ -78,20 +78,26 @@ class SchemaValidator(AbstractValidator):
     def _validate_owner_patterns(self, bp: SchemaBlueprint):
         for database_name_pattern in bp.owner_database_write:
             if not self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern):
-                raise ValueError(f"Schema [{bp.full_name}] owner_database_write pattern [{database_name_pattern}] "
-                                 f"does not match any databases")
+                raise ValueError(
+                    f"Schema [{bp.full_name}] owner_database_write pattern [{database_name_pattern}] "
+                    f"does not match any databases"
+                )
 
         for database_name_pattern in bp.owner_database_read:
             if not self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern):
-                raise ValueError(f"Schema [{bp.full_name}] owner_database_read pattern [{database_name_pattern}] "
-                                 f"does not match any databases")
+                raise ValueError(
+                    f"Schema [{bp.full_name}] owner_database_read pattern [{database_name_pattern}] "
+                    f"does not match any databases"
+                )
 
         for schema_name_pattern in bp.owner_schema_write:
             if not self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, schema_name_pattern):
-                raise ValueError(f"Schema [{bp.full_name}] owner_schema_write pattern [{schema_name_pattern}] "
-                                 f"does not match any schemas")
+                raise ValueError(
+                    f"Schema [{bp.full_name}] owner_schema_write pattern [{schema_name_pattern}] " f"does not match any schemas"
+                )
 
         for schema_name_pattern in bp.owner_schema_read:
             if not self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, schema_name_pattern):
-                raise ValueError(f"Schema [{bp.full_name}] owner_schema_read pattern [{schema_name_pattern}] "
-                                 f"does not match any schemas")
+                raise ValueError(
+                    f"Schema [{bp.full_name}] owner_schema_read pattern [{schema_name_pattern}] " f"does not match any schemas"
+                )
