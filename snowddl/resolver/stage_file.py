@@ -46,7 +46,7 @@ class StageFileResolver(AbstractResolver):
 
             for path in all_files:
                 # Snowflake LIST commands adds stage name implicitly, which should be removed
-                stage_path = f"/{path.relative_to(path.parts[0])}"
+                stage_path = Path("/") / path.relative_to(path.parts[0])
                 full_name = f"{stage_bp.full_name}({stage_path})"
 
                 # Snowflake LIST commands provides "md5" and "size", but it is not reliable due to encryption
@@ -92,31 +92,31 @@ class StageFileResolver(AbstractResolver):
         self.engine.execute_safe_ddl(
             "PUT {local_path} @{stage_name:i}{stage_target:r} PARALLEL=1 OVERWRITE=TRUE AUTO_COMPRESS=FALSE",
             {
-                "local_path": f"file://{bp.local_path}",
+                "local_path": f"file://{bp.local_path.as_posix()}",
                 "stage_name": bp.stage_name,
-                "stage_target": Path(bp.stage_path).parent,
+                "stage_target": bp.stage_path.parent.as_posix(),
             },
         )
 
     def _upload_md5_marker(self, bp: StageFileBlueprint):
         # Placeholder path for PUT command, directory does not matter
         # Actual contents of marker pseudo-file is empty and come from zero-length BytesIO in file_stream
-        md5_marker_path = Path(bp.local_path).name + f".{self._md5_file(bp.local_path)}.md5"
+        md5_marker_path = bp.local_path.parent / (bp.local_path.name + f".{self._md5_file(bp.local_path)}.md5")
 
         self.engine.execute_safe_ddl(
             "PUT {local_path} @{stage_name:i}{stage_target:r} PARALLEL=1 OVERWRITE=TRUE AUTO_COMPRESS=FALSE",
             {
-                "local_path": f"file://{md5_marker_path}",
+                "local_path": f"file://{md5_marker_path.as_posix()}",
                 "stage_name": bp.stage_name,
-                "stage_target": Path(bp.stage_path).parent,
+                "stage_target": bp.stage_path.parent.as_posix(),
             },
             file_stream=BytesIO(),
         )
 
-    def _md5_file(self, local_path: str):
+    def _md5_file(self, local_path: Path):
         hash_md5 = md5()
 
-        with open(local_path, "rb") as f:
+        with local_path.open("rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_md5.update(chunk)
 

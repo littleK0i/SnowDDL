@@ -1,4 +1,5 @@
 from abc import ABC
+from pathlib import Path
 from typing import Optional, List, Dict, Set, Union, TypeVar
 
 from .column import (
@@ -354,9 +355,9 @@ class StageBlueprint(SchemaObjectBlueprint):
 
 class StageFileBlueprint(SchemaObjectBlueprint):
     full_name: StageFileIdent
-    local_path: str
+    local_path: Path
     stage_name: SchemaObjectIdent
-    stage_path: str
+    stage_path: Path
 
 
 class StreamBlueprint(SchemaObjectBlueprint):

@@ -13,6 +13,7 @@ This is a major update to config parsing and validation, which introduces some b
 - Improved error handling while parsing config files with multiple entities. Now each entity is processed separately and may raise a separate exception.
 - Switched all calls of `information_schema.policy_references()` table function to `SNOWFLAKE` database. Other databases may not exist, especially during very first `plan` action.
 - Moved database role grants for shares from `global_roles` to `share_read` parameter. Currently, there are no more uses for database role grants, so thematically it makes sense.
+- Reworked `StageFileBlueprint` to operate using `Path` objects instead of strings. It helps to improve general compatibility with Windows OS.
 
 ## [0.36.2] - 2024-11-28
 
