@@ -53,8 +53,11 @@ class IdentPattern:
 
         return str_ident_without_prefix == self.pattern
 
+    def __str__(self):
+        return self.pattern
+
     def __repr__(self):
-        return f"<{self.__class__.__name__}={self.pattern}>"
+        return f"<{self.__class__.__name__}={str(self)}>"
 
     def _is_complex_pattern(self, val):
         return any(char in self.special_chars_complex_pattern for char in val)

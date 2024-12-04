@@ -8,4 +8,5 @@ from .settings import SnowDDLSettings
 from .error import SnowDDLExecuteError, SnowDDLUnsupportedError
 from .parser import *
 from .resolver import *
+from .validator import *
 from .version import __version__

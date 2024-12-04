@@ -137,7 +137,6 @@ class UserParser(AbstractParser):
         )
         # fmt: on
 
-        self.validate_user_type_properties(bp)
         self.config.add_blueprint(bp)
 
         # Authentication policy
@@ -186,15 +185,3 @@ class UserParser(AbstractParser):
             default_warehouse_map[business_role_name] = business_role["warehouse_usage"][0]
 
         return default_warehouse_map
-
-    def validate_user_type_properties(self, bp: UserBlueprint):
-        if bp.type in ("SERVICE", "LEGACY_SERVICE"):
-            if bp.first_name:
-                raise ValueError(f"Property [FIRST_NAME] is not allowed for user [{bp.full_name}] with type [{bp.type}]")
-
-            if bp.last_name:
-                raise ValueError(f"Property [LAST_NAME] is not allowed for user [{bp.full_name}] with type [{bp.type}]")
-
-        if bp.type == "SERVICE":
-            if bp.password:
-                raise ValueError(f"Property [PASSWORD] is not allowed for user [{bp.full_name}] with type [{bp.type}]")

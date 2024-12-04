@@ -18,6 +18,7 @@ from snowddl.engine import SnowDDLEngine
 from snowddl.parser import default_parse_sequence, DirectoryScanner, PermissionModelParser, PlaceholderParser
 from snowddl.resolver import default_resolve_sequence, default_destroy_sequence
 from snowddl.settings import SnowDDLSettings
+from snowddl.validator import default_validate_sequence
 from snowddl.version import __version__
 
 
@@ -26,6 +27,7 @@ class BaseApp:
     application_version = __version__
 
     parse_sequence = default_parse_sequence
+    validate_sequence = default_validate_sequence
     resolve_sequence = default_resolve_sequence
     destroy_sequence = default_destroy_sequence
 
@@ -358,6 +360,9 @@ class BaseApp:
         config = SnowDDLConfig(self.env_prefix)
         scanner = DirectoryScanner(self.config_path)
 
+        parser_error_count = 0
+        validator_error_count = 0
+
         # Placeholders
         placeholder_path = self.get_placeholder_path()
         placeholder_values = self.get_placeholder_values()
@@ -378,16 +383,14 @@ class BaseApp:
             exit(1)
 
         # All blueprints
-        total_error_count = 0
-
         for parser_cls in self.parse_sequence:
             parser = parser_cls(config, scanner)
             parser.load_blueprints()
 
-            total_error_count += len(parser.errors)
+            parser_error_count += len(parser.errors)
 
-        if total_error_count:
-            self.logger.error(f"Execution halted due to [{total_error_count}] error(s) in config parsers")
+        if parser_error_count:
+            self.logger.error(f"Execution halted due to [{parser_error_count}] error(s) in config parsers")
             exit(1)
 
         # Custom programmatically generated blueprints and config adjustments
@@ -403,6 +406,17 @@ class BaseApp:
                 self.logger.warning(f"[{module_path}]: {''.join(TracebackException.from_exception(e).format())}")
                 self.logger.error("Execution halted due to error in programmatic config")
                 exit(1)
+
+        # Run validators after all parsers and programmatic configs
+        for validator_cls in self.validate_sequence:
+            validator = validator_cls(config)
+            validator.validate()
+
+            validator_error_count += len(validator.errors)
+
+        if validator_error_count:
+            self.logger.error(f"Execution halted due to [{validator_error_count}] error(s) in config validators")
+            exit(1)
 
         if self.args.get("show_unused_files"):
             self.output_unused_file_warnings(scanner.get_unused_file_paths())

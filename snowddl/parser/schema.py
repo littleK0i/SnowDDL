@@ -96,36 +96,17 @@ class SchemaParser(AbstractParser):
     def load_blueprints(self):
         for database_name in self.get_database_names():
             database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
+            database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
 
             for schema_name in self.get_schema_names_in_database(database_name):
                 schema_params = self.parse_single_entity_file(f"{database_name}/{schema_name}/params", schema_json_schema)
+                schema_permission_model_name = schema_params.get("permission_model", database_permission_model_name).upper()
 
                 combined_params = {
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
                     "is_sandbox": schema_params.get("is_sandbox", database_params.get("is_sandbox", False)),
                 }
-
-                # fmt: off
-                database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
-                schema_permission_model_name = schema_params.get("permission_model", database_permission_model_name).upper()
-                # fmt: on
-
-                database_permission_model = self.config.get_permission_model(database_permission_model_name)
-                schema_permission_model = self.config.get_permission_model(schema_permission_model_name)
-
-                if database_permission_model.ruleset != schema_permission_model.ruleset:
-                    raise ValueError(
-                        f"Database [{database_name}] permission model ruleset does not match schema [{database_name}.{schema_name}] permission model ruleset"
-                    )
-
-                if not schema_permission_model.ruleset.create_schema_owner_role:
-                    for k in schema_params:
-                        if k.startswith("owner_"):
-                            raise ValueError(
-                                f"Cannot use parameter [{k}] for schema [{database_name}.{schema_name}] due to database-level permission model"
-                                f"This parameter should be configured on database level"
-                            )
 
                 # fmt: off
                 bp = SchemaBlueprint(

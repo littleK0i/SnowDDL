@@ -83,24 +83,12 @@ class DatabaseParser(AbstractParser):
     def load_blueprints(self):
         for database_name in self.get_database_names():
             database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
-
-            # fmt: off
-            databases_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
-            database_permission_model = self.config.get_permission_model(databases_permission_model_name)
-            # fmt: on
-
-            if not database_permission_model.ruleset.create_database_owner_role:
-                for k in database_params:
-                    if k.startswith("owner_"):
-                        raise ValueError(
-                            f"Cannot use parameter [{k}] for database [{database_name}] due to schema-level permission model. "
-                            f"This parameter should be configured on schema level"
-                        )
+            database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
 
             # fmt: off
             bp = DatabaseBlueprint(
                 full_name=DatabaseIdent(self.env_prefix, database_name),
-                permission_model=databases_permission_model_name,
+                permission_model=database_permission_model_name,
                 is_transient=database_params.get("is_transient", False),
                 retention_time=database_params.get("retention_time", None),
                 is_sandbox=database_params.get("is_sandbox", False),
