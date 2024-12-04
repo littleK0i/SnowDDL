@@ -36,6 +36,9 @@ jobs:
       SNOWFLAKE_ENV_PREFIX: ${{ matrix.env-prefix }}
 
     steps:
+      - name: Enable longpaths
+        run: git config --global core.longpaths true
+
       - name: Checkout repo
         uses: actions/checkout@v2
 
