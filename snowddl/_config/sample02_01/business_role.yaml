@@ -9,5 +9,5 @@ snowflake_full_access:
     - snowflake
 
 snowflake_object_viewer:
-  global_roles:
+  share_read:
     - snowflake.object_viewer

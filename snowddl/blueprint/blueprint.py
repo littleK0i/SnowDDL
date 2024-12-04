@@ -249,7 +249,7 @@ class OutboundShareBlueprint(AbstractBlueprint):
     full_name: OutboundShareIdent
     accounts: List[AccountIdent] = []
     share_restrictions: bool = False
-    grants: List[Grant] = []
+    grant_patterns: List[GrantPattern] = []
 
 
 class PipeBlueprint(SchemaObjectBlueprint):

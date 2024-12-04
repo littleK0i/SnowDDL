@@ -1,4 +1,6 @@
-from snowddl.blueprint import OutboundShareBlueprint, Grant, build_grant_name_ident
+from typing import List
+
+from snowddl.blueprint import OutboundShareBlueprint, Grant, GrantPattern, build_grant_name_ident
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
 
@@ -55,7 +57,7 @@ class OutboundShareResolver(AbstractResolver):
 
         self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
 
-        for bp_grant in bp.grants:
+        for bp_grant in self.expand_grant_patterns_to_grants(bp.grant_patterns):
             self.create_grant(bp.full_name, bp_grant)
 
         if bp.accounts:
@@ -66,15 +68,16 @@ class OutboundShareResolver(AbstractResolver):
     def compare_object(self, bp: OutboundShareBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
+        bp_grants = self.expand_grant_patterns_to_grants(bp.grant_patterns)
         existing_grants = self.get_existing_share_grants(bp.full_name)
 
-        for bp_grant in bp.grants:
+        for bp_grant in bp_grants:
             if bp_grant not in existing_grants:
                 self.create_grant(bp.full_name, bp_grant)
                 result = ResolveResult.GRANT
 
         for ex_grant in existing_grants:
-            if ex_grant not in bp.grants:
+            if ex_grant not in bp_grants:
                 self.drop_grant(bp.full_name, ex_grant)
                 result = ResolveResult.GRANT
 
@@ -167,5 +170,22 @@ class OutboundShareResolver(AbstractResolver):
                     name=build_grant_name_ident(ObjectType[r["granted_on"]], r["name"]),
                 )
             )
+
+        return grants
+
+    def expand_grant_patterns_to_grants(self, grant_patterns: List[GrantPattern]):
+        grants = []
+
+        for grant_pattern in grant_patterns:
+            blueprints = self.config.get_blueprints_by_type_and_pattern(grant_pattern.on.blueprint_cls, grant_pattern.pattern)
+
+            for obj_bp in blueprints.values():
+                grants.append(
+                    Grant(
+                        privilege=grant_pattern.privilege,
+                        on=grant_pattern.on,
+                        name=obj_bp.full_name,
+                    ),
+                )
 
         return grants

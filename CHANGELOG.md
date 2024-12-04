@@ -7,11 +7,12 @@ This is a major update to config parsing and validation, which introduces some b
 - Moved parsing errors from `SnowDDLConfig` class into individual `Parser` classes, now works similar to `Resolvers`.
 - Introduced a concept of `IdentPattern`. It is a special class used to define patterns to match object names in config.
 - Introduced a concept of `GrantPattern`. It is a special class used to define grants for objects defined by `IdentPattern`.
-- Significantly reworked `BusinessRoleBlueprint`, `TechnicalRoleBlueprint`, `DatabaseBlueprint`, `SchemaBlueprint`. Moved grant generation logic from parsers to resolvers. Programmatic config update is required.
+- Significantly reworked `BusinessRoleBlueprint`, `TechnicalRoleBlueprint`, `DatabaseBlueprint`, `SchemaBlueprint`, `OutboundShareBlueprint`. Moved grant generation logic from parsers to resolvers. Programmatic config update is required.
 - Introduced concept of `Validators` running after all parsers and programmatic config to validate an entire config.
 - Moved some validations from existing parsers to validators.
 - Improved error handling while parsing config files with multiple entities. Now each entity is processed separately and may raise a separate exception.
 - Switched all calls of `information_schema.policy_references()` table function to `SNOWFLAKE` database. Other databases may not exist, especially during very first `plan` action.
+- Moved database role grants for shares from `global_roles` to `share_read` parameter. Currently, there are no more uses for database role grants, so thematically it makes sense.
 
 ## [0.36.2] - 2024-11-28
 

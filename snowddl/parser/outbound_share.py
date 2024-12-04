@@ -1,4 +1,4 @@
-from snowddl.blueprint import AccountIdent, OutboundShareBlueprint, OutboundShareIdent, Grant, ObjectType
+from snowddl.blueprint import AccountIdent, OutboundShareBlueprint, OutboundShareIdent, IdentPattern, GrantPattern, ObjectType
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -46,7 +46,7 @@ class OutboundShareParser(AbstractParser):
             full_name=OutboundShareIdent(self.env_prefix, share_name),
             accounts=self.get_share_accounts(share_params),
             share_restrictions=share_params.get("share_restrictions", False),
-            grants=self.get_share_grants(share_params),
+            grant_patterns=self.get_share_grant_patterns(share_params),
             comment=share_params.get("comment"),
         )
 
@@ -67,26 +67,14 @@ class OutboundShareParser(AbstractParser):
 
         return share_accounts
 
-    def get_share_grants(self, share):
-        grants = []
+    def get_share_grant_patterns(self, share):
+        grant_patterns = []
 
         for definition, pattern_list in share["grants"].items():
             on, privileges = definition.upper().split(":")
 
             for p in privileges.split(","):
                 for pattern in pattern_list:
-                    blueprints = self.config.get_blueprints_by_type_and_pattern(ObjectType[on].blueprint_cls, pattern)
+                    grant_patterns.append(GrantPattern(privilege=p, on=ObjectType[on], pattern=IdentPattern(pattern)))
 
-                    if not blueprints:
-                        raise ValueError(f"No {ObjectType[on].plural} matched wildcard grant with pattern [{pattern}]")
-
-                    for object_bp in blueprints.values():
-                        grants.append(
-                            Grant(
-                                privilege=p,
-                                on=ObjectType[on],
-                                name=object_bp.full_name,
-                            )
-                        )
-
-        return grants
+        return grant_patterns

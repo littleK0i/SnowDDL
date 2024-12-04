@@ -104,7 +104,7 @@ class BusinessRoleParser(AbstractParser):
     def process_business_role(self, business_role_name, business_role_params):
         technical_roles = []
 
-        for technical_role_name in business_role_params.get("technical_roles", []) +  business_role_params.get("tech_roles", []):
+        for technical_role_name in business_role_params.get("technical_roles", []) + business_role_params.get("tech_roles", []):
             technical_roles.append(build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX))
 
         # fmt: off
