@@ -32,5 +32,8 @@ jobs:
       - name: Install
         run: pip install -e .[dev]
 
-      - name: Run pytest
+      - name: Run unit tests
+        run: pytest test_unit
+
+      - name: Run integration tests
         run: test/run_test.sh
