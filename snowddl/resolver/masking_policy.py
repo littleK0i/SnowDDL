@@ -224,9 +224,8 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
         existing_policy_refs = {}
 
         cur = self.engine.execute_meta(
-            "SELECT * FROM TABLE({database:i}.information_schema.policy_references(policy_name => {policy_name}))",
+            "SELECT * FROM TABLE(snowflake.information_schema.policy_references(policy_name => {policy_name}))",
             {
-                "database": policy_name.database_full_name,
                 "policy_name": policy_name,
             },
         )
