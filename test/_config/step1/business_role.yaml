@@ -11,6 +11,8 @@ pm001_br1:
   warehouse_usage:
     - pm001_wh1
     - pm001_wh2
+  technical_roles:
+    - pm001_tr1
   global_roles:
     - test_global_role_1
     - test_global_role_2

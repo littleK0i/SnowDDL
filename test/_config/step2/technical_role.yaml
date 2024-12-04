@@ -1,0 +1,6 @@
+pm001_tr2:
+  grants:
+    DATABASE:USAGE:
+      - pm001*
+    SCHEMA:USAGE:
+      - pm001*.*

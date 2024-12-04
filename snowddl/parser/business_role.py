@@ -102,6 +102,11 @@ class BusinessRoleParser(AbstractParser):
         self.parse_multi_entity_file("business_role", business_role_json_schema, self.process_business_role)
 
     def process_business_role(self, business_role_name, business_role_params):
+        technical_roles = []
+
+        for technical_role_name in business_role_params.get("technical_roles", []) +  business_role_params.get("tech_roles", []):
+            technical_roles.append(build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX))
+
         # fmt: off
         bp = BusinessRoleBlueprint(
             full_name=build_role_ident(self.env_prefix, business_role_name, self.config.BUSINESS_ROLE_SUFFIX),
@@ -114,7 +119,7 @@ class BusinessRoleParser(AbstractParser):
             share_read=[build_share_read_ident(share_name) for share_name in business_role_params.get("share_read", [])],
             warehouse_usage=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in business_role_params.get("warehouse_usage", [])],
             warehouse_monitor=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in business_role_params.get("warehouse_monitor", [])],
-            technical_roles=[AccountObjectIdent(self.env_prefix, technical_role_name) for technical_role_name in business_role_params.get("technical_roles", []) +  business_role_params.get("tech_roles", [])],
+            technical_roles=technical_roles,
             global_roles=[Ident(global_role_name) for global_role_name in business_role_params.get("global_roles", [])],
             comment=business_role_params.get("comment"),
         )

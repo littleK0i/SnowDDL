@@ -2,3 +2,10 @@ eai001_tr1:
   grants:
     EXTERNAL_ACCESS_INTEGRATION:USAGE:
       - eai001_eai1
+
+pm001_tr1:
+  grants:
+    DATABASE:USAGE:
+      - pm001*
+    SCHEMA:USAGE:
+      - pm001*.*

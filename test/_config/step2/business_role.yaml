@@ -10,6 +10,8 @@ pm001_br1:
     - snowflake.usage_viewer
   warehouse_usage:
     - pm001_wh1
+  technical_roles:
+    - pm001_tr2
   global_roles:
     - test_global_role_2
     - test_global_role_3
