@@ -384,7 +384,7 @@ class AbstractRoleResolver(AbstractResolver):
 
             elif database_permission_model.ruleset.create_schema_owner_role:
                 # Databases with "schema owner" permission model are automatically expanded into individual schema roles
-                schema_name_pattern = IdentPattern(self.config.env_prefix, f"{database_bp.full_name.database}.*")
+                schema_name_pattern = IdentPattern(f"{database_bp.full_name.database}.*")
                 grants.extend(self.build_schema_role_grants(schema_name_pattern, role_type))
 
         return grants

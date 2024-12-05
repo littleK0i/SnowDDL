@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.37.1] - 2024-12-05
+
+- Fixed issue with database role grants pointing to database with `schema_owner` ruleset.
+
 ## [0.37.0] - 2024-12-04
 
 This is a major update to config parsing and validation, which introduces some breaking changes. [Read more about it](https://docs.snowddl.com/breaking-changes-log/0.37.0-december-2024).
