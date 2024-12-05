@@ -529,15 +529,25 @@ class TableResolver(AbstractSchemaObjectResolver):
                         )
                 else:
                     # Column does not exist, use default value with type cast
-                    query.append_nl(
-                        "    {comma:r}{col_val}::{col_type:r} AS {col_name:i}",
-                        {
-                            "comma": "  " if idx == 0 else ", ",
-                            "col_name": c.name,
-                            "col_type": c.type,
-                            "col_val": c.default,
-                        },
-                    )
+                    if c.default is not None:
+                        query.append_nl(
+                            "    {comma:r}{col_default:r}::{col_type:r} AS {col_name:i}",
+                            {
+                                "comma": "  " if idx == 0 else ", ",
+                                "col_name": c.name,
+                                "col_type": c.type,
+                                "col_default": self._normalize_bp_default(c.default),
+                            },
+                        )
+                    else:
+                        query.append_nl(
+                            "    {comma:r}NULL::{col_type:r} AS {col_name:i}",
+                            {
+                                "comma": "  " if idx == 0 else ", ",
+                                "col_name": c.name,
+                                "col_type": c.type,
+                            },
+                        )
 
             query.append_nl(
                 "FROM {full_name:i}",

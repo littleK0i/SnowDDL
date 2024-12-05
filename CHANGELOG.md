@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.37.2] - 2024-12-05
+
+- Improved handling of new columns with default values during replace table.
+
 ## [0.37.1] - 2024-12-05
 
 - Fixed issue with database role grants pointing to database with `schema_owner` ruleset.
