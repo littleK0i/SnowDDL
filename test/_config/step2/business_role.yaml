@@ -1,4 +1,8 @@
 pm001_br1:
+  database_read:
+    - pm001_db2
+  database_write:
+    - pm001_db1
   schema_owner:
     - pm001_db1.sc2
   schema_read:
