@@ -296,8 +296,11 @@ class BaseApp:
         if args["authenticator"] == "snowflake":
             if not args["a"] or not args["u"] or (not args["p"] and not args["k"] and "SNOWFLAKE_PRIVATE_KEY" not in environ):
                 return False
-        elif args["authenticator"] in ("externalbrowser", "oauth_snowpark"):
+        elif args["authenticator"] == "externalbrowser":
             if not args["a"] or not args["u"]:
+                return False
+        elif args["authenticator"] == "oauth_snowpark":
+            if not args["a"]:
                 return False
         elif args["authenticator"] is not None:
             return False

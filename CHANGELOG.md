@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.37.4] - 2024-12-06
+
+- Relaxed argument validation for `oauth_snowpark` authenticator.
+
 ## [0.37.3] - 2024-12-06
 
 - Added `oauth_snowpark` authenticator to simplify running SnowDDL inside Snowpark containers.
