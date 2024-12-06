@@ -6,7 +6,6 @@ from json import loads as json_loads
 from json.decoder import JSONDecodeError
 from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
-from os.path import isfile
 from pathlib import Path
 from snowflake.connector import connect
 from string import ascii_uppercase, digits
@@ -106,7 +105,7 @@ class BaseApp:
         # Options
         parser.add_argument(
             "--authenticator",
-            help="Authenticator: 'snowflake' or 'externalbrowser' (to use any IdP and a web browser) (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
+            help="Authenticator: 'snowflake', 'externalbrowser', 'oauth_snowpark` (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
             default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
         )
         parser.add_argument(
@@ -297,13 +296,12 @@ class BaseApp:
         if args["authenticator"] == "snowflake":
             if not args["a"] or not args["u"] or (not args["p"] and not args["k"] and "SNOWFLAKE_PRIVATE_KEY" not in environ):
                 return False
-        elif args["authenticator"] == "externalbrowser":
+        elif args["authenticator"] in ("externalbrowser", "oauth_snowpark"):
             if not args["a"] or not args["u"]:
                 return False
-        elif args["authenticator"] == "oauth_snowpark":
-            return True
         elif args["authenticator"] is not None:
             return False
+
         return True
 
     def init_logger(self):
@@ -562,17 +560,19 @@ class BaseApp:
             options["authenticator"] = "externalbrowser"
         elif self.args.get("authenticator") == "oauth_snowpark":
             options["authenticator"] = "oauth"
+            token_path = Path("/snowflake/session/token")
+
             if "SNOWFLAKE_OAUTH_TOKEN" in environ:
                 options["token"] = environ["SNOWFLAKE_OAUTH_TOKEN"]
-            elif isfile("/snowflake/session/token"):
-                options["token"] = open("/snowflake/session/token", "r").read()
+            elif token_path.is_file():
+                options["token"] = token_path.read_text("utf-8")
             else:
-                raise ValueError("Failed to obtain token for 'oauth_snowpark' authenticator.")
-            
+                raise ValueError("Failed to obtain token for 'oauth_snowpark' authenticator")
+
             if "SNOWFLAKE_HOST" in environ:
                 options["host"] = environ["SNOWFLAKE_HOST"]
             else:
-                raise ValueError("Failed to obtain host for 'oauth_snowpark' authenticator.")
+                raise ValueError("Failed to obtain host for 'oauth_snowpark' authenticator")
 
         else:
             raise ValueError("Only 'snowflake', 'externalbrowser' and 'oauth_snowpark' authenticators are supported")

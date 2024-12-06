@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.37.3] - 2024-12-06
+
+- Added `oauth_snowpark` authenticator to simplify running SnowDDL inside Snowpark containers.
+
 ## [0.37.2] - 2024-12-05
 
 - Improved handling of new columns with default values during replace table.
