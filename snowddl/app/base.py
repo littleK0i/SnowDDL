@@ -6,6 +6,7 @@ from json import loads as json_loads
 from json.decoder import JSONDecodeError
 from logging import getLogger, Formatter, StreamHandler
 from os import environ, getcwd
+from os.path import isfile
 from pathlib import Path
 from snowflake.connector import connect
 from string import ascii_uppercase, digits
@@ -299,6 +300,8 @@ class BaseApp:
         elif args["authenticator"] == "externalbrowser":
             if not args["a"] or not args["u"]:
                 return False
+        elif args["authenticator"] == "oauth_snowpark":
+            return True
         elif args["authenticator"] is not None:
             return False
         return True
@@ -557,8 +560,22 @@ class BaseApp:
                 options["password"] = self.args["p"]
         elif self.args.get("authenticator") == "externalbrowser":
             options["authenticator"] = "externalbrowser"
+        elif self.args.get("authenticator") == "oauth_snowpark":
+            options["authenticator"] = "oauth"
+            if "SNOWFLAKE_OAUTH_TOKEN" in environ:
+                options["token"] = environ["SNOWFLAKE_OAUTH_TOKEN"]
+            elif isfile("/snowflake/session/token"):
+                options["token"] = open("/snowflake/session/token", "r").read()
+            else:
+                raise ValueError("Failed to obtain token for 'oauth_snowpark' authenticator.")
+            
+            if "SNOWFLAKE_HOST" in environ:
+                options["host"] = environ["SNOWFLAKE_HOST"]
+            else:
+                raise ValueError("Failed to obtain host for 'oauth_snowpark' authenticator.")
+
         else:
-            raise ValueError("Only 'snowflake' and 'externalbrowser' authenticators are supported")
+            raise ValueError("Only 'snowflake', 'externalbrowser' and 'oauth_snowpark' authenticators are supported")
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {
