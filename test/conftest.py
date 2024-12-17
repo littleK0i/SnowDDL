@@ -439,6 +439,17 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_iceberg_table(self, database, schema, name):
+        cur = self.execute(
+            "SHOW ICEBERG TABLES LIKE {object_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "object_name": Ident(name),
+            },
+        )
+
+        return cur.fetchone()
+
     def show_indexes(self, database, schema, name):
         cur = self.execute(
             "SHOW INDEXES IN TABLE {table_name:i}",

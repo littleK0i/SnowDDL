@@ -18,14 +18,20 @@ schema_json_schema = {
         "permission_model": {
             "type": "string",
         },
+        "is_sandbox": {
+            "type": "boolean"
+        },
         "is_transient": {
             "type": "boolean"
         },
         "retention_time": {
             "type": "integer"
         },
-        "is_sandbox": {
-            "type": "boolean"
+        "external_volume": {
+            "type": "string"
+        },
+        "catalog": {
+            "type": "string",
         },
         "owner_database_read": {
             "type": "array",
@@ -112,9 +118,11 @@ class SchemaParser(AbstractParser):
                 bp = SchemaBlueprint(
                     full_name=SchemaIdent(self.env_prefix, database_name, schema_name),
                     permission_model=schema_permission_model_name,
+                    is_sandbox=combined_params.get("is_sandbox", False),
                     is_transient=combined_params.get("is_transient", False),
                     retention_time=combined_params.get("retention_time", None),
-                    is_sandbox=combined_params.get("is_sandbox", False),
+                    external_volume=Ident(schema_params.get("external_volume")) if schema_params.get("external_volume") else None,
+                    catalog=Ident(schema_params.get("catalog")) if schema_params.get("catalog") else None,
                     owner_database_write=[IdentPattern(p) for p in schema_params.get("owner_database_write", [])],
                     owner_database_read=[IdentPattern(p) for p in schema_params.get("owner_database_read", [])],
                     owner_schema_write=[IdentPattern(p) for p in schema_params.get("owner_schema_write", [])],

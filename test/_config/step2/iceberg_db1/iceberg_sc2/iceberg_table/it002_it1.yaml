@@ -1,0 +1,2 @@
+metadata_file_path: test_iceberg_table_2/metadata/00000-c8b82a2f-9504-4bed-8050-af8ec14afa26.metadata.json
+replace_invalid_characters: true

@@ -33,4 +33,4 @@ jobs:
         run: pip install -e .[dev]
 
       - name: Run pytest
-        run: test/run_test.sh
+        run: test/run_test_full.sh

@@ -1,0 +1,49 @@
+-- Configure external volume:
+-- https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3
+SET STORAGE_BASE_URL = 's3://snowddl-test-1/iceberg_glue/';
+SET STORAGE_ROLE_ARN = 'arn:aws:iam::571600836355:role/snowflake_role';
+SET STORAGE_EXTERNAL_ID = 'BKB93946_SFCRole=589_NdIqHV/NfOf1EcQ1SuEWXxP6MoA=';
+
+-- Configure catalog integration:
+-- https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-glue
+SET GLUE_CATALOG_NAMESPACE = 'iceberg_glue'
+SET GLUE_ROLE_ARN = 'arn:aws:iam::571600836355:role/snowflake_glue';
+SET GLUE_CATALOG_ID = '571600836355';
+SET GLUE_REGION = 'us-east-1';
+
+---
+
+USE ROLE ACCOUNTADMIN;
+
+---
+
+CREATE OR REPLACE EXTERNAL VOLUME TEST_EXTERNAL_VOLUME_GLUE
+STORAGE_LOCATIONS =
+(
+    (
+        NAME = 'iceberg_glue'
+        STORAGE_PROVIDER = 'S3'
+        STORAGE_BASE_URL = $STORAGE_BASE_URL
+        STORAGE_AWS_ROLE_ARN = $STORAGE_ROLE_ARN
+        STORAGE_AWS_EXTERNAL_ID = $STORAGE_EXTERNAL_ID
+    )
+)
+ALLOW_WRITES = FALSE;
+
+---
+
+CREATE OR REPLACE CATALOG INTEGRATION TEST_CATALOG_GLUE
+CATALOG_SOURCE = GLUE
+CATALOG_NAMESPACE = $GLUE_CATALOG_NAMESPACE
+TABLE_FORMAT = ICEBERG
+GLUE_AWS_ROLE_ARN = $GLUE_ROLE_ARN
+GLUE_CATALOG_ID = $GLUE_CATALOG_ID
+GLUE_REGION = $GLUE_REGION
+ENABLED = TRUE;
+
+CREATE OR REPLACE CATALOG INTEGRATION TEST_CATALOG_OBJECT_STORE
+CATALOG_SOURCE = OBJECT_STORE
+TABLE_FORMAT = ICEBERG
+ENABLED = TRUE;
+
+---

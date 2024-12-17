@@ -16,6 +16,7 @@ from .external_table import ExternalTableParser
 from .file_format import FileFormatParser
 from .function import FunctionParser
 from .hybrid_table import HybridTableParser
+from .iceberg_table import IcebergTableParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
@@ -68,6 +69,7 @@ default_parse_sequence = [
     TableParser,
     EventTableParser,
     HybridTableParser,
+    IcebergTableParser,
     DynamicTableParser,
     ExternalTableParser,
     StreamParser,
@@ -103,6 +105,7 @@ singledb_parse_sequence = [
     TableParser,
     EventTableParser,
     HybridTableParser,
+    IcebergTableParser,
     DynamicTableParser,
     ExternalTableParser,
     StreamParser,

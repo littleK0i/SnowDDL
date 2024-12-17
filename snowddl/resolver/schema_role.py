@@ -55,6 +55,25 @@ class SchemaRoleResolver(AbstractRoleResolver):
             )
         )
 
+        # Iceberg-related grants
+        if schema_bp.external_volume:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.EXTERNAL_VOLUME,
+                    name=schema_bp.external_volume,
+                )
+            )
+
+        if schema_bp.catalog:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.INTEGRATION,
+                    name=schema_bp.catalog,
+                )
+            )
+
         # Create grants
         for model_create_grant in schema_permission_model.owner_create_grants:
             grants.append(

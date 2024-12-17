@@ -109,9 +109,9 @@ class BusinessRoleBlueprint(AbstractBlueprint):
 class DatabaseBlueprint(AbstractBlueprint):
     full_name: DatabaseIdent
     permission_model: Optional[str] = None
+    is_sandbox: Optional[bool] = None
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
-    is_sandbox: Optional[bool] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_integration_usage: List[Ident] = []
@@ -216,6 +216,17 @@ class HybridTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     indexes: Optional[List[IndexReference]] = None
 
 
+class IcebergTableBlueprint(SchemaObjectBlueprint):
+    external_volume: Ident
+    catalog: Ident
+    catalog_table_name: Optional[str] = None
+    catalog_namespace: Optional[str] = None
+    metadata_file_path: Optional[str] = None
+    base_location: Optional[str] = None
+    replace_invalid_characters: bool = False
+    auto_refresh: bool = False
+
+
 class MaterializedViewBlueprint(SchemaObjectBlueprint):
     text: str
     columns: Optional[List[ViewColumn]] = None
@@ -312,9 +323,11 @@ class RowAccessPolicyBlueprint(SchemaObjectBlueprint):
 class SchemaBlueprint(AbstractBlueprint):
     full_name: SchemaIdent
     permission_model: Optional[str] = None
+    is_sandbox: Optional[bool] = None
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
-    is_sandbox: Optional[bool] = None
+    external_volume: Optional[Ident] = None
+    catalog: Optional[Ident] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []

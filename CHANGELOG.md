@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.38.0] - 2024-12-17
+
+- Introduced initial implementation of `ICEBERG_TABLE` object type. Currently only unmanaged Iceberg tables are supported.
+- Added parameters `external_volume` and `catalog` for `SCHEMA` object type, required for Iceberg tables to work.
+- Split `run_test.sh` script into two scripts: `run_test_full.sh` and `run_test_lite.sh`. The Lite version does not run tests which require complicated setup for external resources. At this moment it skips Iceberg tables.
+- Added `iceberg_setup.sql` for tests, helps to prepare environment for Iceberg table tests.
+
+Managed Iceberg tables will be implemented if we see a sufficient interest from users.
+
 ## [0.37.4] - 2024-12-06
 
 - Relaxed argument validation for `oauth_snowpark` authenticator.

@@ -98,6 +98,15 @@ class ObjectType(Enum):
         "blueprint_cls": "ExternalTableBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    EXTERNAL_VOLUME = {
+        "singular": "EXTERNAL VOLUME",
+        "plural": "EXTERNAL VOLUMES",
+        "singular_for_ref": "VOLUME",
+        "singular_for_grant": "VOLUME",
+    }
+
     FILE_FORMAT = {
         "singular": "FILE FORMAT",
         "plural": "FILE FORMATS",
@@ -121,13 +130,12 @@ class ObjectType(Enum):
         "blueprint_cls": "HybridTableBlueprint",
     }
 
-    # Technical object type, used for GRANTs only
-    # Currently there is no blueprint
     ICEBERG_TABLE = {
         "singular": "ICEBERG TABLE",
         "plural": "ICEBERG TABLES",
         "singular_for_ref": "TABLE",
         "is_future_grant_supported": True,
+        "blueprint_cls": "IcebergTableBlueprint",
     }
 
     # Technical object type, used for GRANTs only

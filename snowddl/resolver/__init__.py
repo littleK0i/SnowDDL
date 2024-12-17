@@ -18,6 +18,7 @@ from .file_format import FileFormatResolver
 from .foreign_key import ForeignKeyResolver
 from .function import FunctionResolver
 from .hybrid_table import HybridTableResolver
+from .iceberg_table import IcebergTableResolver
 from .masking_policy import MaskingPolicyResolver
 from .materialized_view import MaterializedViewResolver
 from .network_policy import NetworkPolicyResolver
@@ -72,6 +73,7 @@ default_resolve_sequence = [
     TableResolver,
     EventTableResolver,
     HybridTableResolver,
+    IcebergTableResolver,
     DynamicTableResolver,
     ExternalTableResolver,
     PrimaryKeyResolver,
@@ -138,8 +140,8 @@ singledb_resolve_sequence = [
     TableResolver,
     EventTableResolver,
     HybridTableResolver,
+    IcebergTableResolver,
     DynamicTableResolver,
-    ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,
     ForeignKeyResolver,

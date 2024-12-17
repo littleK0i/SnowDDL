@@ -18,6 +18,7 @@ from .blueprint import (
     ForeignKeyBlueprint,
     FunctionBlueprint,
     HybridTableBlueprint,
+    IcebergTableBlueprint,
     MaterializedViewBlueprint,
     MaskingPolicyBlueprint,
     NetworkPolicyBlueprint,
