@@ -142,6 +142,7 @@ singledb_resolve_sequence = [
     HybridTableResolver,
     IcebergTableResolver,
     DynamicTableResolver,
+    ExternalTableResolver,
     PrimaryKeyResolver,
     UniqueKeyResolver,
     ForeignKeyResolver,
