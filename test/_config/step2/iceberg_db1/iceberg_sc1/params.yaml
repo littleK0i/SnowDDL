@@ -1,2 +1,4 @@
+permission_model: iceberg
+
 external_volume: test_external_volume_glue
 catalog: test_catalog_glue
