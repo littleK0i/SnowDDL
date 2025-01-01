@@ -1,0 +1,31 @@
+name: Pytest performance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pytest_perf:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: snowddl_test
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ENV_PREFIX: PERF
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Install
+        run: pip install -e .[dev]
+
+      - name: Run pytest
+        run: test/run_test_perf.sh

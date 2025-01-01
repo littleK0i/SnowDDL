@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.39.0] - 2025-01-01
+
+- Increased default number of workers from 8 to 32.
+- Introduced basic benchmark to estimate how number of workers impacts final performance.
+- Added dependency validations for DYNAMIC_TABLE, HYBRID_TABLE, TASK, VIEW.
+
 ## [0.38.0] - 2024-12-17
 
 - Introduced initial implementation of `ICEBERG_TABLE` object type. Currently only unmanaged Iceberg tables are supported.
