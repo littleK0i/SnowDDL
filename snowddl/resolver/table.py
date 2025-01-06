@@ -65,7 +65,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         query = self._build_create_table(bp)
         self.engine.execute_safe_ddl(query)
 
-        self._compare_search_optimization(bp)
+        self._create_search_optimization(bp)
 
         return ResolveResult.CREATE
 
@@ -347,7 +347,7 @@ class TableResolver(AbstractSchemaObjectResolver):
 
         # If table was re-created, apply or suggest search optimization using exactly the same condition value
         if result == ResolveResult.REPLACE:
-            self._compare_search_optimization(bp, False, condition=self.engine.settings.execute_replace_table)
+            self._create_search_optimization(bp, condition=self.engine.settings.execute_replace_table)
         else:
             if self._compare_search_optimization(bp, row["search_optimization"]) and result == ResolveResult.NOCHANGE:
                 result = ResolveResult.ALTER
@@ -564,8 +564,34 @@ class TableResolver(AbstractSchemaObjectResolver):
 
         return bp_cluster_by == snow_cluster_by
 
+    def _create_search_optimization(self, bp: TableBlueprint, condition=True):
+        # Legacy search optimization on an entire table
+        if isinstance(bp.search_optimization, bool):
+            if bp.search_optimization:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=condition,
+                )
+
+            return
+
+        # Detailed search optimization on specific columns
+        for bp_item in bp.search_optimization:
+            self.engine.execute_unsafe_ddl(
+                "ALTER TABLE {full_name:i} ADD SEARCH OPTIMIZATION ON {method:r}({target:i})",
+                {
+                    "full_name": bp.full_name,
+                    "method": bp_item.method,
+                    "target": bp_item.target,
+                },
+                condition=condition,
+            )
+
     def _compare_search_optimization(self, bp: TableBlueprint, is_search_optimization_enabled=False, condition=True):
-        # Legacy search optimization on the whole table
+        # Legacy search optimization on an entire table
         if isinstance(bp.search_optimization, bool):
             if bp.search_optimization and not is_search_optimization_enabled:
                 self.engine.execute_unsafe_ddl(

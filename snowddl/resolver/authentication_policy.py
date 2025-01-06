@@ -1,4 +1,5 @@
 from snowddl.blueprint import AuthenticationPolicyBlueprint, AuthenticationPolicyReference, ObjectType, SchemaObjectIdent
+from snowddl.error import SnowDDLExecuteError
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult
 
 
@@ -350,22 +351,21 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
         return existing_policy_refs
 
     def _object_has_another_policy_ref(self, ref: AuthenticationPolicyReference):
-        if ref.object_type == ObjectType.ACCOUNT:
+        try:
             cur = self.engine.execute_meta(
                 "SELECT * FROM TABLE(snowflake.information_schema.policy_references(ref_entity_domain => {object_type}, ref_entity_name  => {object_name}))",
                 {
                     "object_type": ref.object_type.name,
-                    "object_name": self.engine.context.current_account,
+                    "object_name": self.engine.context.current_account if ref.object_type == ObjectType.ACCOUNT else ref.object_name,
                 },
             )
-        else:
-            cur = self.engine.execute_meta(
-                "SELECT * FROM TABLE(snowflake.information_schema.policy_references(ref_entity_domain => {object_type}, ref_entity_name  => {object_name}))",
-                {
-                    "object_type": ref.object_type.name,
-                    "object_name": ref.object_name,
-                },
-            )
+        except SnowDDLExecuteError as e:
+            # User does not exist or not authorized
+            # Skip this error during planning
+            if e.snow_exc.errno == 2003:
+                return False
+            else:
+                raise
 
         for r in cur:
             if r["POLICY_KIND"] == "AUTHENTICATION_POLICY":

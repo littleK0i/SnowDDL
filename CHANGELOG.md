@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.39.1] - 2025-01-06
+
+- Fixed error when `TableResolver` tries to run `DESCRIBE SEARCH OPTIMIZATION` on `TABLE` which does not exist yet.
+- Fixed error when `AuthenticationPolicyResolver` tries to run `POLICY_REFERENCES()` on `USER` which does not exist yet.
+
+These changes take effect mostly during `plan` action and should not have noticeable impact on `apply`.
+
 ## [0.39.0] - 2025-01-01
 
 - Increased default number of workers from 8 to 32.
