@@ -1,0 +1,7 @@
+columns:
+  aaa: NUMBER(10,0)
+  bbb: NUMBER(10,0)
+  id: NUMBER(10,0)
+  name: VARCHAR(255)
+
+change_tracking: true

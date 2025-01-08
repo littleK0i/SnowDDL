@@ -72,10 +72,10 @@ default_parse_sequence = [
     IcebergTableParser,
     DynamicTableParser,
     ExternalTableParser,
-    StreamParser,
     MaterializedViewParser,
     ViewParser,
     PipeParser,
+    StreamParser,
     TaskParser,
     AlertParser,
     # --
@@ -108,10 +108,10 @@ singledb_parse_sequence = [
     IcebergTableParser,
     DynamicTableParser,
     ExternalTableParser,
-    StreamParser,
     MaterializedViewParser,
     ViewParser,
     PipeParser,
+    StreamParser,
     TaskParser,
     AlertParser,
 ]

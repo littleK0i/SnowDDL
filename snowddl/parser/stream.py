@@ -38,11 +38,11 @@ class StreamParser(AbstractParser):
     def process_stream(self, f: ParsedFile):
         bp = StreamBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            object_type=ObjectType[f.params["object_type"]],
+            object_type=ObjectType[f.params["object_type"].upper()],
             object_name=build_schema_object_ident(self.env_prefix, f.params["object_name"], f.database, f.schema),
-            append_only=f.params.get("append_only"),
-            insert_only=f.params.get("insert_only"),
-            show_initial_rows=f.params.get("show_initial_rows"),
+            append_only=f.params.get("append_only", False),
+            insert_only=f.params.get("insert_only", False),
+            show_initial_rows=f.params.get("show_initial_rows", False),
             comment=f.params.get("comment"),
         )
 

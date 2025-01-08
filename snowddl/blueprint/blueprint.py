@@ -134,7 +134,7 @@ class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 
 
 class EventTableBlueprint(SchemaObjectBlueprint):
-    change_tracking: bool
+    change_tracking: bool = False
 
 
 class ExternalAccessIntegrationBlueprint(AbstractBlueprint):
@@ -376,9 +376,9 @@ class StageFileBlueprint(SchemaObjectBlueprint):
 class StreamBlueprint(SchemaObjectBlueprint):
     object_type: ObjectType
     object_name: SchemaObjectIdent
-    append_only: Optional[bool] = None
-    insert_only: Optional[bool] = None
-    show_initial_rows: Optional[bool] = None
+    append_only: bool = False
+    insert_only: bool = False
+    show_initial_rows: bool = None
 
 
 class TableBlueprint(SchemaObjectBlueprint):
@@ -447,6 +447,7 @@ class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     text: str
     columns: Optional[List[ViewColumn]] = None
     is_secure: bool = False
+    change_tracking: bool = False
 
 
 class WarehouseBlueprint(AbstractBlueprint):

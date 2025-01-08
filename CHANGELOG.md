@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.40.0] - 2025-01-08
+
+- `VIEW` object type is now supported as a valid target for `STREAM`. Streams are resolved AFTER views.
+- Added `change_tracking` parameter for views.
+- Added validation of `change_tracking=True` for `EVENT_TABLE`, `TABLE` and `VIEW` targeted by `STREAM`.
+- Reworked `STREAM` replace conditions. Now resolver should react to changes in `object_type` and `object_name` properly.
+- Stale streams will be suggested for replacement even if all other parameters are the same. It is especially important for streams on views.
+- Added "replace reasons" comments before `CREATE OR REPLACE STREAM` for better clarity. It is similar to "replace reasons" on tables.
+- Renamed technical object type `EXTERNAL_VOLUME` into `VOLUME`. It is necessary for grants to operate properly.
+- Added tests for streams.
+
 ## [0.39.1] - 2025-01-06
 
 - Fixed error when `TableResolver` tries to run `DESCRIBE SEARCH OPTIMIZATION` on `TABLE` which does not exist yet.

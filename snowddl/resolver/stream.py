@@ -1,6 +1,5 @@
 from snowddl.blueprint import StreamBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
-from snowddl.resolver._utils import coalesce
 
 
 class StreamResolver(AbstractSchemaObjectResolver):
@@ -23,8 +22,10 @@ class StreamResolver(AbstractSchemaObjectResolver):
                 "database": r["database_name"],
                 "schema": r["schema_name"],
                 "name": r["name"],
+                "object_type": r["source_type"],
                 "object_name": r["table_name"],
                 "type": r["type"],
+                "stale": r["stale"] == "true",
                 "mode": r["mode"],
                 "comment": r["comment"] if r["comment"] else None,
             }
@@ -41,18 +42,28 @@ class StreamResolver(AbstractSchemaObjectResolver):
         return ResolveResult.CREATE
 
     def compare_object(self, bp: StreamBlueprint, row: dict):
-        is_replace_required = False
+        replace_reasons = []
 
-        if coalesce(bp.append_only, False) != ("APPEND_ONLY" in row["mode"]):
-            is_replace_required = True
+        if row["stale"]:
+            replace_reasons.append(f"Stream is marked as stale")
 
-        if coalesce(bp.insert_only, False) != ("INSERT_ONLY" in row["mode"]):
-            is_replace_required = True
+        if bp.object_type.singular_for_ref != row["object_type"].upper().replace(" ", "_"):
+            replace_reasons.append(f"Source object type [{str(bp.object_type.name)}] in config does not match source type [{row['object_type']}] in Snowflake")
 
-        if is_replace_required:
+        if bp.object_name != row["object_name"]:
+            replace_reasons.append(f"Source object name [{bp.object_name}] in config does not match source name [{row['object_name']}] in Snowflake")
+
+        if bp.append_only != ("APPEND_ONLY" in row["mode"]):
+            replace_reasons.append(f"APPEND_ONLY={str(bp.append_only)} in config does not match mode [{row['mode']}] in Snowflake")
+
+        if bp.insert_only != ("INSERT_ONLY" in row["mode"]):
+            replace_reasons.append(f"INSERT_ONLY={str(bp.insert_only)} in config does not match mode [{row['mode']}] in Snowflake")
+
+        if replace_reasons:
             query = self._build_create_stream_sql(bp, True)
-            self.engine.execute_unsafe_ddl(query)
+            query_with_comment = "\n".join(f"-- {r}" for r in replace_reasons) + "\n" + str(query)
 
+            self.engine.execute_unsafe_ddl(query_with_comment)
             return ResolveResult.REPLACE
 
         if bp.comment != row["comment"]:
@@ -106,29 +117,14 @@ class StreamResolver(AbstractSchemaObjectResolver):
             },
         )
 
-        if bp.append_only is not None:
-            query.append_nl(
-                "APPEND_ONLY = {append_only:b}",
-                {
-                    "append_only": bp.append_only,
-                },
-            )
+        if bp.append_only:
+            query.append_nl("APPEND_ONLY = TRUE")
 
-        if bp.insert_only is not None:
-            query.append_nl(
-                "INSERT_ONLY = {insert_only:b}",
-                {
-                    "insert_only": bp.insert_only,
-                },
-            )
+        if bp.insert_only:
+            query.append_nl("INSERT_ONLY = TRUE")
 
-        if bp.show_initial_rows is not None:
-            query.append_nl(
-                "SHOW_INITIAL_ROWS = {show_initial_rows:b}",
-                {
-                    "show_initial_rows": bp.show_initial_rows,
-                },
-            )
+        if bp.show_initial_rows:
+            query.append_nl("SHOW_INITIAL_ROWS = TRUE")
 
         if bp.comment:
             query.append_nl(

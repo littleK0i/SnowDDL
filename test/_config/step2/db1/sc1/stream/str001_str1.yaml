@@ -1,0 +1,4 @@
+object_type: TABLE
+object_name: str001_tb1
+append_only: true
+comment: abc

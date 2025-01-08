@@ -151,6 +151,9 @@ class ViewResolver(AbstractSchemaObjectResolver):
 
             query.append_nl(")")
 
+        if bp.change_tracking:
+            query.append_nl("CHANGE_TRACKING = TRUE")
+
         query.append_nl("COPY GRANTS")
         query.append_nl("AS")
         query.append_nl(bp.text)

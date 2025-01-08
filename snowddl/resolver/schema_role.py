@@ -60,7 +60,7 @@ class SchemaRoleResolver(AbstractRoleResolver):
             grants.append(
                 Grant(
                     privilege="USAGE",
-                    on=ObjectType.EXTERNAL_VOLUME,
+                    on=ObjectType.VOLUME,
                     name=schema_bp.external_volume,
                 )
             )

@@ -79,10 +79,10 @@ default_resolve_sequence = [
     PrimaryKeyResolver,
     UniqueKeyResolver,
     ForeignKeyResolver,
-    StreamResolver,
     MaterializedViewResolver,
     ViewResolver,
     PipeResolver,
+    StreamResolver,
     TaskResolver,
     AlertResolver,
     # --
@@ -146,10 +146,10 @@ singledb_resolve_sequence = [
     PrimaryKeyResolver,
     UniqueKeyResolver,
     ForeignKeyResolver,
-    StreamResolver,
     MaterializedViewResolver,
     ViewResolver,
     PipeResolver,
+    StreamResolver,
     TaskResolver,
     AlertResolver,
     # --

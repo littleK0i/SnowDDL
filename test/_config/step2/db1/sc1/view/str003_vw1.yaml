@@ -1,0 +1,6 @@
+text: |-
+  SELECT a.id, a.name, b.aaa, b.bbb
+  FROM str003_tb1 a
+      JOIN str003_tb2 b ON (a.id=b.id)
+
+change_tracking: true
