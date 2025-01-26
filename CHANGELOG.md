@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.41.0] - 2025-01-26
+
+- Changed naming for some roles automatically created by SnowDDL to prevent collisions with native Snowflake entities, specifically `DATABASE ROLES`:
+  - `DatabaseRole` -> `DatabaseAccessRole`
+  - `SchemaRole` -> `SchemaAccessRole`
+  - `ShareRole` -> `ShareAccessRole`
+  - `WarehouseRole` -> `WarehouseAccessRole`
+
+This change affects SnowDDL internals only. Config format and business logic remains the same. Names of roles in Snowflake account remain the same. Only names of files, classes and constants were changed.
+
 ## [0.40.0] - 2025-01-08
 
 - `VIEW` object type is now supported as a valid target for `STREAM`. Streams are resolved AFTER views.

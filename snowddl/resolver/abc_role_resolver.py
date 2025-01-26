@@ -377,7 +377,7 @@ class AbstractRoleResolver(AbstractResolver):
                             self.config.env_prefix,
                             database_bp.full_name.database,
                             role_type,
-                            self.config.DATABASE_ROLE_SUFFIX,
+                            self.config.DATABASE_ACCESS_ROLE_SUFFIX,
                         ),
                     )
                 )
@@ -402,7 +402,7 @@ class AbstractRoleResolver(AbstractResolver):
                         schema_bp.full_name.database,
                         schema_bp.full_name.schema,
                         role_type,
-                        self.config.SCHEMA_ROLE_SUFFIX,
+                        self.config.SCHEMA_ACCESS_ROLE_SUFFIX,
                     ),
                 )
             )
@@ -413,7 +413,7 @@ class AbstractRoleResolver(AbstractResolver):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=build_role_ident(self.config.env_prefix, warehouse_name.name, role_type, self.config.WAREHOUSE_ROLE_SUFFIX),
+            name=build_role_ident(self.config.env_prefix, warehouse_name.name, role_type, self.config.WAREHOUSE_ACCESS_ROLE_SUFFIX),
         )
 
     def build_share_read_grant(self, share_name: Union[Ident, DatabaseRoleIdent]) -> Grant:
@@ -427,7 +427,7 @@ class AbstractRoleResolver(AbstractResolver):
             return Grant(
                 privilege="USAGE",
                 on=ObjectType.ROLE,
-                name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ROLE_SUFFIX),
+                name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ACCESS_ROLE_SUFFIX),
             )
 
     def build_technical_role_grant(self, technical_role_name: AccountObjectIdent) -> Grant:

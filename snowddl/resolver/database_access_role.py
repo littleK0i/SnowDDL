@@ -11,9 +11,9 @@ from snowddl.blueprint import (
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
-class DatabaseRoleResolver(AbstractRoleResolver):
+class DatabaseAccessRoleResolver(AbstractRoleResolver):
     def get_role_suffix(self):
-        return self.config.DATABASE_ROLE_SUFFIX
+        return self.config.DATABASE_ACCESS_ROLE_SUFFIX
 
     def get_blueprints(self):
         blueprints = []

@@ -10,9 +10,9 @@ from snowddl.blueprint import (
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
-class SchemaRoleResolver(AbstractRoleResolver):
+class SchemaAccessRoleResolver(AbstractRoleResolver):
     def get_role_suffix(self):
-        return self.config.SCHEMA_ROLE_SUFFIX
+        return self.config.SCHEMA_ACCESS_ROLE_SUFFIX
 
     def get_blueprints(self):
         blueprints = []

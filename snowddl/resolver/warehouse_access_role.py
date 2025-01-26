@@ -2,9 +2,9 @@ from snowddl.blueprint import RoleBlueprint, WarehouseBlueprint, Grant, build_ro
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
-class WarehouseRoleResolver(AbstractRoleResolver):
+class WarehouseAccessRoleResolver(AbstractRoleResolver):
     def get_role_suffix(self):
-        return self.config.WAREHOUSE_ROLE_SUFFIX
+        return self.config.WAREHOUSE_ACCESS_ROLE_SUFFIX
 
     def get_blueprints(self):
         blueprints = []

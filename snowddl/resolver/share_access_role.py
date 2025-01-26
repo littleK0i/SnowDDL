@@ -10,9 +10,9 @@ from snowddl.blueprint import (
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
 
 
-class ShareRoleResolver(AbstractRoleResolver):
+class ShareAccessRoleResolver(AbstractRoleResolver):
     def get_role_suffix(self):
-        return self.config.SHARE_ROLE_SUFFIX
+        return self.config.SHARE_ACCESS_ROLE_SUFFIX
 
     def get_blueprints(self):
         blueprints = []
@@ -48,7 +48,7 @@ class ShareRoleResolver(AbstractRoleResolver):
         ]
 
         return RoleBlueprint(
-            full_name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ROLE_SUFFIX),
+            full_name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ACCESS_ROLE_SUFFIX),
             grants=grants,
         )
 

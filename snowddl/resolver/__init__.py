@@ -8,7 +8,7 @@ from .alert import AlertResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
-from .database_role import DatabaseRoleResolver
+from .database_access_role import DatabaseAccessRoleResolver
 from .dynamic_table import DynamicTableResolver
 from .event_table import EventTableResolver
 from .external_access_integration import ExternalAccessIntegrationResolver
@@ -31,9 +31,9 @@ from .projection_policy import ProjectionPolicyResolver
 from .resource_monitor import ResourceMonitorResolver
 from .row_access_policy import RowAccessPolicyResolver
 from .sequence import SequenceResolver
-from .share_role import ShareRoleResolver
+from .share_access_role import ShareAccessRoleResolver
 from .schema import SchemaResolver
-from .schema_role import SchemaRoleResolver
+from .schema_access_role import SchemaAccessRoleResolver
 from .secret import SecretResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
@@ -46,19 +46,19 @@ from .unique_key import UniqueKeyResolver
 from .user import UserResolver
 from .user_role import UserRoleResolver
 from .warehouse import WarehouseResolver
-from .warehouse_role import WarehouseRoleResolver
+from .warehouse_access_role import WarehouseAccessRoleResolver
 
 
 default_resolve_sequence = [
     AccountParameterResolver,
     ResourceMonitorResolver,
     WarehouseResolver,
-    WarehouseRoleResolver,
+    WarehouseAccessRoleResolver,
     DatabaseResolver,
     SchemaResolver,
-    ShareRoleResolver,
-    DatabaseRoleResolver,
-    SchemaRoleResolver,
+    ShareAccessRoleResolver,
+    DatabaseAccessRoleResolver,
+    SchemaAccessRoleResolver,
     SecretResolver,
     NetworkRuleResolver,
     ExternalAccessIntegrationResolver,
@@ -105,7 +105,7 @@ default_destroy_sequence = [
     AccountParameterResolver,
     ResourceMonitorResolver,
     WarehouseResolver,
-    WarehouseRoleResolver,
+    WarehouseAccessRoleResolver,
     # --
     NetworkPolicyResolver,
     AuthenticationPolicyResolver,
@@ -113,9 +113,9 @@ default_destroy_sequence = [
     # --
     DatabaseResolver,
     SchemaResolver,
-    ShareRoleResolver,
-    DatabaseRoleResolver,
-    SchemaRoleResolver,
+    ShareAccessRoleResolver,
+    DatabaseAccessRoleResolver,
+    SchemaAccessRoleResolver,
     # --
     OutboundShareResolver,
     TechnicalRoleResolver,
