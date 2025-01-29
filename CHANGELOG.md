@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.42.0] - 2025-01-29
+
+- Introduced logic to `.lstrip(" \n\r\t").rstrip(" \n\r\t;")` from object config parameters containing SQL snippets:
+  - AGGREGATION_POLICY: `body`;
+  - DYNAMIC_TABLE: `text`;
+  - MASKING_POLICY: `body`;
+  - MATERIALIZED_VIEW: `text`;
+  - PROJECTION_POLICY: `body`;
+  - ROW_ACCESS_POLICY: `body`;
+  - TASK: `body`;
+  - VIEW: `text`;
+
+This change should help to prevent issues with these characters causing SnowDDL to re-create object constantly. Affected objects might be re-created once after the update.
+
+FUNCTION and PROCEDURE are not affected by this change, since their bodies may contain code which is not SQL.
+
 ## [0.41.0] - 2025-01-26
 
 - Changed naming for some roles automatically created by SnowDDL to prevent collisions with native Snowflake entities, specifically `DATABASE ROLES`:
