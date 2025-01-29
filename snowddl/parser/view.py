@@ -142,7 +142,7 @@ class ViewParser(AbstractParser):
 
         bp = ViewBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            text=f.params["text"],
+            text=self.normalise_sql_text_param(f.params["text"]),
             columns=column_blueprints if column_blueprints else None,
             is_secure=f.params.get("is_secure", False),
             change_tracking=f.params.get("change_tracking", False),

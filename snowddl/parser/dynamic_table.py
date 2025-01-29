@@ -89,7 +89,7 @@ class DynamicTableParser(AbstractParser):
 
         bp = DynamicTableBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            text=f.params["text"],
+            text=self.normalise_sql_text_param(f.params["text"]),
             columns=column_blueprints if column_blueprints else None,
             target_lag=self.normalise_target_lag(f.params["target_lag"]),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]),

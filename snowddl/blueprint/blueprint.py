@@ -288,7 +288,7 @@ class PrimaryKeyBlueprint(SchemaObjectBlueprint):
 class ProcedureBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdentWithArgs
     language: str
-    body: str
+    body: Optional[str] = None
     arguments: List[ArgumentWithType]
     returns: Union[DataType, List[NameWithType]]
     is_strict: bool = False

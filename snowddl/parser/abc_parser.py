@@ -100,6 +100,9 @@ class AbstractParser(ABC):
 
         self.errors[error_key] = exc
 
+    def normalise_sql_text_param(self, text: str):
+        return text.lstrip(" \t\n\r").rstrip(" \t\n\r;")
+
     def normalise_params_list(self, params):
         if params is None:
             return None

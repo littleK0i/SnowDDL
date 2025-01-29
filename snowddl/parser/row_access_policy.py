@@ -77,7 +77,7 @@ class RowAccessPolicyParser(AbstractParser):
 
         bp = RowAccessPolicyBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            body=f.params["body"],
+            body=self.normalise_sql_text_param(f.params["body"]),
             arguments=arguments,
             references=references,
             comment=f.params.get("comment"),
