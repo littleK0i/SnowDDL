@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.42.1] - 2025-01-30
+
+- Prevented SnowDDL from trying to change `OWNERSHIP` of Notebook object. This change is explicitly [not supported](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-limitations) by Snowflake.
+
 ## [0.42.0] - 2025-01-29
 
 - Introduced logic to `.lstrip(" \n\r\t").rstrip(" \n\r\t;")` from object config parameters containing SQL snippets:
