@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.0] - 2025-01-31
+
+- Introduced action `validate`. It prepares and validates config, but stops right before connecting to Snowflake. It might be helpful for automated checks and git hooks.
+- Removed `self.engine` from application classes. Now engine is created and closed only during `execute()` call, but not during `__init__`.
+
+This change should not have any impact, unless you have custom application classes. In this case replace `with self.engine` call with `with self.get_engine()`. Some output functions now also accept `engine` argument instead of relying on `self.engine`.
+
 ## [0.42.1] - 2025-01-30
 
 - Prevented SnowDDL from trying to change `OWNERSHIP` of Notebook object. This change is explicitly [not supported](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-limitations) by Snowflake.

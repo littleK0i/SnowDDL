@@ -188,11 +188,11 @@ class ConvertApp(BaseApp):
     def execute(self):
         error_count = 0
 
-        with self.engine:
-            self.output_engine_context()
+        with self.get_engine() as engine:
+            self.output_engine_context(engine)
 
             for converter_cls in default_converter_sequence:
-                converter = converter_cls(self.engine, self.config_path)
+                converter = converter_cls(engine, self.config_path)
                 converter.convert()
 
                 error_count += len(converter.errors)

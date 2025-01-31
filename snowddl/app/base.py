@@ -44,9 +44,6 @@ class BaseApp:
             self.config = self.init_config()
             self.settings = self.init_settings()
 
-        with self.measure_elapsed_time("InitEngine"):
-            self.engine = self.init_engine()
-
     def init_arguments_parser(self):
         formatter = lambda prog: HelpFormatter(prog, max_help_position=36)
 
@@ -280,6 +277,7 @@ class BaseApp:
         subparsers.add_parser(
             "destroy", help="Drop objects with specified --env-prefix, use it to reset dev and test environments"
         )
+        subparsers.add_parser("validate", help="Validate config only, do not connect to Snowflake")
 
         return parser
 
@@ -523,8 +521,11 @@ class BaseApp:
 
         return settings
 
-    def init_engine(self):
-        return SnowDDLEngine(self.get_connection(), self.config, self.settings)
+    def get_engine(self):
+        with self.measure_elapsed_time("GetEngine"):
+            engine = SnowDDLEngine(self.get_connection(), self.config, self.settings)
+
+        return engine
 
     def get_connection(self):
         options = {
@@ -588,10 +589,13 @@ class BaseApp:
         return connect(**options)
 
     def execute(self):
+        if self.args.get("action") == "validate":
+            return
+
         total_error_count = 0
 
-        with self.engine:
-            self.output_engine_context()
+        with self.get_engine() as engine:
+            self.output_engine_context(engine)
 
             if self.args.get("action") == "destroy":
                 if not self.args.get("env_prefix") and not self.args.get("destroy_without_prefix"):
@@ -599,53 +603,54 @@ class BaseApp:
 
                 for resolver_cls in self.destroy_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
-                        resolver = resolver_cls(self.engine)
+                        resolver = resolver_cls(engine)
                         resolver.destroy()
 
                     total_error_count += len(resolver.errors)
 
-                self.engine.context.destroy_role_with_prefix()
+                engine.context.destroy_role_with_prefix()
             else:
                 for resolver_cls in self.resolve_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
-                        resolver = resolver_cls(self.engine)
+                        resolver = resolver_cls(engine)
                         resolver.resolve()
 
                     total_error_count += len(resolver.errors)
 
-            self.engine.connection.close()
-            self.output_engine_stats()
-            self.output_engine_warnings()
+            engine.connection.close()
+
+            self.output_engine_stats(engine)
+            self.output_engine_warnings(engine)
 
             if self.args.get("show_timers"):
                 self.output_app_timers()
 
             if self.args.get("show_sql"):
-                self.output_executed_ddl()
+                self.output_executed_ddl(engine)
 
-            self.output_suggested_ddl()
+            self.output_suggested_ddl(engine)
 
             if total_error_count > 0:
                 exit(8)
 
-    def output_engine_context(self):
+    def output_engine_context(self, engine: SnowDDLEngine):
         roles = []
 
-        if self.engine.context.is_account_admin:
+        if engine.context.is_account_admin:
             roles.append("ACCOUNTADMIN")
 
-        if self.engine.context.is_sys_admin:
+        if engine.context.is_sys_admin:
             roles.append("SYSADMIN")
 
-        if self.engine.context.is_security_admin:
+        if engine.context.is_security_admin:
             roles.append("SECURITYADMIN")
 
         self.logger.info(
-            f"Snowflake version = {self.engine.context.version} ({self.engine.context.edition.name}), SnowDDL version = {__version__}"
+            f"Snowflake version = {engine.context.version} ({engine.context.edition.name}), SnowDDL version = {__version__}"
         )
-        self.logger.info(f"Account = {self.engine.context.current_account}, Region = {self.engine.context.current_region}")
-        self.logger.info(f"Session = {self.engine.context.current_session}, User = {self.engine.context.current_user}")
-        self.logger.info(f"Role = {self.engine.context.current_role}, Warehouse = {self.engine.context.current_warehouse}")
+        self.logger.info(f"Account = {engine.context.current_account}, Region = {engine.context.current_region}")
+        self.logger.info(f"Session = {engine.context.current_session}, User = {engine.context.current_user}")
+        self.logger.info(f"Role = {engine.context.current_role}, Warehouse = {engine.context.current_warehouse}")
         self.logger.info(f"Roles in session = {','.join(roles)}")
         self.logger.info("---")
 
@@ -687,13 +692,13 @@ class BaseApp:
 
         return None
 
-    def output_engine_stats(self):
+    def output_engine_stats(self, engine: SnowDDLEngine):
         self.logger.info(
-            f"Executed {len(self.engine.executed_ddl)} DDL queries, Suggested {len(self.engine.suggested_ddl)} DDL queries"
+            f"Executed {len(engine.executed_ddl)} DDL queries, Suggested {len(engine.suggested_ddl)} DDL queries"
         )
 
-    def output_engine_warnings(self):
-        for object_type, object_names in self.engine.intention_cache.invalid_name_warning.items():
+    def output_engine_warnings(self, engine: SnowDDLEngine):
+        for object_type, object_names in engine.intention_cache.invalid_name_warning.items():
             for name in object_names:
                 self.logger.warning(
                     f"Detected {object_type.name} with name [{name}] "
@@ -708,18 +713,18 @@ class BaseApp:
         for timer_name, timer_value in self.elapsed_timers.items():
             self.logger.info(f"Timer [{timer_name}] elapsed time is {timer_value:.3f}s")
 
-    def output_suggested_ddl(self):
-        if self.engine.suggested_ddl:
+    def output_suggested_ddl(self, engine: SnowDDLEngine):
+        if engine.suggested_ddl:
             print("--- Suggested DDL ---\n")
 
-        for sql in self.engine.suggested_ddl:
+        for sql in engine.suggested_ddl:
             print(f"{sql};\n")
 
-    def output_executed_ddl(self):
-        if self.engine.executed_ddl:
+    def output_executed_ddl(self, engine: SnowDDLEngine):
+        if engine.executed_ddl:
             print("--- Executed DDL ---\n")
 
-        for sql in self.engine.executed_ddl:
+        for sql in engine.executed_ddl:
             print(f"{sql};\n")
 
     @contextmanager

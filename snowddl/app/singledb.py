@@ -226,6 +226,7 @@ class SingleDbApp(BaseApp):
         subparsers.add_parser(
             "destroy", help="Drop objects with specified --env-prefix, use it to reset dev and test environments"
         )
+        subparsers.add_parser("validate", help="Validate config only, do not connect to Snowflake")
 
         return parser
 
@@ -301,15 +302,18 @@ class SingleDbApp(BaseApp):
         return settings
 
     def execute(self):
+        if self.args.get("action") == "validate":
+            return
+
         error_count = 0
 
-        with self.engine:
-            self.output_engine_context()
+        with self.get_engine() as engine:
+            self.output_engine_context(engine)
 
             if self.args.get("action") == "destroy":
                 for resolver_cls in self.destroy_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
-                        resolver = resolver_cls(self.engine)
+                        resolver = resolver_cls(engine)
                         resolver.destroy()
 
                     error_count += len(resolver.errors)
@@ -317,22 +321,23 @@ class SingleDbApp(BaseApp):
             else:
                 for resolver_cls in self.resolve_sequence:
                     with self.measure_elapsed_time(resolver_cls.__name__):
-                        resolver = resolver_cls(self.engine)
+                        resolver = resolver_cls(engine)
                         resolver.resolve()
 
                     error_count += len(resolver.errors)
 
-            self.engine.connection.close()
-            self.output_engine_stats()
-            self.output_engine_warnings()
+            engine.connection.close()
+
+            self.output_engine_stats(engine)
+            self.output_engine_warnings(engine)
 
             if self.args.get("show_timers"):
                 self.output_app_timers()
 
             if self.args.get("show_sql"):
-                self.output_executed_ddl()
+                self.output_executed_ddl(engine)
 
-            self.output_suggested_ddl()
+            self.output_suggested_ddl(engine)
 
             if error_count > 0:
                 exit(8)
