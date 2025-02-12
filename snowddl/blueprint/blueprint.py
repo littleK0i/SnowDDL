@@ -260,7 +260,7 @@ class NetworkRuleBlueprint(SchemaObjectBlueprint):
 class OutboundShareBlueprint(AbstractBlueprint):
     full_name: OutboundShareIdent
     accounts: List[AccountIdent] = []
-    share_restrictions: bool = False
+    share_restrictions: Optional[bool] = None
     grant_patterns: List[GrantPattern] = []
 
 

@@ -1,6 +1,7 @@
+from json import loads as json_loads
 from typing import List
 
-from snowddl.blueprint import OutboundShareBlueprint, Grant, GrantPattern, build_grant_name_ident
+from snowddl.blueprint import AccountIdent, OutboundShareBlueprint, Grant, GrantPattern, build_grant_name_ident
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType
 
 
@@ -60,8 +61,7 @@ class OutboundShareResolver(AbstractResolver):
         for bp_grant in self.expand_grant_patterns_to_grants(bp.grant_patterns):
             self.create_grant(bp.full_name, bp_grant)
 
-        if bp.accounts:
-            self.set_accounts(bp)
+        self.compare_accounts(bp)
 
         return ResolveResult.CREATE
 
@@ -81,10 +81,7 @@ class OutboundShareResolver(AbstractResolver):
                 self.drop_grant(bp.full_name, ex_grant)
                 result = ResolveResult.GRANT
 
-        # SHOW SHARES command returns only 3 accounts for each OUTBOUND SHARE
-        # If you have to set more accounts, it will work, but SnowDDL will be forced to run SET ACCOUNTS every time
-        if bp.accounts and [str(a) for a in bp.accounts] != row["accounts"]:
-            self.set_accounts(bp)
+        if self.compare_accounts(bp, check_existing=True):
             result = ResolveResult.ALTER
 
         if bp.comment != row["comment"]:
@@ -112,21 +109,63 @@ class OutboundShareResolver(AbstractResolver):
 
         return ResolveResult.DROP
 
-    def set_accounts(self, bp: OutboundShareBlueprint):
-        query = self.engine.query_builder()
+    def compare_accounts(self, bp: OutboundShareBlueprint, check_existing=False):
+        existing_accounts = []
+        accounts_to_add = []
+        accounts_to_remove = []
 
-        query.append(
-            "ALTER SHARE {full_name:i} SET ACCOUNTS = {accounts:i}",
-            {
-                "full_name": bp.full_name,
-                "accounts": bp.accounts,
-            },
-        )
+        if check_existing:
+            cur = self.engine.execute_meta(
+                "SELECT SYSTEM$LIST_OUTBOUND_SHARES_DETAILS({share_name}) AS details",
+                {
+                    "share_name": bp.full_name,
+                },
+            )
 
-        if bp.share_restrictions is not None:
-            query.append_nl("SHARE_RESTRICTIONS = {share_restrictions:b}", {"share_restrictions": bp.share_restrictions})
+            row = cur.fetchone()
 
-        self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
+            if row:
+                for r in json_loads(row["DETAILS"]):
+                    existing_accounts.append(AccountIdent(*r["account_name"].split(".", 2)))
+
+        for account in bp.accounts:
+            if account not in existing_accounts:
+                accounts_to_add.append(account)
+
+        for account in existing_accounts:
+            if account not in bp.accounts:
+                accounts_to_remove.append(account)
+
+        if accounts_to_add:
+            query = self.engine.query_builder()
+
+            query.append(
+                "ALTER SHARE {full_name:i} ADD ACCOUNTS = {accounts:i}",
+                {
+                    "full_name": bp.full_name,
+                    "accounts": accounts_to_add,
+                },
+            )
+
+            if bp.share_restrictions is not None:
+                query.append_nl("SHARE_RESTRICTIONS = {share_restrictions:b}", {"share_restrictions": bp.share_restrictions})
+
+            self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
+
+        if accounts_to_remove:
+            query = self.engine.query_builder()
+
+            query.append(
+                "ALTER SHARE {full_name:i} REMOVE ACCOUNTS = {accounts:i}",
+                {
+                    "full_name": bp.full_name,
+                    "accounts": accounts_to_remove,
+                },
+            )
+
+            self.engine.execute_unsafe_ddl(query, condition=self.engine.settings.execute_outbound_share)
+
+        return len(accounts_to_add) > 0 or len(accounts_to_remove) > 0
 
     def create_grant(self, share_name, grant: Grant):
         self.engine.execute_unsafe_ddl(

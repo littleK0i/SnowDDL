@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.44.0] - 2025-02-12
+
+- Reworked `OUTBOUND_SHARE` resolver. Now it supports more than 3 accounts per share. `SET ACCOUNTS` command was replaced with `ADD ACCOUNTS` and `REMOVE ACCOUNTS`, since `SET ACCOUNTS` no longer supports `SHARE_RESTRICTIONS` parameter.
+
 ## [0.43.0] - 2025-01-31
 
 - Introduced action `validate`. It prepares and validates config, but stops right before connecting to Snowflake. It might be helpful for automated checks and git hooks.
