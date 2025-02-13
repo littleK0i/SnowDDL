@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.44.1] - 2025-02-13
+
+- Added workaround for `AWS_SNS_TOPIC` DIRECTORY parameter not being present in output of `DESC STAGE` command. It should be possible to use this parameter without triggering `ValueError`.
+
 ## [0.44.0] - 2025-02-12
 
 - Reworked `OUTBOUND_SHARE` resolver. Now it supports more than 3 accounts per share. `SET ACCOUNTS` command was replaced with `ADD ACCOUNTS` and `REMOVE ACCOUNTS`, since `SET ACCOUNTS` no longer supports `SHARE_RESTRICTIONS` parameter.

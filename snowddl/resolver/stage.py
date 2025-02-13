@@ -459,6 +459,16 @@ class StageResolver(AbstractSchemaObjectResolver):
             "DIRECTORY": {},
         }
 
+        # Add phantom parameters which should exist in output of DESC command
+        # https://github.com/littleK0i/SnowDDL/issues/183
+        result["DIRECTORY"]["AWS_SNS_TOPIC"] = {
+            "parent_property": "DIRECTORY",
+            "property": "AWS_SNS_TOPIC",
+            "property_type": "String",
+            "property_value": "",
+            "property_default": "",
+        }
+
         for r in cur:
             if r["parent_property"] not in result:
                 result[r["parent_property"]] = {}
