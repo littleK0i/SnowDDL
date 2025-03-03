@@ -1,0 +1,7 @@
+schedule: 1 hour
+
+condition: |-
+  SELECT * FROM ${{ env_prefix }}db1.sc1.al002_tb1
+
+action: |-
+  SELECT CURRENT_TIMESTAMP()

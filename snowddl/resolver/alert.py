@@ -48,12 +48,13 @@ class AlertResolver(AbstractSchemaObjectResolver):
             },
         )
 
-        query.append_nl(
-            "WAREHOUSE = {warehouse:i}",
-            {
-                "warehouse": bp.warehouse,
-            },
-        )
+        if bp.warehouse:
+            query.append_nl(
+                "WAREHOUSE = {warehouse:i}",
+                {
+                    "warehouse": bp.warehouse,
+                },
+            )
 
         query.append_nl(
             "SCHEDULE = {schedule}",
@@ -76,20 +77,29 @@ class AlertResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: AlertBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
-        if str(bp.warehouse) != row["warehouse"]:
-            self.engine.execute_safe_ddl(
-                "ALTER ALERT {full_name:i} SET warehouse = {warehouse:i}",
-                {
-                    "full_name": bp.full_name,
-                    "warehouse": bp.warehouse,
-                },
-            )
+        if bp.warehouse != row["warehouse"]:
+            if bp.warehouse:
+                self.engine.execute_safe_ddl(
+                    "ALTER ALERT {full_name:i} SET WAREHOUSE = {warehouse:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "warehouse": bp.warehouse,
+                    },
+                )
+            else:
+                self.engine.execute_safe_ddl(
+                    "ALTER ALERT {full_name:i} UNSET WAREHOUSE",
+                    {
+                        "full_name": bp.full_name,
+                        "warehouse": bp.warehouse,
+                    },
+                )
 
             result = ResolveResult.ALTER
 
         if str(bp.schedule) != row["schedule"]:
             self.engine.execute_safe_ddl(
-                "ALTER ALERT {full_name:i} SET schedule = {schedule}",
+                "ALTER ALERT {full_name:i} SET SCHEDULE = {schedule}",
                 {
                     "full_name": bp.full_name,
                     "schedule": bp.schedule,

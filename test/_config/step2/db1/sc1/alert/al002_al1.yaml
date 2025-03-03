@@ -1,0 +1,10 @@
+warehouse: al002_wh1
+schedule: USING CRON * * * * * UTC
+
+condition: |-
+  SELECT 1
+  FROM ${{ env_prefix }}db1.sc1.al002_tb1
+
+action: |-
+  SELECT
+  CURRENT_TIMESTAMP() AS abc

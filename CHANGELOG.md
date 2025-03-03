@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.44.2] - 2025-03-03
+
+- Added support for serverless alerts. Parameter `WAREHOUSE` for object type `ALERT` is now optional.
+- Fixed tests for object type `USER` related to recent changes in output of `SHOW USERS` command.
+
 ## [0.44.1] - 2025-02-13
 
 - Added workaround for `AWS_SNS_TOPIC` DIRECTORY parameter not being present in output of `DESC STAGE` command. It should be possible to use this parameter without triggering `ValueError`.

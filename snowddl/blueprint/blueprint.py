@@ -76,7 +76,7 @@ class AggregationPolicyBlueprint(SchemaObjectBlueprint):
 
 class AlertBlueprint(SchemaObjectBlueprint):
     full_name: SchemaObjectIdent
-    warehouse: AccountObjectIdent
+    warehouse: Optional[AccountObjectIdent] = None
     schedule: str
     condition: str
     action: str

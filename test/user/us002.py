@@ -14,9 +14,9 @@ def test_step1(helper):
 def test_step2(helper):
     user = helper.show_user("us002_us1")
 
-    assert user["first_name"] == ""
-    assert user["last_name"] == ""
-    assert user["email"] == ""
+    assert user["first_name"] is None
+    assert user["last_name"] is None
+    assert user["email"] is None
     assert user["disabled"] == "true"
 
     assert user["type"] == "LEGACY_SERVICE"
@@ -27,9 +27,9 @@ def test_step2(helper):
 def test_step3(helper):
     user = helper.show_user("us002_us1")
 
-    assert user["first_name"] == ""
-    assert user["last_name"] == ""
-    assert user["email"] == ""
+    assert user["first_name"] is None
+    assert user["last_name"] is None
+    assert user["email"] is None
     assert user["disabled"] == "true"
 
     assert user["type"] == "SERVICE"
