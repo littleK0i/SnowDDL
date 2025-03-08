@@ -562,6 +562,7 @@ class BaseApp:
                 options["password"] = self.args["p"]
         elif self.args.get("authenticator") == "externalbrowser":
             options["authenticator"] = "externalbrowser"
+            options["client_store_temporary_credential"] = True
         elif self.args.get("authenticator") == "oauth_snowpark":
             options["authenticator"] = "oauth"
             token_path = Path("/snowflake/session/token")

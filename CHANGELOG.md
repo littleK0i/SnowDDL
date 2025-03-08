@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.44.3] - 2025-03-08
+
+- Enabled `client_store_temporary_credential` for authenticator `externalbrowser`.
+
 ## [0.44.2] - 2025-03-03
 
 - Added support for serverless alerts. Parameter `WAREHOUSE` for object type `ALERT` is now optional.
