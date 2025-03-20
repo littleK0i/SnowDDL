@@ -16,3 +16,9 @@ class TechnicalRoleValidator(AbstractValidator):
                     f"Technical role [{bp.full_name}] grant pattern [{grant_pattern.pattern}] "
                     f"does not match any objects of type [{grant_pattern.on.name}]"
                 )
+
+            if grant_pattern.privilege == "ALL":
+                raise ValueError(
+                    f"Technical role [{bp.full_name}] with grant privilege [{grant_pattern.on.name}:ALL] is not supported, "
+                    f"each individual privilege must be defined explicitly, e.g. [TABLE:SELECT,UPDATE,DELETE]"
+                )

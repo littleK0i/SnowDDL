@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.44.4] - 2025-03-20
+
+- Added explicit validator preventing technical roles from using `ALL` privilege. Each individual privilege must be defined explicitly.
+
 ## [0.44.3] - 2025-03-08
 
 - Enabled `client_store_temporary_credential` for authenticator `externalbrowser`.
