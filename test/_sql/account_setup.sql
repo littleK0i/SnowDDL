@@ -1,7 +1,11 @@
 -- SQL script to set up a new Snowflake account for tests and GitHub workflows
--- Replace replace <password> placeholder statement with an actual password of your choice
+-- Replace <password> placeholder statement with an actual password of your choice
+
+-- Replace <aws_role_arn> with ARN of AWS role
+-- https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration
 
 SET PASSWORD = '<password>';
+SET STORAGE_AWS_ROLE_ARN = '<storage_aws_role_arn>';
 
 ---
 
@@ -50,6 +54,18 @@ ALTER USER SNOWDDL_TEST SET DEFAULT_WAREHOUSE = SNOWDDL_WH;
 
 GRANT CREATE SHARE, IMPORT SHARE ON ACCOUNT TO ROLE SNOWDDL_ADMIN;
 GRANT OVERRIDE SHARE RESTRICTIONS ON ACCOUNT TO ROLE SNOWDDL_ADMIN;
+
+---
+
+CREATE STORAGE INTEGRATION TEST_STORAGE_INTEGRATION_AWS
+TYPE = EXTERNAL_STAGE
+STORAGE_PROVIDER = 'S3'
+ENABLED = TRUE
+STORAGE_AWS_ROLE_ARN = $STORAGE_AWS_ROLE_ARN
+STORAGE_ALLOWED_LOCATIONS = ('*')
+;
+
+GRANT USAGE ON INTEGRATION TEST_STORAGE_INTEGRATION_AWS TO ROLE SNOWDDL_ADMIN;
 
 ---
 
