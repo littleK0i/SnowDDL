@@ -15,5 +15,7 @@ class HybridTableValidator(AbstractValidator):
                 raise ValueError(f"Hybrid table [{bp.full_name}] cannot depend on itself")
 
             if depends_on_name not in self.config.get_blueprints_by_type(HybridTableBlueprint):
-                raise ValueError(f"Hybrid table [{bp.full_name}] depends on another hybrid table "
-                                 f"[{depends_on_name}] which does not exist in config")
+                raise ValueError(
+                    f"Hybrid table [{bp.full_name}] depends on another hybrid table "
+                    f"[{depends_on_name}] which does not exist in config"
+                )

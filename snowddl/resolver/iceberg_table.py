@@ -44,8 +44,8 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
         create_query.append(
             "CREATE ICEBERG TABLE {full_name:i}",
             {
-                 "full_name": bp.full_name,
-            }
+                "full_name": bp.full_name,
+            },
         )
 
         create_query.append_nl(common_query)
@@ -70,7 +70,7 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
                 "CREATE OR REPLACE ICEBERG TABLE {full_name:i}",
                 {
                     "full_name": bp.full_name,
-                }
+                },
             )
 
             replace_query.append_nl(common_query)
@@ -107,14 +107,14 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
             "EXTERNAL_VOLUME = {external_volume:i}",
             {
                 "external_volume": bp.external_volume,
-            }
+            },
         )
 
         query.append_nl(
             "CATALOG = {catalog:i}",
             {
                 "catalog": bp.catalog,
-            }
+            },
         )
 
         if bp.catalog_table_name:
@@ -122,7 +122,7 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
                 "CATALOG_TABLE_NAME = {catalog_table_name}",
                 {
                     "catalog_table_name": bp.catalog_table_name,
-                }
+                },
             )
 
         if bp.catalog_namespace:
@@ -130,7 +130,7 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
                 "CATALOG_NAMESPACE = {catalog_namespace}",
                 {
                     "catalog_namespace": bp.catalog_namespace,
-                }
+                },
             )
 
         if bp.metadata_file_path:
@@ -138,7 +138,7 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
                 "METADATA_FILE_PATH = {metadata_file_path}",
                 {
                     "metadata_file_path": bp.metadata_file_path,
-                }
+                },
             )
 
         if bp.base_location:
@@ -146,7 +146,7 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
                 "BASE_LOCATION = {base_location}",
                 {
                     "base_location": bp.base_location,
-                }
+                },
             )
 
         if bp.replace_invalid_characters:
@@ -156,11 +156,6 @@ class IcebergTableResolver(AbstractSchemaObjectResolver):
             query.append_nl("AUTO_REFRESH = TRUE")
 
         if bp.comment:
-            query.append_nl(
-                "COMMENT = {comment}",
-                {
-                    "comment": bp.comment
-                }
-            )
+            query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
 
         return query

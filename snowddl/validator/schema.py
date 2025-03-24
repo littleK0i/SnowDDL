@@ -47,32 +47,32 @@ class SchemaValidator(AbstractValidator):
 
             if bp.owner_schema_read:
                 raise ValueError(
-                    f"Cannot use parameter owner_schema_read for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_schema_read for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_integration_usage:
                 raise ValueError(
-                    f"Cannot use parameter owner_integration_usage for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_integration_usage for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_share_read:
                 raise ValueError(
-                    f"Cannot use parameter owner_share_read for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_share_read for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_warehouse_usage:
                 raise ValueError(
-                    f"Cannot use parameter owner_warehouse_usage for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_warehouse_usage for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_account_grants:
                 raise ValueError(
-                    f"Cannot use parameter owner_account_grants for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_account_grants for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_global_roles:
                 raise ValueError(
-                    f"Cannot use parameter owner_global_roles for database [{bp.full_name}] due to permission model ruleset"
+                    f"Cannot use parameter owner_global_roles for schema [{bp.full_name}] due to permission model ruleset"
                 )
 
     def _validate_owner_patterns(self, bp: SchemaBlueprint):

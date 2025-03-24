@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.0] - 2025-03-24
+
+- Separated `DatabaseAccessRoleResolver` into `DatabaseOwnerRoleResolver`, `DatabaseReadRoleResolver`, `DatabaseWriteRoleResolver`.
+- Separated `SchemaAccessRoleResolver` into `SchemaOwnerRoleResolver`, `SchemaReadRoleResolver`, `SchemaWriteRoleResolver`.
+- Separated `WarehouseAccessRoleResolver` into `WarehouseMonitorRoleResolver`, `WarehouseUsageRoleResolver`.
+- Moved creation of database owner roles and schema owner roles after creation of read and write roles in execution sequence order.
+- Removed dependency checks from database owner roles and schema owner roles, no longer needed.
+- Added `owner_schema_read`, `owner_schema_write` parameters for `DATABASE` object type. It is now possible to grant individual schema access to database owners.
+- Removed permission model restrictions from `owner_database_read`, `owner_database_write` parameters of `DATABASE` object type. It is now possible to grant database access regardless of its permission model settings.
+
+This change aims to eliminate inconsistencies related to interactions between database roles and schema roles. It should help to simplify introduction of new role types in the future.
+
 ## [0.44.4] - 2025-03-20
 
 - Added explicit validator preventing technical roles from using `ALL` privilege. Each individual privilege must be defined explicitly.

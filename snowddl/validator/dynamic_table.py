@@ -15,5 +15,7 @@ class DynamicTableValidator(AbstractValidator):
                 raise ValueError(f"Dynamic table [{bp.full_name}] cannot depend on itself")
 
             if depends_on_name not in self.config.get_blueprints_by_type(DynamicTableBlueprint):
-                raise ValueError(f"Dynamic table [{bp.full_name}] depends on another dynamic table "
-                                 f"[{depends_on_name}] which does not exist in config")
+                raise ValueError(
+                    f"Dynamic table [{bp.full_name}] depends on another dynamic table "
+                    f"[{depends_on_name}] which does not exist in config"
+                )

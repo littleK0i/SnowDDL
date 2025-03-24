@@ -11,12 +11,15 @@ class StreamValidator(AbstractValidator):
 
     def _validate_dependency(self, bp: StreamBlueprint):
         if bp.object_name not in self.config.get_blueprints_by_type(bp.object_type.blueprint_cls):
-            raise ValueError(f"Stream [{bp.full_name}] depends on {bp.object_type.name} "
-                             f"[{bp.object_name}] which does not exist in config")
+            raise ValueError(
+                f"Stream [{bp.full_name}] depends on {bp.object_type.name} " f"[{bp.object_name}] which does not exist in config"
+            )
 
         target_bp = self.config.get_blueprints_by_type(bp.object_type.blueprint_cls)[str(bp.object_name)]
 
         if isinstance(target_bp, (EventTableBlueprint, TableBlueprint, ViewBlueprint)):
             if not target_bp.change_tracking:
-                raise ValueError(f"Stream [{bp.full_name}] depends on {bp.object_type.name} "
-                                 f"[{bp.object_name}], but change_tracking is not enabled on it")
+                raise ValueError(
+                    f"Stream [{bp.full_name}] depends on {bp.object_type.name} "
+                    f"[{bp.object_name}], but change_tracking is not enabled on it"
+                )

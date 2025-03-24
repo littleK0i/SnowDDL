@@ -45,19 +45,27 @@ class StreamResolver(AbstractSchemaObjectResolver):
         replace_reasons = []
 
         if row["stale"]:
-            replace_reasons.append(f"Stream is marked as stale")
+            replace_reasons.append("Stream is marked as stale")
 
         if bp.object_type.singular_for_ref != row["object_type"].upper().replace(" ", "_"):
-            replace_reasons.append(f"Source object type [{str(bp.object_type.name)}] in config does not match source type [{row['object_type']}] in Snowflake")
+            replace_reasons.append(
+                f"Source object type [{str(bp.object_type.name)}] in config does not match source type [{row['object_type']}] in Snowflake"
+            )
 
         if bp.object_name != row["object_name"]:
-            replace_reasons.append(f"Source object name [{bp.object_name}] in config does not match source name [{row['object_name']}] in Snowflake")
+            replace_reasons.append(
+                f"Source object name [{bp.object_name}] in config does not match source name [{row['object_name']}] in Snowflake"
+            )
 
         if bp.append_only != ("APPEND_ONLY" in row["mode"]):
-            replace_reasons.append(f"APPEND_ONLY={str(bp.append_only)} in config does not match mode [{row['mode']}] in Snowflake")
+            replace_reasons.append(
+                f"APPEND_ONLY={str(bp.append_only)} in config does not match mode [{row['mode']}] in Snowflake"
+            )
 
         if bp.insert_only != ("INSERT_ONLY" in row["mode"]):
-            replace_reasons.append(f"INSERT_ONLY={str(bp.insert_only)} in config does not match mode [{row['mode']}] in Snowflake")
+            replace_reasons.append(
+                f"INSERT_ONLY={str(bp.insert_only)} in config does not match mode [{row['mode']}] in Snowflake"
+            )
 
         if replace_reasons:
             query = self._build_create_stream_sql(bp, True)

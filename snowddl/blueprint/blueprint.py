@@ -114,6 +114,8 @@ class DatabaseBlueprint(AbstractBlueprint):
     retention_time: Optional[int] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
+    owner_schema_write: List[IdentPattern] = []
+    owner_schema_read: List[IdentPattern] = []
     owner_integration_usage: List[Ident] = []
     owner_share_read: List[Union[Ident, DatabaseRoleIdent]] = []
     owner_warehouse_usage: List[AccountObjectIdent] = []

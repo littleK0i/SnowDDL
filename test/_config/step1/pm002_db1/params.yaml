@@ -7,6 +7,12 @@ owner_database_write:
 owner_database_read:
   - pm002_db2
 
+owner_schema_write:
+  - pm002_db1.sc1
+
+owner_schema_read:
+  - pm002_db1.sc1
+
 owner_warehouse_usage:
   - pm002_wh1
   - pm002_wh2

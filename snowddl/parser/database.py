@@ -38,6 +38,18 @@ database_json_schema = {
                 "type": "string"
             }
         },
+        "owner_schema_read": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "owner_schema_write": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
         "owner_share_read": {
             "share_read": {
                 "type": "array",
@@ -94,6 +106,8 @@ class DatabaseParser(AbstractParser):
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],
                 owner_database_read=[IdentPattern(p) for p in database_params.get("owner_database_read", [])],
+                owner_schema_write=[IdentPattern(p) for p in database_params.get("owner_schema_write", [])],
+                owner_schema_read=[IdentPattern(p) for p in database_params.get("owner_schema_read", [])],
                 owner_integration_usage=[Ident(integration_name) for integration_name in database_params.get("owner_integration_usage", [])],
                 owner_share_read=[build_share_read_ident(share_name) for share_name in database_params.get("owner_share_read", [])],
                 owner_warehouse_usage=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in database_params.get("owner_warehouse_usage", [])],

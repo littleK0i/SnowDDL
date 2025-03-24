@@ -15,5 +15,6 @@ class ViewValidator(AbstractValidator):
                 raise ValueError(f"View [{bp.full_name}] cannot depend on itself")
 
             if depends_on_name not in self.config.get_blueprints_by_type(ViewBlueprint):
-                raise ValueError(f"View [{bp.full_name}] depends on another view "
-                                 f"[{depends_on_name}] which does not exist in config")
+                raise ValueError(
+                    f"View [{bp.full_name}] depends on another view " f"[{depends_on_name}] which does not exist in config"
+                )

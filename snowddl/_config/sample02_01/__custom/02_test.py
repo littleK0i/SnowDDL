@@ -4,7 +4,9 @@ from snowddl import SchemaObjectIdent, SnowDDLConfig, TableBlueprint, ViewBluepr
 def handler(config: SnowDDLConfig):
     # Add view combining all custom tables
     parts = []
-    table_blueprints = config.get_blueprints_by_type_and_pattern(TableBlueprint, IdentPattern("test_db.test_schema.custom_table_*"))
+    table_blueprints = config.get_blueprints_by_type_and_pattern(
+        TableBlueprint, IdentPattern("test_db.test_schema.custom_table_*")
+    )
 
     for full_name, bp in table_blueprints.items():
         parts.append(f"SELECT id, name FROM {full_name}")

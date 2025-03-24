@@ -694,9 +694,7 @@ class BaseApp:
         return None
 
     def output_engine_stats(self, engine: SnowDDLEngine):
-        self.logger.info(
-            f"Executed {len(engine.executed_ddl)} DDL queries, Suggested {len(engine.suggested_ddl)} DDL queries"
-        )
+        self.logger.info(f"Executed {len(engine.executed_ddl)} DDL queries, Suggested {len(engine.suggested_ddl)} DDL queries")
 
     def output_engine_warnings(self, engine: SnowDDLEngine):
         for object_type, object_names in engine.intention_cache.invalid_name_warning.items():

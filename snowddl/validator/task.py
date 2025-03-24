@@ -15,5 +15,6 @@ class TaskValidator(AbstractValidator):
                 raise ValueError(f"Task [{bp.full_name}] cannot depend on itself")
 
             if depends_on_name not in self.config.get_blueprints_by_type(TaskBlueprint):
-                raise ValueError(f"Task [{bp.full_name}] depends on another task "
-                                 f"[{depends_on_name}] which does not exist in config")
+                raise ValueError(
+                    f"Task [{bp.full_name}] depends on another task " f"[{depends_on_name}] which does not exist in config"
+                )

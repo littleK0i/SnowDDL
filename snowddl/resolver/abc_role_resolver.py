@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
 from snowddl.blueprint import (
     AccountGrant,
@@ -25,6 +25,18 @@ class AbstractRoleResolver(AbstractResolver):
     def get_role_suffix(self) -> str:
         pass
 
+    def get_role_type(self) -> Optional[str]:
+        return None
+
+    def get_role_pattern(self) -> Tuple[str, str]:
+        role_type = self.get_role_type()
+        role_suffix = self.get_role_suffix()
+
+        if role_type:
+            return (self.config.env_prefix, f"__{role_type}__{role_suffix}")
+
+        return (self.config.env_prefix, f"__{role_suffix}")
+
     def get_object_type(self):
         return ObjectType.ROLE
 
@@ -34,7 +46,7 @@ class AbstractRoleResolver(AbstractResolver):
         cur = self.engine.execute_meta(
             "SHOW ROLES LIKE {pattern:lse}",
             {
-                "pattern": (self.config.env_prefix, f"__{self.get_role_suffix()}"),
+                "pattern": self.get_role_pattern(),
             },
         )
 
@@ -47,7 +59,7 @@ class AbstractRoleResolver(AbstractResolver):
                 "comment": r["comment"] if r["comment"] else None,
             }
 
-        # Process role grants in parallel
+        # Retrieve role grants in parallel
         for role_name, grants, account_grants, future_grants in self.engine.executor.map(
             self.get_existing_role_grants, existing_roles
         ):
@@ -418,7 +430,9 @@ class AbstractRoleResolver(AbstractResolver):
         return Grant(
             privilege="USAGE",
             on=ObjectType.ROLE,
-            name=build_role_ident(self.config.env_prefix, warehouse_name.name, role_type, self.config.WAREHOUSE_ACCESS_ROLE_SUFFIX),
+            name=build_role_ident(
+                self.config.env_prefix, warehouse_name.name, role_type, self.config.WAREHOUSE_ACCESS_ROLE_SUFFIX
+            ),
         )
 
     def build_share_read_grant(self, share_name: Union[Ident, DatabaseRoleIdent]) -> Grant:

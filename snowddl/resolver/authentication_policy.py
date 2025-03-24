@@ -356,7 +356,9 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
                 "SELECT * FROM TABLE(snowflake.information_schema.policy_references(ref_entity_domain => {object_type}, ref_entity_name  => {object_name}))",
                 {
                     "object_type": ref.object_type.name,
-                    "object_name": self.engine.context.current_account if ref.object_type == ObjectType.ACCOUNT else ref.object_name,
+                    "object_name": self.engine.context.current_account
+                    if ref.object_type == ObjectType.ACCOUNT
+                    else ref.object_name,
                 },
             )
         except SnowDDLExecuteError as e:

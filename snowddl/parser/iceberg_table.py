@@ -52,7 +52,9 @@ class IcebergTableParser(AbstractParser):
                 schema_params = self.parse_single_entity_file(f"{database_name}/{schema_name}/params", schema_json_schema)
                 combined_params[database_name][schema_name] = schema_params
 
-        self.parse_schema_object_files("iceberg_table", iceberg_table_json_schema, partial(self.process_table, combined_params=combined_params))
+        self.parse_schema_object_files(
+            "iceberg_table", iceberg_table_json_schema, partial(self.process_table, combined_params=combined_params)
+        )
 
     def process_table(self, f: ParsedFile, combined_params: dict):
         if not combined_params[f.database][f.schema].get("external_volume"):

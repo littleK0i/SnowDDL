@@ -1,4 +1,4 @@
-from snowddl.blueprint import DatabaseBlueprint
+from snowddl.blueprint import DatabaseBlueprint, SchemaBlueprint
 from snowddl.validator.abc_validator import AbstractValidator
 
 
@@ -22,6 +22,16 @@ class DatabaseValidator(AbstractValidator):
             if bp.owner_database_read:
                 raise ValueError(
                     f"Cannot use parameter owner_database_read for database [{bp.full_name}] due to permission model ruleset"
+                )
+
+            if bp.owner_schema_write:
+                raise ValueError(
+                    f"Cannot use parameter owner_schema_write for database [{bp.full_name}] due to permission model ruleset"
+                )
+
+            if bp.owner_schema_read:
+                raise ValueError(
+                    f"Cannot use parameter owner_schema_read for database [{bp.full_name}] due to permission model ruleset"
                 )
 
             if bp.owner_integration_usage:
@@ -51,37 +61,27 @@ class DatabaseValidator(AbstractValidator):
 
     def _validate_owner_patterns(self, bp: DatabaseBlueprint):
         for database_name_pattern in bp.owner_database_write:
-            target_blueprints = self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern)
-
-            if not target_blueprints:
+            if not self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern):
                 raise ValueError(
                     f"Database [{bp.full_name}] owner_database_write pattern [{database_name_pattern}] "
                     f"does not match any databases"
                 )
 
-            for target_bp in target_blueprints.values():
-                target_db_permission_model = self.config.get_permission_model(target_bp.permission_model)
-
-                if not target_db_permission_model.ruleset.create_database_write_role:
-                    raise ValueError(
-                        f"Database [{bp.full_name}] owner_database_write refers to another database [{target_bp.full_name}] "
-                        f"without associated database_write role"
-                    )
-
         for database_name_pattern in bp.owner_database_read:
-            target_blueprints = self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern)
-
-            if not target_blueprints:
+            if not self.config.get_blueprints_by_type_and_pattern(DatabaseBlueprint, database_name_pattern):
                 raise ValueError(
                     f"Database [{bp.full_name}] owner_database_read pattern [{database_name_pattern}] "
                     f"does not match any databases"
                 )
 
-            for target_bp in target_blueprints.values():
-                target_db_permission_model = self.config.get_permission_model(target_bp.permission_model)
+        for schema_name_pattern in bp.owner_schema_write:
+            if not self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, schema_name_pattern):
+                raise ValueError(
+                    f"Database [{bp.full_name}] owner_schema_write pattern [{schema_name_pattern}] " f"does not match any schemas"
+                )
 
-                if not target_db_permission_model.ruleset.create_database_read_role:
-                    raise ValueError(
-                        f"Database [{bp.full_name}] owner_database_read refers to another database [{target_bp.full_name}] "
-                        f"without associated database_read role"
-                    )
+        for schema_name_pattern in bp.owner_schema_read:
+            if not self.config.get_blueprints_by_type_and_pattern(SchemaBlueprint, schema_name_pattern):
+                raise ValueError(
+                    f"Database [{bp.full_name}] owner_schema_read pattern [{schema_name_pattern}] " f"does not match any schemas"
+                )
