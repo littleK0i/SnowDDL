@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.46.0] - 2025-03-25
+
+- Parameter `value_list` for `NETWORK_RULE` is no longer required.
+- Added parameter `algorithm` for `SECRET`. Type `SYMMETRIC_KEY` is now supported.
+
 ## [0.45.0] - 2025-03-24
 
 - Separated `DatabaseAccessRoleResolver` into `DatabaseOwnerRoleResolver`, `DatabaseReadRoleResolver`, `DatabaseWriteRoleResolver`.

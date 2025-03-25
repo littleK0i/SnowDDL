@@ -255,8 +255,8 @@ class NetworkPolicyBlueprint(AbstractBlueprint):
 
 class NetworkRuleBlueprint(SchemaObjectBlueprint):
     type: str
-    value_list: List[str]
     mode: str
+    value_list: List[str] = []
 
 
 class OutboundShareBlueprint(AbstractBlueprint):
@@ -350,6 +350,7 @@ class SecretBlueprint(SchemaObjectBlueprint):
     username: Optional[str] = None
     password: Optional[str] = None
     secret_string: Optional[str] = None
+    algorithm: Optional[str] = None
 
 
 class SequenceBlueprint(SchemaObjectBlueprint):

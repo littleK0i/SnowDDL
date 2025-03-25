@@ -82,14 +82,22 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
 
         result = ResolveResult.NOCHANGE
 
-        if bp.value_list != desc["value_list"].split(","):
-            self.engine.execute_safe_ddl(
-                "ALTER NETWORK RULE {full_name:i} SET VALUE_LIST = ({value_list})",
-                {
-                    "full_name": bp.full_name,
-                    "value_list": bp.value_list,
-                },
-            )
+        if ",".join(bp.value_list) != desc["value_list"]:
+            if bp.value_list:
+                self.engine.execute_safe_ddl(
+                    "ALTER NETWORK RULE {full_name:i} SET VALUE_LIST = ({value_list})",
+                    {
+                        "full_name": bp.full_name,
+                        "value_list": bp.value_list,
+                    },
+                )
+            else:
+                self.engine.execute_safe_ddl(
+                    "ALTER NETWORK RULE {full_name:i} UNSET VALUE_LIST",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                )
 
             result = ResolveResult.ALTER
 
@@ -125,18 +133,19 @@ class NetworkRuleResolver(AbstractSchemaObjectResolver):
         )
 
         query.append_nl(
-            "VALUE_LIST = ({value_list})",
-            {
-                "value_list": bp.value_list,
-            },
-        )
-
-        query.append_nl(
             "MODE = {mode}",
             {
                 "mode": bp.mode,
             },
         )
+
+        if bp.value_list:
+            query.append_nl(
+                "VALUE_LIST = ({value_list})",
+                {
+                    "value_list": bp.value_list,
+                },
+            )
 
         if bp.comment:
             query.append_nl(

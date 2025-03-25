@@ -5,7 +5,7 @@ def test_step1(helper):
     assert show["type"] == "HOST_PORT"
     assert show["mode"] == "EGRESS"
 
-    assert desc["value_list"].split(",") == ["example.com", "company.com:443"]
+    assert desc["value_list"] == "example.com,company.com:443"
 
 
 def test_step2(helper):
@@ -15,7 +15,7 @@ def test_step2(helper):
     assert show["type"] == "HOST_PORT"
     assert show["mode"] == "EGRESS"
 
-    assert desc["value_list"].split(",") == ["example.com:80", "microsoft.com:443"]
+    assert desc["value_list"] == "example.com:80,microsoft.com:443"
 
 
 def test_step3(helper):

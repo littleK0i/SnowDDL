@@ -34,6 +34,9 @@ secret_json_schema = {
         "secret_string": {
             "type": "string"
         },
+        "algorithm": {
+            "type": "string"
+        },
         "comment": {
             "type": "string"
         },
@@ -59,6 +62,7 @@ class SecretParser(AbstractParser):
             username=f.params.get("username"),
             password=f.params.get("password"),
             secret_string=f.params.get("secret_string"),
+            algorithm=f.params.get("algorithm"),
             comment=f.params.get("comment"),
         )
 

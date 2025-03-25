@@ -6,7 +6,7 @@ def test_step1(helper):
     assert show["mode"] == "INGRESS"
     assert show["comment"] == "abc"
 
-    assert desc["value_list"].split(",") == ["192.168.2.0/24", "192.168.1.99"]
+    assert desc["value_list"] == "192.168.2.0/24,192.168.1.99"
 
 
 def test_step2(helper):
@@ -17,7 +17,7 @@ def test_step2(helper):
     assert show["mode"] == "INGRESS"
     assert show["comment"] == "cde"
 
-    assert desc["value_list"].split(",") == ["192.168.2.0/23", "192.168.1.100"]
+    assert desc["value_list"] == "192.168.2.0/23,192.168.1.100"
 
 
 def test_step3(helper):

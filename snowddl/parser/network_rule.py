@@ -14,7 +14,6 @@ network_rule_json_schema = {
             "items": {
                 "type": "string"
             },
-            "minItems": 1
         },
         "mode": {
             "type": "string"
@@ -23,7 +22,7 @@ network_rule_json_schema = {
             "type": "string"
         },
     },
-    "required": ["type", "value_list", "mode"],
+    "required": ["type", "mode"],
     "additionalProperties": False
 }
 # fmt: on
@@ -37,7 +36,7 @@ class NetworkRuleParser(AbstractParser):
         bp = NetworkRuleBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             type=str(f.params["type"]).upper(),
-            value_list=[str(v) for v in f.params["value_list"]],
+            value_list=[str(v) for v in f.params.get("value_list", [])],
             mode=str(f.params["mode"]).upper(),
             comment=f.params.get("comment"),
         )

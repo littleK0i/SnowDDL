@@ -156,6 +156,14 @@ class SecretResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.algorithm:
+            query.append_nl(
+                "ALGORITHM = {algorithm}",
+                {
+                    "algorithm": bp.algorithm,
+                },
+            )
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
