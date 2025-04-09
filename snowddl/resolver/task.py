@@ -123,6 +123,14 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.scheduling_mode:
+            query.append_nl(
+                "SCHEDULING_MODE = {scheduling_mode}",
+                {
+                    "scheduling_mode": bp.scheduling_mode,
+                },
+            )
+
         if bp.config:
             query.append_nl(
                 "CONFIG = {config}",
@@ -163,6 +171,22 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.success_integration:
+            query.append_nl(
+                "SUCCESS_INTEGRATION = {success_integration:i}",
+                {
+                    "success_integration": bp.success_integration,
+                },
+            )
+
+        if bp.log_level:
+            query.append_nl(
+                "LOG_LEVEL = {log_level}",
+                {
+                    "log_level": bp.log_level,
+                },
+            )
+
         if bp.task_auto_retry_attempts:
             query.append_nl(
                 "TASK_AUTO_RETRY_ATTEMPTS = {task_auto_retry_attempts:d}",
@@ -176,6 +200,30 @@ class TaskResolver(AbstractSchemaObjectResolver):
                 "USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = {user_task_minimum_trigger_interval_in_seconds:d}",
                 {
                     "user_task_minimum_trigger_interval_in_seconds": bp.user_task_minimum_trigger_interval_in_seconds,
+                },
+            )
+
+        if bp.target_completion_interval:
+            query.append_nl(
+                "TARGET_COMPLETION_INTERVAL = {target_completion_interval}",
+                {
+                    "target_completion_interval": bp.target_completion_interval,
+                },
+            )
+
+        if bp.serverless_task_min_statement_size:
+            query.append_nl(
+                "SERVERLESS_TASK_MIN_STATEMENT_SIZE = {serverless_task_min_statement_size}",
+                {
+                    "serverless_task_min_statement_size": bp.serverless_task_min_statement_size,
+                },
+            )
+
+        if bp.serverless_task_max_statement_size:
+            query.append_nl(
+                "SERVERLESS_TASK_MAX_STATEMENT_SIZE = {serverless_task_max_statement_size}",
+                {
+                    "serverless_task_max_statement_size": bp.serverless_task_max_statement_size,
                 },
             )
 

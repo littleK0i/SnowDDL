@@ -1,0 +1,17 @@
+# scheduling_mode: fixed
+schedule: 6 hours
+target_completion_interval: 3 hours
+
+user_task_managed_initial_warehouse_size: SMALL
+user_task_minimum_trigger_interval_in_seconds: 60
+
+serverless_task_min_statement_size: SMALL
+serverless_task_max_statement_size: MEDIUM
+
+log_level: ERROR
+
+body: |-
+  BEGIN
+    ALTER SESSION SET TIMESTAMP_OUTPUT_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF';
+    SELECT CURRENT_TIMESTAMP;
+  END;

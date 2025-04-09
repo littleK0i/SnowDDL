@@ -1,0 +1,20 @@
+# scheduling_mode: flexible
+schedule: 6 hours
+target_completion_interval: 2 hours
+
+error_integration: test_notification_integration
+success_integration: test_notification_integration
+
+user_task_managed_initial_warehouse_size: XSMALL
+user_task_minimum_trigger_interval_in_seconds: 30
+
+serverless_task_min_statement_size: XSMALL
+serverless_task_max_statement_size: SMALL
+
+log_level: INFO
+
+body: |-
+  BEGIN
+    ALTER SESSION SET TIMESTAMP_OUTPUT_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF';
+    SELECT CURRENT_TIMESTAMP;
+  END

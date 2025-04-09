@@ -400,6 +400,7 @@ class TagBlueprint(SchemaObjectBlueprint):
 
 class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     body: str
+    scheduling_mode: Optional[str] = None
     schedule: Optional[str] = None
     after: Optional[List[SchemaObjectIdent]] = None
     finalize: Optional[SchemaObjectIdent] = None
@@ -412,8 +413,13 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     user_task_timeout_ms: Optional[int] = None
     suspend_task_after_num_failures: Optional[int] = None
     error_integration: Optional[Ident] = None
+    success_integration: Optional[Ident] = None
+    log_level: Optional[str] = None
     task_auto_retry_attempts: Optional[int] = None
     user_task_minimum_trigger_interval_in_seconds: Optional[int] = None
+    target_completion_interval: Optional[str] = None
+    serverless_task_min_statement_size: Optional[str] = None
+    serverless_task_max_statement_size: Optional[str] = None
 
 
 class TechnicalRoleBlueprint(AbstractBlueprint):

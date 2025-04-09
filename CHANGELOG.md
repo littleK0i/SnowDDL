@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.47.0] - 2025-04-09
+
+- All parameters are now required for authentication policy. Snowflake has changed defaults recently. Hardcoding defaults is no longer a viable strategy.
+- Added parameters `scheduling_mode`, `success_integration`, `log_level`, `target_completion_interval`, `serverless_task_min_statement_size`, `serverless_task_max_statement_size` for `TASK` object type.
+- Added test for `TASK` with multi-statement Snowflake script.
+
 ## [0.46.0] - 2025-03-25
 
 - Parameter `value_list` for `NETWORK_RULE` is no longer required.

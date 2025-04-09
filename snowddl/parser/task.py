@@ -9,6 +9,9 @@ task_json_schema = {
         "body": {
             "type": "string"
         },
+        "scheduling_mode": {
+            "type": "string"
+        },
         "schedule": {
             "type": "string"
         },
@@ -52,15 +55,30 @@ task_json_schema = {
         "error_integration": {
             "type": "string"
         },
+        "success_integration": {
+            "type": "string"
+        },
+        "log_level": {
+            "type": "string",
+        },
         "task_auto_retry_attempts": {
             "type": "integer"
         },
         "user_task_minimum_trigger_interval_in_seconds": {
             "type": "integer"
         },
+        "target_completion_interval": {
+            "type": "string",
+        },
+        "serverless_task_min_statement_size": {
+            "type": "string",
+        },
+        "serverless_task_max_statement_size": {
+            "type": "string",
+        },
         "comment": {
             "type": "string"
-        }
+        },
     },
     "required": ["body"],
     "additionalProperties": False
@@ -88,6 +106,7 @@ class TaskParser(AbstractParser):
         bp = TaskBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             body=self.normalise_sql_text_param(f.params["body"]),
+            scheduling_mode=f.params.get("scheduling_mode"),
             schedule=f.params.get("schedule"),
             after=after,
             finalize=finalize,
@@ -101,8 +120,13 @@ class TaskParser(AbstractParser):
             user_task_timeout_ms=f.params.get("user_task_timeout_ms"),
             suspend_task_after_num_failures=f.params.get("suspend_task_after_num_failures"),
             error_integration=Ident(f.params.get("error_integration")) if f.params.get("error_integration") else None,
+            success_integration=Ident(f.params.get("success_integration")) if f.params.get("success_integration") else None,
+            log_level=f.params.get("log_level"),
             task_auto_retry_attempts=f.params.get("task_auto_retry_attempts"),
             user_task_minimum_trigger_interval_in_seconds=f.params.get("user_task_minimum_trigger_interval_in_seconds"),
+            target_completion_interval=f.params.get("target_completion_interval"),
+            serverless_task_min_statement_size=f.params.get("serverless_task_min_statement_size"),
+            serverless_task_max_statement_size=f.params.get("serverless_task_max_statement_size"),
             comment=f.params.get("comment"),
         )
 

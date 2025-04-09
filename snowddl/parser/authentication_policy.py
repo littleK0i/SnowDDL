@@ -41,7 +41,14 @@ authentication_policy_json_schema = {
             "type": "string"
         }
     },
-    "additionalProperties": False
+    "additionalProperties": False,
+    "required": [
+        "authentication_methods",
+        "mfa_authentication_methods",
+        "mfa_enrollment",
+        "client_types",
+        "security_integrations",
+    ],
 }
 # fmt: on
 
@@ -53,22 +60,16 @@ class AuthenticationPolicyParser(AbstractParser):
         )
 
     def process_authentication_policy(self, f: ParsedFile):
-        # As of Oct 2024, no easy way around hardcoding defaults
-        # Cannot distinguish missing value and explicitly set default value
+        # All parameters are required, since Snowflake keeps changing defaults liberally
+        # We cannot trust defaults on this object type
         # https://docs.snowflake.com/en/sql-reference/sql/create-authentication-policy
         bp = AuthenticationPolicyBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
-            authentication_methods=self.normalise_params_list(f.params.get("authentication_methods"))
-            if f.params.get("authentication_methods")
-            else ["ALL"],
-            mfa_authentication_methods=self.normalise_params_list(f.params.get("mfa_authentication_methods"))
-            if f.params.get("mfa_authentication_methods")
-            else ["PASSWORD", "SAML"],
-            mfa_enrollment=f.params.get("mfa_enrollment").upper() if f.params.get("mfa_enrollment") else "OPTIONAL",
-            client_types=self.normalise_params_list(f.params.get("client_types")) if f.params.get("client_types") else ["ALL"],
-            security_integrations=self.normalise_params_list(f.params.get("security_integrations"))
-            if f.params.get("security_integrations")
-            else ["ALL"],
+            authentication_methods=self.normalise_params_list(f.params.get("authentication_methods")),
+            mfa_authentication_methods=self.normalise_params_list(f.params.get("mfa_authentication_methods")),
+            mfa_enrollment=f.params.get("mfa_enrollment").upper(),
+            client_types=self.normalise_params_list(f.params.get("client_types")),
+            security_integrations=self.normalise_params_list(f.params.get("security_integrations")),
             comment=f.params.get("comment"),
         )
 

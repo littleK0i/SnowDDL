@@ -296,6 +296,16 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_task_parameters(self, database, schema, name):
+        cur = self.execute(
+            "SHOW PARAMETERS IN TASK {name:i}",
+            {
+                "name": SchemaObjectIdent(self.env_prefix, database, schema, name),
+            },
+        )
+
+        return {r["key"]: r for r in cur}
+
     def show_user(self, name):
         cur = self.execute(
             "SHOW USERS LIKE {user_name:lf}",

@@ -1,2 +1,5 @@
-mfa_enrollment: REQUIRED
+authentication_methods: [ALL]
 mfa_authentication_methods: [PASSWORD]
+mfa_enrollment: REQUIRED
+client_types: [ALL]
+security_integrations: [ALL]

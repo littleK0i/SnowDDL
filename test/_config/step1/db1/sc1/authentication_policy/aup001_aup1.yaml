@@ -2,4 +2,5 @@ authentication_methods: [SAML, KEYPAIR]
 mfa_authentication_methods: [SAML]
 mfa_enrollment: REQUIRED
 client_types: [SNOWFLAKE_UI, DRIVERS]
+security_integrations: [ALL]
 comment: abc
