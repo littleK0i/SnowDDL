@@ -2,6 +2,7 @@ fivetran:
   ruleset: DATABASE_OWNER
 
   owner_create_grants:
+    - DATASET
     - STAGE
     - TABLE
     - VIEW
@@ -9,12 +10,14 @@ fivetran:
     - CORTEX_SEARCH_SERVICE
 
   owner_future_grants:
+    DATASET: [OWNERSHIP]
     STAGE: [OWNERSHIP]
     TABLE: [OWNERSHIP]
     VIEW: [OWNERSHIP]
     CORTEX_SEARCH_SERVICE: [OWNERSHIP]
 
   read_future_grants:
+    DATASET: [USAGE]
     STAGE: [READ]
     TABLE: [SELECT, REFERENCES]
     VIEW: [SELECT, REFERENCES]

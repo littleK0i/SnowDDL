@@ -32,6 +32,7 @@ def test_step1(helper):
         BaseDataType.ARRAY,
         BaseDataType.GEOGRAPHY,
         BaseDataType.GEOMETRY,
+        BaseDataType.FILE,
     ]
 
     # Compare returns signature
@@ -50,7 +51,8 @@ def test_step1(helper):
         "OBJ OBJECT, "
         "ARR ARRAY, "
         "GEO1 GEOGRAPHY, "
-        "GEO2 GEOMETRY)"
+        "GEO2 GEOMETRY, "
+        "FILE1 FILE)"
     )
 
     assert function_desc["language"] == "SQL"
@@ -80,6 +82,7 @@ def test_step2(helper):
         BaseDataType.ARRAY,
         BaseDataType.GEOGRAPHY,
         BaseDataType.GEOMETRY,
+        BaseDataType.FILE,
     ]
 
     # Compare returns signature
@@ -98,7 +101,8 @@ def test_step2(helper):
         "OBJ OBJECT, "
         "ARR ARRAY, "
         "GEO1 GEOGRAPHY, "
-        "GEO2 GEOMETRY)"
+        "GEO2 GEOMETRY, "
+        "FILE1 FILE)"
     )
 
     assert function_desc["language"] == "SQL"

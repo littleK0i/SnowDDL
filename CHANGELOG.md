@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.48.0] - 2025-04-15
+
+- Added `FILE` data type.
+- Added `DATASET` object type. It is currently not managed by SnowDDL, but can be used for create and future grants in permission models.
+- Added parameter `is_aggregate` for `FUNCTION` object type. It works with Python user-defined aggregate functions.
+
 ## [0.47.0] - 2025-04-09
 
 - All parameters are now required for authentication policy. Snowflake has changed defaults recently. Hardcoding defaults is no longer a viable strategy.

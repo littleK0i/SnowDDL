@@ -22,3 +22,4 @@ columns:
   arr: ARRAY
   geo1: GEOGRAPHY
   geo2: GEOMETRY
+  file1: FILE

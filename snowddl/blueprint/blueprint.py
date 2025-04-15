@@ -199,6 +199,7 @@ class FunctionBlueprint(SchemaObjectBlueprint):
     arguments: List[ArgumentWithType]
     returns: Union[DataType, List[NameWithType]]
     is_secure: bool = False
+    is_aggregate: bool = False
     is_strict: bool = False
     is_immutable: bool = False
     is_memoizable: bool = False

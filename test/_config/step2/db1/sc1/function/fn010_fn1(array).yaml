@@ -1,0 +1,28 @@
+language: python
+runtime_version: "3.10"
+handler: PythonGetUniqueValues
+
+is_aggregate: true
+
+arguments:
+  input: ARRAY
+
+returns: ARRAY
+
+body: |-
+  class PythonGetUniqueValues:
+    def __init__(self):
+      self._agg_state = set()
+
+    @property
+    def aggregate_state(self):
+      return self._agg_state
+
+    def accumulate(self, input):
+      self._agg_state.update(input)
+
+    def merge(self, other_agg_state):
+      self._agg_state.update(other_agg_state)
+
+    def finish(self):
+      return list(self._agg_state)

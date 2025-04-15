@@ -2,7 +2,7 @@ def test_step1(helper):
     cols = helper.desc_table("db1", "sc1", "tb001_tb1")
 
     # Created table with specific number of columns
-    assert len(cols) == 23
+    assert len(cols) == 24
 
     # Data types and sizes
     assert cols["NUM1"]["type"] == "NUMBER(10,0)"
@@ -14,7 +14,7 @@ def test_step2(helper):
     cols = helper.desc_table("db1", "sc1", "tb001_tb1")
 
     # Still the same number of columns
-    assert len(cols) == 23
+    assert len(cols) == 24
 
     # Data types and sizes
     assert cols["NUM1"]["type"] == "NUMBER(12,0)"

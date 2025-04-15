@@ -30,6 +30,7 @@ class FunctionResolver(AbstractSchemaObjectResolver):
                 "name": r["name"],
                 "arguments": r["arguments"],
                 "comment": r["description"],
+                "is_aggregate": r["is_aggregate"] == "Y",
                 "is_table_function": r["is_table_function"] == "Y",
                 "is_secure": r["is_secure"] == "Y",
                 "is_memoizable": r["is_memoizable"] == "Y",
@@ -92,6 +93,9 @@ class FunctionResolver(AbstractSchemaObjectResolver):
 
         if bp.is_secure:
             query.append("SECURE")
+
+        if bp.is_aggregate:
+            query.append("AGGREGATE")
 
         query.append(
             "FUNCTION {full_name:in} (",

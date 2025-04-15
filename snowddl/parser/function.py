@@ -63,6 +63,9 @@ function_json_schema = {
         "is_secure": {
             "type": "boolean"
         },
+        "is_aggregate": {
+            "type": "boolean"
+        },
         "is_strict": {
             "type": "boolean"
         },
@@ -149,6 +152,7 @@ class FunctionParser(AbstractParser):
             arguments=arguments,
             returns=self.get_returns(f),
             is_secure=f.params.get("is_secure", False),
+            is_aggregate=f.params.get("is_aggregate", False),
             is_strict=f.params.get("is_strict", False),
             is_immutable=f.params.get("is_immutable", False),
             is_memoizable=f.params.get("is_memoizable", False),

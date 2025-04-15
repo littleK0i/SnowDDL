@@ -59,6 +59,13 @@ class ObjectType(Enum):
         "plural": "DATABASE ROLES",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    DATASET = {
+        "singular": "DATASET",
+        "plural": "DATASETS",
+    }
+
     DYNAMIC_TABLE = {
         "singular": "DYNAMIC TABLE",
         "plural": "DYNAMIC TABLES",

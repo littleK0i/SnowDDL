@@ -22,6 +22,7 @@ arguments:
   arr: ARRAY
   geo1: GEOGRAPHY
   geo2: GEOMETRY
+  file1: FILE
 
 
 returns:
@@ -48,6 +49,7 @@ returns:
   arr: ARRAY
   geo1: GEOGRAPHY
   geo2: GEOMETRY
+  file1: FILE
 
 body: |-
   SELECT NUM1, NUM2, NUM3, NUM4
@@ -61,3 +63,4 @@ body: |-
       , TZ1, TZ2
       , VAR, OBJ, ARR
       , GEO1, GEO2
+      , FILE1

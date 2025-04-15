@@ -1,0 +1,29 @@
+language: python
+runtime_version: "3.10"
+handler: PythonSum
+
+is_aggregate: true
+
+arguments:
+  a: NUMBER(38,0)
+
+returns: NUMBER(38,0)
+
+body: |-
+  class PythonSum:
+    def __init__(self):
+      # This aggregate state is a primitive Python data type.
+      self._partial_sum = 0
+
+    @property
+    def aggregate_state(self):
+      return self._partial_sum
+
+    def accumulate(self, input_value):
+      self._partial_sum += input_value
+
+    def merge(self, other_partial_sum):
+      self._partial_sum += other_partial_sum
+
+    def finish(self):
+      return self._partial_sum

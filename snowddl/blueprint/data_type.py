@@ -10,6 +10,12 @@ class BaseDataType(Enum):
         "default_properties": [38, 0],
     }
 
+    FILE = {
+        "base_name": "FILE",
+        "number_of_properties": 0,
+        "default_properties": [],
+    }
+
     FLOAT = {
         "base_name": "FLOAT",
         "number_of_properties": 0,
