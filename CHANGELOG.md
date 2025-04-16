@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.48.1] - 2025-04-16
+
+- Added explicit `.rstrip(";")` call when reading `text` from `DYNAMIC_TABLE` metadata. It should help to prevent re-creation of dynamic tables.
+
 ## [0.48.0] - 2025-04-15
 
 - Added `FILE` data type.

@@ -29,7 +29,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 "owner": r["owner"],
                 # Extract SQL query text only, skip the initial "CREATE DYNAMIC TABLE ..." part
                 # Snowflake modifies original SQL text in this column, it cannot be compared directly
-                "text": r["text"].partition("\nAS\n")[2],
+                "text": r["text"].partition("\nAS\n")[2].rstrip(";"),
                 "target_lag": r["target_lag"],
                 "refresh_mode": r["refresh_mode"],
                 "warehouse": r["warehouse"],
