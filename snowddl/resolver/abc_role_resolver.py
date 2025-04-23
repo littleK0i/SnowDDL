@@ -97,7 +97,7 @@ class AbstractRoleResolver(AbstractResolver):
                 account_grants.append(AccountGrant(privilege=r["privilege"]))
             else:
                 try:
-                    grant_name = build_grant_name_ident(object_type, r["name"])
+                    grant_name = build_grant_name_ident(self.config.env_prefix, r["name"], object_type)
                 except (KeyError, ValueError):
                     self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                     continue

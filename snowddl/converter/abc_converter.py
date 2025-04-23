@@ -119,10 +119,7 @@ class AbstractConverter(ABC):
         return name.lower()
 
     def _normalise_name_with_prefix(self, name: str):
-        if name.startswith(self.env_prefix):
-            name = name[len(self.env_prefix) :]
-
-        return self._normalise_name(name)
+        return self._normalise_name(name.removeprefix(self.env_prefix))
 
     @abstractmethod
     def get_object_type(self) -> ObjectType:

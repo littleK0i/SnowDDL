@@ -47,7 +47,7 @@ class StreamResolver(AbstractSchemaObjectResolver):
         if row["stale"]:
             replace_reasons.append("Stream is marked as stale")
 
-        if bp.object_type.singular_for_ref != row["object_type"].upper().replace(" ", "_"):
+        if bp.object_type.singular != row["object_type"].upper():
             replace_reasons.append(
                 f"Source object type [{str(bp.object_type.name)}] in config does not match source type [{row['object_type']}] in Snowflake"
             )

@@ -26,7 +26,7 @@ class UserRoleResolver(AbstractRoleResolver):
             object_type = ObjectType.ROLE
 
             try:
-                grant_name = build_grant_name_ident(object_type, r["name"])
+                grant_name = build_grant_name_ident(self.config.env_prefix, r["name"], object_type)
             except (KeyError, ValueError):
                 self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
                 continue

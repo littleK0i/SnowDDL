@@ -1,6 +1,6 @@
 from typing import Union
 
-from .ident import AbstractIdent, DatabaseIdent, SchemaIdent
+from .ident import AbstractIdent, AbstractIdentWithPrefix, DatabaseIdent, SchemaIdent
 from .ident_pattern import IdentPattern
 from .object_type import ObjectType
 from ..model import BaseModelWithConfig
@@ -42,3 +42,18 @@ class GrantPattern(BaseModelWithConfig):
     privilege: str
     on: ObjectType
     pattern: IdentPattern
+
+    def is_matching_grant(self, grant: Grant):
+        if self.privilege != grant.privilege:
+            return False
+
+        if self.on.singular_for_grant != grant.on.singular_for_grant:
+            return False
+
+        if not isinstance(grant.name, AbstractIdentWithPrefix):
+            return False
+
+        if not self.pattern.is_match_ident(grant.name):
+            return False
+
+        return True

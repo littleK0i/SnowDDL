@@ -25,3 +25,12 @@ test_share_2:
       - test_db.test_schema.*
 
   comment: Test share without accounts
+
+test_share_3:
+  grants:
+    DATABASE:USAGE:
+      - fivetran_db
+    SCHEMA:USAGE:
+      - fivetran_db.test_schema
+    TABLE:SELECT:
+      - fivetran_db.test_schema.*

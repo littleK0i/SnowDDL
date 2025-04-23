@@ -47,8 +47,12 @@ def build_role_ident(env_prefix, *args: Union[AbstractIdent, str]) -> AccountObj
     return AccountObjectIdent(env_prefix, f"{'__'.join(str(a) for a in args)}")
 
 
-def build_grant_name_ident(object_type: ObjectType, grant_name: str):
-    env_prefix = ""
+def build_grant_name_ident(env_prefix: str, grant_name: str, object_type: ObjectType):
+    if grant_name.startswith(env_prefix):
+        grant_env_prefix = env_prefix
+        grant_name = grant_name.removeprefix(env_prefix)
+    else:
+        grant_env_prefix = ""
 
     parts = [p.strip('"') for p in grant_name.split(".")]
     last_part = parts[-1]
@@ -67,21 +71,21 @@ def build_grant_name_ident(object_type: ObjectType, grant_name: str):
                 for arg in arguments_str.split(","):
                     data_types.append(BaseDataType[arg.strip(" ").split(" ")[-1]])
 
-            return SchemaObjectIdentWithArgs(env_prefix, parts[0], parts[1], parts[2], data_types=data_types)
+            return SchemaObjectIdentWithArgs(grant_env_prefix, parts[0], parts[1], parts[2], data_types=data_types)
 
-        return SchemaObjectIdent(env_prefix, parts[0], parts[1], parts[2])
+        return SchemaObjectIdent(grant_env_prefix, parts[0], parts[1], parts[2])
 
     if len(parts) == 2:
         if object_type == ObjectType.DATABASE_ROLE:
-            return DatabaseRoleIdent(env_prefix, parts[0], parts[1])
+            return DatabaseRoleIdent(grant_env_prefix, parts[0], parts[1])
 
-        return SchemaIdent(env_prefix, parts[0], parts[1])
+        return SchemaIdent(grant_env_prefix, parts[0], parts[1])
 
     if len(parts) == 1:
         if object_type == ObjectType.DATABASE:
-            return DatabaseIdent(env_prefix, parts[0])
+            return DatabaseIdent(grant_env_prefix, parts[0])
 
-        return AccountObjectIdent(env_prefix, parts[0])
+        return AccountObjectIdent(grant_env_prefix, parts[0])
 
     raise ValueError(f"Unexpected grant name format [{grant_name}] in Snowflake for object type [{object_type}]")
 

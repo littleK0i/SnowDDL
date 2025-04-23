@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.49.0] - 2025-04-23
+
+- Added initial implementation for `SEMANTIC_VIEW` object type.
+- Reworked grants checking mechanism for outbound shares. Existing grants created by external tools and matching grant patterns in config will not be dropped.
+- Reworked building of grant names. Now it tries to detect current env_prefix and put it into corresponding argument.
+- Adjusted destroy sequence. Moved outbound share above `DATABASE` in order to mitigate shares blocking database and role drops.
+- Bumped minimum Python version from 3.8 to 3.9.
+- Bumped maximum Python version in tests from 3.11 to 3.12.
+
 ## [0.48.1] - 2025-04-16
 
 - Added explicit `.rstrip(";")` call when reading `text` from `DYNAMIC_TABLE` metadata. It should help to prevent re-creation of dynamic tables.

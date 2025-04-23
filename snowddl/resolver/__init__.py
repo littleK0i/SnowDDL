@@ -123,6 +123,7 @@ default_destroy_sequence = [
     NetworkPolicyResolver,
     AuthenticationPolicyResolver,
     ExternalAccessIntegrationResolver,
+    OutboundShareResolver,
     # --
     DatabaseResolver,
     SchemaResolver,
@@ -134,7 +135,6 @@ default_destroy_sequence = [
     DatabaseOwnerRoleResolver,
     SchemaOwnerRoleResolver,
     # --
-    OutboundShareResolver,
     TechnicalRoleResolver,
     BusinessRoleResolver,
     UserRoleResolver,

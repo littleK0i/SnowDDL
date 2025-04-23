@@ -77,7 +77,7 @@ class OutboundShareResolver(AbstractResolver):
                 result = ResolveResult.GRANT
 
         for ex_grant in existing_grants:
-            if ex_grant not in bp_grants:
+            if not any (grant_pattern.is_matching_grant(ex_grant) for grant_pattern in bp.grant_patterns):
                 self.drop_grant(bp.full_name, ex_grant)
                 result = ResolveResult.GRANT
 
@@ -206,7 +206,7 @@ class OutboundShareResolver(AbstractResolver):
                 Grant(
                     privilege=r["privilege"],
                     on=ObjectType[r["granted_on"]],
-                    name=build_grant_name_ident(ObjectType[r["granted_on"]], r["name"]),
+                    name=build_grant_name_ident(self.config.env_prefix, r["name"], ObjectType[r["granted_on"]]),
                 )
             )
 

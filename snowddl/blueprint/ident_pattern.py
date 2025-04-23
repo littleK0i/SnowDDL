@@ -64,12 +64,7 @@ class IdentPattern:
 
     @classmethod
     def _get_str_ident_without_prefix(cls, ident: AbstractIdentWithPrefix):
-        str_ident = str(ident)
-
-        if ident.env_prefix:
-            str_ident = str_ident[len(ident.env_prefix) :]
-
-        return str_ident
+        return str(ident).removeprefix(ident.env_prefix)
 
     def _validate_pattern(self, val):
         val = str(val)

@@ -14,17 +14,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - env-prefix: PY38_LINUX
+          - env-prefix: PY39_LINUX
             os: ubuntu-latest
-            python-version: 3.8
+            python-version: 3.9
 
-          - env-prefix: PY312_LINUX
+          - env-prefix: PY313_LINUX
             os: ubuntu-latest
-            python-version: 3.12
+            python-version: 3.13
 
-          - env-prefix: PY312_WINDOWS
+          - env-prefix: PY313_WINDOWS
             os: windows-latest
-            python-version: 3.12
+            python-version: 3.13
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
