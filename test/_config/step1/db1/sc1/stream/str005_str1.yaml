@@ -1,0 +1,4 @@
+object_type: EXTERNAL_TABLE
+object_name: str005_ext1
+
+insert_only: true
