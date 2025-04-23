@@ -1,0 +1,4 @@
+columns:
+  book_id: NUMBER(38,0)
+  book_name: VARCHAR(255)
+  number_of_pages: NUMBER(38,0)

@@ -39,6 +39,7 @@ from .schema_owner_role import SchemaOwnerRoleResolver
 from .schema_read_role import SchemaReadRoleResolver
 from .schema_write_role import SchemaWriteRoleResolver
 from .secret import SecretResolver
+from .semantic_view import SemanticViewResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
 from .stream import StreamResolver
@@ -91,6 +92,7 @@ default_resolve_sequence = [
     ForeignKeyResolver,
     MaterializedViewResolver,
     ViewResolver,
+    SemanticViewResolver,
     PipeResolver,
     StreamResolver,
     TaskResolver,
@@ -163,6 +165,7 @@ singledb_resolve_sequence = [
     ForeignKeyResolver,
     MaterializedViewResolver,
     ViewResolver,
+    SemanticViewResolver,
     PipeResolver,
     StreamResolver,
     TaskResolver,

@@ -40,6 +40,7 @@ from .reference import (
     RowAccessPolicyReference,
     TagReference,
 )
+from .semantic_view import SemanticViewExpression, SemanticViewRelationship, SemanticViewTable
 from .stage import StageWithPath
 from ..model import BaseModelWithConfig
 
@@ -352,6 +353,14 @@ class SecretBlueprint(SchemaObjectBlueprint):
     password: Optional[str] = None
     secret_string: Optional[str] = None
     algorithm: Optional[str] = None
+
+
+class SemanticViewBlueprint(SchemaObjectBlueprint):
+    tables: List[SemanticViewTable]
+    relationships: List[SemanticViewRelationship] = []
+    facts: List[SemanticViewExpression] = []
+    dimensions: List[SemanticViewExpression] = []
+    metrics: List[SemanticViewExpression] = []
 
 
 class SequenceBlueprint(SchemaObjectBlueprint):

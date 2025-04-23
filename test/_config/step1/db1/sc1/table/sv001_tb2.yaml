@@ -1,0 +1,3 @@
+columns:
+  author_id: NUMBER(38,0)
+  author_name: VARCHAR(255)

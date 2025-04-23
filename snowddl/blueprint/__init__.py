@@ -32,6 +32,7 @@ from .blueprint import (
     RowAccessPolicyBlueprint,
     SchemaBlueprint,
     SecretBlueprint,
+    SemanticViewBlueprint,
     SequenceBlueprint,
     StageBlueprint,
     StageFileBlueprint,
@@ -100,4 +101,5 @@ from .reference import (
     RowAccessPolicyReference,
     TagReference,
 )
+from .semantic_view import SemanticViewExpression, SemanticViewRelationship, SemanticViewTable
 from .stage import StageWithPath, StageUploadFile

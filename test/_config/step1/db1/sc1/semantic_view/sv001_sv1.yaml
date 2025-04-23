@@ -1,0 +1,69 @@
+tables:
+  - table_alias: tb1
+    table_name: sv001_tb1
+    primary_key: [author_id, book_id]
+    with_synonyms: [aaa, bbb]
+    comment: "Link between authors and books"
+
+  - table_alias: tb2
+    table_name: sv001_tb2
+    primary_key: [author_id]
+    with_synonyms: [ccc, ddd]
+    comment: "List of authors"
+
+  - table_alias: tb3
+    table_name: sv001_tb3
+    primary_key: [book_id]
+    comment: "List of books1"
+
+relationships:
+  - table_alias: tb1
+    columns: [author_id]
+    ref_table_alias: tb2
+    ref_columns: [author_id]
+
+  - table_alias: tb1
+    columns: [book_id]
+    ref_table_alias: tb3
+    ref_columns: [book_id]
+
+facts:
+  - table_alias: tb1
+    name: unique_id
+    sql: CONCAT(author_id, '-', book_id)
+    with_synonyms: [aaa, bbb]
+    comment: "Unique ID for link between authors and books"
+
+  - table_alias: tb3
+    name: number_of_pages
+    sql: number_of_pages
+    comment: "Number of pages in a book"
+
+dimensions:
+  - table_alias: tb1
+    name: author_book_link_create_dt
+    sql: CAST(create_ts AS DATE)
+    comment: "Date when link between author and book was established"
+
+  - table_alias: tb2
+    name: author_name
+    sql: author_name
+    comment: "Name of author"
+
+  - table_alias: tb3
+    name: book_name
+    sql: book_name
+    comment: "Name of book"
+
+metrics:
+  - table_alias: tb1
+    name: count_distinct_author
+    sql: count(distinct author_id)
+    comment: "Number of unique authors"
+
+  - table_alias: tb1
+    name: count_distinct_book
+    sql: count(distinct book_id)
+    comment: "Number of unique books"
+
+comment: abc

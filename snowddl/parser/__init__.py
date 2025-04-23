@@ -31,6 +31,7 @@ from .resource_monitor import ResourceMonitorParser
 from .row_access_policy import RowAccessPolicyParser
 from .schema import SchemaParser
 from .secret import SecretParser
+from .semantic_view import SemanticViewParser
 from .sequence import SequenceParser
 from .stage import StageParser
 from .stream import StreamParser
@@ -74,6 +75,7 @@ default_parse_sequence = [
     ExternalTableParser,
     MaterializedViewParser,
     ViewParser,
+    SemanticViewParser,
     PipeParser,
     StreamParser,
     TaskParser,
@@ -110,6 +112,7 @@ singledb_parse_sequence = [
     ExternalTableParser,
     MaterializedViewParser,
     ViewParser,
+    SemanticViewParser,
     PipeParser,
     StreamParser,
     TaskParser,

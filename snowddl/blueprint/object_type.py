@@ -228,6 +228,13 @@ class ObjectType(Enum):
         "blueprint_cls": "SecretBlueprint",
     }
 
+    SEMANTIC_VIEW = {
+        "singular": "SEMANTIC VIEW",
+        "plural": "SEMANTIC VIEWS",
+        "is_future_grant_supported": True,
+        "blueprint_cls": "SemanticViewBlueprint",
+    }
+
     SEQUENCE = {
         "singular": "SEQUENCE",
         "plural": "SEQUENCES",
