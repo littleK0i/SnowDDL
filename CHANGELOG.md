@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.49.2] - 2025-04-23
+
+- Introduced explicit `object_type` to `source_type` mapping for `STREAM`. It should help to reduce naming inconsistency presented in output of `SHOW STREAMS` command.
+- Added `STREAM` tests targeting `EXTERNAL_TABLE` and `STAGE` (directory table).
+- Added workaround for Snowflake bug related to `SHOW STREAMS` command returning not fully qualified names for `STAGE` targets.
+
 ## [0.49.1] - 2025-04-23
 
 - Added explicit `.rstrip(";")` call when reading `text` from `VIEW` and `MATERIALIZED_VIEW` metadata. Other object types should not be affected by trailing semicolon problem.
