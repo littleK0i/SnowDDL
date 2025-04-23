@@ -25,7 +25,7 @@ class MaterializedViewResolver(AbstractSchemaObjectResolver):
                 "schema": r["schema_name"],
                 "name": r["name"],
                 "owner": r["owner"],
-                "text": r["text"],
+                "text": str(r["text"]).rstrip(";"),
                 "is_secure": r["is_secure"] == "true",
                 "cluster_by": r["cluster_by"] if r["cluster_by"] else None,
                 "invalid": r["invalid"] == "true",

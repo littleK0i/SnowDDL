@@ -28,7 +28,7 @@ class ViewResolver(AbstractSchemaObjectResolver):
                 "schema": r["schema_name"],
                 "name": r["name"],
                 "owner": r["owner"],
-                "text": r["text"],
+                "text": str(r["text"]).rstrip(";"),
                 "is_secure": r["is_secure"] == "true",
                 "comment": r["comment"] if r["comment"] else None,
             }

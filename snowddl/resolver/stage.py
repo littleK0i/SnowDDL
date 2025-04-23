@@ -113,7 +113,7 @@ class StageResolver(AbstractSchemaObjectResolver):
             return True
 
         if bp.url is None:
-            encryption_type = coalesce(bp.encryption, {}).get("TYPE", "SNOWFLAKE_FULL")
+            encryption_type = coalesce(bp.encryption, {}).get("TYPE", "SNOWFLAKE_FULL").upper()
 
             if row["type"] == "INTERNAL" and encryption_type != "SNOWFLAKE_FULL":
                 return True

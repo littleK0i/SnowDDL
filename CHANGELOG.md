@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.49.1] - 2025-04-23
+
+- Added explicit `.rstrip(";")` call when reading `text` from `VIEW` and `MATERIALIZED_VIEW` metadata. Other object types should not be affected by trailing semicolon problem.
+- Fixed issue with lower-cased encryption type causing forced replace for `STAGE` objects.
+
 ## [0.49.0] - 2025-04-23
 
 - Added initial implementation for `SEMANTIC_VIEW` object type.
