@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.50.0] - 2025-05-09
+
+- Introduced `future_grants` for technical roles.
+- Added extra validation to prevent `OWNERSHIP` privilege being assigned via technical roles.
+- Reworked mechanism of cross-checking existing grants vs. future grants defined in config. It no longer creates new objects in large quantities.
+
 ## [0.49.2] - 2025-04-23
 
 - Introduced explicit `object_type` to `source_type` mapping for `STREAM`. It should help to reduce naming inconsistency presented in output of `SHOW STREAMS` command.

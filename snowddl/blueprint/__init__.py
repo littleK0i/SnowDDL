@@ -59,7 +59,7 @@ from .column import (
 )
 from .data_type import BaseDataType, DataType
 from .edition import Edition
-from .grant import Grant, AccountGrant, FutureGrant, GrantPattern
+from .grant import Grant, AccountGrant, FutureGrant, GrantPattern, FutureGrantPattern
 
 from .ident import (
     AbstractIdent,

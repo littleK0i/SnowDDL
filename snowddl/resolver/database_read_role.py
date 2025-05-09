@@ -4,8 +4,6 @@ from snowddl.blueprint import (
     Grant,
     RoleBlueprint,
     SchemaBlueprint,
-    SchemaIdent,
-    SchemaObjectIdent,
     build_role_ident,
 )
 from snowddl.resolver.abc_role_resolver import AbstractRoleResolver, ObjectType
@@ -89,17 +87,3 @@ class DatabaseReadRoleResolver(AbstractRoleResolver):
         )
 
         return bp
-
-    def grant_to_future_grant(self, grant: Grant):
-        if not grant.on.is_future_grant_supported:
-            return None
-
-        if isinstance(grant.name, (SchemaIdent, SchemaObjectIdent)):
-            return FutureGrant(
-                privilege=grant.privilege,
-                on_future=grant.on,
-                in_parent=ObjectType.DATABASE,
-                name=grant.name.database_full_name,
-            )
-
-        return None

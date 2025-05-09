@@ -77,7 +77,7 @@ class OutboundShareResolver(AbstractResolver):
                 result = ResolveResult.GRANT
 
         for ex_grant in existing_grants:
-            if not any (grant_pattern.is_matching_grant(ex_grant) for grant_pattern in bp.grant_patterns):
+            if not any(grant_pattern.is_matching_grant(ex_grant) for grant_pattern in bp.grant_patterns):
                 self.drop_grant(bp.full_name, ex_grant)
                 result = ResolveResult.GRANT
 

@@ -12,7 +12,7 @@ from .column import (
     SearchOptimizationItem,
 )
 from .data_type import DataType
-from .grant import AccountGrant, Grant, FutureGrant, GrantPattern
+from .grant import AccountGrant, Grant, FutureGrant, GrantPattern, FutureGrantPattern
 from .ident import (
     AbstractIdent,
     Ident,
@@ -435,6 +435,7 @@ class TaskBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 class TechnicalRoleBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     grant_patterns: List[GrantPattern] = []
+    future_grant_patterns: List[FutureGrantPattern] = []
     account_grants: List[AccountGrant] = []
 
 

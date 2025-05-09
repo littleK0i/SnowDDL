@@ -9,3 +9,9 @@ pm001_tr1:
       - pm001*
     SCHEMA:USAGE:
       - pm001*.*
+
+  future_grants:
+    TABLE:SELECT,REFERENCES:
+      - pm001_db1
+    VIEW:SELECT:
+      - pm001*.*

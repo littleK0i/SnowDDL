@@ -207,7 +207,7 @@ class AbstractRoleResolver(AbstractResolver):
 
         # Normal grants
         for existing_grant in row["grants"]:
-            if existing_grant not in bp.grants and self.grant_to_future_grant(existing_grant) not in bp.future_grants:
+            if existing_grant not in bp.grants and not any(fg.is_matching_grant(existing_grant) for fg in bp.future_grants):
                 self.drop_grant(bp.full_name, existing_grant)
                 result = ResolveResult.GRANT
 
@@ -372,11 +372,6 @@ class AbstractRoleResolver(AbstractResolver):
                 "copy_grants": " COPY CURRENT GRANTS" if (grant.privilege == "OWNERSHIP") else "",
             },
         )
-
-    def grant_to_future_grant(self, grant: Grant):
-        # Overloaded in Database and Schema role resolvers
-        # Other role types are not expected to utilize furue grants
-        return None
 
     def build_database_role_grants(self, database_name_pattern: IdentPattern, role_type: str) -> List[Grant]:
         grants = []

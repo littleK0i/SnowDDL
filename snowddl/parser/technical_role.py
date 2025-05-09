@@ -1,4 +1,12 @@
-from snowddl.blueprint import GrantPattern, AccountGrant, TechnicalRoleBlueprint, ObjectType, IdentPattern, build_role_ident
+from snowddl.blueprint import (
+    GrantPattern,
+    FutureGrantPattern,
+    AccountGrant,
+    TechnicalRoleBlueprint,
+    ObjectType,
+    IdentPattern,
+    build_role_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser
 
 
@@ -18,11 +26,22 @@ technical_role_json_schema = {
                     "minItems": 1
                 }
             },
+            "future_grants": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
             "account_grants": {
                 "type": "array",
                 "items": {
                     "type": "string"
-                }
+                },
+                "minItems": 1
             },
             "comment": {
                 "type": "string"
@@ -44,6 +63,7 @@ class TechnicalRoleParser(AbstractParser):
 
     def process_technical_role(self, technical_role_name, technical_role_params):
         grant_patterns = []
+        future_grant_patterns = []
         account_grants = []
 
         for definition, pattern_list in technical_role_params.get("grants", {}).items():
@@ -53,12 +73,27 @@ class TechnicalRoleParser(AbstractParser):
                 for pattern in pattern_list:
                     grant_patterns.append(GrantPattern(privilege=p, on=ObjectType[on], pattern=IdentPattern(pattern)))
 
+        for definition, pattern_list in technical_role_params.get("future_grants", {}).items():
+            on, privileges = definition.upper().split(":")
+
+            for p in privileges.split(","):
+                for pattern in pattern_list:
+                    future_grant_patterns.append(
+                        FutureGrantPattern(
+                            privilege=p,
+                            on_future=ObjectType[on],
+                            in_parent=ObjectType.SCHEMA if ("." in pattern) else ObjectType.DATABASE,
+                            pattern=IdentPattern(pattern),
+                        )
+                    )
+
         for privilege in technical_role_params.get("account_grants", []):
             account_grants.append(AccountGrant(privilege=privilege))
 
         bp = TechnicalRoleBlueprint(
             full_name=build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX),
             grant_patterns=grant_patterns,
+            future_grant_patterns=future_grant_patterns,
             account_grants=account_grants,
             comment=technical_role_params.get("comment"),
         )

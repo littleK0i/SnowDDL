@@ -107,7 +107,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                     "PRIMARY KEY ({col_names:i})",
                     {
                         "col_names": t.primary_key,
-                    }
+                    },
                 )
 
             if t.with_synonyms:
@@ -115,7 +115,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                     "WITH SYNONYMS ({with_synonyms})",
                     {
                         "with_synonyms": t.with_synonyms,
-                    }
+                    },
                 )
 
             if t.comment:
@@ -123,7 +123,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                     "COMMENT = {comment}",
                     {
                         "comment": t.comment,
-                    }
+                    },
                 )
 
         query.append_nl(")")
@@ -182,7 +182,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "WITH SYNONYMS ({with_synonyms})",
                         {
                             "with_synonyms": e.with_synonyms,
-                        }
+                        },
                     )
 
                 if e.comment:
@@ -190,7 +190,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "COMMENT = {comment}",
                         {
                             "comment": e.comment,
-                        }
+                        },
                     )
 
             query.append_nl(")")
@@ -216,7 +216,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "WITH SYNONYMS ({with_synonyms})",
                         {
                             "with_synonyms": e.with_synonyms,
-                        }
+                        },
                     )
 
                 if e.comment:
@@ -224,7 +224,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "COMMENT = {comment}",
                         {
                             "comment": e.comment,
-                        }
+                        },
                     )
 
             query.append_nl(")")
@@ -250,7 +250,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "WITH SYNONYMS ({with_synonyms})",
                         {
                             "with_synonyms": e.with_synonyms,
-                        }
+                        },
                     )
 
                 if e.comment:
@@ -258,7 +258,7 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                         "COMMENT = {comment}",
                         {
                             "comment": e.comment,
-                        }
+                        },
                     )
 
             query.append_nl(")")
