@@ -124,6 +124,11 @@ class DatabaseBlueprint(AbstractBlueprint):
     owner_global_roles: List[Ident] = []
 
 
+class DatabaseRoleBlueprint(AbstractBlueprint):
+    full_name: DatabaseRoleIdent
+    grant_patterns: List[GrantPattern] = []
+
+
 class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     text: str
     columns: Optional[List[DynamicTableColumn]] = None

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.51.0] - 2025-05-15
+
+- Introduced `DATABASE_ROLE` object type. Currently, it can be used for outbound shares only.
+
 ## [0.50.0] - 2025-05-09
 
 - Introduced `future_grants` for technical roles.

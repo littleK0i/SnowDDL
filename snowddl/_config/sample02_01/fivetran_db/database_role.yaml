@@ -1,0 +1,8 @@
+test_database_role_1:
+  grants:
+    DATABASE:USAGE:
+      - fivetran_db
+    SCHEMA:USAGE:
+      - fivetran_db.test_schema
+    TABLE:SELECT:
+      - fivetran_db.test_schema.*

@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Dict, Set, TYPE_CHECKING
 
 from snowddl.blueprint import (
+    DatabaseRoleBlueprint,
     ForeignKeyBlueprint,
     ObjectType,
     PrimaryKeyBlueprint,
@@ -45,7 +46,7 @@ class IntentionCache:
         schema_object_name = ".".join(object_full_name_parts[:3])
 
         # All schemas and schema objects are implicitly dropped by DATABASE
-        if issubclass(blueprint_cls, (SchemaBlueprint, SchemaObjectBlueprint)) and (
+        if issubclass(blueprint_cls, (SchemaBlueprint, SchemaObjectBlueprint, DatabaseRoleBlueprint)) and (
             database_name in self.drop_intention[ObjectType.DATABASE]
         ):
             return True

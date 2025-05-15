@@ -9,6 +9,7 @@ from .blueprint import (
     AuthenticationPolicyBlueprint,
     BusinessRoleBlueprint,
     DatabaseBlueprint,
+    DatabaseRoleBlueprint,
     DynamicTableBlueprint,
     EventTableBlueprint,
     ExternalAccessIntegrationBlueprint,

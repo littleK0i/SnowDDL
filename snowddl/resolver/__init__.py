@@ -10,6 +10,7 @@ from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
 from .database_owner_role import DatabaseOwnerRoleResolver
 from .database_read_role import DatabaseReadRoleResolver
+from .database_role import DatabaseRoleResolver
 from .database_write_role import DatabaseWriteRoleResolver
 from .dynamic_table import DynamicTableResolver
 from .event_table import EventTableResolver
@@ -98,6 +99,7 @@ default_resolve_sequence = [
     TaskResolver,
     AlertResolver,
     # --
+    DatabaseRoleResolver,
     OutboundShareResolver,
     TechnicalRoleResolver,
     BusinessRoleResolver,
@@ -135,6 +137,7 @@ default_destroy_sequence = [
     DatabaseOwnerRoleResolver,
     SchemaOwnerRoleResolver,
     # --
+    DatabaseRoleResolver,
     TechnicalRoleResolver,
     BusinessRoleResolver,
     UserRoleResolver,
@@ -171,6 +174,7 @@ singledb_resolve_sequence = [
     TaskResolver,
     AlertResolver,
     # --
+    DatabaseRoleResolver,
     AggregationPolicyResolver,
     MaskingPolicyResolver,
     ProjectionPolicyResolver,
@@ -180,4 +184,5 @@ singledb_resolve_sequence = [
 
 singledb_destroy_sequence = [
     SchemaResolver,
+    DatabaseRoleResolver,
 ]

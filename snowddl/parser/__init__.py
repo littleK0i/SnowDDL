@@ -8,6 +8,7 @@ from .alert import AlertParser
 from .authentication_policy import AuthenticationPolicyParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
+from .database_role import DatabaseRoleParser
 from .dynamic_table import DynamicTableParser
 from .event_table import EventTableParser
 from .external_access_integration import ExternalAccessIntegrationParser
@@ -81,6 +82,7 @@ default_parse_sequence = [
     TaskParser,
     AlertParser,
     # --
+    DatabaseRoleParser,
     OutboundShareParser,
     TechnicalRoleParser,
     BusinessRoleParser,
@@ -117,4 +119,6 @@ singledb_parse_sequence = [
     StreamParser,
     TaskParser,
     AlertParser,
+    # --
+    DatabaseRoleParser,
 ]
