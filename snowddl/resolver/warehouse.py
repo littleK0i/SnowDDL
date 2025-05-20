@@ -139,7 +139,11 @@ class WarehouseResolver(AbstractResolver):
             query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
 
         if bp.resource_constraint != row["resource_constraint"]:
-            query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
+            # Take new default value into account for STANDARD warehouse type
+            if bp.resource_constraint is None and bp.type == "STANDARD" and row["resource_constraint"] == "STANDARD_GEN_1":
+                pass
+            else:
+                query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
 
         if self.engine.context.edition >= Edition.ENTERPRISE:
             if bp.min_cluster_count != row["min_cluster_count"]:

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.51.1] - 2025-05-20
+
+- Added temporary workaround for potential new default `resource_constraint=STANDARD_GEN_1` for `STANDARD` warehouses. Previously it was `null`.
+
 ## [0.51.0] - 2025-05-15
 
 - Introduced `DATABASE_ROLE` object type. Currently, it can be used for outbound shares only.
