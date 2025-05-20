@@ -64,12 +64,8 @@ class WarehouseParser(AbstractParser):
 
     def process_warehouse(self, warehouse_name, warehouse_params):
         warehouse_type = warehouse_params.get("type", "STANDARD").upper()
-
-        resource_constraint = None
+        resource_constraint = warehouse_params.get("resource_constraint")
         resource_monitor = None
-
-        if warehouse_type == "SNOWPARK-OPTIMIZED":
-            resource_constraint = warehouse_params.get("resource_constraint", "MEMORY_16X")
 
         if warehouse_params.get("resource_monitor"):
             resource_monitor = AccountObjectIdent(self.env_prefix, warehouse_params["resource_monitor"])
