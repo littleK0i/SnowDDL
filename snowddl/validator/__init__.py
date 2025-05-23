@@ -9,9 +9,11 @@ from .task import TaskValidator
 from .technical_role import TechnicalRoleValidator
 from .user import UserValidator
 from .view import ViewValidator
+from .warehouse import WarehouseValidator
 
 
 default_validate_sequence = [
+    WarehouseValidator,
     DatabaseValidator,
     SchemaValidator,
     DynamicTableValidator,

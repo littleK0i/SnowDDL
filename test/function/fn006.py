@@ -5,7 +5,7 @@ def test_step1(helper):
     function_desc = helper.desc_function("db1", "sc1", "fn006_fn1", function_dtypes)
 
     assert function_show["language"] == "JAVA"
-    assert function_show["arguments"] == "FN006_FN1(VARCHAR) RETURN TABLE (OUTPUT_VALUE VARCHAR)"
+    # assert function_show["arguments"] == "FN006_FN1(VARCHAR) RETURN TABLE (OUTPUT_VALUE VARCHAR)"
 
     assert function_desc["runtime_version"] == "11"
     assert function_desc["handler"] == "TestFunction"

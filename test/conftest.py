@@ -487,17 +487,49 @@ class Helper:
     def is_edition_business_critical(self):
         return self.edition >= Edition.BUSINESS_CRITICAL
 
-    def dtypes_from_arguments(self, arguments):
-        arguments = arguments.replace("DEFAULT ", "")
-        arguments = arguments.translate(str.maketrans("", "", "[] "))
+    def dtypes_from_arguments(self, arguments: str):
+        all_dtypes = []
 
         start_dtypes_idx = arguments.index("(")
-        finish_dtypes_idx = arguments.index(")")
+        finish_dtypes_idx = arguments.index(") RETURN ")
 
-        if finish_dtypes_idx - start_dtypes_idx == 1:
-            return []
+        for dtype_part in self.split_by_comma_outside_parentheses(arguments[start_dtypes_idx + 1 : finish_dtypes_idx]):
+            # Remove optional DEFAULT prefix from the beginning
+            dtype_part = dtype_part.removeprefix("DEFAULT ")
 
-        return [BaseDataType[a] for a in arguments[start_dtypes_idx + 1 : finish_dtypes_idx].split(",")]
+            # Remove optional data type size introduced in bundle 2025_03
+            # https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944
+            dtype_size_start_idx = dtype_part.find("(")
+
+            if dtype_size_start_idx > -1:
+                dtype_part = dtype_part[:dtype_size_start_idx]
+
+            all_dtypes.append(dtype_part)
+
+        return [BaseDataType[dtype] for dtype in all_dtypes]
+
+    def split_by_comma_outside_parentheses(self, s: str):
+        parts = []
+        current = []
+        depth = 0
+
+        for char in s:
+            if char == "," and depth == 0:
+                parts.append("".join(current).strip())
+                current = []
+
+            else:
+                if char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+
+                current.append(char)
+
+        if current:
+            parts.append("".join(current).strip())
+
+        return parts
 
     def __enter__(self):
         return self

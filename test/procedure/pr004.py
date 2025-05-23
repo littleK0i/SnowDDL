@@ -25,6 +25,8 @@ def test_step1(helper):
     ]
 
     # Compare returns signature
+    # This check is muted due to upcoming: https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944
+    """
     assert (
         procedure_desc["returns"] == "TABLE ("
         "NUM1 NUMBER, NUM2 NUMBER, "
@@ -40,6 +42,7 @@ def test_step1(helper):
         "OBJ OBJECT, "
         "ARR ARRAY)"
     )
+    """
 
     assert "DEFAULT" in procedure_show["arguments"]
 
@@ -68,6 +71,8 @@ def test_step2(helper):
     ]
 
     # Compare returns signature
+    # This check is muted due to upcoming: https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944
+    """
     assert (
         procedure_desc["returns"] == "TABLE ("
         "NUM1 NUMBER, NUM2 NUMBER, "
@@ -83,6 +88,7 @@ def test_step2(helper):
         "OBJ OBJECT, "
         "ARR ARRAY)"
     )
+    """
 
     assert "DEFAULT" in procedure_show["arguments"]
 

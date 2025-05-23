@@ -635,16 +635,16 @@ class BaseApp:
                 exit(8)
 
     def output_engine_context(self, engine: SnowDDLEngine):
-        roles = []
+        system_roles = []
 
         if engine.context.is_account_admin:
-            roles.append("ACCOUNTADMIN")
+            system_roles.append("ACCOUNTADMIN")
 
         if engine.context.is_sys_admin:
-            roles.append("SYSADMIN")
+            system_roles.append("SYSADMIN")
 
         if engine.context.is_security_admin:
-            roles.append("SECURITYADMIN")
+            system_roles.append("SECURITYADMIN")
 
         self.logger.info(
             f"Snowflake version = {engine.context.version} ({engine.context.edition.name}), SnowDDL version = {__version__}"
@@ -652,7 +652,8 @@ class BaseApp:
         self.logger.info(f"Account = {engine.context.current_account}, Region = {engine.context.current_region}")
         self.logger.info(f"Session = {engine.context.current_session}, User = {engine.context.current_user}")
         self.logger.info(f"Role = {engine.context.current_role}, Warehouse = {engine.context.current_warehouse}")
-        self.logger.info(f"Roles in session = {','.join(roles)}")
+        self.logger.info(f"System roles = {','.join(system_roles)}")
+        self.logger.info(f"Active bundles = {','.join(engine.context.active_bundles)}")
         self.logger.info("---")
 
     def get_placeholder_path(self):

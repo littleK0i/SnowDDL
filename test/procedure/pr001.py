@@ -35,6 +35,8 @@ def test_step1(helper):
     ]
 
     # Compare returns signature
+    # This check is muted due to upcoming: https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944
+    """
     assert (
         procedure_desc["returns"] == "TABLE ("
         "NUM1 NUMBER, NUM2 NUMBER, NUM3 NUMBER, NUM4 NUMBER, "
@@ -52,6 +54,7 @@ def test_step1(helper):
         "GEO1 GEOGRAPHY, "
         "GEO2 GEOMETRY)"
     )
+    """
 
     assert procedure_desc["language"] == "SQL"
     assert procedure_desc["execute as"] == "OWNER"
@@ -87,6 +90,8 @@ def test_step2(helper):
     ]
 
     # Compare returns signature
+    # This check is muted due to upcoming: https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944
+    """
     assert (
         procedure_desc["returns"] == "TABLE ("
         "NUM1 NUMBER, NUM2 NUMBER, NUM3 NUMBER, "
@@ -104,6 +109,7 @@ def test_step2(helper):
         "GEO1 GEOGRAPHY, "
         "GEO2 GEOMETRY)"
     )
+    """
 
     assert procedure_desc["language"] == "SQL"
     assert procedure_desc["execute as"] == "CALLER"

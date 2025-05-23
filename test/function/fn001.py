@@ -5,7 +5,7 @@ def test_step1(helper):
     function_desc = helper.desc_function("db1", "sc1", "fn001_fn1", function_dtypes)
 
     assert function_show["language"] == "SQL"
-    assert function_show["arguments"] == "FN001_FN1() RETURN NUMBER"
+    # assert function_show["arguments"] == "FN001_FN1() RETURN NUMBER"
 
     assert function_show["is_table_function"] == "N"
     assert function_show["is_secure"] == "N"
@@ -23,7 +23,7 @@ def test_step2(helper):
     function_desc = helper.desc_function("db1", "sc1", "fn001_fn1", function_dtypes)
 
     assert function_show["language"] == "SQL"
-    assert function_show["arguments"] == "FN001_FN1() RETURN VARCHAR"
+    # assert function_show["arguments"] == "FN001_FN1() RETURN VARCHAR"
 
     assert function_show["is_table_function"] == "N"
     assert function_show["is_secure"] == "Y"

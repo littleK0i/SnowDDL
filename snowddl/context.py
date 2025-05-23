@@ -23,6 +23,7 @@ class SnowDDLContext:
                 , IS_ROLE_IN_SESSION('SYSADMIN') AS is_sys_admin
                 , IS_ROLE_IN_SESSION('SECURITYADMIN') AS is_security_admin
                 , SYSTEM$BOOTSTRAP_DATA_REQUEST('ACCOUNT') AS bootstrap_account
+                , SYSTEM$SHOW_ACTIVE_BEHAVIOR_CHANGE_BUNDLES() AS active_bundles
         """
         )
 
@@ -42,9 +43,11 @@ class SnowDDLContext:
         self.is_security_admin = r["IS_SECURITY_ADMIN"]
 
         bootstrap_account = loads(r["BOOTSTRAP_ACCOUNT"])
+        active_bundles = loads(r["ACTIVE_BUNDLES"])
 
         self.version = bootstrap_account["serverVersion"]
         self.edition = Edition[bootstrap_account["accountInfo"]["serviceLevelName"]]
+        self.active_bundles = [bundle["name"] for bundle in active_bundles if bundle["isEnabled"]]
 
         self._validate()
 

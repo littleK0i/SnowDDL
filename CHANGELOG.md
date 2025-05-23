@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.52.0] - 2025-05-23
+
+- Reworked data type parsing logic for `SHOW FUNCTIONS` and `SHOW PROCEDURES` to prepare for bundle `2025_03` [changes](https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944).
+- Parameter `resource_constraint` is now required for `SNOWPARK-OPTIMIZED` warehouse. It is necessary to protect from future random changes in default values.
+- Added `Active bundles` to context and logging.
+- Skipped some checks in tests until bundle `2025_03` is fully deployed. Proposed change is so problematic, I expect it to be partially reverted.
+
 ## [0.51.1] - 2025-05-20
 
 - Added temporary workaround for potential new default `resource_constraint=STANDARD_GEN_1` for `STANDARD` warehouses. Previously it was `null`.

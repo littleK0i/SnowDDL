@@ -276,12 +276,8 @@ class WarehouseResolver(AbstractResolver):
             return False
 
         # Special rules for RESOURCE_CONSTRAINT are required to take both old and new default logic into account
-        if bp.resource_constraint is None:
-            if bp.type == "STANDARD" and row["resource_constraint"] == "STANDARD_GEN_1":
-                return False
-
-            if bp.type == "SNOWPARK-OPTIMIZED" and row["resource_constraint"] == "MEMORY_16X":
-                return False
+        if bp.resource_constraint is None and bp.type == "STANDARD" and row["resource_constraint"] == "STANDARD_GEN_1":
+            return False
 
         return True
 
