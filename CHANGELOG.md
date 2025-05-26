@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.53.0] -2025-05-26
+
+- Added policies for `DYNAMIC_TABLE` config.
+- Fixed incorrect object type names while dropping policy references.
+- Added CLI option `--clone-source-env-prefix`. It allowed to clone tables from another environment with env prefix. Previously it was possible to clone only from databases without prefix.
+
 ## [0.52.0] - 2025-05-23
 
 - Reworked data type parsing logic for `SHOW FUNCTIONS` and `SHOW PROCEDURES` to prepare for bundle `2025_03` [changes](https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_03/bcr-1944).

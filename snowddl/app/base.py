@@ -258,9 +258,13 @@ class BaseApp:
         # Cloning
         parser.add_argument(
             "--clone-table",
-            help="Clone all tables from source databases (without env_prefix) to destination databases (with env_prefix)",
+            help="Clone all tables from source databases to destination databases (with env_prefix)",
             default=False,
             action="store_true",
+        )
+        parser.add_argument(
+            "--clone-source-env-prefix",
+            help="Clone from another environment with different env_prefix",
         )
 
         # Destroy without env prefix
@@ -496,6 +500,12 @@ class BaseApp:
                 raise ValueError("Argument --clone-table requires argument --env-prefix")
 
             settings.clone_table = True
+
+        if self.args.get("clone_source_env_prefix"):
+            env_prefix = self.args.get("clone_source_env_prefix")
+            env_prefix_separator = self.args.get("env_prefix_separator")
+
+            settings.clone_source_env_prefix = f"{env_prefix}{env_prefix_separator}".upper()
 
         if self.args.get("env_admin_role"):
             settings.env_admin_role = Ident(self.args.get("env_admin_role"))

@@ -24,6 +24,7 @@ class SnowDDLSettings(BaseModelWithConfig):
     refresh_stage_encryption: bool = False
     refresh_secrets: bool = False
     clone_table: bool = False
+    clone_source_env_prefix: str = ""
     exclude_object_types: List[ObjectType] = []
     include_object_types: List[ObjectType] = []
     include_databases: List[DatabaseIdent] = []

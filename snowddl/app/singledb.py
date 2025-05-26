@@ -216,6 +216,10 @@ class SingleDbApp(BaseApp):
             default=False,
             action="store_true",
         )
+        parser.add_argument(
+            "--clone-source-env-prefix",
+            help="Clone from another environment with different env_prefix",
+        )
 
         # Subparsers
         subparsers = parser.add_subparsers(dest="action")
