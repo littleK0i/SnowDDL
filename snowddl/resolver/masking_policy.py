@@ -175,7 +175,7 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {object_name:i} MODIFY COLUMN {first_column:i} SET MASKING POLICY {policy_name:i} USING ({columns:i})",
                 {
-                    "object_type": ref.object_type.singular,
+                    "object_type": ref.object_type.singular_for_ref,
                     "object_name": ref.object_name,
                     "policy_name": bp.full_name,
                     "first_column": ref.columns[0],
@@ -191,7 +191,7 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {first_column:i} UNSET MASKING POLICY",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "name": existing_ref["name"],
@@ -211,7 +211,7 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {first_column:i} UNSET MASKING POLICY",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "name": existing_ref["name"],

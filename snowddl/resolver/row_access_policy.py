@@ -196,7 +196,7 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} DROP ROW ACCESS POLICY {policy_name:i}",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "name": existing_ref["name"],
@@ -216,7 +216,7 @@ class RowAccessPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} DROP ROW ACCESS POLICY {policy_name:i}",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "name": existing_ref["name"],

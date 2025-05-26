@@ -4,6 +4,9 @@ al001_wh2:
 al002_wh1:
   size: XSMALL
 
+ap001_wh1:
+  size: XSMALL
+
 dt001_wh1:
   size: XSMALL
 
@@ -16,6 +19,9 @@ dt002_wh1:
 dt003_wh1:
   size: XSMALL
 
+mp001_wh1:
+  size: XSMALL
+
 pm001_wh1:
   size: XSMALL
 
@@ -26,6 +32,12 @@ pm002_wh1:
   size: XSMALL
 
 pm002_wh2:
+  size: XSMALL
+
+pp001_wh1:
+  size: XSMALL
+
+rp001_wh1:
   size: XSMALL
 
 us001_wh1:

@@ -153,7 +153,7 @@ class ProjectionPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {column:i} UNSET PROJECTION POLICY",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "column": existing_ref["column"],
@@ -174,7 +174,7 @@ class ProjectionPolicyResolver(AbstractSchemaObjectResolver):
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {column:i} UNSET PROJECTION POLICY",
                 {
-                    "object_type": existing_ref["object_type"],
+                    "object_type": ObjectType[existing_ref["object_type"]].singular_for_ref,
                     "database": existing_ref["database"],
                     "schema": existing_ref["schema"],
                     "column": existing_ref["column"],

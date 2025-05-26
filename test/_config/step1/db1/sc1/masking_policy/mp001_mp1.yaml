@@ -10,6 +10,10 @@ body: |-
   END
 
 #references:
+#  - object_type: DYNAMIC_TABLE
+#    object_name: mp001_dt1
+#    columns: [name, id]
+#
 #  - object_type: TABLE
 #    object_name: mp001_tb1
 #    columns: [name, id]

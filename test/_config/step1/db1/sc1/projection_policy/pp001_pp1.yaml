@@ -4,6 +4,14 @@ body: |-
   END
 
 #references:
+#  - object_type: DYNAMIC_TABLE
+#    object_name: pp001_dt1
+#    column: id
+#
+#  - object_type: DYNAMIC_TABLE
+#    object_name: pp001_dt1
+#    column: name
+#
 #  - object_type: TABLE
 #    object_name: pp001_tb1
 #    column: id

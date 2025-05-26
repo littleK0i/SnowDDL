@@ -1,0 +1,9 @@
+text: |-
+  SELECT id, name
+  FROM ${{ env_prefix }}db1.sc1.ap001_tb2
+
+warehouse: ap001_wh1
+target_lag: 1 hour
+
+aggregation_policy:
+  policy_name: ap001_ap1

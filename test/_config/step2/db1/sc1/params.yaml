@@ -2,8 +2,11 @@ owner_integration_usage:
   - test_notification_integration
 
 owner_warehouse_usage:
-  - al001_wh2
+  - ap001_wh1
   - dt001_wh1
   - dt001_wh2
   - dt002_wh1
   - dt003_wh1
+  - mp001_wh1
+  - pp001_wh1
+  - rp001_wh1

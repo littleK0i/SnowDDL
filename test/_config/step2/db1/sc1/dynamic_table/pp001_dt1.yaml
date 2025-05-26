@@ -1,0 +1,10 @@
+text: |-
+  SELECT id, name
+  FROM ${{ env_prefix }}db1.sc1.pp001_tb2
+
+warehouse: pp001_wh1
+target_lag: 1 hour
+
+projection_policies:
+  - policy_name: pp001_pp1
+    column: id

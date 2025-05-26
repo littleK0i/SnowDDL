@@ -1,0 +1,10 @@
+text: |-
+  SELECT id, name
+  FROM ${{ env_prefix }}db1.sc1.rp001_tb2
+
+warehouse: rp001_wh1
+target_lag: 1 hour
+
+row_access_policy:
+  policy_name: rp001_rp1
+  columns: [name]
