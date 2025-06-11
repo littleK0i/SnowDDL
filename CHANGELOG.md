@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.53.0] -2025-05-26
+## [0.54.0] - 2025-06-11
+
+- Introduced basic `oauth` authenticator and `--oauth-token` CLI argument. It is different from currently existing `oauth_snowpark`.
+
+## [0.53.0] - 2025-05-26
 
 - Added policies for `DYNAMIC_TABLE` config.
 - Fixed incorrect object type names while dropping policy references.

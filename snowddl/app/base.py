@@ -102,8 +102,13 @@ class BaseApp:
         # Options
         parser.add_argument(
             "--authenticator",
-            help="Authenticator: 'snowflake', 'externalbrowser', 'oauth_snowpark` (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
+            help="Authenticator: snowflake, externalbrowser, oauth, oauth_snowpark (default: SNOWFLAKE_AUTHENTICATOR env variable)",
             default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
+        )
+        parser.add_argument(
+            "--oauth-token",
+            help="Oauth access token (default: SNOWFLAKE_OAUTH_TOKEN env variable)",
+            default=environ.get("SNOWFLAKE_OAUTH_TOKEN"),
         )
         parser.add_argument(
             "--passphrase",
@@ -300,6 +305,9 @@ class BaseApp:
                 return False
         elif args["authenticator"] == "externalbrowser":
             if not args["a"] or not args["u"]:
+                return False
+        elif args["authenticator"] == "oauth":
+            if not args["a"] or not args["oauth_token"]:
                 return False
         elif args["authenticator"] == "oauth_snowpark":
             if not args["a"]:
@@ -570,15 +578,21 @@ class BaseApp:
                 )
             else:
                 options["password"] = self.args["p"]
+
         elif self.args.get("authenticator") == "externalbrowser":
             options["authenticator"] = "externalbrowser"
             options["client_store_temporary_credential"] = True
+
+        elif self.args.get("authenticator") == "oauth":
+            options["authenticator"] = "oauth"
+            options["token"] = self.args["oauth_token"]
+
         elif self.args.get("authenticator") == "oauth_snowpark":
             options["authenticator"] = "oauth"
             token_path = Path("/snowflake/session/token")
 
-            if "SNOWFLAKE_OAUTH_TOKEN" in environ:
-                options["token"] = environ["SNOWFLAKE_OAUTH_TOKEN"]
+            if self.args["oauth_token"]:
+                options["token"] = self.args["oauth_token"]
             elif token_path.is_file():
                 options["token"] = token_path.read_text("utf-8")
             else:
@@ -590,7 +604,7 @@ class BaseApp:
                 raise ValueError("Failed to obtain host for 'oauth_snowpark' authenticator")
 
         else:
-            raise ValueError("Only 'snowflake', 'externalbrowser' and 'oauth_snowpark' authenticators are supported")
+            raise ValueError("Only 'snowflake', 'externalbrowser', 'oauth' and 'oauth_snowpark' authenticators are supported")
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {

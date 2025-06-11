@@ -99,8 +99,13 @@ class SingleDbApp(BaseApp):
         # Generic options
         parser.add_argument(
             "--authenticator",
-            help="Authenticator: 'snowflake', 'externalbrowser', 'oauth_snowpark' (default: SNOWFLAKE_AUTHENTICATOR env variable or 'snowflake')",
+            help="Authenticator: snowflake, externalbrowser, oauth, oauth_snowpark (default: SNOWFLAKE_AUTHENTICATOR env variable)",
             default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
+        )
+        parser.add_argument(
+            "--oauth-token",
+            help="Oauth access token (default: SNOWFLAKE_OAUTH_TOKEN env variable)",
+            default=environ.get("SNOWFLAKE_OAUTH_TOKEN"),
         )
         parser.add_argument(
             "--passphrase",
