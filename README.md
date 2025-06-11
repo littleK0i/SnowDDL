@@ -57,6 +57,6 @@ Please use GitHub "Issues" to report bugs and technical problems.
 Please use GitHub "Discussions" to ask questions and provide feedback.
 
 ## Created by
-[Vitaly Markov](https://www.linkedin.com/in/markov-vitaly/), 2024
+[Vitaly Markov](https://www.linkedin.com/in/markov-vitaly/), 2025
 
 Enjoy!
