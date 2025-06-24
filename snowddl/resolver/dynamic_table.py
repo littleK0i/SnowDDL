@@ -75,7 +75,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
     def compare_object(self, bp: DynamicTableBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
-        if bp.text != row["text"] or not self._compare_cluster_by(bp, row):
+        if bp.text != row["text"]:
             query = self.engine.query_builder()
             query.append("CREATE OR REPLACE")
 
@@ -113,6 +113,23 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                     "warehouse": bp.warehouse,
                 },
             )
+
+            result = ResolveResult.ALTER
+
+        if not self._compare_cluster_by(bp, row):
+            if bp.cluster_by:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DYNAMIC TABLE {full_name:i} CLUSTER BY ({cluster_by:r})",
+                    {
+                        "full_name": bp.full_name,
+                        "cluster_by": bp.cluster_by,
+                    },
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DYNAMIC TABLE {full_name:i} DROP CLUSTERING KEY",
+                    {"full_name": bp.full_name},
+                )
 
             result = ResolveResult.ALTER
 
