@@ -8,6 +8,7 @@ class SemanticViewTable(BaseModelWithConfig):
     table_alias: Optional[Ident] = None
     table_name: SchemaObjectIdent
     primary_key: Optional[List[Ident]] = None
+    unique: Optional[List[List[Ident]]] = None
     with_synonyms: Optional[List[str]] = None
     comment: Optional[str] = None
 

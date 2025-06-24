@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.54.1] - 2025-06-24
+
+- Added `unique` parameter for `SEMANTIC_VIEW` table. Semantic views should now be fully supported.
+
 ## [0.54.0] - 2025-06-11
 
 - Introduced basic `oauth` authenticator and `--oauth-token` CLI argument. It is different from currently existing `oauth_snowpark`.

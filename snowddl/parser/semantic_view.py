@@ -32,6 +32,17 @@ semantic_view_json_schema = {
                         },
                         "minItems": 1
                     },
+                    "unique": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "minItems": 1
+                        },
+                        "minItems": 1
+                    },
                     "with_synonyms": {
                         "type": "array",
                         "items": {
@@ -199,6 +210,7 @@ class SemanticViewParser(AbstractParser):
             table_alias=Ident(table_def.get("table_alias")),
             table_name=build_schema_object_ident(self.env_prefix, table_def.get("table_name"), f.database, f.schema),
             primary_key=[Ident(c) for c in table_def.get("primary_key")] if table_def.get("primary_key") else None,
+            unique=[[Ident(c) for c in u] for u in table_def.get("unique")] if table_def.get("unique") else None,
             with_synonyms=[s for s in table_def.get("with_synonyms")] if table_def.get("with_synonyms") else None,
             comment=table_def.get("comment"),
         )

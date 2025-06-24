@@ -14,7 +14,9 @@ tables:
   - table_alias: tb3
     table_name: sv001_tb3
     primary_key: [book_id]
-    comment: "List of books1"
+    unique:
+      - [book_isbn]
+    comment: "List of books"
 
 relationships:
   - table_alias: tb1

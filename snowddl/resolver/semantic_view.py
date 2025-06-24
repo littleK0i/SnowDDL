@@ -110,6 +110,15 @@ class SemanticViewResolver(AbstractSchemaObjectResolver):
                     },
                 )
 
+            if t.unique:
+                for unique_key in t.unique:
+                    query.append(
+                        "UNIQUE ({col_names:i})",
+                        {
+                            "col_names": unique_key,
+                        },
+                    )
+
             if t.with_synonyms:
                 query.append(
                     "WITH SYNONYMS ({with_synonyms})",
