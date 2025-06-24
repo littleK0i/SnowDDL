@@ -1,5 +1,9 @@
+from re import compile
+
 from snowddl.blueprint import DynamicTableBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
+
+cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
 
 
 class DynamicTableResolver(AbstractSchemaObjectResolver):
@@ -30,6 +34,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 # Extract SQL query text only, skip the initial "CREATE DYNAMIC TABLE ..." part
                 # Snowflake modifies original SQL text in this column, it cannot be compared directly
                 "text": r["text"].partition("\nAS\n")[2].rstrip(";"),
+                "cluster_by": r["cluster_by"] if r["cluster_by"] else None,
                 "target_lag": r["target_lag"],
                 "refresh_mode": r["refresh_mode"],
                 "warehouse": r["warehouse"],
@@ -61,10 +66,16 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.CREATE
 
+    def _compare_cluster_by(self, bp: DynamicTableBlueprint, row: dict):
+        bp_cluster_by = ", ".join(bp.cluster_by) if bp.cluster_by else None
+        snow_cluster_by = cluster_by_syntax_re.sub(r"\2", row["cluster_by"]) if row["cluster_by"] else None
+
+        return bp_cluster_by == snow_cluster_by
+
     def compare_object(self, bp: DynamicTableBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
-        if bp.text != row["text"]:
+        if bp.text != row["text"] or not self._compare_cluster_by(bp, row):
             query = self.engine.query_builder()
             query.append("CREATE OR REPLACE")
 
