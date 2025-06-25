@@ -1,0 +1,6 @@
+text: |-
+  SELECT id, name
+  FROM dt004_tb1
+
+warehouse: dt004_wh1
+target_lag: 1 hour

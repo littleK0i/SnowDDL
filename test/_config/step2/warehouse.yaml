@@ -19,6 +19,9 @@ dt002_wh1:
 dt003_wh1:
   size: XSMALL
 
+dt004_wh1:
+  size: XSMALL
+
 mp001_wh1:
   size: XSMALL
 

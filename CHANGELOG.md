@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.54.2] - 2025-06-25
+
+- Added check for `cluster_by` parameter for existing dynamic tables (thanks to gcv-epalmer).
+
 ## [0.54.1] - 2025-06-24
 
 - Added `unique` parameter for `SEMANTIC_VIEW` table. Semantic views should now be fully supported.

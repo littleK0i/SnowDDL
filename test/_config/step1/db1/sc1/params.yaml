@@ -8,6 +8,7 @@ owner_warehouse_usage:
   - dt001_wh2
   - dt002_wh1
   - dt003_wh1
+  - dt004_wh1
   - mp001_wh1
   - pp001_wh1
   - rp001_wh1
