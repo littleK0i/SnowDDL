@@ -1,15 +1,22 @@
-from re import compile
+from json import loads as json_loads
 
 from snowddl.blueprint import DynamicTableBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
-cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
-
 
 class DynamicTableResolver(AbstractSchemaObjectResolver):
-    # Dynamic tables are available for all accounts during preview, including STANDARD edition
-    # skip_min_edition = Edition.ENTERPRISE
     skip_on_empty_blueprints = True
+
+    unit_to_seconds_multiplier = {
+        "second": 1,
+        "seconds": 1,
+        "minute": 60,
+        "minutes": 60,
+        "hour": 3600,
+        "hours": 3600,
+        "day": 86400,
+        "days": 86400,
+    }
 
     def get_object_type(self) -> ObjectType:
         return ObjectType.DYNAMIC_TABLE
@@ -18,7 +25,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
         existing_objects = {}
 
         cur = self.engine.execute_meta(
-            "SHOW DYNAMIC TABLES IN SCHEMA {database:i}.{schema:i}",
+            "SHOW AS RESOURCE DYNAMIC TABLES IN SCHEMA {database:i}.{schema:i}",
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
@@ -26,19 +33,22 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
+            r = json_loads(r["As Resource"])
+
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
                 "database": r["database_name"],
                 "schema": r["schema_name"],
                 "name": r["name"],
                 "owner": r["owner"],
-                # Extract SQL query text only, skip the initial "CREATE DYNAMIC TABLE ..." part
-                # Snowflake modifies original SQL text in this column, it cannot be compared directly
-                "text": r["text"].partition("\nAS\n")[2].rstrip(";"),
-                "cluster_by": r["cluster_by"] if r["cluster_by"] else None,
+                "is_transient": r["kind"] == "TRANSIENT",
+                "retention_time": r["data_retention_time_in_days"],
+                "columns": r["columns"],
+                "text": r["query"].rstrip(";"),
+                "cluster_by": r["cluster_by"],
                 "target_lag": r["target_lag"],
                 "refresh_mode": r["refresh_mode"],
                 "warehouse": r["warehouse"],
-                "comment": r["comment"] if r["comment"] else None,
+                "comment": r["comment"],
             }
 
         return existing_objects
@@ -66,16 +76,25 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.CREATE
 
-    def _compare_cluster_by(self, bp: DynamicTableBlueprint, row: dict):
-        bp_cluster_by = ", ".join(bp.cluster_by) if bp.cluster_by else None
-        snow_cluster_by = cluster_by_syntax_re.sub(r"\2", row["cluster_by"]) if row["cluster_by"] else None
-
-        return bp_cluster_by == snow_cluster_by
-
     def compare_object(self, bp: DynamicTableBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
+        replace_reasons = []
+
+        if bp.columns and [str(c.name) for c in bp.columns] != [str(c["name"]) for c in row["columns"]]:
+            replace_reasons.append("Column definition was changed")
 
         if bp.text != row["text"]:
+            replace_reasons.append("SQL text was changed")
+
+        if bp.is_transient is True and row["is_transient"] is False:
+            replace_reasons.append("Dynamic table type was changed to TRANSIENT")
+        elif bp.is_transient is False and row["is_transient"] is True:
+            replace_reasons.append("Dynamic table type was changed to PERMANENT")
+
+        if bp.refresh_mode and bp.refresh_mode != "AUTO" and bp.refresh_mode != row["refresh_mode"]:
+            replace_reasons.append(f"Refresh mode was changed to {bp.refresh_mode}")
+
+        if replace_reasons:
             query = self.engine.query_builder()
             query.append("CREATE OR REPLACE")
 
@@ -90,11 +109,11 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
             )
 
             query.append(self._build_common_dynamic_table_sql(bp))
-            self.engine.execute_unsafe_ddl(query)
+            self.engine.execute_unsafe_ddl("\n".join(f"-- {r}" for r in replace_reasons) + "\n" + str(query))
 
             return ResolveResult.REPLACE
 
-        if bp.target_lag != row["target_lag"]:
+        if not self._compare_target_lag(bp, row):
             self.engine.execute_safe_ddl(
                 "ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG = {target_lag}",
                 {
@@ -133,6 +152,17 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
             result = ResolveResult.ALTER
 
+        if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
+            self.engine.execute_unsafe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}",
+                {
+                    "full_name": bp.full_name,
+                    "retention_time": bp.retention_time,
+                },
+            )
+
+            result = ResolveResult.ALTER
+
         if bp.comment != row["comment"]:
             self.engine.execute_safe_ddl(
                 "ALTER DYNAMIC TABLE {full_name:i} SET COMMENT = {comment}",
@@ -143,6 +173,30 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
             )
 
             result = ResolveResult.ALTER
+
+        for idx, c in enumerate(row["columns"]):
+            bp_col_comment = bp.columns[idx].comment if bp.columns else None
+
+            if bp_col_comment != c["comment"]:
+                if bp_col_comment:
+                    self.engine.execute_safe_ddl(
+                        "ALTER DYNAMIC TABLE {full_name:i} MODIFY COLUMN {column_name:i} COMMENT {comment}",
+                        {
+                            "full_name": bp.full_name,
+                            "column_name": c["name"],
+                            "comment": bp_col_comment,
+                        },
+                    )
+                else:
+                    self.engine.execute_safe_ddl(
+                        "ALTER DYNAMIC TABLE {full_name:i} MODIFY COLUMN {column_name:i} UNSET COMMENT",
+                        {
+                            "full_name": bp.full_name,
+                            "column_name": c["name"],
+                        },
+                    )
+
+                result = ResolveResult.ALTER
 
         return result
 
@@ -241,3 +295,25 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
         query.append_nl(bp.text)
 
         return query
+
+    def _compare_cluster_by(self, bp: DynamicTableBlueprint, row: dict):
+        bp_cluster_by = ", ".join(bp.cluster_by).upper() if bp.cluster_by else None
+        snow_cluster_by = ", ".join(row["cluster_by"]).upper() if row["cluster_by"] else None
+
+        return bp_cluster_by == snow_cluster_by
+
+    def _compare_target_lag(self, bp: DynamicTableBlueprint, row: dict):
+        if bp.target_lag == "DOWNSTREAM":
+            return row["target_lag"]["type"] == "DOWNSTREAM"
+
+        num, _, unit = bp.target_lag.partition(" ")
+
+        num = int(num)
+        unit = unit.lower()
+
+        num_in_seconds = num * self.unit_to_seconds_multiplier[unit]
+
+        if row["target_lag"]["type"] == "USER_DEFINED" and row["target_lag"]["seconds"] == num_in_seconds:
+            return True
+
+        return False

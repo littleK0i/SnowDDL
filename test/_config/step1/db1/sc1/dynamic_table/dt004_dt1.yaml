@@ -1,3 +1,7 @@
+columns:
+  id: aaa
+  name: ~
+
 text: |-
   SELECT id, name
   FROM dt004_tb1

@@ -1,3 +1,5 @@
+from functools import partial
+
 from snowddl.blueprint import (
     AccountObjectIdent,
     DynamicTableBlueprint,
@@ -16,6 +18,7 @@ from snowddl.blueprint import (
     RowAccessPolicyReference,
 )
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.parser.schema import database_json_schema, schema_json_schema
 
 
 # fmt: off
@@ -155,9 +158,25 @@ class DynamicTableParser(AbstractParser):
     unit_plural_to_singular = {v: k for k, v in unit_singular_to_plural.items()}
 
     def load_blueprints(self):
-        self.parse_schema_object_files("dynamic_table", dynamic_table_json_schema, self.process_dynamic_table)
+        combined_params = {}
 
-    def process_dynamic_table(self, f: ParsedFile):
+        for database_name in self.get_database_names():
+            database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
+            combined_params[database_name] = {}
+
+            for schema_name in self.get_schema_names_in_database(database_name):
+                schema_params = self.parse_single_entity_file(f"{database_name}/{schema_name}/params", schema_json_schema)
+
+                combined_params[database_name][schema_name] = {
+                    "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
+                    "retention_time": schema_params.get("retention_time"),
+                }
+
+        self.parse_schema_object_files(
+            "dynamic_table", dynamic_table_json_schema, partial(self.process_dynamic_table, combined_params=combined_params)
+        )
+
+    def process_dynamic_table(self, f: ParsedFile, combined_params: dict):
         column_blueprints = []
 
         for col_name, col_comment in f.params.get("columns", {}).items():
@@ -177,8 +196,8 @@ class DynamicTableParser(AbstractParser):
             refresh_mode=f.params.get("refresh_mode").upper() if f.params.get("refresh_mode") else None,
             initialize=f.params.get("initialize").upper() if f.params.get("initialize") else None,
             cluster_by=f.params.get("cluster_by"),
-            is_transient=f.params.get("is_transient", False),
-            retention_time=f.params.get("retention_time"),
+            is_transient=f.params.get("is_transient", combined_params[f.database][f.schema].get("is_transient", False)),
+            retention_time=f.params.get("retention_time", combined_params[f.database][f.schema].get("retention_time", None)),
             depends_on=set(
                 build_schema_object_ident(self.env_prefix, d, f.database, f.schema) for d in f.params.get("depends_on", [])
             ),

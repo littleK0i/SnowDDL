@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.55.0] - 2025-06-26
+
+- Reworked `DYNAMIC_TABLE` to use `SHOW AS RESOURCE DYNAMIC TABLES` command.
+- Implemented additional dynamic table checks for column comments, transient, retention_time, refresh_mode.
+- Added explicit "replace reasons" comments for `DYNAMIC_TABLE`, similar to `TABLE`.
+- `TABLE` comments can now be fully "unset" to NULL instead of empty string.
+
 ## [0.54.2] - 2025-06-25
 
 - Added check for `cluster_by` parameter for existing dynamic tables (thanks to gcv-epalmer).

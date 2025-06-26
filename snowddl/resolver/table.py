@@ -165,16 +165,25 @@ class TableResolver(AbstractSchemaObjectResolver):
 
             # Comments
             if snow_c.comment != bp_c.comment:
-                # UNSET COMMENT is currently not supported for columns, we can only set it to empty string
-                safe_alters.append(
-                    self.engine.format(
-                        "MODIFY COLUMN {col_name:i} COMMENT {comment}",
-                        {
-                            "col_name": col_name,
-                            "comment": bp_c.comment if bp_c.comment else "",
-                        },
+                if bp_c.comment:
+                    safe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} COMMENT {comment}",
+                            {
+                                "col_name": col_name,
+                                "comment": bp_c.comment,
+                            },
+                        )
                     )
-                )
+                else:
+                    safe_alters.append(
+                        self.engine.format(
+                            "MODIFY COLUMN {col_name:i} UNSET COMMENT",
+                            {
+                                "col_name": col_name,
+                            },
+                        )
+                    )
 
             # If type matches exactly, skip all other checks
             if snow_c.type == bp_c.type:
@@ -266,7 +275,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         if bp.is_transient is True and row["is_transient"] is False:
             replace_reasons.append("Table type was changed to TRANSIENT")
         elif bp.is_transient is False and row["is_transient"] is True:
-            replace_reasons.append("Table type was changed to no longer being TRANSIENT")
+            replace_reasons.append("Table type was changed to PERMANENT")
 
         # Retention time
         if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
