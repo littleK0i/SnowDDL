@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.55.1] - 2025-07-23
+
+- Prevented errors for outbound shares with organization listings.
+
 ## [0.55.0] - 2025-06-26
 
 - Reworked `DYNAMIC_TABLE` to use `SHOW AS RESOURCE DYNAMIC TABLES` command.

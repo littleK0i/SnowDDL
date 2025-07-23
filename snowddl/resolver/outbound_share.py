@@ -126,6 +126,9 @@ class OutboundShareResolver(AbstractResolver):
 
             if row:
                 for r in json_loads(row["DETAILS"]):
+                    if "TARGETED WITHIN ORGANIZATION" in r["account_name"]:
+                        continue
+
                     existing_accounts.append(AccountIdent(*r["account_name"].split(".", 2)))
 
         for account in bp.accounts:
