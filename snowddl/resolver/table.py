@@ -79,6 +79,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         bp_cols = {str(c.name): c for c in bp.columns}
         snow_cols = self._get_existing_columns(bp)
 
+        dropping_col_names = []
         remaining_col_names = list(snow_cols.keys())
 
         for col_name, snow_c in snow_cols.items():
@@ -93,7 +94,9 @@ class TableResolver(AbstractSchemaObjectResolver):
                     )
                 )
 
+                dropping_col_names.append(col_name)
                 remaining_col_names.remove(col_name)
+
                 replace_notices.append(f"Column {col_name} is about to be dropped")
                 continue
 
@@ -353,6 +356,9 @@ class TableResolver(AbstractSchemaObjectResolver):
                 )
 
             result = ResolveResult.ALTER
+
+            for col_name in dropping_col_names:
+                self.engine.intention_cache.add_column_drop_intention(str(bp.full_name), col_name)
 
         # If table was re-created, apply or suggest search optimization using exactly the same condition value
         if result == ResolveResult.REPLACE:

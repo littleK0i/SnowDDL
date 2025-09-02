@@ -99,7 +99,7 @@ class AbstractRoleResolver(AbstractResolver):
                 try:
                     grant_name = build_grant_name_ident(self.config.env_prefix, r["name"], object_type)
                 except (KeyError, ValueError):
-                    self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
+                    self.engine.intention_cache.add_object_name_warning(object_type, r["name"])
                     continue
 
                 grants.append(
@@ -128,7 +128,7 @@ class AbstractRoleResolver(AbstractResolver):
             try:
                 grant_name = build_future_grant_name_ident(object_type, r["name"])
             except ValueError:
-                self.engine.intention_cache.add_invalid_name_warning(object_type, r["name"])
+                self.engine.intention_cache.add_object_name_warning(object_type, r["name"])
                 continue
 
             future_grants.append(

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.56.0] - 2025-09-02
+
+- Reworked and extended drop intention cache logic to table columns.
+- Prevented generation of `DROP PRIMARY KEY`, `DROP UNIQUE KEY` and `DROP FOREIGN KEY` commands if relevant tables or columns are about to be dropped.
+- Removed unused resolver for `TAG` object type.
+
 ## [0.55.1] - 2025-07-23
 
 - Prevented errors for outbound shares with organization listings.

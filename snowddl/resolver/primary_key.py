@@ -92,3 +92,15 @@ class PrimaryKeyResolver(AbstractSchemaObjectResolver):
         )
 
         return ResolveResult.DROP
+
+    def _check_implicit_drop_intention(self, object_full_name: str) -> bool:
+        # Dropping any of parent objects implicitly drops the entire key
+        if self.engine.intention_cache.check_parent_object_drop_intention(self.object_type, object_full_name):
+            return True
+
+        # Dropping one of primary key columns implicitly drops the entire key
+        for col_name in self.existing_objects[object_full_name]["columns"]:
+            if self.engine.intention_cache.check_column_drop_intention(object_full_name, col_name):
+                return True
+
+        return False

@@ -107,3 +107,33 @@ class ForeignKeyResolver(AbstractSchemaObjectResolver):
         )
 
         return ResolveResult.DROP
+
+    def _check_implicit_drop_intention(self, object_full_name: str) -> bool:
+        # Dropping any of parent objects implicitly drops this object
+        if self.engine.intention_cache.check_parent_object_drop_intention(self.object_type, object_full_name):
+            return True
+
+        fk = self.existing_objects[object_full_name]
+
+        for ref_table_object_type in [ObjectType.TABLE, ObjectType.EXTERNAL_TABLE]:
+            # Dropping ref_table implicitly drops all foreign keys pointing to it
+            if self.engine.intention_cache.check_object_drop_intention(ref_table_object_type, fk["ref_table_name"]):
+                return True
+
+            # Dropping any of parent objects of ref_table implicitly drops this object
+            if self.engine.intention_cache.check_parent_object_drop_intention(ref_table_object_type, fk["ref_table_name"]):
+                return True
+
+        table_full_name = f"{fk['database']}.{fk['schema']}.{fk['table']}"
+
+        # Dropping one of foreign key columns implicitly drops the entire key
+        for col_name in fk["columns"]:
+            if self.engine.intention_cache.check_column_drop_intention(table_full_name, col_name):
+                return True
+
+        # Dropping one of foreign key columns in ref_table implicitly drops the entire key
+        for col_name in fk["ref_columns"]:
+            if self.engine.intention_cache.check_column_drop_intention(fk["ref_table_name"], col_name):
+                return True
+
+        return False

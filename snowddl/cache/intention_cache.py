@@ -20,24 +20,24 @@ class IntentionCache:
     def __init__(self, engine: "SnowDDLEngine"):
         self.engine = engine
 
-        self.drop_intention: Dict[ObjectType, Set[str]] = defaultdict(set)
-        self.replace_intention: Dict[ObjectType, Set[str]] = defaultdict(set)
+        self.object_drop_intention: Dict[ObjectType, Set[str]] = defaultdict(set)
+        self.object_name_warning: Dict[ObjectType, Set[str]] = defaultdict(set)
 
-        self.invalid_name_warning: Dict[ObjectType, Set[str]] = defaultdict(set)
+        self.column_drop_intention: Dict[str, Set[str]] = defaultdict(set)
 
-    def add_drop_intention(self, object_type: ObjectType, object_full_name: str):
-        self.drop_intention[object_type].add(object_full_name)
+    def add_object_drop_intention(self, object_type: ObjectType, object_full_name: str):
+        self.object_drop_intention[object_type].add(object_full_name)
 
-    def add_replace_intention(self, object_type: ObjectType, object_full_name: str):
-        self.replace_intention[object_type].add(object_full_name)
+    def add_object_name_warning(self, object_type: ObjectType, object_full_name: str):
+        self.object_name_warning[object_type].add(object_full_name)
 
-    def add_invalid_name_warning(self, object_type: ObjectType, object_full_name: str):
-        self.invalid_name_warning[object_type].add(object_full_name)
+    def add_column_drop_intention(self, object_full_name: str, column_name: str):
+        self.column_drop_intention[object_full_name].add(column_name)
 
-    def check_drop_intention(self, object_type: ObjectType, object_full_name: str):
-        return object_full_name in self.drop_intention[object_type]
+    def check_object_drop_intention(self, object_type: ObjectType, object_full_name: str):
+        return object_full_name in self.object_drop_intention[object_type]
 
-    def check_parent_drop_intention(self, object_type: ObjectType, object_full_name: str):
+    def check_parent_object_drop_intention(self, object_type: ObjectType, object_full_name: str):
         blueprint_cls = object_type.blueprint_cls
         object_full_name_parts = object_full_name.partition("(")[0].split(".")
 
@@ -47,24 +47,27 @@ class IntentionCache:
 
         # All schemas and schema objects are implicitly dropped by DATABASE
         if issubclass(blueprint_cls, (SchemaBlueprint, SchemaObjectBlueprint, DatabaseRoleBlueprint)) and (
-            database_name in self.drop_intention[ObjectType.DATABASE]
+            database_name in self.object_drop_intention[ObjectType.DATABASE]
         ):
             return True
 
         # All schema objects are implicitly dropped by SCHEMA
-        if issubclass(blueprint_cls, SchemaObjectBlueprint) and (schema_name in self.drop_intention[ObjectType.SCHEMA]):
+        if issubclass(blueprint_cls, SchemaObjectBlueprint) and (schema_name in self.object_drop_intention[ObjectType.SCHEMA]):
             return True
 
         # All stage files are implicitly dropped by STAGE
-        if issubclass(blueprint_cls, StageFileBlueprint) and (schema_object_name in self.drop_intention[ObjectType.STAGE]):
+        if issubclass(blueprint_cls, StageFileBlueprint) and (schema_object_name in self.object_drop_intention[ObjectType.STAGE]):
             return True
 
         # All table constraints are implicitly dropped by various TABLE types which support constraints
         if issubclass(blueprint_cls, (ForeignKeyBlueprint, PrimaryKeyBlueprint, UniqueKeyBlueprint)) and (
-            schema_object_name in self.drop_intention[ObjectType.TABLE]
-            or schema_object_name in self.drop_intention[ObjectType.EXTERNAL_TABLE]
-            or schema_object_name in self.drop_intention[ObjectType.HYBRID_TABLE]
+            schema_object_name in self.object_drop_intention[ObjectType.TABLE]
+            or schema_object_name in self.object_drop_intention[ObjectType.EXTERNAL_TABLE]
+            or schema_object_name in self.object_drop_intention[ObjectType.HYBRID_TABLE]
         ):
             return True
 
         return False
+
+    def check_column_drop_intention(self, object_full_name: str, column_name: str):
+        return column_name in self.column_drop_intention[object_full_name]
