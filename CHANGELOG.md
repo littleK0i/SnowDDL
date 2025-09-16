@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.57.0] - 2025-09-16
+
+- Introduced workaround for user type `NULL` being replaced with `PERSON` in bundle `2025_05`.
+- Implemented initial logic for `SNAPSHOT POLICY` and `SNAPSHOT SET` object types.
+
 ## [0.56.0] - 2025-09-02
 
 - Reworked and extended drop intention cache logic to table columns.

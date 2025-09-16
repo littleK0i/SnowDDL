@@ -35,6 +35,8 @@ from .blueprint import (
     SecretBlueprint,
     SemanticViewBlueprint,
     SequenceBlueprint,
+    SnapshotPolicyBlueprint,
+    SnapshotSetBlueprint,
     StageBlueprint,
     StageFileBlueprint,
     StreamBlueprint,

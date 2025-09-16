@@ -277,6 +277,10 @@ class UserResolver(AbstractResolver):
         return True
 
     def _compare_type(self, bp: UserBlueprint, row: dict):
+        # Workaround for: https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_05/bcr-2067
+        if bp.type is None and row["type"] == "PERSON":
+            return False
+
         if bp.type != row["type"]:
             # Type is processed separately, since changing TYPE property impacts visibility of other properties
             self.engine.execute_safe_ddl(

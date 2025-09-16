@@ -374,6 +374,17 @@ class SequenceBlueprint(SchemaObjectBlueprint):
     is_ordered: Optional[bool] = None
 
 
+class SnapshotPolicyBlueprint(SchemaObjectBlueprint):
+    schedule: Optional[str] = None
+    expire_after_days: Optional[int] = None
+
+
+class SnapshotSetBlueprint(SchemaObjectBlueprint):
+    object_type: ObjectType
+    object_name: Union[DatabaseIdent, SchemaIdent, SchemaObjectIdent]
+    snapshot_policy: Optional[SchemaObjectIdent] = None
+
+
 class StageBlueprint(SchemaObjectBlueprint):
     url: Optional[str] = None
     storage_integration: Optional[Ident] = None

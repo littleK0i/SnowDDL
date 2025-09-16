@@ -247,6 +247,18 @@ class ObjectType(Enum):
         "blueprint_cls": "OutboundShareBlueprint",
     }
 
+    SNAPSHOT_POLICY = {
+        "singular": "SNAPSHOT POLICY",
+        "plural": "SNAPSHOT POLICIES",
+        "blueprint_cls": "SnapshotPolicyBlueprint",
+    }
+
+    SNAPSHOT_SET = {
+        "singular": "SNAPSHOT SET",
+        "plural": "SNAPSHOT SETS",
+        "blueprint_cls": "SnapshotSetBlueprint",
+    }
+
     STAGE = {
         "singular": "STAGE",
         "plural": "STAGES",

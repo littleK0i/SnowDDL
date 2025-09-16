@@ -34,6 +34,8 @@ from .schema import SchemaParser
 from .secret import SecretParser
 from .semantic_view import SemanticViewParser
 from .sequence import SequenceParser
+from .snapshot_policy import SnapshotPolicyParser
+from .snapshot_set import SnapshotSetParser
 from .stage import StageParser
 from .stream import StreamParser
 from .table import TableParser
@@ -55,6 +57,8 @@ default_parse_sequence = [
     RowAccessPolicyParser,
     ResourceMonitorParser,
     AccountPolicyParser,
+    SnapshotPolicyParser,
+    SnapshotSetParser,
     # --
     WarehouseParser,
     DatabaseParser,
@@ -95,6 +99,8 @@ singledb_parse_sequence = [
     MaskingPolicyParser,
     ProjectionPolicyParser,
     RowAccessPolicyParser,
+    SnapshotPolicyParser,
+    SnapshotSetParser,
     # --
     DatabaseParser,
     SchemaParser,

@@ -41,6 +41,8 @@ from .schema_read_role import SchemaReadRoleResolver
 from .schema_write_role import SchemaWriteRoleResolver
 from .secret import SecretResolver
 from .semantic_view import SemanticViewResolver
+from .snapshot_policy import SnapshotPolicyResolver
+from .snapshot_set import SnapshotSetResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
 from .stream import StreamResolver
@@ -112,6 +114,8 @@ default_resolve_sequence = [
     NetworkPolicyResolver,
     ProjectionPolicyResolver,
     RowAccessPolicyResolver,
+    SnapshotPolicyResolver,
+    SnapshotSetResolver,
 ]
 
 
@@ -179,6 +183,8 @@ singledb_resolve_sequence = [
     MaskingPolicyResolver,
     ProjectionPolicyResolver,
     RowAccessPolicyResolver,
+    SnapshotPolicyResolver,
+    SnapshotSetResolver,
 ]
 
 
