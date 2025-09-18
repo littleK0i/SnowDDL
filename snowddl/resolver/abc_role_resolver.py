@@ -280,9 +280,10 @@ class AbstractRoleResolver(AbstractResolver):
         # OWNERSHIP can only be transferred, not revoked
         # We transfer ownership back to default "SnowDDL admin" role instead of REVOKE
         if grant.privilege == "OWNERSHIP":
-            # Changing ownership of notebooks is not supported by Snowflake
+            # Changing ownership of notebooks and shares is not supported by Snowflake
             # https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-limitations
-            if grant.on == ObjectType.NOTEBOOK:
+            # https://docs.snowflake.com/en/sql-reference/sql/grant-ownership#usage-notes
+            if grant.on in (ObjectType.NOTEBOOK, ObjectType.SHARE):
                 return
 
             self.engine.execute_safe_ddl(
