@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.57.1] - 2025-09-19
+
+- Fix typo in `SHARE` object type definition (thanks to @rex911).
+- Update AbstractRoleResolver to not transfer ownership of notebooks and shares (thanks to @rex911).
+
 ## [0.57.0] - 2025-09-16
 
 - Introduced workaround for user type `NULL` being replaced with `PERSON` in bundle `2025_05`.
