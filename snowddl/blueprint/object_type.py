@@ -242,7 +242,7 @@ class ObjectType(Enum):
     }
 
     SHARE = {
-        "singluar": "SHARE",
+        "singular": "SHARE",
         "plural": "SHARES",
         "blueprint_cls": "OutboundShareBlueprint",
     }
