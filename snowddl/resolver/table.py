@@ -1,5 +1,5 @@
 from itertools import islice
-from re import compile
+from json import loads as json_loads
 
 from snowddl.blueprint import (
     Ident,
@@ -12,9 +12,6 @@ from snowddl.blueprint import (
 )
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
-cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
-collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
-
 
 class TableResolver(AbstractSchemaObjectResolver):
     def get_object_type(self) -> ObjectType:
@@ -24,7 +21,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         existing_objects = {}
 
         cur = self.engine.execute_meta(
-            "SHOW TABLES IN SCHEMA {database:i}.{schema:i}",
+            "SHOW AS RESOURCE TABLES IN SCHEMA {database:i}.{schema:i}",
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
@@ -32,14 +29,10 @@ class TableResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
+            r = json_loads(r["As Resource"])
+
             # Skip other table types
-            if (
-                r.get("is_external") == "Y"
-                or r.get("is_event") == "Y"
-                or r.get("is_hybrid") == "Y"
-                or r.get("is_iceberg") == "Y"
-                or r.get("is_dynamic") == "Y"
-            ):
+            if r["table_type"] != "NORMAL":
                 continue
 
             full_name = f"{r['database_name']}.{r['schema_name']}.{r['name']}"
@@ -49,11 +42,13 @@ class TableResolver(AbstractSchemaObjectResolver):
                 "name": r["name"],
                 "owner": r["owner"],
                 "is_transient": r["kind"] == "TRANSIENT",
-                "retention_time": int(r["retention_time"]),
-                "cluster_by": r["cluster_by"] if r["cluster_by"] else None,
-                "change_tracking": bool(r["change_tracking"] == "ON"),
-                "search_optimization": bool(r.get("search_optimization") == "ON"),
-                "comment": r["comment"] if r["comment"] else None,
+                "retention_time": r["data_retention_time_in_days"],
+                "cluster_by": r["cluster_by"],
+                "change_tracking": r["change_tracking"],
+                "search_optimization": r["search_optimization"],
+                "comment": r["comment"],
+                "columns": r["columns"],
+                "constraints": r["constraints"],
             }
 
         return existing_objects
@@ -77,7 +72,7 @@ class TableResolver(AbstractSchemaObjectResolver):
         replace_notices = []
 
         bp_cols = {str(c.name): c for c in bp.columns}
-        snow_cols = self._get_existing_columns(bp)
+        snow_cols = self._get_existing_columns(bp, row)
 
         dropping_col_names = []
         remaining_col_names = list(snow_cols.keys())
@@ -381,35 +376,34 @@ class TableResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.DROP
 
-    def _get_existing_columns(self, bp: TableBlueprint):
+    def _get_existing_columns(self, bp: TableBlueprint, row: dict):
         existing_columns = {}
 
-        cur = self.engine.execute_meta(
-            "DESC TABLE {full_name:i}",
-            {
-                "full_name": bp.full_name,
-            },
-        )
-
-        for r in cur:
-            m = collate_type_syntax_re.match(r["type"])
-
-            if m:
-                dtype = m.group(1)
-                collate = m.group(2)
-            else:
-                dtype = r["type"]
-                collate = None
-
-            existing_columns[r["name"]] = TableColumn(
-                name=Ident(r["name"]),
-                type=DataType(dtype),
-                not_null=bool(r["null?"] == "N"),
-                default=r["default"] if r["default"] else None,
-                expression=r["expression"] if r["expression"] else None,
-                collate=collate,
-                comment=r["comment"] if r["comment"] else None,
+        for c in row["columns"]:
+            existing_columns[c["name"]] = TableColumn(
+                name=Ident(c["name"]),
+                type=DataType(c["datatype"]),
+                not_null=c["nullable"] is False,
+                default=c["default"],
+                collate=c["collate"],
+                comment=c["comment"],
             )
+
+        # Expression is not available in SHOW AS RESOURCE TABLES output
+        # DESC TABLE must be used explicitly in order to read expression value
+        if self.engine.settings.legacy_column_expression:
+            cur = self.engine.execute_meta(
+                "DESC TABLE {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
+
+            for r in cur:
+                if r["expression"] is None:
+                    continue
+
+                existing_columns[r["name"]].expression = r["expression"]
 
         return existing_columns
 
@@ -574,10 +568,10 @@ class TableResolver(AbstractSchemaObjectResolver):
         return query
 
     def _compare_cluster_by(self, bp: TableBlueprint, row: dict):
-        bp_cluster_by = ", ".join(bp.cluster_by) if bp.cluster_by else None
-        snow_cluster_by = cluster_by_syntax_re.sub(r"\2", row["cluster_by"]) if row["cluster_by"] else None
+        bp_normalized_cluster_by = [c.upper() for c in bp.cluster_by] if bp.cluster_by else None
+        snow_normalized_cluster_by = [c.upper() for c in row["cluster_by"]] if row["cluster_by"] else None
 
-        return bp_cluster_by == snow_cluster_by
+        return bp_normalized_cluster_by == snow_normalized_cluster_by
 
     def _create_search_optimization(self, bp: TableBlueprint, condition=True):
         # Legacy search optimization on an entire table

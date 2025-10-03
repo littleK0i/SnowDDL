@@ -31,6 +31,9 @@ class SnowDDLSettings(BaseModelWithConfig):
     ignore_ownership: bool = False
     max_workers: int = 32
 
+    # Legacy compatibility flags
+    legacy_column_expression: bool = False
+
     # Options specific for snowddl-convert
     convert_function_body_to_file: bool = False
     convert_view_text_to_file: bool = False

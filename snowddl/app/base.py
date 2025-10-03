@@ -277,6 +277,12 @@ class BaseApp:
             "--destroy-without-prefix", help="Allow {destroy} action without --env-prefix", default=False, action="store_true"
         )
 
+        # Legacy compatibility flags
+        parser.add_argument(
+            "--legacy-column-expression",
+            help="Enable handling for undocumented table column expression parameter",
+        )
+
         # Subparsers
         subparsers = parser.add_subparsers(dest="action")
         subparsers.required = True
@@ -536,6 +542,9 @@ class BaseApp:
 
         if self.args.get("max_workers"):
             settings.max_workers = int(self.args.get("max_workers"))
+
+        if self.args.get("legacy_column_expression"):
+            settings.legacy_column_expression = True
 
         return settings
 
