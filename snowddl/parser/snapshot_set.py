@@ -26,6 +26,7 @@ snapshot_set_json_schema = {
             "type": "string"
         }
     },
+    "required": ["object_type", "object_name"],
     "additionalProperties": False
 }
 # fmt: on
