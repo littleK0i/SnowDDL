@@ -117,7 +117,7 @@ class BaseApp:
         )
         parser.add_argument(
             "--workload-identity-provider",
-            help="Workload identity provider (default: WORKLOAD_IDENTITY_PROVIDER env variable)",
+            help="Workload identity provider (default: SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER env variable)",
             default=environ.get("SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER"),
         )
         parser.add_argument(
