@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - env-prefix: PY39_LINUX
+          - env-prefix: PY310_LINUX
             os: ubuntu-latest
-            python-version: 3.9
+            python-version: 3.10
 
           - env-prefix: PY313_LINUX
             os: ubuntu-latest
@@ -56,12 +56,11 @@ jobs:
       - name: Install SnowDDL
         run: pip install -e .
 
-      - name: Get Workload Identity Token
-        run: |-
-          echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(curl -sSL -X GET \"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SNOWFLAKE_AUDIENCE\" -H \"Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN\" | jq -r '.value')" >> "$GITHUB_ENV"
+      - name: Install Snowflake CLI
+        run: pip install snowflake-cli
 
-      - name: Show Workload Identity Token
-        run: echo "$SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN"
+      - name: Get Workload Identity Token
+        run: echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(snow auth oidc read-token --type=github)" >> "$GITHUB_ENV"
 
       - name: "Cleanup"
         run: snowddl -c sample01_01 --apply-unsafe destroy
