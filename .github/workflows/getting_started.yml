@@ -16,29 +16,23 @@ jobs:
         include:
           - env-prefix: PY310_LINUX
             os: ubuntu-latest
-            python-version: "3.10"
+            python-version: 3.10
 
           - env-prefix: PY313_LINUX
             os: ubuntu-latest
-            python-version: "3.13"
+            python-version: 3.13
 
           - env-prefix: PY313_WINDOWS
             os: windows-latest
-            python-version: "3.13"
+            python-version: 3.13
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
 
-    permissions:
-      id-token: write
-      contents: read
-
     env:
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_USER: snowddl
-      SNOWFLAKE_AUTHENTICATOR: workload_identity
-      SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER: OIDC
-      SNOWFLAKE_AUDIENCE: snowflakecomputing.com
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
       SNOWFLAKE_ENV_PREFIX: ${{ matrix.env-prefix }}
 
     steps:
@@ -53,14 +47,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install SnowDDL
+      - name: Install
         run: pip install -e .
-
-      - name: Install Snowflake CLI
-        run: pip install snowflake-cli
-
-      - name: Get Workload Identity Token
-        run: echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(snow auth oidc read-token --type=github)" >> "$GITHUB_ENV"
 
       - name: "Cleanup"
         run: snowddl -c sample01_01 --apply-unsafe destroy
