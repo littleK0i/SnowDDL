@@ -102,13 +102,23 @@ class BaseApp:
         # Options
         parser.add_argument(
             "--authenticator",
-            help="Authenticator: snowflake, externalbrowser, oauth, oauth_snowpark (default: SNOWFLAKE_AUTHENTICATOR env variable)",
+            help="Authenticator: snowflake, externalbrowser, oauth, oauth_snowpark, workload_identity (default: SNOWFLAKE_AUTHENTICATOR env variable)",
             default=environ.get("SNOWFLAKE_AUTHENTICATOR", "snowflake"),
         )
         parser.add_argument(
             "--oauth-token",
             help="Oauth access token (default: SNOWFLAKE_OAUTH_TOKEN env variable)",
             default=environ.get("SNOWFLAKE_OAUTH_TOKEN"),
+        )
+        parser.add_argument(
+            "--workload-identity-token",
+            help="Workload identity token (default: SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN env variable)",
+            default=environ.get("SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN"),
+        )
+        parser.add_argument(
+            "--workload-identity-provider",
+            help="Workload identity provider (default: SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER env variable)",
+            default=environ.get("SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER"),
         )
         parser.add_argument(
             "--passphrase",
@@ -311,6 +321,9 @@ class BaseApp:
                 return False
         elif args["authenticator"] == "oauth_snowpark":
             if not args["a"]:
+                return False
+        elif args["authenticator"] == "workload_identity":
+            if not args["a"] or not args["workload_identity_token"] or not args["workload_identity_provider"]:
                 return False
         elif args["authenticator"] is not None:
             return False
@@ -603,8 +616,13 @@ class BaseApp:
             else:
                 raise ValueError("Failed to obtain host for 'oauth_snowpark' authenticator")
 
+        elif self.args.get("authenticator") == "workload_identity":
+            options["authenticator"] = "workload_identity"
+            options["workload_identity_provider"] = self.args["workload_identity_provider"]
+            options["token"] = self.args["workload_identity_token"]
+
         else:
-            raise ValueError("Only 'snowflake', 'externalbrowser', 'oauth' and 'oauth_snowpark' authenticators are supported")
+            raise ValueError("Only 'snowflake', 'externalbrowser', 'oauth', 'oauth_snowpark' and 'workload_identity' authenticators are supported")
 
         if self.args.get("query_tag"):
             options["session_parameters"] = {
