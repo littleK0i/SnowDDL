@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  getting_started:
+  pytest:
 
     runs-on: ubuntu-latest
     timeout-minutes: 20
