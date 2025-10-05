@@ -108,6 +108,16 @@ class SingleDbApp(BaseApp):
             default=environ.get("SNOWFLAKE_OAUTH_TOKEN"),
         )
         parser.add_argument(
+            "--workload-identity-token",
+            help="Workload identity token (default: SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN env variable)",
+            default=environ.get("SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN"),
+        )
+        parser.add_argument(
+            "--workload-identity-provider",
+            help="Workload identity provider (default: SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER env variable)",
+            default=environ.get("SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER"),
+        )
+        parser.add_argument(
             "--passphrase",
             help="Passphrase for private key file (default: SNOWFLAKE_PRIVATE_KEY_PASSPHRASE env variable)",
             default=environ.get("SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"),
