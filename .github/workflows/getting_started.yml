@@ -56,11 +56,9 @@ jobs:
       - name: Install SnowDDL
         run: pip install -e .
 
-      - name: Install Snowflake CLI
-        run: pip install snowflake-cli
-
       - name: Get Workload Identity Token
-        run: echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(snow auth oidc read-token --type=github)" >> "$GITHUB_ENV"
+        run: |-
+          echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(curl -sSL -X GET \"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SNOWFLAKE_AUDIENCE\" -H \"Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN\" | jq -r '.value')" >> "$GITHUB_ENV"
 
       - name: Show Workload Identity Token
         run: echo "$SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN"
