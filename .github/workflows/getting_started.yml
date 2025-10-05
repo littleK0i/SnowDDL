@@ -38,6 +38,7 @@ jobs:
       SNOWFLAKE_USER: snowddl
       SNOWFLAKE_AUTHENTICATOR: workload_identity
       SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER: OIDC
+      SNOWFLAKE_AUDIENCE: snowflakecomputing.com
       SNOWFLAKE_ENV_PREFIX: ${{ matrix.env-prefix }}
 
     steps:
@@ -60,6 +61,9 @@ jobs:
 
       - name: Get Workload Identity Token
         run: echo "SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN=$(snow auth oidc read-token --type=github)" >> "$GITHUB_ENV"
+
+      - name: Show Workload Identity Token
+        run: echo "$SNOWFLAKE_WORKLOAD_IDENTITY_TOKEN"
 
       - name: "Cleanup"
         run: snowddl -c sample01_01 --apply-unsafe destroy
