@@ -1,10 +1,11 @@
 -- SQL script to set up a new Snowflake account for tests and GitHub workflows
--- Replace <password> placeholder statement with an actual password of your choice
+-- Replace <public_key> placeholder statement with an actual public key
+-- https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication
 
 -- Replace <aws_role_arn> with ARN of AWS role
 -- https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration
 
-SET PASSWORD = '<password>';
+SET RSA_PUBLIC_KEY = '<public_key>';
 SET STORAGE_AWS_ROLE_ARN = '<storage_aws_role_arn>';
 
 ---
@@ -32,7 +33,8 @@ CREATE ROLE SNOWDDL_ADMIN_TEST;
 GRANT ROLE ACCOUNTADMIN TO ROLE SNOWDDL_ADMIN_TEST;
 
 CREATE USER SNOWDDL_TEST
-PASSWORD = $PASSWORD
+TYPE = SERVICE
+RSA_PUBLIC_KEY = $RSA_PUBLIC_KEY
 DEFAULT_ROLE = SNOWDDL_ADMIN_TEST;
 
 GRANT ROLE SNOWDDL_ADMIN_TEST TO USER SNOWDDL_TEST;

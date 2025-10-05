@@ -1,3 +1,4 @@
+from cryptography.hazmat.primitives import serialization
 from json import loads
 from itertools import groupby
 from os import environ
@@ -538,10 +539,17 @@ class Helper:
         self.connection.close()
 
     def _init_connection(self):
+        key_bytes = str(environ["SNOWFLAKE_PRIVATE_KEY"]).encode("utf-8")
+        pk = serialization.load_pem_private_key(data=key_bytes, password=None)
+
         options = {
             "account": environ.get("SNOWFLAKE_ACCOUNT"),
             "user": environ.get("SNOWFLAKE_USER"),
-            "password": environ.get("SNOWFLAKE_PASSWORD"),
+            "private_key": pk.private_bytes(
+                encoding=serialization.Encoding.DER,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.NoEncryption(),
+            )
         }
 
         return connect(**options)
