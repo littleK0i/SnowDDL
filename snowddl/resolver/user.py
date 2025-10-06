@@ -176,14 +176,17 @@ class UserResolver(AbstractResolver):
         query = self.engine.query_builder()
 
         for param_name, param_value in bp.workload_identity.items():
+            # ISSUER + SUBJECT is the unique key in Snowflake
+            # SnowDDL has to append env_prefix in order to prevent duplicate key error
+            # Feel free to adjust this logic for your own custom test environment
+            if self.config.env_prefix and param_name == "SUBJECT":
+                param_value = f"{param_value}:{self.config.env_prefix.rstrip('_$')}"
+
             query.append_nl(
                 "    {param_name:r} = {param_value:dp}",
                 {
                     "param_name": param_name,
-                    # ISSUER + SUBJECT is the unique key in Snowflake
-                    # SnowDDL has to append env_prefix in order to prevent duplicate key error
-                    # Feel free to adjust this logic for your own custom test environment
-                    "param_value": f"{param_value}:{self.config.env_prefix.rstrip('_$')}" if param_name == "SUBJECT" else param_value,
+                    "param_value": param_value,
                 },
             )
 

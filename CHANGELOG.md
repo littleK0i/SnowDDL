@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.58.1] - 2025-10-06
+
+- Removed `:` from workload identity `SUBJECT` when env prefix is empty.
+
 ## [0.58.0] - 2025-10-06
 
 - Introduced `workload_identity` authenticator and relevant CLI options (thanks to @jbylina).
