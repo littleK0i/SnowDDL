@@ -37,6 +37,8 @@ class UserResolver(AbstractResolver):
                 "has_password": r["has_password"] == "true",
                 "has_rsa_public_key": r["has_rsa_public_key"] == "true",
                 "has_mfa": r["has_mfa"] == "true",
+                "has_pat": r["has_pat"] == "true",
+                "has_workload_identity": r["has_workload_identity"] == "true",
                 "comment": r["comment"] if r["comment"] else None,
             }
 
@@ -96,6 +98,12 @@ class UserResolver(AbstractResolver):
         if bp.type:
             query.append_nl("TYPE = {type}", {"type": bp.type})
 
+        # Workload identity
+        if bp.workload_identity:
+            query.append_nl("WORKLOAD_IDENTITY = (")
+            query.append(self._build_workload_identity_parameters(bp))
+            query.append_nl(")")
+
         # Object and session parameters
         query.append(self._build_common_parameters(bp))
 
@@ -123,7 +131,13 @@ class UserResolver(AbstractResolver):
         if self._compare_public_keys(bp, row):
             result = ResolveResult.ALTER
 
+        if self._compare_workload_identity_pre_type(bp, row):
+            result = ResolveResult.ALTER
+
         if self._compare_type(bp, row):
+            result = ResolveResult.ALTER
+
+        if self._compare_workload_identity_post_type(bp, row):
             result = ResolveResult.ALTER
 
         if self._compare_parameters(bp):
@@ -153,6 +167,23 @@ class UserResolver(AbstractResolver):
                 {
                     "param_name": param_name,
                     "param_value": param_value,
+                },
+            )
+
+        return query
+
+    def _build_workload_identity_parameters(self, bp: UserBlueprint):
+        query = self.engine.query_builder()
+
+        for param_name, param_value in bp.workload_identity.items():
+            query.append_nl(
+                "    {param_name:r} = {param_value:dp}",
+                {
+                    "param_name": param_name,
+                    # ISSUER + SUBJECT is the unique key in Snowflake
+                    # SnowDDL has to append env_prefix in order to prevent duplicate key error
+                    # Feel free to adjust this logic for your own custom test environment
+                    "param_value": f"{param_value}:{self.config.env_prefix.rstrip('_$')}" if param_name == "SUBJECT" else param_value,
                 },
             )
 
@@ -332,6 +363,39 @@ class UserResolver(AbstractResolver):
 
         if query.fragment_count() > 1:
             self.engine.execute_safe_ddl(query)
+            return True
+
+        return False
+
+    def _compare_workload_identity_pre_type(self, bp: UserBlueprint, row: dict):
+        if not bp.workload_identity and row["has_workload_identity"]:
+            self.engine.execute_safe_ddl(
+                "ALTER USER {name:i} UNSET WORKLOAD_IDENTITY",
+                {
+                    "name": bp.full_name,
+                },
+            )
+
+            return True
+
+        return False
+
+    def _compare_workload_identity_post_type(self, bp: UserBlueprint, row: dict):
+        if bp.workload_identity and (not row["has_workload_identity"] or self.engine.settings.refresh_workload_identity):
+            query = self.engine.query_builder()
+
+            query.append(
+                "ALTER USER {name:i} SET WORKLOAD_IDENTITY = (",
+                {
+                    "name": bp.full_name,
+                }
+            )
+
+            query.append(self._build_workload_identity_parameters(bp))
+            query.append_nl(")")
+
+            self.engine.execute_safe_ddl(query)
+
             return True
 
         return False

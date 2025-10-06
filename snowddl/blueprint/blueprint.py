@@ -477,6 +477,7 @@ class UserBlueprint(AbstractBlueprint):
     default_warehouse: Optional[AccountObjectIdent] = None
     default_namespace: Optional[Union[DatabaseIdent, SchemaIdent]] = None
     session_params: Dict[str, Union[bool, float, int, str]] = {}
+    workload_identity: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
 
 
 class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):

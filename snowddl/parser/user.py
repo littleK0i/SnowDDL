@@ -79,6 +79,12 @@ user_json_schema = {
             "network_policy": {
                 "type": "string",
             },
+            "workload_identity": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": ["array", "boolean", "number", "string"]
+                }
+            },
         },
         "additionalProperties": False
     }
@@ -132,6 +138,7 @@ class UserParser(AbstractParser):
             default_warehouse=AccountObjectIdent(self.env_prefix, default_warehouse) if default_warehouse else None,
             default_namespace=build_default_namespace_ident(self.env_prefix, user_params.get("default_namespace")) if user_params.get("default_namespace") else None,
             session_params=self.normalise_params_dict(user_params.get("session_params", {})),
+            workload_identity=self.normalise_params_dict(user_params.get("workload_identity")),
             business_roles=business_roles,
             comment=user_params.get("comment"),
         )

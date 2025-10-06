@@ -18,6 +18,10 @@ us002_us1:
   type: legacy_service
   password: YQYAtgqkbS5h
 
+us003_us1:
+  disabled: true
+  type: person
+
 np001_us1:
   disabled: true
   network_policy: np001_np2

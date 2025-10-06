@@ -1,8 +1,14 @@
 # Changelog
 
+## [0.58.0] - 2025-10-06
+
+- Introduced `workload_identity` authenticator and relevant CLI options (thanks to @jbylina).
+- Introduced `workload_identity` parameter for `USER` object type and `--refresh-workload-identity` CLI option.
+- Made `object_type` and `object_name` mandatory for `SNAPSHOT_SET`.
+
 ## [0.57.1] - 2025-09-19
 
-- Fix typo in `SHARE` object type definition (thanks to @rex911).
+- Fixed typo in `SHARE` object type definition (thanks to @rex911).
 - Update AbstractRoleResolver to not transfer ownership of notebooks and shares (thanks to @rex911).
 
 ## [0.57.0] - 2025-09-16

@@ -20,6 +20,7 @@ class SnowDDLSettings(BaseModelWithConfig):
     execute_resource_monitor: bool = False
     execute_outbound_share: bool = False
     refresh_user_passwords: bool = False
+    refresh_workload_identity: bool = False
     refresh_future_grants: bool = False
     refresh_stage_encryption: bool = False
     refresh_secrets: bool = False

@@ -10,6 +10,14 @@ us002_us1:
     d4A3+Wp/pkTiYUh2GvjHTZrGViZXBPRjciP+6ktLMuXP4bW2DeS1xEYIUeYhxaNI
     IwIDAQAB
 
+us003_us1:
+  disabled: true
+  type: service
+  workload_identity:
+    type: OIDC
+    issuer: https://token.actions.githubusercontent.com
+    subject: repo:littleK0i/SnowDDL:ref:refs/heads/master
+
 np001_us1:
   disabled: true
 

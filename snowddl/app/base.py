@@ -252,6 +252,9 @@ class BaseApp:
             "--refresh-user-passwords", help="Additionally refresh passwords of users", default=False, action="store_true"
         )
         parser.add_argument(
+            "--refresh-workload-identity", help="Additionally refresh workload identites of users", default=False, action="store_true"
+        )
+        parser.add_argument(
             "--refresh-future-grants",
             help="Additionally refresh missing grants for existing objects derived from future grants",
             default=False,
@@ -503,6 +506,9 @@ class BaseApp:
 
         if self.args.get("refresh_user_passwords"):
             settings.refresh_user_passwords = True
+
+        if self.args.get("refresh_workload_identity"):
+            settings.refresh_workload_identity = True
 
         if self.args.get("refresh_future_grants"):
             settings.refresh_future_grants = True
