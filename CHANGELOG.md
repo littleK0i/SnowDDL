@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.58.2] - 2025-10-16
+
+- Excluded all non-standard `DATABASE` objects while processing `SHOW DATABASES` for "schema cache". It includes personal databases, inbound shares and application databases.
+
 ## [0.58.1] - 2025-10-06
 
 - Removed `:` from workload identity `SUBJECT` when env prefix is empty.

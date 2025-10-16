@@ -31,8 +31,8 @@ class SchemaCache:
             if r["owner"] != self.engine.context.current_role and not self.engine.settings.ignore_ownership:
                 continue
 
-            # Skip shares
-            if r["origin"]:
+            # Skip non-standard databases
+            if r["kind"] != "STANDARD":
                 continue
 
             # Skip databases not listed in settings explicitly

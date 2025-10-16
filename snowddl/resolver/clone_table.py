@@ -31,8 +31,8 @@ class CloneTableResolver(AbstractResolver):
         cur = self.engine.execute_meta("SHOW DATABASES")
 
         for r in cur:
-            # Skip shares
-            if r["origin"]:
+            # Skip non-standard databases
+            if r["kind"] != "STANDARD":
                 continue
 
             src_database = str(r["name"])
