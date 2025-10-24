@@ -47,7 +47,7 @@ class StageFileResolver(AbstractResolver):
             for path in all_files:
                 # Snowflake LIST commands adds stage name implicitly, which should be removed
                 stage_path = Path("/") / path.relative_to(path.parts[0])
-                full_name = f"{stage_bp.full_name}({stage_path})"
+                full_name = f"{stage_bp.full_name}({stage_path.as_posix()})"
 
                 # Snowflake LIST commands provides "md5" and "size", but it is not reliable due to encryption
                 existing_objects[full_name] = {

@@ -1,0 +1,26 @@
+authentication_methods: [SAML, KEYPAIR]
+mfa_enrollment: REQUIRED_PASSWORD_ONLY
+
+mfa_policy:
+  allowed_methods: [PASSKEY, DUO]
+
+pat_policy:
+  default_expiry_in_days: 30
+  max_expiry_in_days: 365
+  network_policy_evaluation: ENFORCED_NOT_REQUIRED
+
+workload_identity_policy:
+  allowed_providers:
+    - AWS
+    - AZURE
+    - GCP
+    - OIDC
+  allowed_aws_accounts:
+    - "123456789012"
+    - "210987654321"
+  allowed_azure_issuers:
+    - "https://login.microsoftonline.com/8c7832f5-de56-4d9f-ba94-3b2c361abe6b/v2.0"
+    - "https://login.microsoftonline.com/9ebd1ec9-9a78-4429-8f53-5cf870a812d1/v2.0"
+  allowed_oidc_issuers:
+    - "https://my.custom.oidc.issuer/"
+    - "https://another.custom/oidc/issuer"

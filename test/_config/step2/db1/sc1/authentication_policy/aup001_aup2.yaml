@@ -1,5 +1,4 @@
 authentication_methods: [SAML, PASSWORD]
-mfa_authentication_methods: [SAML, PASSWORD]
 mfa_enrollment: OPTIONAL
 client_types: [SNOWFLAKE_UI, SNOWSQL]
 security_integrations: [ALL]

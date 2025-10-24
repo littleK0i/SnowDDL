@@ -1,0 +1,18 @@
+authentication_methods: [SAML, KEYPAIR]
+mfa_enrollment: REQUIRED_PASSWORD_ONLY
+
+mfa_policy:
+  allowed_methods: [PASSKEY, DUO]
+
+pat_policy:
+  default_expiry_in_days: 10
+  max_expiry_in_days: 180
+
+workload_identity_policy:
+  allowed_providers:
+    - AWS
+  allowed_aws_accounts:
+    - "123456789012"
+  allowed_oidc_issuers:
+    - "https://my.custom.oidc.issuer/"
+    - "https://another.custom/oidc/issuer"

@@ -1,0 +1,2 @@
+authentication_methods: [SAML, KEYPAIR]
+mfa_enrollment: REQUIRED_PASSWORD_ONLY

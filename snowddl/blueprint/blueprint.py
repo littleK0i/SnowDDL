@@ -84,11 +84,14 @@ class AlertBlueprint(SchemaObjectBlueprint):
 
 
 class AuthenticationPolicyBlueprint(SchemaObjectBlueprint):
-    authentication_methods: List[str]
-    mfa_authentication_methods: List[str]
-    mfa_enrollment: str
-    client_types: List[str]
-    security_integrations: List[str]
+    authentication_methods: Optional[List[str]] = None
+    mfa_authentication_methods: Optional[List[str]] = None
+    mfa_enrollment: Optional[str] = None
+    mfa_policy: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
+    client_types: Optional[List[str]] = None
+    security_integrations: Optional[List[str]] = None
+    pat_policy: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
+    workload_identity_policy: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     references: List[AuthenticationPolicyReference] = []
 
 

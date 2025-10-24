@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.59.0] - 2025-10-24
+
+- All `AUTHENTICATION_POLICY` parameters are now optional.
+- Added parameters `mfa_policy`, `pat_policy`, `workload_identity_policy` for `AUTHENTICATION POLICY`.
+- Switched `AUTHENTICATION_POLICY` to short-hash approach instead of comparing each individual parameter.
+- Switched `AUTHENTICATION_POLICY` to `CREATE OR ALTER` approach instead of `ALTER`.
+- Switched `AUTHENTICATION_POLICY` new references to `FORCE` mode instead of explicitly finding and dropping currently existing references.
+- Fixed `STAGE_FILE` path delimiter issue for existing files on Windows.
+
 ## [0.58.2] - 2025-10-16
 
 - Excluded all non-standard `DATABASE` objects while processing `SHOW DATABASES` for "schema cache". It includes personal databases, inbound shares and application databases.

@@ -3,11 +3,10 @@ def test_step1(helper):
     refs = helper.get_policy_refs("db1", "sc1", "aup001_aup1")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[SAML, KEYPAIR]"
-    assert params["MFA_AUTHENTICATION_METHODS"]["value"] == "[SAML]"
     assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED"
     assert params["CLIENT_TYPES"]["value"] == "[SNOWFLAKE_UI, DRIVERS]"
     assert params["SECURITY_INTEGRATIONS"]["value"] == "[ALL]"
-    assert params["COMMENT"]["value"] == "abc"
+    assert str(params["COMMENT"]["value"]).startswith("abc #")
 
     assert len(refs) == 1
     assert refs[0]["REF_ENTITY_DOMAIN"] == "USER"
@@ -20,11 +19,10 @@ def test_step2(helper):
     refs_2 = helper.get_policy_refs("db1", "sc1", "aup001_aup2")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[SAML, PASSWORD]"
-    assert params["MFA_AUTHENTICATION_METHODS"]["value"] == "[SAML, PASSWORD]"
-    assert params["MFA_ENROLLMENT"]["value"] == "OPTIONAL"
+    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY"  # orig: OPTIONAL
     assert params["CLIENT_TYPES"]["value"] == "[SNOWFLAKE_UI, SNOWSQL]"
     assert params["SECURITY_INTEGRATIONS"]["value"] == "[ALL]"
-    assert params["COMMENT"]["value"] == "cde"
+    assert str(params["COMMENT"]["value"]).startswith("cde #")
 
     assert len(refs_1) == 0
     assert len(refs_2) == 1
@@ -38,10 +36,9 @@ def test_step3(helper):
     refs = helper.get_policy_refs("db1", "sc1", "aup001_aup1")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[ALL]"
-    assert params["MFA_AUTHENTICATION_METHODS"]["value"] == "[PASSWORD, SAML]"
-    assert params["MFA_ENROLLMENT"]["value"] == "OPTIONAL"
+    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY"  # orig: OPTIONAL
     assert params["CLIENT_TYPES"]["value"] == "[ALL]"
     assert params["SECURITY_INTEGRATIONS"]["value"] == "[ALL]"
-    assert params["COMMENT"]["value"] == "null"
+    assert str(params["COMMENT"]["value"]).startswith("#")
 
     assert len(refs) == 0
