@@ -103,12 +103,21 @@ class AbstractParser(ABC):
     def normalise_sql_text_param(self, text: str):
         return text.lstrip(" \t\n\r").rstrip(" \t\n\r;")
 
+    def normalise_param(self, param):
+        if param is None:
+            return None
+
+        if isinstance(param, str):
+            return param.upper()
+
+        raise ValueError(f"Value is neither None, nor str [{param}]")
+
     def normalise_params_list(self, params):
         if params is None:
             return None
 
         if isinstance(params, list):
-            return [p.upper() for p in params]
+            return [self.normalise_param(p) for p in params]
 
         raise ValueError(f"Value is neither None, nor list [{params}]")
 
@@ -117,7 +126,7 @@ class AbstractParser(ABC):
             return None
 
         if isinstance(params, dict):
-            return {k.upper(): v for k, v in params.items()}
+            return {self.normalise_param(k): v for k, v in params.items()}
 
         raise ValueError(f"Value is neither None, nor dictionary [{params}]")
 
