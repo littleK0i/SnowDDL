@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.59.1] - 2025-10-25
+
+- Fixed issue with optional `mfa_enrollment` parameter for `AUTHENTICATION_POLICY`.
+
 ## [0.59.0] - 2025-10-24
 
 - All `AUTHENTICATION_POLICY` parameters are now optional.

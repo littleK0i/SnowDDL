@@ -75,7 +75,7 @@ class AuthenticationPolicyParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             authentication_methods=self.normalise_params_list(f.params.get("authentication_methods")),
             mfa_authentication_methods=self.normalise_params_list(f.params.get("mfa_authentication_methods")),
-            mfa_enrollment=f.params.get("mfa_enrollment").upper(),
+            mfa_enrollment=f.params.get("mfa_enrollment").upper() if f.params.get("mfa_enrollment") else None,
             mfa_policy=self.normalise_params_dict(f.params.get("mfa_policy")),
             client_types=self.normalise_params_list(f.params.get("client_types")),
             security_integrations=self.normalise_params_list(f.params.get("security_integrations")),

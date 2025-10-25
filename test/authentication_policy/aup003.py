@@ -20,7 +20,7 @@ def test_step2(helper):
     params = helper.desc_authentication_policy("db1", "sc1", "aup003_aup1")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[SAML, KEYPAIR]"
-    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_PASSWORD_ONLY"
+    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY"
 
     assert "ALLOWED_METHODS=[ALL]" in params["MFA_POLICY"]["value"]
 
