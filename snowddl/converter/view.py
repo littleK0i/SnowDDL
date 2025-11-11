@@ -1,14 +1,11 @@
 from pathlib import Path
-from re import compile, DOTALL
+from sqlglot import Tokenizer, TokenType
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_converter import ConvertResult
 from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter
 from snowddl.converter._yaml import YamlLiteralStr, YamlIncludeStr
 from snowddl.parser.view import view_json_schema
-
-
-view_text_re = compile(r"^.*?\sas(\n|\s)+(.*)$", DOTALL)
 
 
 class ViewConverter(AbstractSchemaObjectConverter):
@@ -77,13 +74,8 @@ class ViewConverter(AbstractSchemaObjectConverter):
         return cols
 
     def _get_text_or_include(self, object_path: Path, row: dict):
-        # TODO: replace with better implementation when available
-        cur = self.engine.execute_meta(
-            "SELECT GET_DDL('VIEW', {ident}) AS view_ddl", {"ident": f"{row['database']}.{row['schema']}.{row['name']}"}
-        )
-
-        view_ddl = cur.fetchone()["VIEW_DDL"]
-        view_text = view_text_re.sub(r"\2", view_ddl).rstrip(";").strip(" \n\r\t")
+        view_text = self._extract_view_text_after_as(row)
+        view_text = view_text.rstrip(";").strip(" \n\r\t")
 
         # Remove trailing spaces from each line to prevent output formatting issues
         # https://github.com/yaml/pyyaml/issues/411
@@ -96,3 +88,12 @@ class ViewConverter(AbstractSchemaObjectConverter):
             return YamlIncludeStr(f"sql/{file_name}")
 
         return YamlLiteralStr(view_text)
+
+    def _extract_view_text_after_as(self, row: dict):
+        tokenizer = Tokenizer()
+
+        for token in tokenizer.tokenize(row["text"]):
+            if token.token_type == TokenType.ALIAS:
+                return row["text"][token.end+2:]
+
+        raise ValueError(f"Could not extract view text after 'AS' keyword using sqlglot tokenizer")

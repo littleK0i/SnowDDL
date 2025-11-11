@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.60.0] - 2025-11-11
+
+- Replaced regular expression in `VIEW` converter with sqlglot tokenizer.
+- Introduced new category for optional dependencies: "convert". Example: `pip install snowddl[convert]`. It is only required if you plan to use converters.
+
 ## [0.59.1] - 2025-10-25
 
 - Fixed issue with optional `mfa_enrollment` parameter for `AUTHENTICATION_POLICY`.

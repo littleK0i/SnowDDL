@@ -36,6 +36,9 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.optional-dependencies]
+convert = [
+    "sqlglot"
+]
 dev = [
     "black",
     "pytest",
