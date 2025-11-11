@@ -42,6 +42,8 @@ class AbstractConverter(ABC):
         if self._is_skipped():
             return
 
+        self._check_optional_dependencies()
+
         try:
             self.existing_objects = self.get_existing_objects()
         except SnowDDLExecuteError as e:
@@ -93,6 +95,9 @@ class AbstractConverter(ABC):
             return self.object_type not in self.engine.settings.include_object_types
 
         return False
+
+    def _check_optional_dependencies(self):
+        pass
 
     def _dump_file(self, file_path: Path, data: Dict, json_schema: dict):
         # Remove None values

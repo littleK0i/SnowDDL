@@ -1,5 +1,10 @@
 from pathlib import Path
-from sqlglot import Tokenizer, TokenType
+
+try:
+    from sqlglot import Tokenizer, TokenType
+except ImportError:
+    Tokenizer = None
+    TokenType = None
 
 from snowddl.blueprint import ObjectType
 from snowddl.converter.abc_converter import ConvertResult
@@ -97,3 +102,7 @@ class ViewConverter(AbstractSchemaObjectConverter):
                 return row["text"][token.end+2:]
 
         raise ValueError(f"Could not extract view text after 'AS' keyword using sqlglot tokenizer")
+
+    def _check_optional_dependencies(self):
+        if Tokenizer is None:
+            raise ImportError("Package [sqlglot] is required to parse VIEW text")
