@@ -34,6 +34,18 @@ class ObjectType(Enum):
         "blueprint_cls": "AuthenticationPolicyBlueprint",
     }
 
+    BACKUP_POLICY = {
+        "singular": "BACKUP POLICY",
+        "plural": "BACKUP POLICIES",
+        "blueprint_cls": "BackupPolicyBlueprint",
+    }
+
+    BACKUP_SET = {
+        "singular": "BACKUP SET",
+        "plural": "BACKUP SETS",
+        "blueprint_cls": "BackupSetBlueprint",
+    }
+
     CLONE_TABLE = {
         "singular": "CLONE TABLE",
         "plural": "CLONE TABLES",
@@ -245,18 +257,6 @@ class ObjectType(Enum):
         "singular": "SHARE",
         "plural": "SHARES",
         "blueprint_cls": "OutboundShareBlueprint",
-    }
-
-    SNAPSHOT_POLICY = {
-        "singular": "SNAPSHOT POLICY",
-        "plural": "SNAPSHOT POLICIES",
-        "blueprint_cls": "SnapshotPolicyBlueprint",
-    }
-
-    SNAPSHOT_SET = {
-        "singular": "SNAPSHOT SET",
-        "plural": "SNAPSHOT SETS",
-        "blueprint_cls": "SnapshotSetBlueprint",
     }
 
     STAGE = {

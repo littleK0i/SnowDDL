@@ -16,6 +16,7 @@ arguments:
   geo1: GEOGRAPHY
   geo2: GEOMETRY
   file1: FILE
+  dec1: DECFLOAT(38)
 
 
 returns:
@@ -36,6 +37,7 @@ returns:
   geo1: GEOGRAPHY
   geo2: GEOMETRY
   file1: FILE
+  dec1: DECFLOAT(38)
 
 body: |-
   SELECT NUM1, NUM2, NUM3
@@ -50,3 +52,4 @@ body: |-
       , VAR, OBJ, ARR
       , GEO1, GEO2
       , FILE1
+      , DEC1

@@ -22,6 +22,12 @@ class BaseDataType(Enum):
         "default_properties": [],
     }
 
+    DECFLOAT = {
+        "base_name": "DECFLOAT",
+        "number_of_properties": 1,
+        "default_properties": [38],
+    }
+
     BINARY = {
         "base_name": "BINARY",
         "number_of_properties": 1,

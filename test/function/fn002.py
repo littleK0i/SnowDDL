@@ -33,6 +33,7 @@ def test_step1(helper):
         BaseDataType.GEOGRAPHY,
         BaseDataType.GEOMETRY,
         BaseDataType.FILE,
+        BaseDataType.DECFLOAT,
     ]
 
     # Compare returns signature
@@ -54,7 +55,8 @@ def test_step1(helper):
         "ARR ARRAY, "
         "GEO1 GEOGRAPHY, "
         "GEO2 GEOMETRY, "
-        "FILE1 FILE)"
+        "FILE1 FILE, "
+        "DEC1 DECFLOAT)"
     )
     """
 
@@ -86,6 +88,7 @@ def test_step2(helper):
         BaseDataType.GEOGRAPHY,
         BaseDataType.GEOMETRY,
         BaseDataType.FILE,
+        BaseDataType.DECFLOAT,
     ]
 
     # Compare returns signature
@@ -107,7 +110,8 @@ def test_step2(helper):
         "ARR ARRAY, "
         "GEO1 GEOGRAPHY, "
         "GEO2 GEOMETRY, "
-        "FILE1 FILE)"
+        "FILE1 FILE, "
+        "DEC1 DECFLOAT)"
     )
     """
 

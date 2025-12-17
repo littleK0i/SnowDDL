@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.61.0]
+
+- Added `DECFLOAT` data type. You should never find yourself using it, but it exists nonetheless.
+- Renamed `SNAPSHOT_POLICY`, `SNAPSHOT_SET` object types to `BACKUP_POLICY`, `BACKUP_SET`. Config paths should be updated from `snapshot_*` to `backup_*`.
+
 ## [0.60.0] - 2025-11-11
 
 - Replaced regular expression in `VIEW` converter with sqlglot tokenizer.

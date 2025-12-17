@@ -1,18 +1,18 @@
-from snowddl.blueprint import SnapshotPolicyBlueprint
+from snowddl.blueprint import BackupPolicyBlueprint
 from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
 
 
-class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
+class BackupPolicyResolver(AbstractSchemaObjectResolver):
     skip_on_empty_blueprints = True
 
     def get_object_type(self) -> ObjectType:
-        return ObjectType.SNAPSHOT_POLICY
+        return ObjectType.BACKUP_POLICY
 
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
         cur = self.engine.execute_meta(
-            "SHOW SNAPSHOT POLICIES IN SCHEMA {database:i}.{schema:i}",
+            "SHOW BACKUP POLICIES IN SCHEMA {database:i}.{schema:i}",
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
@@ -33,13 +33,13 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
         return existing_objects
 
     def get_blueprints(self):
-        return self.config.get_blueprints_by_type(SnapshotPolicyBlueprint)
+        return self.config.get_blueprints_by_type(BackupPolicyBlueprint)
 
-    def create_object(self, bp: SnapshotPolicyBlueprint):
+    def create_object(self, bp: BackupPolicyBlueprint):
         query = self.engine.query_builder()
 
         query.append(
-            "CREATE SNAPSHOT POLICY {full_name:i}",
+            "CREATE BACKUP POLICY {full_name:i}",
             {
                 "full_name": bp.full_name,
             },
@@ -73,13 +73,13 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
 
         return ResolveResult.CREATE
 
-    def compare_object(self, bp: SnapshotPolicyBlueprint, row: dict):
+    def compare_object(self, bp: BackupPolicyBlueprint, row: dict):
         result = ResolveResult.NOCHANGE
 
         if bp.schedule != row["schedule"]:
             if bp.schedule:
                 self.engine.execute_unsafe_ddl(
-                    "ALTER SNAPSHOT POLICY {full_name:i} SET SCHEDULE = {schedule}",
+                    "ALTER BACKUP POLICY {full_name:i} SET SCHEDULE = {schedule}",
                     {
                         "full_name": bp.full_name,
                         "schedule": bp.schedule,
@@ -87,7 +87,7 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
                 )
             else:
                 self.engine.execute_unsafe_ddl(
-                    "ALTER SNAPSHOT POLICY {full_name:i} UNSET SCHEDULE",
+                    "ALTER BACKUP POLICY {full_name:i} UNSET SCHEDULE",
                     {
                         "full_name": bp.full_name,
                     },
@@ -98,7 +98,7 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
         if bp.expire_after_days != row["expire_after_days"]:
             if bp.expire_after_days:
                 self.engine.execute_unsafe_ddl(
-                    "ALTER SNAPSHOT POLICY {full_name:i} SET EXPIRE_AFTER_DAYS = {expire_after_days:d}",
+                    "ALTER BACKUP POLICY {full_name:i} SET EXPIRE_AFTER_DAYS = {expire_after_days:d}",
                     {
                         "full_name": bp.full_name,
                         "expire_after_days": bp.expire_after_days,
@@ -106,7 +106,7 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
                 )
             else:
                 self.engine.execute_unsafe_ddl(
-                    "ALTER SNAPSHOT POLICY {full_name:i} UNSET EXPIRE_AFTER_DAYS",
+                    "ALTER BACKUP POLICY {full_name:i} UNSET EXPIRE_AFTER_DAYS",
                     {
                         "full_name": bp.full_name,
                     },
@@ -116,7 +116,7 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
 
         if bp.comment != row["comment"]:
             self.engine.execute_unsafe_ddl(
-                "ALTER SNAPSHOT POLICY {full_name:i} SET COMMENT = {comment}",
+                "ALTER BACKUP POLICY {full_name:i} SET COMMENT = {comment}",
                 {
                     "full_name": bp.full_name,
                     "comment": bp.comment,
@@ -129,7 +129,7 @@ class SnapshotPolicyResolver(AbstractSchemaObjectResolver):
 
     def drop_object(self, row: dict):
         self.engine.execute_unsafe_ddl(
-            "DROP SNAPSHOT POLICY {database:i}.{schema:i}.{name:i}",
+            "DROP BACKUP POLICY {database:i}.{schema:i}.{name:i}",
             {
                 "database": row["database"],
                 "schema": row["schema"],

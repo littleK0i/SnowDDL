@@ -95,6 +95,17 @@ class AuthenticationPolicyBlueprint(SchemaObjectBlueprint):
     references: List[AuthenticationPolicyReference] = []
 
 
+class BackupPolicyBlueprint(SchemaObjectBlueprint):
+    schedule: Optional[str] = None
+    expire_after_days: Optional[int] = None
+
+
+class BackupSetBlueprint(SchemaObjectBlueprint):
+    object_type: ObjectType
+    object_name: Union[DatabaseIdent, SchemaIdent, SchemaObjectIdent]
+    backup_policy: Optional[SchemaObjectIdent] = None
+
+
 class BusinessRoleBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     database_owner: List[IdentPattern] = []
@@ -375,17 +386,6 @@ class SequenceBlueprint(SchemaObjectBlueprint):
     start: int
     interval: int
     is_ordered: Optional[bool] = None
-
-
-class SnapshotPolicyBlueprint(SchemaObjectBlueprint):
-    schedule: Optional[str] = None
-    expire_after_days: Optional[int] = None
-
-
-class SnapshotSetBlueprint(SchemaObjectBlueprint):
-    object_type: ObjectType
-    object_name: Union[DatabaseIdent, SchemaIdent, SchemaObjectIdent]
-    snapshot_policy: Optional[SchemaObjectIdent] = None
 
 
 class StageBlueprint(SchemaObjectBlueprint):

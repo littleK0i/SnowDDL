@@ -6,6 +6,8 @@ from .account_policy import AccountPolicyParser
 from .aggregation_policy import AggregationPolicyParser
 from .alert import AlertParser
 from .authentication_policy import AuthenticationPolicyParser
+from .backup_policy import BackupPolicyParser
+from .backup_set import BackupSetParser
 from .business_role import BusinessRoleParser
 from .database import DatabaseParser
 from .database_role import DatabaseRoleParser
@@ -34,8 +36,6 @@ from .schema import SchemaParser
 from .secret import SecretParser
 from .semantic_view import SemanticViewParser
 from .sequence import SequenceParser
-from .snapshot_policy import SnapshotPolicyParser
-from .snapshot_set import SnapshotSetParser
 from .stage import StageParser
 from .stream import StreamParser
 from .table import TableParser
@@ -57,8 +57,8 @@ default_parse_sequence = [
     RowAccessPolicyParser,
     ResourceMonitorParser,
     AccountPolicyParser,
-    SnapshotPolicyParser,
-    SnapshotSetParser,
+    BackupPolicyParser,
+    BackupSetParser,
     # --
     WarehouseParser,
     DatabaseParser,
@@ -99,8 +99,8 @@ singledb_parse_sequence = [
     MaskingPolicyParser,
     ProjectionPolicyParser,
     RowAccessPolicyParser,
-    SnapshotPolicyParser,
-    SnapshotSetParser,
+    BackupPolicyParser,
+    BackupSetParser,
     # --
     DatabaseParser,
     SchemaParser,

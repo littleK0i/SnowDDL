@@ -5,6 +5,8 @@ from .account_params import AccountParameterResolver
 from .aggregation_policy import AggregationPolicyResolver
 from .authentication_policy import AuthenticationPolicyResolver
 from .alert import AlertResolver
+from .backup_policy import BackupPolicyResolver
+from .backup_set import BackupSetResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
@@ -41,8 +43,6 @@ from .schema_read_role import SchemaReadRoleResolver
 from .schema_write_role import SchemaWriteRoleResolver
 from .secret import SecretResolver
 from .semantic_view import SemanticViewResolver
-from .snapshot_policy import SnapshotPolicyResolver
-from .snapshot_set import SnapshotSetResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
 from .stream import StreamResolver
@@ -114,8 +114,8 @@ default_resolve_sequence = [
     NetworkPolicyResolver,
     ProjectionPolicyResolver,
     RowAccessPolicyResolver,
-    SnapshotPolicyResolver,
-    SnapshotSetResolver,
+    BackupPolicyResolver,
+    BackupSetResolver,
 ]
 
 
@@ -183,8 +183,8 @@ singledb_resolve_sequence = [
     MaskingPolicyResolver,
     ProjectionPolicyResolver,
     RowAccessPolicyResolver,
-    SnapshotPolicyResolver,
-    SnapshotSetResolver,
+    BackupPolicyResolver,
+    BackupSetResolver,
 ]
 
 
