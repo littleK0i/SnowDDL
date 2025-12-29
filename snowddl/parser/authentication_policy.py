@@ -36,6 +36,15 @@ authentication_policy_json_schema = {
             },
             "minItems": 1
         },
+        "client_policy": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": ["array", "boolean", "number", "string"]
+                }
+            }
+        },
         "security_integrations": {
             "type": "array",
             "items": {
@@ -78,6 +87,7 @@ class AuthenticationPolicyParser(AbstractParser):
             mfa_enrollment=f.params.get("mfa_enrollment").upper() if f.params.get("mfa_enrollment") else None,
             mfa_policy=self.normalise_params_dict(f.params.get("mfa_policy")),
             client_types=self.normalise_params_list(f.params.get("client_types")),
+            client_policy=self._normalise_client_policy(f.params.get("client_policy")),
             security_integrations=self.normalise_params_list(f.params.get("security_integrations")),
             pat_policy=self.normalise_params_dict(f.params.get("pat_policy")),
             workload_identity_policy=self.normalise_params_dict(f.params.get("workload_identity_policy")),
@@ -85,3 +95,14 @@ class AuthenticationPolicyParser(AbstractParser):
         )
 
         self.config.add_blueprint(bp)
+
+    def _normalise_client_policy(self, client_policy):
+        if client_policy is None:
+            return None
+
+        result = {}
+
+        for k, v in client_policy.items():
+            result[k.upper()] = self.normalise_params_dict(v)
+
+        return result

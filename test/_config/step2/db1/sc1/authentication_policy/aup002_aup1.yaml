@@ -1,4 +1,7 @@
 authentication_methods: [ALL]
 mfa_enrollment: REQUIRED
 client_types: [ALL]
+client_policy:
+  python_driver:
+    minimum_version: 4.1.0
 security_integrations: [ALL]

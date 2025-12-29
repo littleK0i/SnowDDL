@@ -158,6 +158,30 @@ class AuthenticationPolicyResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.client_policy:
+            query.append_nl("CLIENT_POLICY = (")
+
+            for client_name, client_params in bp.client_policy.items():
+                query.append(
+                    "{client_name:r} = (",
+                    {
+                        "client_name": client_name,
+                    }
+                )
+
+                for param_name, param_value in client_params.items():
+                    query.append(
+                        "{param_name:r} = {param_value:dp}",
+                        {
+                            "param_name": param_name,
+                            "param_value": param_value,
+                        }
+                    )
+
+                query.append(")")
+
+            query.append(")")
+
         if bp.security_integrations:
             query.append_nl(
                 "SECURITY_INTEGRATIONS = ({security_integrations})",
