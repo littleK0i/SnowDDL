@@ -4,6 +4,7 @@ from .data_type import BaseDataType
 from .ident import (
     AbstractIdent,
     AccountObjectIdent,
+    ApplicationRoleIdent,
     DatabaseIdent,
     DatabaseRoleIdent,
     Ident,
@@ -110,6 +111,10 @@ def build_default_namespace_ident(env_prefix, default_namespace):
         return SchemaIdent(env_prefix, *default_namespace.split(".", 1))
 
     return DatabaseIdent(env_prefix, default_namespace)
+
+
+def build_application_role_ident(application_role_name: str) -> ApplicationRoleIdent:
+    return ApplicationRoleIdent("", *application_role_name.split(".", 2))
 
 
 def build_share_read_ident(share_name: str) -> Union[Ident, DatabaseRoleIdent]:

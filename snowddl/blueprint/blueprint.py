@@ -20,6 +20,7 @@ from .ident import (
     DatabaseIdent,
     DatabaseRoleIdent,
     AccountIdent,
+    ApplicationRoleIdent,
     OutboundShareIdent,
     SchemaIdent,
     SchemaObjectIdent,
@@ -118,6 +119,7 @@ class BusinessRoleBlueprint(AbstractBlueprint):
     share_read: List[Union[Ident, DatabaseRoleIdent]] = []
     warehouse_usage: List[AccountObjectIdent] = []
     warehouse_monitor: List[AccountObjectIdent] = []
+    application_roles: List[ApplicationRoleIdent] = []
     technical_roles: List[AccountObjectIdent] = []
     global_roles: List[Ident] = []
 

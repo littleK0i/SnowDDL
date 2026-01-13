@@ -70,6 +70,7 @@ from .ident import (
     Ident,
     AccountIdent,
     AccountObjectIdent,
+    ApplicationRoleIdent,
     DatabaseIdent,
     DatabaseRoleIdent,
     OutboundShareIdent,
@@ -86,6 +87,7 @@ from .ident_builder import (
     build_grant_name_ident,
     build_future_grant_name_ident,
     build_default_namespace_ident,
+    build_application_role_ident,
     build_share_read_ident,
 )
 from .ident_pattern import IdentPattern

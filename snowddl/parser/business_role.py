@@ -4,6 +4,7 @@ from snowddl.blueprint import (
     Ident,
     IdentPattern,
     build_role_ident,
+    build_application_role_ident,
     build_share_read_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser
@@ -75,6 +76,12 @@ business_role_json_schema = {
                     "type": "string"
                 }
             },
+            "application_roles": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
             "tech_roles": {
                 "type": "array",
                 "items": {
@@ -102,7 +109,11 @@ class BusinessRoleParser(AbstractParser):
         self.parse_multi_entity_file("business_role", business_role_json_schema, self.process_business_role)
 
     def process_business_role(self, business_role_name, business_role_params):
+        application_roles = []
         technical_roles = []
+
+        for application_role_name in business_role_params.get("application_roles", []):
+            application_roles.append(build_application_role_ident(application_role_name))
 
         for technical_role_name in business_role_params.get("technical_roles", []) + business_role_params.get("tech_roles", []):
             technical_roles.append(build_role_ident(self.env_prefix, technical_role_name, self.config.TECHNICAL_ROLE_SUFFIX))
@@ -119,6 +130,7 @@ class BusinessRoleParser(AbstractParser):
             share_read=[build_share_read_ident(share_name) for share_name in business_role_params.get("share_read", [])],
             warehouse_usage=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in business_role_params.get("warehouse_usage", [])],
             warehouse_monitor=[AccountObjectIdent(self.env_prefix, warehouse_name) for warehouse_name in business_role_params.get("warehouse_monitor", [])],
+            application_roles=application_roles,
             technical_roles=technical_roles,
             global_roles=[Ident(global_role_name) for global_role_name in business_role_params.get("global_roles", [])],
             comment=business_role_params.get("comment"),

@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.61.0]
+## [0.62.0] - 2026-01-13
+
+- Added `application_roles` parameter form `BUSINESS_ROLE` object type. It is now possible to grant application roles directly to business roles. Env prefix is currently not supported, applications are supposed to be managed via different means for now.
+
+## [0.61.0] - 2025-12-29
 
 - Added `DECFLOAT` data type. You should never find yourself using it, but it exists nonetheless.
 - Renamed `SNAPSHOT_POLICY`, `SNAPSHOT_SET` object types to `BACKUP_POLICY`, `BACKUP_SET`. Config paths should be updated from `snapshot_*` to `backup_*`.

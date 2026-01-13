@@ -106,6 +106,17 @@ class AccountObjectIdent(AbstractIdentWithPrefix):
         return [f"{self.env_prefix}{self.name}"], None
 
 
+class ApplicationRoleIdent(AbstractIdentWithPrefix):
+    def __init__(self, env_prefix, application, name):
+        super().__init__(env_prefix)
+
+        self.application = self._validate_part(application)
+        self.name = self._validate_part(name)
+
+    def parts_for_format(self):
+        return [f"{self.env_prefix}{self.application}", self.name], None
+
+
 class DatabaseIdent(AbstractIdentWithPrefix):
     def __init__(self, env_prefix, database):
         super().__init__(env_prefix)

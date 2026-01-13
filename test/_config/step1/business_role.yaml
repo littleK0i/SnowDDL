@@ -15,6 +15,8 @@ pm001_br1:
   warehouse_usage:
     - pm001_wh1
     - pm001_wh2
+  application_roles:
+    - snowflake.app_usage_viewer
   technical_roles:
     - pm001_tr1
   global_roles:

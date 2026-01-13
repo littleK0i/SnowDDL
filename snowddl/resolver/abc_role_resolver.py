@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union
 from snowddl.blueprint import (
     AccountGrant,
     AccountObjectIdent,
+    ApplicationRoleIdent,
     DatabaseBlueprint,
     DatabaseRoleIdent,
     FutureGrant,
@@ -256,7 +257,7 @@ class AbstractRoleResolver(AbstractResolver):
         return ResolveResult.DROP
 
     def create_grant(self, role_name, grant: Grant):
-        if grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.DATABASE_ROLE):
+        if grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.APPLICATION_ROLE, ObjectType.DATABASE_ROLE):
             self.engine.execute_safe_ddl(
                 "GRANT {on:r} {name:i} TO ROLE {role_name:i}",
                 {
@@ -295,7 +296,7 @@ class AbstractRoleResolver(AbstractResolver):
                     "current_role": self.engine.context.current_role,
                 },
             )
-        elif grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.DATABASE_ROLE):
+        elif grant.privilege == "USAGE" and grant.on in (ObjectType.ROLE, ObjectType.APPLICATION_ROLE, ObjectType.DATABASE_ROLE):
             self.engine.execute_safe_ddl(
                 "REVOKE {on:r} {name:i} FROM ROLE {role_name:i}",
                 {
@@ -444,6 +445,13 @@ class AbstractRoleResolver(AbstractResolver):
                 on=ObjectType.ROLE,
                 name=build_role_ident(self.config.env_prefix, share_name, self.config.SHARE_ACCESS_ROLE_SUFFIX),
             )
+
+    def build_application_role_grant(self, application_role_name: ApplicationRoleIdent) -> Grant:
+        return Grant(
+            privilege="USAGE",
+            on=ObjectType.APPLICATION_ROLE,
+            name=application_role_name,
+        )
 
     def build_technical_role_grant(self, technical_role_name: AccountObjectIdent) -> Grant:
         return Grant(

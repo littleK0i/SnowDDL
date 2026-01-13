@@ -46,6 +46,10 @@ class BusinessRoleResolver(AbstractRoleResolver):
         for warehouse_name in business_role_bp.warehouse_monitor:
             grants.append(self.build_warehouse_role_grant(warehouse_name, self.config.MONITOR_ROLE_TYPE))
 
+        # Application roles
+        for application_role_name in business_role_bp.application_roles:
+            grants.append(self.build_application_role_grant(application_role_name))
+
         # Technical roles
         for technical_role_name in business_role_bp.technical_roles:
             grants.append(self.build_technical_role_grant(technical_role_name))

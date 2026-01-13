@@ -28,6 +28,13 @@ class ObjectType(Enum):
         "blueprint_cls": "AlertBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    APPLICATION_ROLE = {
+        "singular": "APPLICATION ROLE",
+        "plural": "APPLICATION ROLES",
+    }
+
     AUTHENTICATION_POLICY = {
         "singular": "AUTHENTICATION POLICY",
         "plural": "AUTHENTICATION POLICIES",
