@@ -9,6 +9,7 @@ class StreamResolver(AbstractSchemaObjectResolver):
         ObjectType.STAGE: "Stage",
         ObjectType.TABLE: "Table",
         ObjectType.VIEW: "View",
+        ObjectType.DYNAMIC_TABLE: "Dynamic Table",
     }
 
     def get_object_type(self) -> ObjectType:
