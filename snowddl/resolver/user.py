@@ -356,6 +356,11 @@ class UserResolver(AbstractResolver):
         # Unset such parameter and reset it to default
         for param_name, p in existing_params.items():
             if p["level"] == "USER" and p["key"] not in bp.session_params:
+                # As of Jan 2026, it should be allowed for users to modify WORKSPACE_USER_SETTINGS
+                # Do not unset this user parameter if it was not specified in config
+                if param_name == "WORKSPACE_USER_SETTINGS":
+                    continue
+
                 # Setting parameter to NULL equals to UNSET
                 query.append_nl(
                     "{param_name:r} = NULL",
