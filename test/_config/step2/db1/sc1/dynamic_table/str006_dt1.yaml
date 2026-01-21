@@ -1,0 +1,6 @@
+text: |-
+  SELECT id, name
+  FROM ${{ env_prefix }}db1.sc1.str006_tb1
+
+warehouse: str006_wh1
+target_lag: 1 hour

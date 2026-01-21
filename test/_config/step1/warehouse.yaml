@@ -40,6 +40,9 @@ pp001_wh1:
 rp001_wh1:
   size: XSMALL
 
+str006_wh1:
+  size: XSMALL
+
 ts001_wh1:
   size: XSMALL
 

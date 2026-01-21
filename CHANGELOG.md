@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.62.1] - 2026-01-21
+
+- Added `DYNAMIC_TABLE` support for streams (thanks to @nigel-gott).
+- Added grant check for share access roles. Grant should be restored when underlying inbound share was dropped and re-created.
+- Prevented reset of `WORKSPACE_USER_SETTINGS` user parameter if it was not specified in config. We have to wait for documentation describing this parameter in order to make final decision.
+
 ## [0.62.0] - 2026-01-13
 
 - Added `application_roles` parameter form `BUSINESS_ROLE` object type. It is now possible to grant application roles directly to business roles. Env prefix is currently not supported, applications are supposed to be managed via different means for now.
