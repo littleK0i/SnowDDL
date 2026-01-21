@@ -53,16 +53,28 @@ class ShareAccessRoleResolver(AbstractRoleResolver):
         )
 
     def get_existing_role_grants(self, role_name):
-        # There is no way to detect specific grant of IMPORTED PRIVILEGES
-        # SHOW GRANTS output is filled with whatever grants come with INBOUND SHARE
-        # SHOW GRANTS with IMPORTED PRIVILEGES performance is awful, one call may take a few seconds
-        # IMPORTED PRIVILEGES grant has to be emulated until we find a better option
-        grants = [
-            Grant(
-                privilege="IMPORTED PRIVILEGES",
-                on=ObjectType.DATABASE,
-                name=Ident(role_name[len(self.config.env_prefix) : -len(self.get_role_suffix()) - 2]),
-            )
-        ]
+        grants = []
+        share_database_name = Ident(role_name[len(self.config.env_prefix) : -len(self.get_role_suffix()) - 2])
+
+        # Grant is being checked in reverse for performance reasons
+        # Traditional SHOW GRANTS on role with IMPORTED PRIVILEGES might be very slow
+        cur = self.engine.execute_meta(
+            "SHOW GRANTS ON DATABASE {share_database_name:i}",
+            {
+                "share_database_name": share_database_name,
+            },
+        )
+
+        for r in cur:
+            if r["privilege"] == "USAGE" and r["granted_to"] == "ROLE" and r["grantee_name"] == role_name:
+                # There is no way to detect specific grant of IMPORTED PRIVILEGES
+                # This grant has to be emulated until we find a better option
+                grants.append(
+                    Grant(
+                        privilege="IMPORTED PRIVILEGES",
+                        on=ObjectType.DATABASE,
+                        name=share_database_name,
+                    )
+                )
 
         return role_name, grants, [], []
