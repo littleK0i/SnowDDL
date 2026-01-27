@@ -23,6 +23,10 @@ class UniqueKeyResolver(AbstractSchemaObjectResolver):
             if r["comment"] == ObjectType.HYBRID_TABLE.name:
                 continue
 
+            # Skip automatically generated keys (?)
+            if r["constraint_name"] == "SYS_CONSTRAINT_DERIVED_PK":
+                continue
+
             if r["constraint_name"] not in constraints_by_name:
                 constraints_by_name[r["constraint_name"]] = {
                     "database": r["database_name"],

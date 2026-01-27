@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.62.2] - 2026-01-27
+
+- Added logic to prevent drop of automatically generated `UNIQUE_KEY` objects with name `SYS_CONSTRAINT_DERIVED_PK`.
+
 ## [0.62.1] - 2026-01-21
 
 - Added `DYNAMIC_TABLE` support for streams (thanks to @nigel-gott).
