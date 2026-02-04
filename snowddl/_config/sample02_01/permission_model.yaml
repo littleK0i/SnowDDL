@@ -8,6 +8,7 @@ fivetran:
     - VIEW
     - NOTEBOOK
     - CORTEX_SEARCH_SERVICE
+    - WORKSPACE
 
   owner_future_grants:
     DATASET: [OWNERSHIP]

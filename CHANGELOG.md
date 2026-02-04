@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.63.0] - 2026-02-04
+
+- Introduced support for `UUID` data type.
+- Added `WORKSPACE` object type, which can be used for `owner_create_grants` parameter. Workspaces do not seem to support future grants at this moment.
+
 ## [0.62.2] - 2026-01-27
 
 - Added logic to prevent drop of automatically generated `UNIQUE_KEY` objects with name `SYS_CONSTRAINT_DERIVED_PK`.

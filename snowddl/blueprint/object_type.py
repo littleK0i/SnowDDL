@@ -333,6 +333,13 @@ class ObjectType(Enum):
         "blueprint_cls": "WarehouseBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    WORKSPACE = {
+        "singular": "WORKSPACE",
+        "plural": "WORKSPACES",
+    }
+
     # Constraints
     PRIMARY_KEY = {
         "singular": "PRIMARY KEY",

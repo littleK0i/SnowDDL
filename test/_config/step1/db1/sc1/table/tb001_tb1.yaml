@@ -24,3 +24,4 @@ columns:
   geo2: GEOMETRY
   file1: FILE
   dec1: DECFLOAT(38)
+  uid1: UUID

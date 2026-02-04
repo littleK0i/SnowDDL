@@ -76,6 +76,12 @@ class BaseDataType(Enum):
         "default_properties": [9],
     }
 
+    UUID = {
+        "base_name": "UUID",
+        "number_of_properties": 0,
+        "default_properties": [],
+    }
+
     VARIANT = {
         "base_name": "VARIANT",
         "number_of_properties": 0,
