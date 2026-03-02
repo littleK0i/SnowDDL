@@ -2,6 +2,7 @@ from functools import partial
 
 from snowddl.blueprint import IcebergTableBlueprint, Ident, SchemaObjectIdent
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
+from snowddl.parser.database import database_json_schema
 from snowddl.parser.schema import schema_json_schema
 
 
@@ -46,11 +47,19 @@ class IcebergTableParser(AbstractParser):
         combined_params = {}
 
         for database_name in self.get_database_names():
+            database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
             combined_params[database_name] = {}
 
             for schema_name in self.get_schema_names_in_database(database_name):
                 schema_params = self.parse_single_entity_file(f"{database_name}/{schema_name}/params", schema_json_schema)
-                combined_params[database_name][schema_name] = schema_params
+
+                combined_params[database_name][schema_name] = {
+                    "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
+                    "retention_time": schema_params.get("retention_time"),
+                    "is_sandbox": schema_params.get("is_sandbox", database_params.get("is_sandbox", False)),
+                    "external_volume": schema_params.get("external_volume", database_params.get("external_volume")),
+                    "catalog": schema_params.get("catalog", database_params.get("catalog")),
+                }
 
         self.parse_schema_object_files(
             "iceberg_table", iceberg_table_json_schema, partial(self.process_table, combined_params=combined_params)
@@ -58,10 +67,10 @@ class IcebergTableParser(AbstractParser):
 
     def process_table(self, f: ParsedFile, combined_params: dict):
         if not combined_params[f.database][f.schema].get("external_volume"):
-            raise ValueError("Iceberg table requires parameter [external_volume] to be defined on schema level")
+            raise ValueError("Iceberg table requires parameter [external_volume] to be defined on database or schema level")
 
         if not combined_params[f.database][f.schema].get("catalog"):
-            raise ValueError("Iceberg table requires parameter [catalog] to be defined on schema level")
+            raise ValueError("Iceberg table requires parameter [catalog] to be defined on database or schema level")
 
         bp = IcebergTableBlueprint(
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),

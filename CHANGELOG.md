@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.63.1] - 2026-03-02
+
+- Added `external_volume` and `catalog` parameters to `DATABASE` object type in order to support Iceberg tables on database level.
+
 ## [0.63.0] - 2026-02-04
 
 - Introduced support for `UUID` data type.

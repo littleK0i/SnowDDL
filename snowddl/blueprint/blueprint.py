@@ -130,6 +130,8 @@ class DatabaseBlueprint(AbstractBlueprint):
     is_sandbox: Optional[bool] = None
     is_transient: Optional[bool] = None
     retention_time: Optional[int] = None
+    external_volume: Optional[Ident] = None
+    catalog: Optional[Ident] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []

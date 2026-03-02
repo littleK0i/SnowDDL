@@ -112,6 +112,8 @@ class SchemaParser(AbstractParser):
                     "is_transient": database_params.get("is_transient", False) or schema_params.get("is_transient", False),
                     "retention_time": schema_params.get("retention_time"),
                     "is_sandbox": schema_params.get("is_sandbox", database_params.get("is_sandbox", False)),
+                    "external_volume": schema_params.get("external_volume", database_params.get("external_volume")),
+                    "catalog": schema_params.get("catalog", database_params.get("catalog")),
                 }
 
                 # fmt: off
@@ -121,8 +123,8 @@ class SchemaParser(AbstractParser):
                     is_sandbox=combined_params.get("is_sandbox", False),
                     is_transient=combined_params.get("is_transient", False),
                     retention_time=combined_params.get("retention_time", None),
-                    external_volume=Ident(schema_params.get("external_volume")) if schema_params.get("external_volume") else None,
-                    catalog=Ident(schema_params.get("catalog")) if schema_params.get("catalog") else None,
+                    external_volume=Ident(combined_params.get("external_volume")) if combined_params.get("external_volume") else None,
+                    catalog=Ident(combined_params.get("catalog")) if combined_params.get("catalog") else None,
                     owner_database_write=[IdentPattern(p) for p in schema_params.get("owner_database_write", [])],
                     owner_database_read=[IdentPattern(p) for p in schema_params.get("owner_database_read", [])],
                     owner_schema_write=[IdentPattern(p) for p in schema_params.get("owner_schema_write", [])],

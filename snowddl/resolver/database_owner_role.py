@@ -59,6 +59,25 @@ class DatabaseOwnerRoleResolver(AbstractRoleResolver):
             )
         )
 
+        # Iceberg-related grants
+        if database_bp.external_volume:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.VOLUME,
+                    name=database_bp.external_volume,
+                )
+            )
+
+        if database_bp.catalog:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.INTEGRATION,
+                    name=database_bp.catalog,
+                )
+            )
+
         # Create grants
         for model_create_grant in database_permission_model.owner_create_grants:
             future_grants.append(
