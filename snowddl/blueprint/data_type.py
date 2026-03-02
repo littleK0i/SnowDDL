@@ -147,12 +147,23 @@ class DataType:
         except KeyError:
             raise ValueError(f"Invalid base data type [{m['base_type']}] in type string [{data_type_str}]")
 
+        self.val1 = None
+        self.val2 = None
+
         if self.base_type == BaseDataType.VECTOR:
-            self.val1 = str(m["val1_vector"]).upper()
-            self.val2 = int(m["val2_vector"])
+            if m["val1_vector"] is not None:
+                self.val1 = str(m["val1_vector"]).upper()
+
+            if m["val2_vector"] is not None:
+                self.val2 = int(m["val2_vector"])
         else:
-            self.val1 = int(m["val1"]) if self.base_type.number_of_properties >= 1 else None
-            self.val2 = int(m["val2"]) if self.base_type.number_of_properties >= 2 else None
+            if m["val1"] is not None:
+                self.val1 = int(m["val1"])
+
+            if m["val2"] is not None:
+                self.val2 = int(m["val2"])
+
+        self._validate_number_of_properties(data_type_str)
 
     @staticmethod
     def from_base_type(base_type: BaseDataType):
@@ -177,3 +188,17 @@ class DataType:
             raise NotImplementedError
 
         return str(self) == str(other)
+
+    def _validate_number_of_properties(self, data_type_str):
+        if self.val1 is not None and self.val2 is not None:
+            parsed_number_of_properties = 2
+        elif self.val1 is not None:
+            parsed_number_of_properties = 1
+        else:
+            parsed_number_of_properties = 0
+
+        if self.base_type.number_of_properties != parsed_number_of_properties:
+            raise ValueError(
+                f"Invalid number of properties for base data type [{self.base_type.name}] in type string [{data_type_str}], "
+                f"expected exactly [{self.base_type.number_of_properties}]"
+            )

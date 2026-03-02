@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.63.2] - 2026-03-02
+
+- Improved error message for data types with incorrect number of properties, e.g. `TIMESTAMP_NTZ` or `TIMESTAMP_NTZ(9,1)`. Each data types now expects specific number of properties.
+
 ## [0.63.1] - 2026-03-02
 
 - Added `external_volume` and `catalog` parameters to `DATABASE` object type in order to support Iceberg tables on database level.
