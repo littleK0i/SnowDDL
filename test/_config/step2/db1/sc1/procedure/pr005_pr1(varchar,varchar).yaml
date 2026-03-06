@@ -1,0 +1,14 @@
+language: javascript
+
+arguments:
+  source: VARCHAR(255)
+  target_table:
+    type: VARCHAR(255)
+    default: "'default_target'"
+
+returns: VARCHAR(255)
+
+body: |-
+  return source + ":" + TARGET_TABLE;
+
+comment: cde

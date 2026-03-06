@@ -1,0 +1,11 @@
+language: javascript
+
+arguments:
+  source: VARCHAR(255)
+
+returns: VARCHAR(255)
+
+body: |-
+  return source;
+
+comment: abc
