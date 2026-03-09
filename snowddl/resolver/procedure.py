@@ -4,6 +4,12 @@ from snowddl.resolver._utils import dtypes_from_arguments
 
 
 class ProcedureResolver(AbstractSchemaObjectResolver):
+    def _resolve_changes(self):
+        # Drop before create to avoid ambiguous overloading errors (Snowflake error 949)
+        # when changing procedure arguments with DEFAULT values
+        self._resolve_drop()
+        self._resolve_create_compare()
+
     def get_object_type(self) -> ObjectType:
         return ObjectType.PROCEDURE
 
