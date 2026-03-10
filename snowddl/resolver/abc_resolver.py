@@ -54,8 +54,8 @@ class AbstractResolver(ABC):
             raise e.snow_exc
 
         self._pre_process()
-        self._resolve_create_compare()
         self._resolve_drop()
+        self._resolve_create_compare()
         self._post_process()
 
     def destroy(self):

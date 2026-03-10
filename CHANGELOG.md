@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.64.0] - 2026-03-10
+
+- **(Major change)** Swapped execution order of resolvers. `DROP` commands for removed objects are now executed before `CREATE` and `ALTER` commands. It helps to alleviate some collision issues with `FUNCTION`, `PROCEDURE` and policies.
+
 ## [0.63.2] - 2026-03-02
 
 - Improved error message for data types with incorrect number of properties, e.g. `TIMESTAMP_NTZ` or `TIMESTAMP_NTZ(9,1)`. Each data types now expects specific number of properties.
