@@ -3,6 +3,7 @@
 ## [0.64.0] - 2026-03-10
 
 - **(Major change)** Swapped execution order of resolvers. `DROP` commands for removed objects are now executed before `CREATE` and `ALTER` commands. It helps to alleviate some collision issues with `FUNCTION`, `PROCEDURE` and policies.
+- Removed workaround for Snowflake bug with `STREAM` attached to `STAGE` not returning fully qualified name in metadata. This bug was fixed by Snowflake.
 
 ## [0.63.2] - 2026-03-02
 

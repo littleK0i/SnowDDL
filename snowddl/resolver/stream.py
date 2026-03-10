@@ -62,13 +62,9 @@ class StreamResolver(AbstractSchemaObjectResolver):
             )
 
         if bp.object_name != row["table_name"]:
-            if bp.object_type == ObjectType.STAGE and bp.object_name.name == row["table_name"]:
-                # Snowflake bug: SHOW STREAMS may return not fully qualified name for stage
-                pass
-            else:
-                replace_reasons.append(
-                    f"Source object name [{bp.object_name}] in config does not match table_name [{row['table_name']}] in Snowflake"
-                )
+            replace_reasons.append(
+                f"Source object name [{bp.object_name}] in config does not match table_name [{row['table_name']}] in Snowflake"
+            )
 
         if bp.append_only != ("APPEND_ONLY" in row["mode"]):
             replace_reasons.append(

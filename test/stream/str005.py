@@ -10,7 +10,7 @@ def test_step2(helper):
     stream_show = helper.show_stream("db1", "sc1", "str005_str1")
 
     assert stream_show["source_type"] == "Stage"
-    assert stream_show["table_name"] == "STR005_ST1"  # Snowflake bug: streams for stages return not fully qualified name
+    assert stream_show["table_name"].endswith(".STR005_ST1")
     assert stream_show["mode"] == "DEFAULT"
 
 
