@@ -177,6 +177,21 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_account_parameters(self):
+        cur = self.execute("SHOW PARAMETERS FOR ACCOUNT")
+
+        return {r["key"]: r for r in cur}
+
+    def show_database_parameters(self, database):
+        cur = self.execute(
+            "SHOW PARAMETERS IN DATABASE {name:i}",
+            {
+                "name": SchemaIdent(self.env_prefix, database, "PUBLIC").database_full_name,
+            },
+        )
+
+        return {r["key"]: r for r in cur}
+
     def show_event_table(self, database, schema, name):
         cur = self.execute(
             "SHOW EVENT TABLES LIKE {table_name:lf} IN SCHEMA {schema_name:i}",

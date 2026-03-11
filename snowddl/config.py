@@ -6,6 +6,7 @@ from snowddl.blueprint import (
     AbstractIdentWithPrefix,
     AbstractPolicyReference,
     IdentPattern,
+    SchemaObjectIdent,
     ObjectType,
     PermissionModel,
     PermissionModelRuleset,
@@ -39,6 +40,7 @@ class SnowDDLConfig:
         self.blueprints: Dict[Type[T_Blueprint], Dict[str, T_Blueprint]] = defaultdict(dict)
         self.placeholders: Dict[str, Union[bool, float, int, str]] = {}
         self.permission_models: Dict[str, PermissionModel] = self._init_permission_models()
+        self.account_event_table: Optional[SchemaObjectIdent] = None
 
     def get_blueprints_by_type(self, cls: Type[T_Blueprint]) -> Dict[str, T_Blueprint]:
         return self.blueprints.get(cls, {})

@@ -5,6 +5,7 @@ from snowddl.blueprint import (
     DatabaseIdent,
     Ident,
     IdentPattern,
+    build_schema_object_ident,
     build_share_read_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser
@@ -28,6 +29,9 @@ database_json_schema = {
         },
         "catalog": {
             "type": "string",
+        },
+        "event_table": {
+            "type": "string"
         },
         "is_sandbox": {
             "type": "boolean"
@@ -102,6 +106,15 @@ class DatabaseParser(AbstractParser):
         for database_name in self.get_database_names():
             database_params = self.parse_single_entity_file(f"{database_name}/params", database_json_schema)
             database_permission_model_name = database_params.get("permission_model", self.config.DEFAULT_PERMISSION_MODEL).upper()
+            event_table = None
+
+            if event_table_name := database_params.get("event_table"):
+                if len(event_table_name.split(".")) not in (2, 3):
+                    raise ValueError(
+                        f"Event table identifier [{event_table_name}] must use format [schema.event_table] or [database.schema.event_table]"
+                    )
+
+                event_table = build_schema_object_ident(self.env_prefix, event_table_name, database_name, None)
 
             # fmt: off
             bp = DatabaseBlueprint(
@@ -111,6 +124,7 @@ class DatabaseParser(AbstractParser):
                 retention_time=database_params.get("retention_time", None),
                 external_volume=Ident(database_params.get("external_volume")) if database_params.get("external_volume") else None,
                 catalog=Ident(database_params.get("catalog")) if database_params.get("catalog") else None,
+                event_table=event_table,
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],
                 owner_database_read=[IdentPattern(p) for p in database_params.get("owner_database_read", [])],

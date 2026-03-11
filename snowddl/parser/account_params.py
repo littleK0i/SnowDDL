@@ -1,4 +1,4 @@
-from snowddl.blueprint import AccountParameterBlueprint, Ident
+from snowddl.blueprint import AccountParameterBlueprint, Ident, build_schema_object_ident
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -18,6 +18,15 @@ class AccountParameterParser(AbstractParser):
 
     def process_account_params(self, f: ParsedFile):
         for name, value in f.params.items():
+            if str(name).upper() == "EVENT_TABLE":
+                if len(value.split(".")) != 3:
+                    raise ValueError(
+                        f"Event table identifier [{value}] must use format [database.schema.event_table]"
+                    )
+
+                self.config.account_event_table = build_schema_object_ident(self.env_prefix, value, None, None)
+                continue
+
             bp = AccountParameterBlueprint(
                 full_name=Ident(name),
                 value=value,
