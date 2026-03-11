@@ -32,6 +32,12 @@ class IndexReference(BaseModelWithConfig):
     include: Optional[List[Ident]]
 
 
+class JoinPolicyReference(AbstractPolicyReference):
+    object_type: ObjectType
+    object_name: SchemaObjectIdent
+    columns: Optional[List[Ident]] = None
+
+
 class MaskingPolicyReference(AbstractPolicyReference):
     object_type: ObjectType
     object_name: SchemaObjectIdent

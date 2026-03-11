@@ -220,6 +220,9 @@ class BaseApp:
             action="store_true",
         )
         parser.add_argument(
+            "--apply-join-policy", help="Additionally apply changes to JOIN POLICIES", default=False, action="store_true",
+        )
+        parser.add_argument(
             "--apply-masking-policy", help="Additionally apply changes to MASKING POLICIES", default=False, action="store_true"
         )
         parser.add_argument(
@@ -469,6 +472,7 @@ class BaseApp:
                 settings.execute_account_level_policy = True
                 settings.execute_aggregation_policy = True
                 settings.execute_authentication_policy = True
+                settings.execute_join_policy = True
                 settings.execute_masking_policy = True
                 settings.execute_projection_policy = True
                 settings.execute_row_access_policy = True
@@ -482,6 +486,9 @@ class BaseApp:
 
             if self.args.get("apply_authentication_policy"):
                 settings.execute_authentication_policy = True
+
+            if self.args.get("apply_join_policy"):
+                settings.execute_join_policy = True
 
             if self.args.get("apply_masking_policy"):
                 settings.execute_masking_policy = True

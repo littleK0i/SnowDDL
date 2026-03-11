@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.65.0] -
+
+- Implemented `JOIN_POLICY` object type. It works similar to other policies.
+
 ## [0.64.0] - 2026-03-10
 
 - **(Major change)** Swapped execution order of resolvers. `DROP` commands for removed objects are now executed before `CREATE` and `ALTER` commands. It helps to alleviate some collision issues with `FUNCTION`, `PROCEDURE` and policies.

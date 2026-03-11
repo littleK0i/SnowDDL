@@ -20,6 +20,7 @@ from .file_format import FileFormatParser
 from .function import FunctionParser
 from .hybrid_table import HybridTableParser
 from .iceberg_table import IcebergTableParser
+from .join_policy import JoinPolicyParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
 from .network_policy import NetworkPolicyParser
@@ -51,6 +52,7 @@ default_parse_sequence = [
     # --
     AggregationPolicyParser,
     AuthenticationPolicyParser,
+    JoinPolicyParser,
     MaskingPolicyParser,
     NetworkPolicyParser,
     ProjectionPolicyParser,
@@ -96,6 +98,7 @@ default_parse_sequence = [
 
 singledb_parse_sequence = [
     AggregationPolicyParser,
+    JoinPolicyParser,
     MaskingPolicyParser,
     ProjectionPolicyParser,
     RowAccessPolicyParser,

@@ -1,0 +1,5 @@
+text: |-
+  SELECT * FROM jp001_tb1
+
+join_policy:
+  policy_name: jp001_jp1

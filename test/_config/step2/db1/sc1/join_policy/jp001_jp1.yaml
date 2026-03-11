@@ -1,0 +1,4 @@
+body: |-
+  JOIN_CONSTRAINT(JOIN_REQUIRED => FALSE)
+
+comment: cde

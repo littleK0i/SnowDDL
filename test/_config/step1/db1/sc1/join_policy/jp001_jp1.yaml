@@ -1,0 +1,17 @@
+body: |-
+  CASE
+    WHEN IS_ROLE_IN_SESSION('SYSADMIN')
+    THEN JOIN_CONSTRAINT(JOIN_REQUIRED => FALSE)
+    ELSE JOIN_CONSTRAINT(JOIN_REQUIRED => TRUE)
+  END
+
+#references:
+#
+#  - object_type: TABLE
+#    object_name: jp001_tb1
+#
+#  - object_type: VIEW
+#    object_name: jp001_vw1
+#    columns: [id]
+
+comment: abc

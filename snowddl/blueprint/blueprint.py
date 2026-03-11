@@ -35,6 +35,7 @@ from .reference import (
     AuthenticationPolicyReference,
     ForeignKeyReference,
     IndexReference,
+    JoinPolicyReference,
     MaskingPolicyReference,
     NetworkPolicyReference,
     ProjectionPolicyReference,
@@ -253,6 +254,11 @@ class IcebergTableBlueprint(SchemaObjectBlueprint):
     base_location: Optional[str] = None
     replace_invalid_characters: bool = False
     auto_refresh: bool = False
+
+
+class JoinPolicyBlueprint(SchemaObjectBlueprint):
+    body: str
+    references: List[JoinPolicyReference] = []
 
 
 class MaterializedViewBlueprint(SchemaObjectBlueprint):

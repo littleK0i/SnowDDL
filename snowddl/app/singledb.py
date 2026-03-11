@@ -195,6 +195,9 @@ class SingleDbApp(BaseApp):
             action="store_true",
         )
         parser.add_argument(
+            "--apply-join-policy", help="Additionally apply changes to JOIN POLICIES", default=False, action="store_true",
+        )
+        parser.add_argument(
             "--apply-masking-policy", help="Additionally apply changes to MASKING POLICIES", default=False, action="store_true"
         )
         parser.add_argument(

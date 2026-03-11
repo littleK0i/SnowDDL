@@ -6,6 +6,8 @@ from snowddl.blueprint import (
     ObjectType,
     AggregationPolicyBlueprint,
     AggregationPolicyReference,
+    JoinPolicyBlueprint,
+    JoinPolicyReference,
     MaskingPolicyBlueprint,
     MaskingPolicyReference,
     ProjectionPolicyBlueprint,
@@ -59,6 +61,23 @@ view_json_schema = {
                     },
                     "minItems": 1
                 }
+            },
+            "required": ["policy_name"],
+            "additionalProperties": False
+        },
+        "join_policy": {
+            "type": "object",
+            "properties": {
+                "policy_name": {
+                    "type": "string"
+                },
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
             },
             "required": ["policy_name"],
             "additionalProperties": False
@@ -168,6 +187,19 @@ class ViewParser(AbstractParser):
             )
 
             self.config.add_policy_reference(AggregationPolicyBlueprint, policy_name, ref)
+
+        if f.params.get("join_policy"):
+            policy_name = build_schema_object_ident(
+                self.env_prefix, f.params["join_policy"]["policy_name"], f.database, f.schema
+            )
+
+            ref = JoinPolicyReference(
+                object_type=ObjectType.VIEW,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in f.params["join_policy"]["columns"]] if f.params["join_policy"].get("columns") else None,
+            )
+
+            self.config.add_policy_reference(JoinPolicyBlueprint, policy_name, ref)
 
         for mp in f.params.get("masking_policies", []):
             policy_name = build_schema_object_ident(self.env_prefix, mp["policy_name"], f.database, f.schema)

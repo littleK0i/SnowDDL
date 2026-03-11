@@ -161,6 +161,12 @@ class ObjectType(Enum):
         "plural": "INTEGRATIONS",
     }
 
+    JOIN_POLICY = {
+        "singular": "JOIN POLICY",
+        "plural": "JOIN POLICIES",
+        "blueprint_cls": "JoinPolicyBlueprint",
+    }
+
     MASKING_POLICY = {
         "singular": "MASKING POLICY",
         "plural": "MASKING POLICIES",
