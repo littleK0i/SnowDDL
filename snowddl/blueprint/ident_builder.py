@@ -15,7 +15,7 @@ from .ident import (
 from .object_type import ObjectType
 
 
-def build_schema_object_ident(env_prefix, object_name, context_database_name, context_schema_name) -> SchemaObjectIdent:
+def build_schema_object_ident(env_prefix, object_name, context_database_name, context_schema_name=None) -> SchemaObjectIdent:
     # Function or procedure identifier with arguments
     if object_name.endswith(")"):
         object_name, data_types_str = object_name.rstrip(")").split("(")
@@ -35,6 +35,9 @@ def build_schema_object_ident(env_prefix, object_name, context_database_name, co
 
     # Add context schema_name to "object_name" identifier
     if parts_len == 1:
+        if context_schema_name is None:
+            raise ValueError(f"Schema object identifier [{object_name}] must include at least one delimiter when context schema name is not known")
+
         parts.insert(1, context_schema_name)
 
     # Function or procedure identifier with arguments

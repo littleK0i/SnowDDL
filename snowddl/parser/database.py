@@ -5,6 +5,7 @@ from snowddl.blueprint import (
     DatabaseIdent,
     Ident,
     IdentPattern,
+    build_schema_object_ident,
     build_share_read_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser
@@ -27,6 +28,9 @@ database_json_schema = {
             "type": "string"
         },
         "catalog": {
+            "type": "string",
+        },
+        "event_table": {
             "type": "string",
         },
         "is_sandbox": {
@@ -111,6 +115,7 @@ class DatabaseParser(AbstractParser):
                 retention_time=database_params.get("retention_time", None),
                 external_volume=Ident(database_params.get("external_volume")) if database_params.get("external_volume") else None,
                 catalog=Ident(database_params.get("catalog")) if database_params.get("catalog") else None,
+                event_table=build_schema_object_ident(self.env_prefix, database_params.get("event_table"), database_name) if database_params.get("event_table") else None,
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],
                 owner_database_read=[IdentPattern(p) for p in database_params.get("owner_database_read", [])],

@@ -1,8 +1,9 @@
 # Changelog
 
-## [0.65.0] -
+## [0.65.0] - 2026-03-14
 
 - Implemented `JOIN_POLICY` object type. It works similar to other policies.
+- Implemented event table reference to `DATABASE` via "delayed" database resolver. This approach should help to fix "chicken-egg" problem. Database is created first, followed by creation of event table, followed by delayed creation of event table reference to database.
 
 ## [0.64.0] - 2026-03-10
 

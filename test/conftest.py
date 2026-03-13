@@ -10,6 +10,7 @@ from snowddl import (
     Edition,
     Ident,
     AccountObjectIdent,
+    DatabaseIdent,
     SchemaIdent,
     SchemaObjectIdent,
     SchemaObjectIdentWithArgs,
@@ -165,6 +166,16 @@ class Helper:
         )
 
         return cur.fetchone()
+
+    def show_database_parameters(self, database):
+        cur = self.execute(
+            "SHOW PARAMETERS IN DATABASE {name:i}",
+            {
+                "name": DatabaseIdent(self.env_prefix, database),
+            },
+        )
+
+        return {r["key"]: r for r in cur}
 
     def show_dynamic_table(self, database, schema, name):
         cur = self.execute(

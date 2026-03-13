@@ -10,6 +10,7 @@ from .backup_set import BackupSetResolver
 from .business_role import BusinessRoleResolver
 from .clone_table import CloneTableResolver
 from .database import DatabaseResolver
+from .database_delayed import DatabaseDelayedResolver
 from .database_owner_role import DatabaseOwnerRoleResolver
 from .database_read_role import DatabaseReadRoleResolver
 from .database_role import DatabaseRoleResolver
@@ -118,6 +119,8 @@ default_resolve_sequence = [
     RowAccessPolicyResolver,
     BackupPolicyResolver,
     BackupSetResolver,
+    # --
+    DatabaseDelayedResolver,
 ]
 
 
