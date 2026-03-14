@@ -30,6 +30,9 @@ database_json_schema = {
         "catalog": {
             "type": "string",
         },
+        "catalog_sync": {
+            "type": "string",
+        },
         "event_table": {
             "type": "string",
         },
@@ -115,6 +118,7 @@ class DatabaseParser(AbstractParser):
                 retention_time=database_params.get("retention_time", None),
                 external_volume=Ident(database_params.get("external_volume")) if database_params.get("external_volume") else None,
                 catalog=Ident(database_params.get("catalog")) if database_params.get("catalog") else None,
+                catalog_sync=Ident(database_params.get("catalog_sync")) if database_params.get("catalog_sync") else None,
                 event_table=build_schema_object_ident(self.env_prefix, database_params.get("event_table"), database_name) if database_params.get("event_table") else None,
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],

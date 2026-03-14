@@ -69,6 +69,15 @@ class SchemaOwnerRoleResolver(AbstractRoleResolver):
                 )
             )
 
+        if schema_bp.catalog_sync:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.INTEGRATION,
+                    name=schema_bp.catalog_sync,
+                )
+            )
+
         # Create grants
         for model_create_grant in schema_permission_model.owner_create_grants:
             grants.append(

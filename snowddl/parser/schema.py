@@ -33,6 +33,9 @@ schema_json_schema = {
         "catalog": {
             "type": "string",
         },
+        "catalog_sync": {
+            "type": "string",
+        },
         "owner_database_read": {
             "type": "array",
             "items": {
@@ -114,6 +117,7 @@ class SchemaParser(AbstractParser):
                     "is_sandbox": schema_params.get("is_sandbox", database_params.get("is_sandbox", False)),
                     "external_volume": schema_params.get("external_volume", database_params.get("external_volume")),
                     "catalog": schema_params.get("catalog", database_params.get("catalog")),
+                    "catalog_sync": schema_params.get("catalog_sync", database_params.get("catalog_sync")),
                 }
 
                 # fmt: off
@@ -125,6 +129,7 @@ class SchemaParser(AbstractParser):
                     retention_time=combined_params.get("retention_time", None),
                     external_volume=Ident(combined_params.get("external_volume")) if combined_params.get("external_volume") else None,
                     catalog=Ident(combined_params.get("catalog")) if combined_params.get("catalog") else None,
+                    catalog_sync=Ident(combined_params.get("catalog_sync")) if combined_params.get("catalog_sync") else None,
                     owner_database_write=[IdentPattern(p) for p in schema_params.get("owner_database_write", [])],
                     owner_database_read=[IdentPattern(p) for p in schema_params.get("owner_database_read", [])],
                     owner_schema_write=[IdentPattern(p) for p in schema_params.get("owner_schema_write", [])],

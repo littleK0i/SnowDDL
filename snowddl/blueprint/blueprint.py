@@ -133,6 +133,7 @@ class DatabaseBlueprint(AbstractBlueprint):
     retention_time: Optional[int] = None
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
+    catalog_sync: Optional[Ident] = None
     event_table: Optional[SchemaObjectIdent] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
@@ -363,6 +364,7 @@ class SchemaBlueprint(AbstractBlueprint):
     retention_time: Optional[int] = None
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
+    catalog_sync: Optional[Ident] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.65.1] - 2026-03-14
+
+- Parameters `EXTERNAL_VOLUME` and `CATALOG` are now set for `DATABASE` and `SCHEMA`. Previously these parameters were applied only for unmanaged Iceberg tables directly.
+- Implemented parameter `CATALOG_SYNC` for `DATABASE` and `SCHEMA`. Currently, it can affect only managed Iceberg tables created by external tools.
+
 ## [0.65.0] - 2026-03-14
 
 - Implemented `JOIN_POLICY` object type. It works similar to other policies.

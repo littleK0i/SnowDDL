@@ -78,6 +78,15 @@ class DatabaseOwnerRoleResolver(AbstractRoleResolver):
                 )
             )
 
+        if database_bp.catalog_sync:
+            grants.append(
+                Grant(
+                    privilege="USAGE",
+                    on=ObjectType.INTEGRATION,
+                    name=database_bp.catalog_sync,
+                )
+            )
+
         # Create grants
         for model_create_grant in database_permission_model.owner_create_grants:
             future_grants.append(

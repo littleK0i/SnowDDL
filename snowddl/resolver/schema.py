@@ -27,6 +27,15 @@ class SchemaResolver(AbstractResolver):
         if bp.retention_time is not None:
             query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
+        if bp.external_volume:
+            query.append_nl("EXTERNAL_VOLUME = {external_volume:i}", {"external_volume": bp.external_volume})
+
+        if bp.catalog:
+            query.append_nl("CATALOG = {catalog:i}", {"catalog": bp.catalog})
+
+        if bp.catalog_sync:
+            query.append_nl("CATALOG_SYNC = {catalog_sync:i}", {"catalog_sync": bp.catalog_sync})
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
@@ -40,22 +49,14 @@ class SchemaResolver(AbstractResolver):
         return ResolveResult.CREATE
 
     def compare_object(self, bp: SchemaBlueprint, row: dict):
+        result = ResolveResult.NOCHANGE
+        schema_params = self.engine.schema_cache.schema_params[str(bp.full_name)]
+
         if bp.is_transient != row["is_transient"]:
             if bp.is_transient:
                 raise SnowDDLUnsupportedError(f"Cannot change PERMANENT schema [{bp.full_name}] into TRANSIENT schema")
             else:
                 raise SnowDDLUnsupportedError(f"Cannot change TRANSIENT schema [{bp.full_name}] into PERMANENT schema")
-
-        query = self.engine.query_builder()
-
-        query.append(
-            "ALTER SCHEMA {full_name:i} SET ",
-            {
-                "full_name": bp.full_name,
-            },
-        )
-
-        result = ResolveResult.NOCHANGE
 
         if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
             self.engine.execute_unsafe_ddl(
@@ -63,13 +64,70 @@ class SchemaResolver(AbstractResolver):
                 {
                     "full_name": bp.full_name,
                     "retention_time": bp.retention_time,
-                },
+                }
             )
 
             result = ResolveResult.ALTER
 
+        if bp.external_volume != schema_params.get("EXTERNAL_VOLUME"):
+            if bp.external_volume:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} SET EXTERNAL_VOLUME = {external_volume:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "external_volume": bp.external_volume,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} UNSET EXTERNAL_VOLUME",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.catalog != schema_params.get("CATALOG"):
+            if bp.catalog:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} SET CATALOG = {catalog:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "catalog": bp.catalog,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} UNSET CATALOG",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.catalog_sync != schema_params.get("CATALOG_SYNC"):
+            if bp.catalog_sync:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} SET CATALOG_SYNC = {catalog_sync:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "catalog_sync": bp.catalog_sync,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} UNSET CATALOG_SYNC",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
         if bp.comment != row["comment"]:
-            self.engine.execute_safe_ddl(
+            self.engine.execute_unsafe_ddl(
                 "ALTER SCHEMA {full_name:i} SET COMMENT = {comment}",
                 {
                     "full_name": bp.full_name,

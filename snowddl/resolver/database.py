@@ -29,6 +29,15 @@ class DatabaseResolver(AbstractResolver):
         if bp.retention_time is not None:
             query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
 
+        if bp.external_volume:
+            query.append_nl("EXTERNAL_VOLUME = {external_volume:i}", {"external_volume": bp.external_volume})
+
+        if bp.catalog:
+            query.append_nl("CATALOG = {catalog:i}", {"catalog": bp.catalog})
+
+        if bp.catalog_sync:
+            query.append_nl("CATALOG_SYNC = {catalog_sync:i}", {"catalog_sync": bp.catalog_sync})
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
@@ -45,32 +54,95 @@ class DatabaseResolver(AbstractResolver):
         return ResolveResult.CREATE
 
     def compare_object(self, bp: DatabaseBlueprint, row: dict):
+        result = ResolveResult.NOCHANGE
+        database_params = self.engine.schema_cache.database_params[str(bp.full_name)]
+
         if bp.is_transient != row["is_transient"]:
             if bp.is_transient:
                 raise SnowDDLUnsupportedError(f"Cannot change PERMANENT database [{bp.full_name}] into TRANSIENT database")
             else:
                 raise SnowDDLUnsupportedError(f"Cannot change TRANSIENT database [{bp.full_name}] into PERMANENT database")
 
-        query = self.engine.query_builder()
-
-        query.append("ALTER DATABASE {full_name:i} SET ", {"full_name": bp.full_name})
-
         if bp.retention_time is not None and bp.retention_time != row["retention_time"]:
-            query.append_nl("DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}", {"retention_time": bp.retention_time})
-
-        if bp.comment != row["comment"]:
-            query.append_nl(
-                "COMMENT = {comment}",
+            self.engine.execute_unsafe_ddl(
+                "ALTER DATABASE {full_name:i} SET DATA_RETENTION_TIME_IN_DAYS = {retention_time:d}",
                 {
-                    "comment": bp.comment,
-                },
+                    "full_name": bp.full_name,
+                    "retention_time": bp.retention_time,
+                }
             )
 
-        if query.fragment_count() > 1:
-            self.engine.execute_unsafe_ddl(query)
-            return ResolveResult.ALTER
+            result = ResolveResult.ALTER
 
-        return ResolveResult.NOCHANGE
+        if bp.external_volume != database_params.get("EXTERNAL_VOLUME"):
+            if bp.external_volume:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET EXTERNAL_VOLUME = {external_volume:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "external_volume": bp.external_volume,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET EXTERNAL_VOLUME",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.catalog != database_params.get("CATALOG"):
+            if bp.catalog:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET CATALOG = {catalog:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "catalog": bp.catalog,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET CATALOG",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.catalog_sync != database_params.get("CATALOG_SYNC"):
+            if bp.catalog_sync:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET CATALOG_SYNC = {catalog_sync:i}",
+                    {
+                        "full_name": bp.full_name,
+                        "catalog_sync": bp.catalog_sync,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET CATALOG_SYNC",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.comment != row["comment"]:
+            self.engine.execute_unsafe_ddl(
+                "ALTER DATABASE {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                }
+            )
+
+            result = ResolveResult.ALTER
+
+        return result
 
     def drop_object(self, row: dict):
         self.engine.execute_unsafe_ddl("DROP DATABASE {database:i}", {"database": row["database"]})
