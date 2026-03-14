@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.65.2] - 2026-03-14
+
+- Added missing reset of `database_params` / `schema_params` in schema cache during `.reload()`.
+
 ## [0.65.1] - 2026-03-14
 
 - Parameters `EXTERNAL_VOLUME` and `CATALOG` are now set for `DATABASE` and `SCHEMA`. Previously these parameters were applied only for unmanaged Iceberg tables directly.

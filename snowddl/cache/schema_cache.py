@@ -22,6 +22,9 @@ class SchemaCache:
         self.databases = {}
         self.schemas = {}
 
+        self.database_params = {}
+        self.schema_params = {}
+
         cur = self.engine.execute_meta(
             "SHOW DATABASES LIKE {env_prefix:ls}",
             {
