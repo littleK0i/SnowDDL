@@ -134,6 +134,10 @@ class DatabaseBlueprint(AbstractBlueprint):
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
     catalog_sync: Optional[Ident] = None
+    log_level: Optional[str] = None
+    log_event_level: Optional[str] = None
+    metric_level: Optional[str] = None
+    trace_level: Optional[str] = None
     event_table: Optional[SchemaObjectIdent] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
@@ -365,6 +369,10 @@ class SchemaBlueprint(AbstractBlueprint):
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
     catalog_sync: Optional[Ident] = None
+    log_level: Optional[str] = None
+    log_event_level: Optional[str] = None
+    metric_level: Optional[str] = None
+    trace_level: Optional[str] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []

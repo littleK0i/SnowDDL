@@ -131,6 +131,90 @@ class DatabaseResolver(AbstractResolver):
 
             result = ResolveResult.ALTER
 
+        if bp.log_level != database_params.get("LOG_LEVEL"):
+            if bp.log_level:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET LOG_LEVEL = {log_level}",
+                    {
+                        "full_name": bp.full_name,
+                        "log_level": bp.log_level,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET LOG_LEVEL",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.log_event_level != database_params.get("LOG_EVENT_LEVEL"):
+            if bp.log_event_level:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET LOG_EVENT_LEVEL = {log_event_level}",
+                    {
+                        "full_name": bp.full_name,
+                        "log_event_level": bp.log_event_level,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET LOG_EVENT_LEVEL",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.metric_level != database_params.get("METRIC_LEVEL"):
+            if bp.metric_level:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET METRIC_LEVEL = {metric_level}",
+                    {
+                        "full_name": bp.full_name,
+                        "metric_level": bp.metric_level,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET METRIC_LEVEL",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.trace_level != database_params.get("TRACE_LEVEL"):
+            if bp.trace_level:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} SET TRACE_LEVEL = {trace_level}",
+                    {
+                        "full_name": bp.full_name,
+                        "trace_level": bp.trace_level,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER DATABASE {full_name:i} UNSET TRACE_LEVEL",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                    condition=self.engine.context.is_account_admin,
+                )
+
+            result = ResolveResult.ALTER
+
         if bp.comment != row["comment"]:
             self.engine.execute_unsafe_ddl(
                 "ALTER DATABASE {full_name:i} SET COMMENT = {comment}",

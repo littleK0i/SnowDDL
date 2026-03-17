@@ -1,3 +1,10 @@
+retention_time: 1
+comment: abc
+log_level: INFO
+log_event_level: WARN
+metric_level: ALL
+trace_level: ON_EVENT
+
 owner_integration_usage:
   - test_notification_integration
 

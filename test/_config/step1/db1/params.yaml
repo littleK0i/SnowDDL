@@ -1,2 +1,7 @@
 event_table: sc1.et003_et1
+retention_time: 5
+log_level: DEBUG
+log_event_level: WARN
+metric_level: ALL
+trace_level: ALWAYS
 comment: abc
