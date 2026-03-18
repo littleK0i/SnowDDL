@@ -35,11 +35,11 @@ database_json_schema = {
         },
         "log_level": {
             "type": "string",
-            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG"]
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
         },
         "log_event_level": {
             "type": "string",
-            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG"]
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
         },
         "metric_level": {
             "type": "string",

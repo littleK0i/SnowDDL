@@ -1,15 +1,14 @@
 from snowddl.blueprint import (
     AccountGrant,
     AccountObjectIdent,
-    SchemaBlueprint,
-    SchemaIdent,
     Ident,
     IdentPattern,
+    SchemaBlueprint,
+    SchemaIdent,
     build_share_read_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
-
 
 # fmt: off
 schema_json_schema = {
@@ -38,11 +37,11 @@ schema_json_schema = {
         },
         "log_level": {
             "type": "string",
-            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG"]
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
         },
         "log_event_level": {
             "type": "string",
-            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG"]
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
         },
         "metric_level": {
             "type": "string",

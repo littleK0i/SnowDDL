@@ -139,7 +139,6 @@ class DatabaseResolver(AbstractResolver):
                         "full_name": bp.full_name,
                         "log_level": bp.log_level,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
             else:
                 self.engine.execute_unsafe_ddl(
@@ -147,7 +146,6 @@ class DatabaseResolver(AbstractResolver):
                     {
                         "full_name": bp.full_name,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
 
             result = ResolveResult.ALTER
@@ -160,7 +158,6 @@ class DatabaseResolver(AbstractResolver):
                         "full_name": bp.full_name,
                         "log_event_level": bp.log_event_level,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
             else:
                 self.engine.execute_unsafe_ddl(
@@ -168,7 +165,6 @@ class DatabaseResolver(AbstractResolver):
                     {
                         "full_name": bp.full_name,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
 
             result = ResolveResult.ALTER
@@ -181,7 +177,6 @@ class DatabaseResolver(AbstractResolver):
                         "full_name": bp.full_name,
                         "metric_level": bp.metric_level,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
             else:
                 self.engine.execute_unsafe_ddl(
@@ -189,7 +184,6 @@ class DatabaseResolver(AbstractResolver):
                     {
                         "full_name": bp.full_name,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
 
             result = ResolveResult.ALTER
@@ -202,7 +196,6 @@ class DatabaseResolver(AbstractResolver):
                         "full_name": bp.full_name,
                         "trace_level": bp.trace_level,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
             else:
                 self.engine.execute_unsafe_ddl(
@@ -210,7 +203,6 @@ class DatabaseResolver(AbstractResolver):
                     {
                         "full_name": bp.full_name,
                     },
-                    condition=self.engine.context.is_account_admin,
                 )
 
             result = ResolveResult.ALTER
