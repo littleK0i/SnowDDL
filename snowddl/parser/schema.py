@@ -1,15 +1,14 @@
 from snowddl.blueprint import (
     AccountGrant,
     AccountObjectIdent,
-    SchemaBlueprint,
-    SchemaIdent,
     Ident,
     IdentPattern,
+    SchemaBlueprint,
+    SchemaIdent,
     build_share_read_ident,
 )
 from snowddl.parser.abc_parser import AbstractParser
 from snowddl.parser.database import database_json_schema
-
 
 # fmt: off
 schema_json_schema = {
@@ -35,6 +34,22 @@ schema_json_schema = {
         },
         "catalog_sync": {
             "type": "string",
+        },
+        "log_level": {
+            "type": "string",
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
+        },
+        "log_event_level": {
+            "type": "string",
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
+        },
+        "metric_level": {
+            "type": "string",
+            "enum": ["ALL", "NONE"]
+        },
+        "trace_level": {
+            "type": "string",
+            "enum": ["OFF", "ON_EVENT", "ALWAYS"]
         },
         "owner_database_read": {
             "type": "array",
@@ -118,6 +133,10 @@ class SchemaParser(AbstractParser):
                     "external_volume": schema_params.get("external_volume", database_params.get("external_volume")),
                     "catalog": schema_params.get("catalog", database_params.get("catalog")),
                     "catalog_sync": schema_params.get("catalog_sync", database_params.get("catalog_sync")),
+                    "log_level": schema_params.get("log_level", database_params.get("log_level")),
+                    "log_event_level": schema_params.get("log_event_level", database_params.get("log_event_level")),
+                    "metric_level": schema_params.get("metric_level", database_params.get("metric_level")),
+                    "trace_level": schema_params.get("trace_level", database_params.get("trace_level")),
                 }
 
                 # fmt: off
@@ -130,6 +149,10 @@ class SchemaParser(AbstractParser):
                     external_volume=Ident(combined_params.get("external_volume")) if combined_params.get("external_volume") else None,
                     catalog=Ident(combined_params.get("catalog")) if combined_params.get("catalog") else None,
                     catalog_sync=Ident(combined_params.get("catalog_sync")) if combined_params.get("catalog_sync") else None,
+                    log_level=combined_params.get("log_level", None),
+                    log_event_level=combined_params.get("log_event_level", None),
+                    metric_level=combined_params.get("metric_level", None),
+                    trace_level=combined_params.get("trace_level", None),
                     owner_database_write=[IdentPattern(p) for p in schema_params.get("owner_database_write", [])],
                     owner_database_read=[IdentPattern(p) for p in schema_params.get("owner_database_read", [])],
                     owner_schema_write=[IdentPattern(p) for p in schema_params.get("owner_schema_write", [])],

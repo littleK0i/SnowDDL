@@ -1,3 +1,8 @@
+retention_time: 2
+comment: cde
+metric_level: NONE
+trace_level: OFF
+
 owner_integration_usage:
   - test_notification_integration
 

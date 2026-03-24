@@ -33,6 +33,22 @@ database_json_schema = {
         "catalog_sync": {
             "type": "string",
         },
+        "log_level": {
+            "type": "string",
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
+        },
+        "log_event_level": {
+            "type": "string",
+            "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
+        },
+        "metric_level": {
+            "type": "string",
+            "enum": ["ALL", "NONE"]
+        },
+        "trace_level": {
+            "type": "string",
+            "enum": ["OFF", "ON_EVENT", "ALWAYS"]
+        },
         "event_table": {
             "type": "string",
         },
@@ -119,6 +135,10 @@ class DatabaseParser(AbstractParser):
                 external_volume=Ident(database_params.get("external_volume")) if database_params.get("external_volume") else None,
                 catalog=Ident(database_params.get("catalog")) if database_params.get("catalog") else None,
                 catalog_sync=Ident(database_params.get("catalog_sync")) if database_params.get("catalog_sync") else None,
+                log_level=database_params.get("log_level", None),
+                log_event_level=database_params.get("log_event_level", None),
+                metric_level=database_params.get("metric_level", None),
+                trace_level=database_params.get("trace_level", None),
                 event_table=build_schema_object_ident(self.env_prefix, database_params.get("event_table"), database_name) if database_params.get("event_table") else None,
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],

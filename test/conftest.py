@@ -167,11 +167,42 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_database(self, database):
+        cur = self.execute(
+            "SHOW DATABASES LIKE {database_name:lf}",
+            {
+                "database_name": DatabaseIdent(self.env_prefix, database),
+            },
+        )
+
+        return cur.fetchone()
+
+    def show_schema(self, database, schema):
+        cur = self.execute(
+            "SHOW SCHEMAS LIKE {schema_name:lf} IN DATABASE {database_name:i}",
+            {
+                "database_name": DatabaseIdent(self.env_prefix, database),
+                "schema_name": Ident(schema),
+            },
+        )
+
+        return cur.fetchone()
+
     def show_database_parameters(self, database):
         cur = self.execute(
             "SHOW PARAMETERS IN DATABASE {name:i}",
             {
                 "name": DatabaseIdent(self.env_prefix, database),
+            },
+        )
+
+        return {r["key"]: r for r in cur}
+
+    def show_schema_parameters(self, database, schema):
+        cur = self.execute(
+            "SHOW PARAMETERS IN SCHEMA {name:i}",
+            {
+                "name": SchemaIdent(self.env_prefix, database, schema),
             },
         )
 
