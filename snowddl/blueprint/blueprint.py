@@ -518,7 +518,7 @@ class WarehouseBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     type: str
     size: str
-    generation: str = "1"
+    generation: Optional[str] = None
     auto_suspend: int = 60
     min_cluster_count: int = 1
     max_cluster_count: int = 1

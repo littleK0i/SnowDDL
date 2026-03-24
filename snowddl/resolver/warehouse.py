@@ -26,7 +26,7 @@ class WarehouseResolver(AbstractResolver):
                 "state": r["state"],
                 "type": r["type"],
                 "size": r["size"],
-                "generation": r["generation"],
+                "generation": r["generation"] if r["generation"] else None,
                 "min_cluster_count": r.get("min_cluster_count", None),
                 "max_cluster_count": r.get("max_cluster_count", None),
                 "scaling_policy": r.get("scaling_policy", None),
@@ -55,10 +55,12 @@ class WarehouseResolver(AbstractResolver):
 
         query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
         query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
-        query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
         query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
         query.append_nl("AUTO_RESUME = TRUE")
         query.append_nl("INITIALLY_SUSPENDED = TRUE")
+
+        if bp.generation:
+            query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
 
         if bp.resource_constraint:
             query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})

@@ -15,7 +15,7 @@ warehouse_json_schema = {
                 "type": "string"
             },
             "generation": {
-                "type": "string"
+                "type": "integer",
             },
             "min_cluster_count": {
                 "type": "integer"
@@ -80,7 +80,7 @@ class WarehouseParser(AbstractParser):
             full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
             type=warehouse_type,
             size=warehouse_params["size"],
-            generation=warehouse_params.get("generation", "1"),
+            generation=str(warehouse_params.get("generation", 1)) if warehouse_type == "STANDARD" else None,
             auto_suspend=warehouse_params.get("auto_suspend", 60),
             min_cluster_count=warehouse_params.get("min_cluster_count", 1),
             max_cluster_count=warehouse_params.get("max_cluster_count", 1),
