@@ -5,6 +5,8 @@
 - Added logging parameters `log_level`, `log_event_level`, `metric_level`, `trace_level` for object types `DATABASE` and `SCHEMA` (thanks to @MerlinVeritas).
 - Added parameter `quoted_identifiers_ignore_case` for `DATABASE` and `SCHEMA`. It only makes sense to set if for "sandbox" schemas. All SnowDDL generated identifiers are created in upper-case by design.
 - Improved database and schema parameters cache logic. It now supports parameters with types BOOLEAN and NUMBER, not only STRING.
+- Added parameter `generation` for `WAREHOUSE` object type.
+- Removed option to set `WAREHOUSE` generation using `resource_constraint` parameter. It is required due to upcoming changed in bundle `2026_02`. You may read more about this breaking change [here](https://docs.snowddl.com/breaking-changes-log/0.66.0-march-2026).
 
 ## [0.65.2] - 2026-03-14
 

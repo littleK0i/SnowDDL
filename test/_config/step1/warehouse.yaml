@@ -74,3 +74,7 @@ wh003_wh1:
   size: MEDIUM
   type: SNOWPARK-OPTIMIZED
   resource_constraint: MEMORY_16X
+
+wh004_wh1:
+  size: XSMALL
+  generation: 2

@@ -70,3 +70,7 @@ wh003_wh1:
   size: XSMALL
   type: SNOWPARK-OPTIMIZED
   resource_constraint: MEMORY_1X
+
+wh004_wh1:
+  size: XSMALL
+  generation: 1
