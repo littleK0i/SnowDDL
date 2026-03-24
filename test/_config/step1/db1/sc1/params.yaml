@@ -4,6 +4,7 @@ log_level: INFO
 log_event_level: WARN
 metric_level: ALL
 trace_level: ON_EVENT
+quoted_identifiers_ignore_case: true
 
 owner_integration_usage:
   - test_notification_integration

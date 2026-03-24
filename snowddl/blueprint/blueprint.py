@@ -139,6 +139,7 @@ class DatabaseBlueprint(AbstractBlueprint):
     metric_level: Optional[str] = None
     trace_level: Optional[str] = None
     event_table: Optional[SchemaObjectIdent] = None
+    quoted_identifiers_ignore_case: Optional[bool] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []
@@ -373,6 +374,7 @@ class SchemaBlueprint(AbstractBlueprint):
     log_event_level: Optional[str] = None
     metric_level: Optional[str] = None
     trace_level: Optional[str] = None
+    quoted_identifiers_ignore_case: Optional[bool] = None
     owner_database_write: List[IdentPattern] = []
     owner_database_read: List[IdentPattern] = []
     owner_schema_write: List[IdentPattern] = []

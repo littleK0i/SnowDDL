@@ -1,4 +1,6 @@
 event_table: sc1.et003_et2
 retention_time: 7
 log_level: INFO
+log_event_level: ERROR
 metric_level: NONE
+quoted_identifiers_ignore_case: false

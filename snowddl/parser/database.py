@@ -52,6 +52,9 @@ database_json_schema = {
         "event_table": {
             "type": "string",
         },
+        "quoted_identifiers_ignore_case": {
+            "type": "boolean",
+        },
         "is_sandbox": {
             "type": "boolean"
         },
@@ -140,6 +143,7 @@ class DatabaseParser(AbstractParser):
                 metric_level=database_params.get("metric_level", None),
                 trace_level=database_params.get("trace_level", None),
                 event_table=build_schema_object_ident(self.env_prefix, database_params.get("event_table"), database_name) if database_params.get("event_table") else None,
+                quoted_identifiers_ignore_case=database_params.get("quoted_identifiers_ignore_case", None),
                 is_sandbox=database_params.get("is_sandbox", False),
                 owner_database_write=[IdentPattern(p) for p in database_params.get("owner_database_write", [])],
                 owner_database_read=[IdentPattern(p) for p in database_params.get("owner_database_read", [])],

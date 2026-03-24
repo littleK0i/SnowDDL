@@ -4,4 +4,5 @@ log_level: DEBUG
 log_event_level: WARN
 metric_level: ALL
 trace_level: ALWAYS
+quoted_identifiers_ignore_case: true
 comment: abc

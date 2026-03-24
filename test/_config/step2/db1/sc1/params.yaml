@@ -1,7 +1,10 @@
 retention_time: 2
 comment: cde
+log_level: "OFF"
+log_event_level: "OFF"
 metric_level: NONE
-trace_level: OFF
+trace_level: "OFF"
+quoted_identifiers_ignore_case: false
 
 owner_integration_usage:
   - test_notification_integration

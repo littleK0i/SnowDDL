@@ -36,6 +36,26 @@ class SchemaResolver(AbstractResolver):
         if bp.catalog_sync:
             query.append_nl("CATALOG_SYNC = {catalog_sync:i}", {"catalog_sync": bp.catalog_sync})
 
+        if bp.log_level:
+            query.append_nl("LOG_LEVEL = {log_level}", {"log_level": bp.log_level})
+
+        if bp.log_event_level:
+            query.append_nl("LOG_EVENT_LEVEL = {log_event_level}", {"log_event_level": bp.log_event_level})
+
+        if bp.metric_level:
+            query.append_nl("METRIC_LEVEL = {metric_level}", {"metric_level": bp.metric_level})
+
+        if bp.trace_level:
+            query.append_nl("TRACE_LEVEL = {trace_level}", {"trace_level": bp.trace_level})
+
+        if bp.quoted_identifiers_ignore_case:
+            query.append_nl(
+                "QUOTED_IDENTIFIERS_IGNORE_CASE = {quoted_identifiers_ignore_case:b}",
+                {
+                    "quoted_identifiers_ignore_case": bp.quoted_identifiers_ignore_case
+                }
+            )
+
         if bp.comment:
             query.append_nl(
                 "COMMENT = {comment}",
@@ -195,6 +215,25 @@ class SchemaResolver(AbstractResolver):
             else:
                 self.engine.execute_unsafe_ddl(
                     "ALTER SCHEMA {full_name:i} UNSET TRACE_LEVEL",
+                    {
+                        "full_name": bp.full_name,
+                    },
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.quoted_identifiers_ignore_case != schema_params.get("QUOTED_IDENTIFIERS_IGNORE_CASE"):
+            if bp.quoted_identifiers_ignore_case is not None:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} SET QUOTED_IDENTIFIERS_IGNORE_CASE = {quoted_identifiers_ignore_case:b}",
+                    {
+                        "full_name": bp.full_name,
+                        "quoted_identifiers_ignore_case": bp.quoted_identifiers_ignore_case,
+                    },
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} UNSET QUOTED_IDENTIFIERS_IGNORE_CASE",
                     {
                         "full_name": bp.full_name,
                     },

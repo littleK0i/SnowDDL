@@ -104,7 +104,7 @@ class SchemaCache:
 
         for r in cur:
             if r["level"] == "DATABASE":
-                database_params[database_row["database"]][r["key"]] = r["value"]
+                database_params[database_row["database"]][r["key"]] = self._cast_param_value(r["value"], r["type"])
 
         return database_params
 
@@ -122,6 +122,15 @@ class SchemaCache:
 
         for r in cur:
             if r["level"] == "SCHEMA":
-                schema_params[schema_name][r["key"]] = r["value"]
+                schema_params[schema_name][r["key"]] = self._cast_param_value(r["value"], r["type"])
 
         return schema_params
+
+    def _cast_param_value(self, value, value_type):
+        if value_type == "BOOLEAN":
+            return value == "true"
+
+        if value_type == "NUMBER":
+            return int(value)
+
+        return value

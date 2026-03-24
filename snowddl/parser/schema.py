@@ -51,6 +51,9 @@ schema_json_schema = {
             "type": "string",
             "enum": ["OFF", "ON_EVENT", "ALWAYS"]
         },
+        "quoted_identifiers_ignore_case": {
+            "type": "boolean",
+        },
         "owner_database_read": {
             "type": "array",
             "items": {
@@ -137,6 +140,7 @@ class SchemaParser(AbstractParser):
                     "log_event_level": schema_params.get("log_event_level", database_params.get("log_event_level")),
                     "metric_level": schema_params.get("metric_level", database_params.get("metric_level")),
                     "trace_level": schema_params.get("trace_level", database_params.get("trace_level")),
+                    "quoted_identifiers_ignore_case": schema_params.get("quoted_identifiers_ignore_case", database_params.get("quoted_identifiers_ignore_case")),
                 }
 
                 # fmt: off
@@ -153,6 +157,7 @@ class SchemaParser(AbstractParser):
                     log_event_level=combined_params.get("log_event_level", None),
                     metric_level=combined_params.get("metric_level", None),
                     trace_level=combined_params.get("trace_level", None),
+                    quoted_identifiers_ignore_case=combined_params.get("quoted_identifiers_ignore_case", None),
                     owner_database_write=[IdentPattern(p) for p in schema_params.get("owner_database_write", [])],
                     owner_database_read=[IdentPattern(p) for p in schema_params.get("owner_database_read", [])],
                     owner_schema_write=[IdentPattern(p) for p in schema_params.get("owner_schema_write", [])],

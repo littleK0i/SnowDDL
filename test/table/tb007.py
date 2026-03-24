@@ -16,4 +16,4 @@ def test_step3(helper):
     table = helper.show_table("db1", "sc1", "tb007_tb1")
 
     assert table["kind"] == "TABLE"
-    assert int(table["retention_time"]) == 1
+    assert int(table["retention_time"]) == 2

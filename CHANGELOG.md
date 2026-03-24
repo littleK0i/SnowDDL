@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.66.0] - 2026-03-24
+
+- Added logging parameters `log_level`, `log_event_level`, `metric_level`, `trace_level` for object types `DATABASE` and `SCHEMA` (thanks to @MerlinVeritas).
+- Added parameter `quoted_identifiers_ignore_case` for `DATABASE` and `SCHEMA`. It only makes sense to set if for "sandbox" schemas. All SnowDDL generated identifiers are created in upper-case by design.
+- Improved database and schema parameters cache logic. It now supports parameters with types BOOLEAN and NUMBER, not only STRING.
+
 ## [0.65.2] - 2026-03-14
 
 - Added missing reset of `database_params` / `schema_params` in schema cache during `.reload()`.

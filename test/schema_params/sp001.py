@@ -17,6 +17,9 @@ def test_step1(helper):
     assert sc_params["TRACE_LEVEL"]["level"] == "SCHEMA"
     assert sc_params["TRACE_LEVEL"]["value"] == "ON_EVENT"
 
+    assert sc_params["QUOTED_IDENTIFIERS_IGNORE_CASE"]["level"] == "SCHEMA"
+    assert sc_params["QUOTED_IDENTIFIERS_IGNORE_CASE"]["value"] == "true"
+
 
 def test_step2(helper):
     sc = helper.show_schema("db1", "sc1")
@@ -25,14 +28,20 @@ def test_step2(helper):
     assert int(sc["retention_time"]) == 2
     assert sc["comment"] == "cde"
 
-    assert sc_params["LOG_LEVEL"]["level"] != "SCHEMA"
-    assert sc_params["LOG_EVENT_LEVEL"]["level"] != "SCHEMA"
+    assert sc_params["LOG_LEVEL"]["level"] == "SCHEMA"
+    assert sc_params["LOG_LEVEL"]["value"] == "OFF"
+
+    assert sc_params["LOG_EVENT_LEVEL"]["level"] == "SCHEMA"
+    assert sc_params["LOG_EVENT_LEVEL"]["value"] == "OFF"
 
     assert sc_params["METRIC_LEVEL"]["level"] == "SCHEMA"
     assert sc_params["METRIC_LEVEL"]["value"] == "NONE"
 
     assert sc_params["TRACE_LEVEL"]["level"] == "SCHEMA"
     assert sc_params["TRACE_LEVEL"]["value"] == "OFF"
+
+    assert sc_params["QUOTED_IDENTIFIERS_IGNORE_CASE"]["level"] == "SCHEMA"
+    assert sc_params["QUOTED_IDENTIFIERS_IGNORE_CASE"]["value"] == "false"
 
 
 def test_step3(helper):
@@ -46,3 +55,4 @@ def test_step3(helper):
     assert sc_params["LOG_EVENT_LEVEL"]["level"] != "SCHEMA"
     assert sc_params["METRIC_LEVEL"]["level"] != "SCHEMA"
     assert sc_params["TRACE_LEVEL"]["level"] != "SCHEMA"
+    assert sc_params["QUOTED_IDENTIFIERS_IGNORE_CASE"]["level"] != "SCHEMA"
