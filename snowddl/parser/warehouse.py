@@ -15,7 +15,7 @@ warehouse_json_schema = {
                 "type": "string"
             },
             "generation": {
-                "type": "integer",
+                "type": ["integer", "string"],
             },
             "min_cluster_count": {
                 "type": "integer"
@@ -67,6 +67,16 @@ class WarehouseParser(AbstractParser):
 
     def process_warehouse(self, warehouse_name, warehouse_params):
         warehouse_type = warehouse_params.get("type", "STANDARD").upper()
+        warehouse_generation = warehouse_params.get("generation")
+
+        # Warehouse generation type is string, despite values being integers
+        if warehouse_generation is not None:
+            warehouse_generation = str(warehouse_generation).upper()
+
+        # Enforce default generation '1' for all STANDARD warehouses, regardless of account creation date
+        if warehouse_generation is None and warehouse_type == "STANDARD":
+            warehouse_generation = "1"
+
         resource_constraint = warehouse_params.get("resource_constraint")
         resource_monitor = None
 
@@ -80,7 +90,7 @@ class WarehouseParser(AbstractParser):
             full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
             type=warehouse_type,
             size=warehouse_params["size"],
-            generation=str(warehouse_params.get("generation", 1)) if warehouse_type == "STANDARD" else None,
+            generation=warehouse_generation,
             auto_suspend=warehouse_params.get("auto_suspend", 60),
             min_cluster_count=warehouse_params.get("min_cluster_count", 1),
             max_cluster_count=warehouse_params.get("max_cluster_count", 1),
