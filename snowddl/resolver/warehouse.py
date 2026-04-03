@@ -283,7 +283,7 @@ class WarehouseResolver(AbstractResolver):
             return False
 
         # Special rules for RESOURCE_CONSTRAINT are required to take both old and new default logic into account
-        if bp.resource_constraint is None and bp.type == "STANDARD" and row["resource_constraint"] == "STANDARD_GEN_1":
+        if bp.resource_constraint is None and bp.type == "STANDARD" and row["resource_constraint"] in ("STANDARD_GEN_1", "STANDARD_GEN_2"):
             return False
 
         return True

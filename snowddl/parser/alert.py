@@ -37,8 +37,8 @@ class AlertParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]) if f.params.get("warehouse") else None,
             schedule=str(f.params["schedule"]).strip(),
-            condition=str(f.params["condition"]).strip(),
-            action=str(f.params["action"]).strip(),
+            condition=self.normalise_sql_text_param(f.params["condition"]),
+            action=self.normalise_sql_text_param(f.params["action"]),
             comment=f.params.get("comment"),
         )
 

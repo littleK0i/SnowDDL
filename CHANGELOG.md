@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.66.1] - 2026-04-03
+
+- Added normalisation for SQL parameters in `ALERT` condition and action, similar to `VIEW`, `FUNCTION`, `PROCEDURE`, etc.
+- Added `STANDARD_GEN_2` to list of ignored resource constraint values. As long as new only `generation` parameter is being used, as Snowflake requires to do in the upcoming [2026_02](https://docs.snowflake.com/en/release-notes/bcr-bundles/2026_02/bcr-2225) bundle, this should not cause any issues.
+
 ## [0.66.0] - 2026-03-24
 
 - Added logging parameters `log_level`, `log_event_level`, `metric_level`, `trace_level` for object types `DATABASE` and `SCHEMA` (thanks to @MerlinVeritas).
