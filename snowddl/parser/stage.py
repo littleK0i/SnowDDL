@@ -21,6 +21,15 @@ stage_json_schema = {
         "storage_integration": {
             "type": "string"
         },
+        "endpoint": {
+            "type": "string"
+        },
+        "credentials": {
+            "type": "object",
+            "additionalProperties": {
+                "type": ["boolean", "number", "string"]
+            }
+        },
         "encryption": {
             "type": "object",
             "additionalProperties": {
@@ -66,6 +75,8 @@ class StageParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             url=f.params.get("url"),
             storage_integration=Ident(f.params["storage_integration"]) if f.params.get("storage_integration") else None,
+            endpoint=f.params.get("endpoint"),
+            credentials=self.normalise_params_dict(f.params.get("credentials")),
             encryption=self.normalise_params_dict(f.params.get("encryption")),
             directory=self.normalise_params_dict(f.params.get("directory")),
             file_format=build_schema_object_ident(self.env_prefix, f.params["file_format"], f.database, f.schema) if f.params.get("file_format") else None,

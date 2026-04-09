@@ -415,6 +415,8 @@ class SequenceBlueprint(SchemaObjectBlueprint):
 class StageBlueprint(SchemaObjectBlueprint):
     url: Optional[str] = None
     storage_integration: Optional[Ident] = None
+    endpoint: Optional[str] = None
+    credentials: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     encryption: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     directory: Optional[Dict[str, Union[bool, float, int, str, list]]] = None
     file_format: Optional[SchemaObjectIdent] = None

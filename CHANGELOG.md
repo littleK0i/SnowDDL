@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.66.2] - 2026-04-09
+
+- Added parameters `endpoint` and `credentials` for `STAGE` in order to support external S3-compatible storages. This change is intended for testing only. Not documented and not ready for production yet.
+
 ## [0.66.1] - 2026-04-03
 
 - Added normalisation for SQL parameters in `ALERT` condition and action, similar to `VIEW`, `FUNCTION`, `PROCEDURE`, etc.

@@ -29,6 +29,7 @@ class StageResolver(AbstractSchemaObjectResolver):
                 "name": r["name"],
                 "url": r["url"] if r["url"] else None,
                 "storage_integration": r["storage_integration"] if r["storage_integration"] else None,
+                "endpoint": r["endpoint"],
                 "owner": r["owner"],
                 "type": r["type"],
                 "comment": r["comment"] if r["comment"] else None,
@@ -48,7 +49,7 @@ class StageResolver(AbstractSchemaObjectResolver):
             },
         )
 
-        query.append_nl(self._build_create_stage_sql(bp))
+        query.append(self._build_create_stage_sql(bp))
         self.engine.execute_safe_ddl(query)
 
         return ResolveResult.CREATE
@@ -63,7 +64,7 @@ class StageResolver(AbstractSchemaObjectResolver):
                 },
             )
 
-            query.append_nl(self._build_create_stage_sql(bp))
+            query.append(self._build_create_stage_sql(bp))
             self.engine.execute_unsafe_ddl(query)
 
             return ResolveResult.REPLACE
@@ -78,6 +79,9 @@ class StageResolver(AbstractSchemaObjectResolver):
         if self._compare_storage_integration(bp, row):
             result = ResolveResult.ALTER
 
+        if self._compare_endpoint(bp, row):
+            result = ResolveResult.ALTER
+
         if self._compare_directory(bp, existing_properties):
             result = ResolveResult.ALTER
 
@@ -88,6 +92,9 @@ class StageResolver(AbstractSchemaObjectResolver):
             result = ResolveResult.ALTER
 
         if self._compare_comment(bp, row):
+            result = ResolveResult.ALTER
+
+        if self.engine.settings.refresh_stage_credentials and bp.url and self._refresh_credentials(bp):
             result = ResolveResult.ALTER
 
         if self.engine.settings.refresh_stage_encryption and bp.url and self._refresh_encryption(bp):
@@ -163,6 +170,29 @@ class StageResolver(AbstractSchemaObjectResolver):
                 "STORAGE_INTEGRATION = {storage_integration:i}",
                 {
                     "storage_integration": bp.storage_integration,
+                },
+            )
+
+            self.engine.execute_safe_ddl(query)
+
+            return True
+
+        return False
+
+    def _compare_endpoint(self, bp: StageBlueprint, row):
+        if bp.endpoint != row["endpoint"]:
+            query = self.engine.query_builder()
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
+
+            query.append_nl(
+                "ENDPOINT = {endpoint:i}",
+                {
+                    "endpoint": bp.endpoint,
                 },
             )
 
@@ -305,6 +335,24 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         return False
 
+    def _refresh_credentials(self, bp: StageBlueprint):
+        if bp.encryption:
+            query = self.engine.query_builder()
+            query.append(
+                "ALTER STAGE {full_name:i} SET",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
+
+            query.append_nl(self._build_credentials(bp))
+
+            self.engine.execute_safe_ddl(query)
+
+            return True
+
+        return False
+
     def _refresh_encryption(self, bp: StageBlueprint):
         if bp.encryption:
             query = self.engine.query_builder()
@@ -387,6 +435,25 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         return query
 
+    def _build_credentials(self, bp: StageBlueprint):
+        query = self.engine.query_builder()
+
+        if bp.credentials:
+            query.append("CREDENTIALS = (")
+
+            for k, v in bp.credentials.items():
+                query.append(
+                    "{param_name:r} = {param_value:dp}",
+                    {
+                        "param_name": k,
+                        "param_value": v,
+                    },
+                )
+
+            query.append(")")
+
+        return query
+
     def _build_encryption(self, bp: StageBlueprint):
         query = self.engine.query_builder()
 
@@ -423,6 +490,9 @@ class StageResolver(AbstractSchemaObjectResolver):
                 },
             )
 
+        if bp.endpoint:
+            query.append_nl("ENDPOINT = {endpoint}", {"endpoint": bp.endpoint})
+
         if bp.directory:
             query.append_nl(self._build_directory(bp))
 
@@ -431,6 +501,9 @@ class StageResolver(AbstractSchemaObjectResolver):
 
         if bp.copy_options:
             query.append_nl(self._build_copy_options(bp))
+
+        if bp.credentials:
+            query.append_nl(self._build_credentials(bp))
 
         if bp.encryption:
             query.append_nl(self._build_encryption(bp))

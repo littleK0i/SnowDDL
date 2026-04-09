@@ -264,6 +264,12 @@ class BaseApp:
             action="store_true",
         )
         parser.add_argument(
+            "--refresh-stage-credentials",
+            help="Additionally refresh stage credential parameters for existing external stages",
+            default=False,
+            action="store_true",
+        )
+        parser.add_argument(
             "--refresh-stage-encryption",
             help="Additionally refresh stage encryption parameters for existing external stages",
             default=False,
@@ -519,6 +525,9 @@ class BaseApp:
 
         if self.args.get("refresh_future_grants"):
             settings.refresh_future_grants = True
+
+        if self.args.get("refresh_stage_credentials"):
+            settings.refresh_stage_credentials = True
 
         if self.args.get("refresh_stage_encryption"):
             settings.refresh_stage_encryption = True
