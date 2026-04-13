@@ -294,6 +294,9 @@ class SingleDbApp(BaseApp):
                 if isinstance(bp, (SchemaBlueprint, SchemaObjectBlueprint)) and bp.full_name.database_full_name == self.config_db:
                     singledb_config.add_blueprint(self.convert_blueprint(bp))
 
+        singledb_config.placeholders = original_config.placeholders
+        singledb_config.permission_models = original_config.permission_models
+
         return singledb_config
 
     def convert_blueprint(self, bp: AbstractBlueprint):

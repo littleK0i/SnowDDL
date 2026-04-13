@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.66.3] - 2026-04-13
+
+- Fixed issue with permission models not working in SingleDB mode. Placeholders and permission models are now being copied when building SingleDB config.
+
 ## [0.66.2] - 2026-04-09
 
 - Added parameters `endpoint` and `credentials` for `STAGE` in order to support external S3-compatible storages. This change is intended for testing only. Not documented and not ready for production yet.

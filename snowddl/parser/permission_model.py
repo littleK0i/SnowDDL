@@ -123,3 +123,5 @@ class PermissionModelParser(AbstractParser):
                     model.read_future_grants.append(grant)
 
         self.config.add_permission_model(name.upper(), model)
+
+        print(self.config.permission_models.keys())
