@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.66.4] - 2026-04-17
+
+- Removed unintended debug output when parsing permission models.
+
 ## [0.66.3] - 2026-04-13
 
 - Fixed issue with permission models not working in SingleDB mode. Placeholders and permission models are now being copied when building SingleDB config.
