@@ -336,7 +336,7 @@ class StageResolver(AbstractSchemaObjectResolver):
         return False
 
     def _refresh_credentials(self, bp: StageBlueprint):
-        if bp.encryption:
+        if bp.credentials:
             query = self.engine.query_builder()
             query.append(
                 "ALTER STAGE {full_name:i} SET",
