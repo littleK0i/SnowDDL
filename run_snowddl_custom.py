@@ -1,9 +1,10 @@
 """
-Custom SnowDDL runner that prevents creation of users, warehouses, and databases.
+Custom SnowDDL runner that prevents creation, alteration, and dropping of users,
+warehouses, and databases.
 
-These objects must be pre-created manually in Snowflake. SnowDDL will raise an
-error if a YAML-defined object does not already exist, rather than creating it.
-All other resolver behaviour (ALTER, DROP, role management) is unchanged.
+These objects must be pre-created and managed manually in Snowflake. SnowDDL will
+raise an error rather than CREATE or DROP any of them. For users, property changes
+are silently skipped but the U_ROLE grant is still enforced on each run.
 
 Usage: python run_snowddl_custom.py apply -c ./config --env-prefix DEV_
 """
@@ -21,6 +22,16 @@ class SkipCreateUserResolver(UserResolver):
         raise ValueError(
             f"User [{bp.full_name}] is defined in YAML config but does not exist in Snowflake. "
             f"Users must be created manually before SnowDDL can manage their roles."
+        )
+
+    def compare_object(self, bp, row):
+        self._check_user_role_grant(bp)
+        return ResolveResult.NOCHANGE
+
+    def drop_object(self, row):
+        raise ValueError(
+            f"User [{row['name']}] exists in Snowflake but is not defined in YAML config. "
+            f"Users must be removed manually in Snowflake."
         )
 
 
