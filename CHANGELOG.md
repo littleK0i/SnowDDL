@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.66.5] - 2026-05-07
+
+- Fixed `STAGE` credentials refresh incorrectly depending on `--refresh-stage-encryption` instead of `--refresh-stage-credentials` CLI option.
+
 ## [0.66.4] - 2026-04-17
 
 - Removed unintended debug output when parsing permission models.
