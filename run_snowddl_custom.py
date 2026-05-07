@@ -42,12 +42,30 @@ class SkipCreateWarehouseResolver(WarehouseResolver):
             f"Warehouses must be created manually before SnowDDL can manage their configuration."
         )
 
+    def compare_object(self, bp, row):
+        return ResolveResult.NOCHANGE
+
+    def drop_object(self, row):
+        raise ValueError(
+            f"Warehouse [{row['name']}] exists in Snowflake but is not defined in YAML config. "
+            f"Warehouses must be removed manually in Snowflake."
+        )
+
 
 class SkipCreateDatabaseResolver(DatabaseResolver):
     def create_object(self, bp):
         raise ValueError(
             f"Database [{bp.full_name}] is defined in YAML config but does not exist in Snowflake. "
             f"Databases must be created manually before SnowDDL can manage their configuration."
+        )
+
+    def compare_object(self, bp, row):
+        return ResolveResult.NOCHANGE
+
+    def drop_object(self, row):
+        raise ValueError(
+            f"Database [{row['database']}] exists in Snowflake but is not defined in YAML config. "
+            f"Databases must be removed manually in Snowflake."
         )
 
 
