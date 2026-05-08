@@ -439,6 +439,16 @@ class StreamBlueprint(SchemaObjectBlueprint):
     show_initial_rows: bool = None
 
 
+class StreamlitBlueprint(SchemaObjectBlueprint):
+    stage: SchemaObjectIdent
+    stage_directory: Optional[str] = None
+    main_file: str = "streamlit_app.py"
+    query_warehouse: Optional[AccountObjectIdent] = None
+    title: Optional[str] = None
+    external_access_integrations: Optional[List[AccountObjectIdent]] = None
+    secrets: Optional[Dict[str, SchemaObjectIdent]] = None
+
+
 class TableBlueprint(SchemaObjectBlueprint):
     columns: List[TableColumn]
     cluster_by: Optional[List[str]] = None

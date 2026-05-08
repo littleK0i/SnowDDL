@@ -39,6 +39,7 @@ from .semantic_view import SemanticViewParser
 from .sequence import SequenceParser
 from .stage import StageParser
 from .stream import StreamParser
+from .streamlit import StreamlitParser
 from .table import TableParser
 from .task import TaskParser
 from .technical_role import TechnicalRoleParser
@@ -85,6 +86,7 @@ default_parse_sequence = [
     SemanticViewParser,
     PipeParser,
     StreamParser,
+    StreamlitParser,
     TaskParser,
     AlertParser,
     # --
@@ -126,6 +128,7 @@ singledb_parse_sequence = [
     SemanticViewParser,
     PipeParser,
     StreamParser,
+    StreamlitParser,
     TaskParser,
     AlertParser,
     # --

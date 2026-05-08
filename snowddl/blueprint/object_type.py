@@ -285,6 +285,13 @@ class ObjectType(Enum):
         "blueprint_cls": "StageFileBlueprint",
     }
 
+    STREAMLIT = {
+        "singular": "STREAMLIT",
+        "plural": "STREAMLITS",
+        "is_future_grant_supported": True,
+        "blueprint_cls": "StreamlitBlueprint",
+    }
+
     STREAM = {
         "singular": "STREAM",
         "plural": "STREAMS",

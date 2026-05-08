@@ -48,6 +48,7 @@ from .semantic_view import SemanticViewResolver
 from .stage import StageResolver
 from .stage_file import StageFileResolver
 from .stream import StreamResolver
+from .streamlit import StreamlitResolver
 from .table import TableResolver
 from .task import TaskResolver
 from .technical_role import TechnicalRoleResolver
@@ -100,6 +101,7 @@ default_resolve_sequence = [
     SemanticViewResolver,
     PipeResolver,
     StreamResolver,
+    StreamlitResolver,
     TaskResolver,
     AlertResolver,
     # --
@@ -180,6 +182,7 @@ singledb_resolve_sequence = [
     SemanticViewResolver,
     PipeResolver,
     StreamResolver,
+    StreamlitResolver,
     TaskResolver,
     AlertResolver,
     # --

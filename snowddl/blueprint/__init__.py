@@ -41,6 +41,7 @@ from .blueprint import (
     StageBlueprint,
     StageFileBlueprint,
     StreamBlueprint,
+    StreamlitBlueprint,
     TableBlueprint,
     TagBlueprint,
     TaskBlueprint,
