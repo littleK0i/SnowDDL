@@ -22,13 +22,13 @@ jobs:
             os: ubuntu-latest
             python-version: "3.10"
 
-          - env-prefix: PY313_LINUX
+          - env-prefix: PY314_LINUX
             os: ubuntu-latest
-            python-version: "3.13"
+            python-version: "3.14"
 
-          - env-prefix: PY313_WINDOWS
+          - env-prefix: PY314_WINDOWS
             os: windows-latest
-            python-version: "3.13"
+            python-version: "3.14"
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20

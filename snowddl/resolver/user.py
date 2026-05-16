@@ -361,6 +361,10 @@ class UserResolver(AbstractResolver):
                 if param_name == "WORKSPACE_USER_SETTINGS":
                     continue
 
+                # As of May 2026, same applies to WORKSHEETS_MIGRATED
+                if param_name == "WORKSHEETS_MIGRATED":
+                    continue
+
                 # Setting parameter to NULL equals to UNSET
                 query.append_nl(
                     "{param_name:r} = NULL",

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.66.6] - 2026-05-16
+
+- Prevented reset of `WORKSHEETS_MIGRATED` user parameter if it was not specified in config.
+- Bumped `snowflake-connector-python` dependency to 4.0+.
+- Switched tests to Python 3.14.
+
 ## [0.66.5] - 2026-05-07
 
 - Fixed `STAGE` credentials refresh incorrectly depending on `--refresh-stage-encryption` instead of `--refresh-stage-credentials` CLI option.
