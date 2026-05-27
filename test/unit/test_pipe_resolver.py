@@ -20,7 +20,6 @@ response for Snowpipe Streaming pipes (kind=STREAMING, owner=NULL):
 
 from unittest.mock import MagicMock
 
-from snowddl.resolver.abc_resolver import ResolveResult
 from snowddl.resolver.pipe import PipeResolver
 
 
@@ -32,11 +31,10 @@ def make_resolver():
 
 
 class TestGetExistingObjectsInSchema:
-    def test_is_snowflake_managed_captured_and_coerced_to_bool(self):
+    def test_snowflake_managed_pipe_excluded(self):
         """
-        Bug: is_snowflake_managed not captured from SHOW PIPES output.
-        Snowflake returns the value as the string "true"/"false"; it must be
-        stored as a Python bool (consistent with how stream.py handles "stale").
+        Bug: get_existing_objects_in_schema does not filter out Snowflake-managed pipes,
+        causing drop_object to attempt DROP PIPE and fail with SQL error 2003.
         """
         resolver = make_resolver()
         resolver.engine.execute_meta.return_value = [
@@ -54,28 +52,5 @@ class TestGetExistingObjectsInSchema:
 
         result = resolver.get_existing_objects_in_schema({"database": "DB1", "schema": "SC1"})
 
-        pipe = result["DB1.SC1.MANAGED_PIPE"]
-        assert "is_snowflake_managed" in pipe
-        assert pipe["is_snowflake_managed"] is True
+        assert "DB1.SC1.MANAGED_PIPE" not in result
 
-
-class TestDropObject:
-    def test_snowflake_managed_pipe_is_not_dropped(self):
-        """
-        Bug: drop_object executes DROP PIPE unconditionally, causing SQL error 2003
-        for Snowflake-managed pipes (owner=NULL, kind=STREAMING).
-        After the fix it must return NOCHANGE without executing any DDL.
-        """
-        resolver = make_resolver()
-
-        result = resolver.drop_object(
-            {
-                "database": "DB1",
-                "schema": "SC1",
-                "name": "MANAGED_PIPE",
-                "is_snowflake_managed": True,
-            }
-        )
-
-        assert result == ResolveResult.NOCHANGE
-        resolver.engine.execute_unsafe_ddl.assert_not_called()
