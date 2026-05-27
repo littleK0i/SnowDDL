@@ -27,6 +27,7 @@ class PipeResolver(AbstractSchemaObjectResolver):
                 "integration": r["integration"],
                 "pattern": r["pattern"],
                 "comment": r["comment"],
+                "is_snowflake_managed": r["is_snowflake_managed"] == "true",
             }
 
         return existing_objects
@@ -89,6 +90,9 @@ class PipeResolver(AbstractSchemaObjectResolver):
         return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
+        if row.get("is_snowflake_managed"):
+            return ResolveResult.NOCHANGE
+
         self.engine.execute_unsafe_ddl(
             "DROP PIPE {database:i}.{schema:i}.{name:i}",
             {
