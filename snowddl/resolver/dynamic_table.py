@@ -139,7 +139,7 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
             result = ResolveResult.ALTER
 
-        elif not self._compare_target_lag(bp, row):
+        elif bp.sheduler == "ENABLE" and not self._compare_target_lag(bp, row):
             self.engine.execute_safe_ddl(
                 "ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG = {target_lag}",
                 {

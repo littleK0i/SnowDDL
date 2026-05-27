@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.67.1] - 2026-05-27
+
+- Adjusted compare condition for `target_lag` to run only when scheduler is set to "ENABLE".
+
 ## [0.67.0] - 2026-05-27
 
 - Implemented `scheduler` property for `DYNAMIC_TABLE`.
