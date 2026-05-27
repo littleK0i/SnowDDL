@@ -159,7 +159,8 @@ class DatabaseRoleBlueprint(AbstractBlueprint):
 class DynamicTableBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     text: str
     columns: Optional[List[DynamicTableColumn]] = None
-    target_lag: str
+    scheduler: str = "ENABLE"
+    target_lag: Optional[str] = None
     warehouse: AccountObjectIdent
     refresh_mode: Optional[str] = None
     initialize: Optional[str] = None

@@ -39,6 +39,9 @@ dynamic_table_json_schema = {
         "target_lag": {
             "type": "string"
         },
+        "scheduler": {
+            "type": "string"
+        },
         "warehouse": {
             "type": "string",
         },
@@ -160,7 +163,7 @@ dynamic_table_json_schema = {
             "additionalProperties": False
         },
     },
-    "required": ["text", "target_lag", "warehouse"],
+    "required": ["text", "warehouse"],
     "additionalProperties": False
 }
 # fmt: on
@@ -210,6 +213,7 @@ class DynamicTableParser(AbstractParser):
             full_name=SchemaObjectIdent(self.env_prefix, f.database, f.schema, f.name),
             text=self.normalise_sql_text_param(f.params["text"]),
             columns=column_blueprints if column_blueprints else None,
+            scheduler=f.params.get("scheduler").upper() if f.params.get("scheduler") else "ENABLE",
             target_lag=self.normalise_target_lag(f.params["target_lag"]),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]),
             refresh_mode=f.params.get("refresh_mode").upper() if f.params.get("refresh_mode") else None,
@@ -289,6 +293,9 @@ class DynamicTableParser(AbstractParser):
             self.config.add_policy_reference(RowAccessPolicyBlueprint, policy_name, ref)
 
     def normalise_target_lag(self, target_lag: str):
+        if target_lag is None:
+            return None
+
         if target_lag.upper() == "DOWNSTREAM":
             return "DOWNSTREAM"
 

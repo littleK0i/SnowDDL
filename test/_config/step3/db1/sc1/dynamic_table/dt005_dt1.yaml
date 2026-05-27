@@ -1,0 +1,6 @@
+text: |-
+  SELECT *
+  FROM dt005_tb1
+
+scheduler: disable
+warehouse: dt005_wh1

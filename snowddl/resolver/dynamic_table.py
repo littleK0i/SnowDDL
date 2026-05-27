@@ -45,9 +45,10 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
                 "columns": r["columns"],
                 "text": r["query"].rstrip(";"),
                 "cluster_by": r["cluster_by"],
-                "target_lag": r["target_lag"],
+                "target_lag": r["target_lag"] if r["target_lag"] else None,
                 "refresh_mode": r["refresh_mode"],
                 "warehouse": r["warehouse"],
+                "scheduler": r["scheduler"] if r["scheduler"] else "ENABLE",
                 "comment": r["comment"],
             }
 
@@ -113,7 +114,32 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
 
             return ResolveResult.REPLACE
 
-        if not self._compare_target_lag(bp, row):
+        if bp.scheduler == "DISABLE" and row["scheduler"] == "ENABLE":
+            # Disabling scheduler automatically unsets TARGET_LAG
+            self.engine.execute_safe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET SCHEDULER = {scheduler}",
+                {
+                    "full_name": bp.full_name,
+                    "scheduler": bp.scheduler,
+                },
+            )
+
+            result = ResolveResult.ALTER
+
+        elif bp.scheduler == "ENABLE" and row["scheduler"] == "DISABLE":
+            # Enabling scheduler requires TARGET_LAG to be set in the same statement
+            self.engine.execute_safe_ddl(
+                "ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG={target_lag} SCHEDULER = {scheduler}",
+                {
+                    "full_name": bp.full_name,
+                    "target_lag": bp.target_lag,
+                    "scheduler": bp.scheduler,
+                },
+            )
+
+            result = ResolveResult.ALTER
+
+        elif not self._compare_target_lag(bp, row):
             self.engine.execute_safe_ddl(
                 "ALTER DYNAMIC TABLE {full_name:i} SET TARGET_LAG = {target_lag}",
                 {
@@ -238,11 +264,19 @@ class DynamicTableResolver(AbstractSchemaObjectResolver):
             query.append_nl(")")
 
         query.append_nl(
-            "TARGET_LAG = {target_lag}",
+            "SCHEDULER = {scheduler}",
             {
-                "target_lag": bp.target_lag,
+                "scheduler": bp.scheduler,
             },
         )
+
+        if bp.target_lag:
+            query.append_nl(
+                "TARGET_LAG = {target_lag}",
+                {
+                    "target_lag": bp.target_lag,
+                },
+            )
 
         query.append_nl(
             "WAREHOUSE = {warehouse:i}",

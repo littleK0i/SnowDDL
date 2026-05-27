@@ -7,7 +7,18 @@ class DynamicTableValidator(AbstractValidator):
         return self.config.get_blueprints_by_type(DynamicTableBlueprint)
 
     def validate_blueprint(self, bp: DynamicTableBlueprint):
+        self._validate_scheduler_target_lag(bp)
         self._validate_depends_on(bp)
+
+    def _validate_scheduler_target_lag(self, bp: DynamicTableBlueprint):
+        if bp.scheduler not in ("ENABLE", "DISABLE"):
+            raise ValueError(f"Dynamic table [{bp.full_name}] has unexpected scheduler type [{bp.scheduler}]")
+
+        if bp.scheduler == "ENABLE" and bp.target_lag is None:
+            raise ValueError(f"Dynamic table [{bp.full_name}] property [target_lag] must be defined due to ENABLE scheduler")
+
+        if bp.scheduler == "DISABLE" and bp.target_lag:
+            raise ValueError(f"Dynamic table [{bp.full_name}] property [target_lag] must not be defined due to DISABLE scheduler")
 
     def _validate_depends_on(self, bp: DynamicTableBlueprint):
         for depends_on_name in bp.depends_on:

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.67.0] - 2026-05-27
+
+- Implemented `scheduler` property for `DYNAMIC_TABLE`.
+- Property `target_lag` is no longer required for `DYNAMIC_TABLE` as long as scheduler is set to "DISABLE".
+
 ## [0.66.6] - 2026-05-16
 
 - Prevented reset of `WORKSHEETS_MIGRATED` user parameter if it was not specified in config.
