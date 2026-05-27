@@ -214,7 +214,7 @@ class DynamicTableParser(AbstractParser):
             text=self.normalise_sql_text_param(f.params["text"]),
             columns=column_blueprints if column_blueprints else None,
             scheduler=f.params.get("scheduler").upper() if f.params.get("scheduler") else "ENABLE",
-            target_lag=self.normalise_target_lag(f.params["target_lag"]),
+            target_lag=self.normalise_target_lag(f.params.get("target_lag")),
             warehouse=AccountObjectIdent(self.env_prefix, f.params["warehouse"]),
             refresh_mode=f.params.get("refresh_mode").upper() if f.params.get("refresh_mode") else None,
             initialize=f.params.get("initialize").upper() if f.params.get("initialize") else None,
