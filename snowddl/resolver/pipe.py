@@ -19,6 +19,9 @@ class PipeResolver(AbstractSchemaObjectResolver):
         )
 
         for r in cur:
+            if r["is_snowflake_managed"] == "true":
+                continue
+
             existing_objects[f"{r['database_name']}.{r['schema_name']}.{r['name']}"] = {
                 "database": r["database_name"],
                 "schema": r["schema_name"],
