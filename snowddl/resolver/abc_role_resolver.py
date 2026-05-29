@@ -7,6 +7,7 @@ from snowddl.blueprint import (
     ApplicationRoleIdent,
     DatabaseBlueprint,
     DatabaseRoleIdent,
+    SchemaObjectIdent,
     FutureGrant,
     Ident,
     IdentPattern,
@@ -22,6 +23,10 @@ from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, Objec
 
 
 class AbstractRoleResolver(AbstractResolver):
+    def __init__(self, engine: "SnowDDLEngine"):
+        super().__init__(engine)
+        self._future_grant_warnings_logged = set()
+
     @abstractmethod
     def get_role_suffix(self) -> str:
         pass
@@ -335,6 +340,9 @@ class AbstractRoleResolver(AbstractResolver):
         )
 
     def create_future_grant(self, role_name, grant: FutureGrant):
+        if not grant.on_future.is_future_grant_supported:
+            return
+
         self.engine.execute_safe_ddl(
             "GRANT {privilege:r} ON FUTURE {on_future_plural:r} IN {in_parent_singular:r} {name:i} TO ROLE {role_name:i}",
             {
@@ -347,6 +355,9 @@ class AbstractRoleResolver(AbstractResolver):
         )
 
     def drop_future_grant(self, role_name, grant: FutureGrant):
+        if not grant.on_future.is_future_grant_supported:
+            return
+
         self.engine.execute_safe_ddl(
             "REVOKE {privilege:r} ON FUTURE {on_future_plural:r} IN {in_parent_singular:r} {name:i} FROM ROLE {role_name:i}",
             {
@@ -363,6 +374,10 @@ class AbstractRoleResolver(AbstractResolver):
         if grant.on_future == ObjectType.PIPE:
             return
 
+        if not grant.on_future.is_future_grant_supported:
+            self.apply_future_grant_to_existing_objects_fallback(role_name, grant)
+            return
+
         self.engine.execute_safe_ddl(
             "GRANT {privilege:r} ON ALL {on_future_plural:r} IN {in_parent_singular:r} {name:i} TO ROLE {role_name:i}{copy_grants:r}",
             {
@@ -374,6 +389,77 @@ class AbstractRoleResolver(AbstractResolver):
                 "copy_grants": " COPY CURRENT GRANTS" if (grant.privilege == "OWNERSHIP") else "",
             },
         )
+
+    def apply_future_grant_to_existing_objects_fallback(self, role_name, grant: FutureGrant):
+        """
+        Fallback method to grant permissions on each existing object individually when future grants are not supported by Snowflake.
+        :param role_name: role name to grant permissions on
+        :param grant: needed grant
+        :return: None
+        """
+
+        if grant.on_future not in self._future_grant_warnings_logged:
+            self._future_grant_warnings_logged.add(grant.on_future)
+            self.engine.logger.warning(
+                f"Future grants not supported for {grant.on_future.plural}, "
+                f"falling back to individual object grants (this message won't repeat for this object type)"
+            )
+
+        # Always check if database exists first
+        cur = self.engine.execute_meta(
+            "SHOW {plural:r} LIKE {name:lf}",
+            {
+                "plural": ObjectType.DATABASE.plural,
+                "name": grant.name.database,
+            },
+        )
+        if cur.fetchone() is None:
+            return
+
+        # For SCHEMA parent, also check if schema exists
+        if grant.in_parent == ObjectType.SCHEMA:
+            cur = self.engine.execute_meta(
+                "SHOW {plural:r} LIKE {name:lf} IN {parent_singular:r} {database:i}",
+                {
+                    "plural": ObjectType.SCHEMA.plural,
+                    "name": grant.name.schema,
+                    "parent_singular": ObjectType.DATABASE.singular,
+                    "database": grant.name.database,
+                },
+            )
+            if cur.fetchone() is None:
+                return
+
+        # Get current grants for comparison
+        _, current_grants, _, _ = self.get_existing_role_grants(role_name)
+
+        cur = self.engine.execute_meta(
+            "SHOW {on_future_plural:r} IN {in_parent_singular:r} {name:i}",
+            {
+                "on_future_plural": grant.on_future.plural,
+                "in_parent_singular": grant.in_parent.singular,
+                "name": grant.name,
+            },
+        )
+
+        desired_grants = [
+            Grant(
+                privilege=grant.privilege,
+                on=grant.on_future,
+                name=SchemaObjectIdent(
+                    env_prefix=self.config.env_prefix,
+                    database=row["database_name"],
+                    schema=row["schema_name"],
+                    name=row["name"]
+                )
+            )
+            for row in cur
+        ]
+
+        for desired_grant in desired_grants:
+            if desired_grant in current_grants:
+                continue
+            self.create_grant(role_name, desired_grant)
 
     def build_database_role_grants(self, database_name_pattern: IdentPattern, role_type: str) -> List[Grant]:
         grants = []
