@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.67.2] - 2026-05-30
+
+- Prevented SnowDDL from dropping automatically created Snowflake Streaming pipes managed by Snowflake (thanks to @zaza).
+
 ## [0.67.1] - 2026-05-27
 
 - Adjusted compare condition for `target_lag` to run only when scheduler is set to "ENABLE".

@@ -3,7 +3,9 @@ from json import loads
 from itertools import groupby
 from os import environ
 from pytest import fixture
+from requests import request
 from snowflake.connector import connect, DictCursor
+from snowflake.connector.auth.keypair import AuthByKeyPair
 
 from snowddl import (
     BaseDataType,
@@ -317,6 +319,17 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_pipe_streaming(self, database, schema, name):
+        cur = self.execute(
+            "SHOW PIPES LIKE {pipe_name:lf} IN SCHEMA {schema_name:i}",
+            {
+                "schema_name": SchemaIdent(self.env_prefix, database, schema),
+                "pipe_name": f"{Ident(name)}-STREAMING",
+            },
+        )
+
+        return cur.fetchone()
+
     def show_stream(self, database, schema, name):
         cur = self.execute(
             "SHOW STREAMS LIKE {stream_name:lf} IN SCHEMA {schema_name:i}",
@@ -573,6 +586,43 @@ class Helper:
             parts.append("".join(current).strip())
 
         return parts
+
+    def streaming_open_channel(self, database, schema, table):
+        database = self.env_prefix + database.upper()
+        schema = schema.upper()
+        table = table.upper()
+
+        pipe = f"{table}-STREAMING"
+        channel = f"{table}_CHANNEL"
+
+        full_url = f"https://{self.connection.host}/v2/streaming/databases/{database}/schemas/{schema}/pipes/{pipe}/channels/{channel}"
+
+        headers = {
+            "Authorization": f"Bearer {self._get_jwt_token()}",
+            "X-Snowflake-Authorization-Token-Type": "KEYPAIR_JWT",
+            "Content-Type": "application/json",
+        }
+
+        response = request(
+            method="put",
+            url=full_url,
+            headers=headers,
+            json={},
+        )
+
+        return response.json()
+
+    def _get_jwt_token(self):
+        key_bytes = str(environ["SNOWFLAKE_PRIVATE_KEY"]).encode("utf-8")
+        pk = serialization.load_pem_private_key(data=key_bytes, password=None)
+
+        der = pk.private_bytes(
+            encoding=serialization.Encoding.DER,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        return AuthByKeyPair(private_key=der).prepare(account=environ.get("SNOWFLAKE_ACCOUNT"), user=environ.get("SNOWFLAKE_USER"))
 
     def __enter__(self):
         return self
