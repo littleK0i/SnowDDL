@@ -12,6 +12,7 @@ def test_step1(helper):
     # Defaults are set
     assert "TB002_SQ1" in cols["ID"]["default"]
     assert cols["NAME"]["default"]
+    assert "CAST(CONVERT_TIMEZONE('UTC', CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_TZ(9))) AS TIMESTAMP_NTZ(9))" in cols["REGISTER_TS"]["default"]
 
     # Other params are off
     assert not table["cluster_by"]
@@ -37,6 +38,9 @@ def test_step2(helper):
     # Default value is gone
     assert not cols["NAME"]["default"]
 
+    # SYSDATE() default persists unchanged
+    assert "CAST(CONVERT_TIMEZONE('UTC', CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_TZ(9))) AS TIMESTAMP_NTZ(9))" in cols["REGISTER_TS"]["default"]
+
     # Other params are on
     assert table["cluster_by"]
     assert table["change_tracking"] == "ON"
@@ -58,6 +62,9 @@ def test_step3(helper):
     # Defaults are empty again
     assert not cols["ID"]["default"]
     assert not cols["NAME"]["default"]
+
+    # Column was dropped
+    assert "REGISTER_TS" not in cols
 
     # Other params are off again
     assert not table["cluster_by"]

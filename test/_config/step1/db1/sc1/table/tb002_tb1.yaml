@@ -5,3 +5,6 @@ columns:
   name:
     type: VARCHAR(255)
     default: "'John Doe'"
+  register_ts:
+    type: TIMESTAMP_NTZ(9)
+    default: SYSDATE()

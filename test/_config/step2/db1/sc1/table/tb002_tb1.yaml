@@ -6,6 +6,9 @@ columns:
   name:
     type: VARCHAR(255) NOT NULL
     comment: "abc"
+  register_ts:
+    type: TIMESTAMP_NTZ(9)
+    default: SYSDATE()
 
 comment: "abc"
 cluster_by: ["id"]

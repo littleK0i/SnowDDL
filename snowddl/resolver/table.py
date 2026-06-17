@@ -687,5 +687,8 @@ class TableResolver(AbstractSchemaObjectResolver):
         if isinstance(bp_default, SchemaObjectIdent):
             # This cannot be formatted properly with double-quotes ("), Snowflake strips it from DEFAULT value returned by DESC TABLE
             return f"{bp_default}.NEXTVAL"
+        if isinstance(bp_default, str) and bp_default.upper().replace(" ", "") == "SYSDATE()":
+            # Snowflake normalizes SYSDATE() into this canonical expression
+            return "CAST(CONVERT_TIMEZONE('UTC', CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_TZ(9))) AS TIMESTAMP_NTZ(9))"
 
         return bp_default
