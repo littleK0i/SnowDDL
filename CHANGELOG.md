@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added workaround for Snowflake-managed `SNOWSERVICE-*` integrations (auto-created for Snowpark Container Services / Cortex features) appearing as "does not conform to SnowDDL standards" warnings in `SHOW GRANTS` output.
+
 ## [0.67.4] - 2026-06-12
 
 - Added workaround for Snowflake bug with Cortex Search objects bleeding into `SHOW GRANTS` output.

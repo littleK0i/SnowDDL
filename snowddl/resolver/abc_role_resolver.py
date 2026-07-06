@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from re import compile
+from re import IGNORECASE, compile
 from typing import List, Optional, Tuple, Union
 
 from snowddl.blueprint import (
@@ -23,6 +23,7 @@ from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, Objec
 
 
 cortex_search_object_re = compile(r"^.+\._CORTEX_SEARCH_.+_[0-9A-F]{8}_[0-9A-F]{4}_[0-9A-F]{4}_[0-9A-F]{4}_[0-9A-F]{12}$")
+snowservice_integration_re = compile(r"^SNOWSERVICE-\d+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", IGNORECASE)
 
 
 class AbstractRoleResolver(AbstractResolver):
@@ -100,6 +101,11 @@ class AbstractRoleResolver(AbstractResolver):
 
             # Snowflake bug: phantom objects from CORTEX SEARCH appear in grants, but nowhere else
             if "._CORTEX_SEARCH_" in str(r["name"]) and cortex_search_object_re.match(r["name"]):
+                continue
+
+            # Snowflake-managed integration auto-created for Snowpark Container Services / Cortex features
+            # It has no blueprint in SnowDDL and cannot be created, renamed or dropped by SnowDDL
+            if object_type == ObjectType.INTEGRATION and snowservice_integration_re.match(str(r["name"])):
                 continue
 
             if object_type == ObjectType.ACCOUNT:
