@@ -25,7 +25,7 @@ def test_step2(helper):
 
     assert user["type"] == "SERVICE"
     assert user["has_password"] == "false"
-    assert user["has_rsa_public_key"] == "false"
+    assert user["has_rsa_public_key"] == "true"
 
 
 def test_step3(helper):
