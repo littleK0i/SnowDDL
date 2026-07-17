@@ -445,6 +445,26 @@ class Helper:
 
         return cur.fetchone()
 
+    def show_grants_to_role(self, name):
+        cur = self.execute(
+            "SHOW GRANTS TO ROLE {name:i}",
+            {
+                "name": AccountObjectIdent(self.env_prefix, name),
+            },
+        )
+
+        return cur.fetchall()
+
+    def show_role(self, name):
+        cur = self.execute(
+            "SHOW ROLES LIKE {name:lf}",
+            {
+                "name": AccountObjectIdent(self.env_prefix, name),
+            },
+        )
+
+        return cur.fetchone()
+
     def show_network_policy(self, name):
         # SHOW NETWORK POLICIES does not support LIKE natively
         cur = self.execute("SHOW NETWORK POLICIES")

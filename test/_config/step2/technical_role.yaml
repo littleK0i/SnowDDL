@@ -4,3 +4,8 @@ pm001_tr2:
       - pm001*
     SCHEMA:USAGE:
       - pm001*.*
+
+tr001_tr1:
+  grants:
+    DATABASE_ROLE:USAGE:
+      - SNOWFLAKE.CORTEX_USER

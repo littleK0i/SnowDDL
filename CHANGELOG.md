@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added support for granting database roles not managed by SnowDDL config (e.g. `SNOWFLAKE.CORTEX_USER`) to technical roles. A `DATABASE_ROLE:USAGE` grant pattern with a fully-qualified name and no wildcards now falls back to a direct `GRANT DATABASE ROLE ... TO ROLE ...` when the pattern does not match any database role blueprint.
+
 ## [0.67.5] - 206-07-07
 
 - Added workaround for Snowflake-managed `SNOWSERVICE-*` integrations (auto-created for Snowpark Container Services / Cortex features) appearing as "does not conform to SnowDDL standards" warnings in `SHOW GRANTS` output.

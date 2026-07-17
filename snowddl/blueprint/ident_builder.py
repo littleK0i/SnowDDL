@@ -120,6 +120,12 @@ def build_application_role_ident(application_role_name: str) -> ApplicationRoleI
     return ApplicationRoleIdent("", *application_role_name.split(".", 2))
 
 
+def build_external_database_role_ident(database_role_name: str) -> DatabaseRoleIdent:
+    # External database roles (e.g. SNOWFLAKE.CORTEX_USER) are global objects
+    # No env prefix for global objects, matches build_grant_name_ident() output for SHOW GRANTS
+    return DatabaseRoleIdent("", *database_role_name.split(".", 2))
+
+
 def build_share_read_ident(share_name: str) -> Union[Ident, DatabaseRoleIdent]:
     if "." in share_name:
         # Shares are global, so database roles inside shares are global as well

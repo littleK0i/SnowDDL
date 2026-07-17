@@ -15,3 +15,8 @@ pm001_tr1:
       - pm001_db1
     VIEW:SELECT:
       - pm001*.*
+
+tr001_tr1:
+  grants:
+    DATABASE_ROLE:USAGE:
+      - SNOWFLAKE.CORTEX_USER

@@ -13,10 +13,13 @@ class TechnicalRoleValidator(AbstractValidator):
     def _validate_grant_patterns(self, bp: TechnicalRoleBlueprint):
         for grant_pattern in bp.grant_patterns:
             if not self.config.get_blueprints_by_type_and_pattern(grant_pattern.on.blueprint_cls, grant_pattern.pattern):
-                raise ValueError(
-                    f"Technical role [{bp.full_name}] grant pattern [{grant_pattern.pattern}] "
-                    f"does not match any objects of type [{grant_pattern.on.name}]"
-                )
+                # Fully-qualified database roles owned outside of SnowDDL config (e.g. SNOWFLAKE.CORTEX_USER)
+                # cannot be validated against config, existence is checked by Snowflake on apply
+                if not grant_pattern.is_external_database_role_pattern():
+                    raise ValueError(
+                        f"Technical role [{bp.full_name}] grant pattern [{grant_pattern.pattern}] "
+                        f"does not match any objects of type [{grant_pattern.on.name}]"
+                    )
 
             if grant_pattern.privilege == "ALL":
                 raise ValueError(

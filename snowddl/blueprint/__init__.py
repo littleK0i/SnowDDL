@@ -89,6 +89,7 @@ from .ident_builder import (
     build_future_grant_name_ident,
     build_default_namespace_ident,
     build_application_role_ident,
+    build_external_database_role_ident,
     build_share_read_ident,
 )
 from .ident_pattern import IdentPattern

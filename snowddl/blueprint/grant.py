@@ -69,6 +69,16 @@ class GrantPattern(BaseModelWithConfig):
     on: ObjectType
     pattern: IdentPattern
 
+    def is_external_database_role_pattern(self) -> bool:
+        # Fully-qualified database role owned outside of SnowDDL config (e.g. SNOWFLAKE.CORTEX_USER)
+        # Only USAGE can be granted role-to-role, and wildcards cannot be resolved without blueprints
+        return (
+            self.on == ObjectType.DATABASE_ROLE
+            and self.privilege == "USAGE"
+            and not self.pattern.is_complex_pattern
+            and "." in self.pattern.pattern
+        )
+
     def is_matching_grant(self, grant: Grant):
         if self.privilege != grant.privilege:
             return False
