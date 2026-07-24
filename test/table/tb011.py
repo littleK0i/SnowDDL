@@ -4,7 +4,7 @@ def test_step1(helper):
     assert cols["NUM1"]["type"] == "NUMBER(10,0)"
     assert cols["NUM2"]["type"] == "NUMBER(38,0)"
     assert cols["NUM3"]["type"] == "NUMBER(10,5)"
-    assert cols["NUM3"]["type"] == "NUMBER(38,5)"
+    assert cols["NUM4"]["type"] == "NUMBER(38,5)"
 
 
 def test_step2(helper):
