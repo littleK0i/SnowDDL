@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.67.5] - 206-07-07
+## [0.67.6] - 2026-07-24
+
+- Fixed detection of NUMBER data type changes which involve precision only and can be processed with ALTER TABLE instead of REPLACE TABLE (thanks to @TB99930).
+
+## [0.67.5] - 2026-07-07
 
 - Added workaround for Snowflake-managed `SNOWSERVICE-*` integrations (auto-created for Snowpark Container Services / Cortex features) appearing as "does not conform to SnowDDL standards" warnings in `SHOW GRANTS` output.
 - Prevented reset of user parameters starting with `CORTEX_CODE_`. These parameters do not behave normally and require `ACCOUNTADMIN` to change.

@@ -1,0 +1,5 @@
+columns:
+  num1: NUMBER(12,2)
+  num2: NUMBER(36,2)
+  num3: NUMBER(12,0)
+  num4: NUMBER(36,0)
