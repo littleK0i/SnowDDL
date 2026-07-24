@@ -2,15 +2,15 @@ from itertools import islice
 from re import compile
 
 from snowddl.blueprint import (
-    Ident,
-    TableBlueprint,
-    TableColumn,
-    DataType,
     BaseDataType,
+    DataType,
+    Ident,
     SchemaObjectIdent,
     SearchOptimizationItem,
+    TableBlueprint,
+    TableColumn,
 )
-from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
+from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ObjectType, ResolveResult
 
 cluster_by_syntax_re = compile(r"^(\w+)?\((.*)\)$")
 collate_type_syntax_re = compile(r"^(.*) COLLATE \'(.*)\'$")
@@ -198,7 +198,7 @@ class TableResolver(AbstractSchemaObjectResolver):
                 # Increase or decrease precision of NUMBER, but not scale
                 if (
                     snow_c.type.base_type == BaseDataType.NUMBER
-                    and snow_c.type.val1 != bp_c.type.val2
+                    and snow_c.type.val1 != bp_c.type.val1
                     and snow_c.type.val2 == bp_c.type.val2
                 ):
                     unsafe_alters.append(
