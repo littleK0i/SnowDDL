@@ -142,6 +142,7 @@ class ObjectType(Enum):
         "singular": "HYBRID TABLE",
         "plural": "HYBRID TABLES",
         "singular_for_ref": "TABLE",
+        "singular_for_grant": "TABLE",
         "is_future_grant_supported": True,
         "blueprint_cls": "HybridTableBlueprint",
     }
