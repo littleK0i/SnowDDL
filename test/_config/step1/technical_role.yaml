@@ -3,6 +3,11 @@ eai001_tr1:
     EXTERNAL_ACCESS_INTEGRATION:USAGE:
       - eai001_eai1
 
+ht001_tr1:
+  grants:
+    HYBRID_TABLE:USAGE:
+      - db1.sc1.ht001_ht1
+
 pm001_tr1:
   grants:
     DATABASE:USAGE:
