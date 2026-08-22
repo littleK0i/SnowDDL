@@ -5,7 +5,7 @@ eai001_tr1:
 
 ht001_tr1:
   grants:
-    HYBRID_TABLE:USAGE:
+    HYBRID_TABLE:SELECT:
       - db1.sc1.ht001_ht1
 
 pm001_tr1:
