@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fixed `GRANT ... ON HYBRID TABLE` statements failing with `Unsupported feature 'UNKNOWN'`. Snowflake does not accept `HYBRID TABLE` as a securable object type in `GRANT`/`REVOKE` statements; the generic `TABLE` keyword must be used instead, even though `HYBRID TABLE` is correct for `CREATE`/`ALTER`/`DESC`. Added `singular_for_grant: TABLE` to the `HYBRID_TABLE` object type, following the existing precedent for `EXTERNAL_ACCESS_INTEGRATION`.
+
 ## [0.67.6] - 2026-07-24
 
 - Fixed detection of NUMBER data type changes which involve precision only and can be processed with ALTER TABLE instead of REPLACE TABLE (thanks to @TB99930).
