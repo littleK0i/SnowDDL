@@ -1,0 +1,9 @@
+language: SQL
+
+returns: BOOLEAN
+
+depends_on:
+  - fn012_fn1()
+
+body: |-
+  SELECT ${{ env_prefix }}db1.sc1.fn012_fn1()

@@ -1,0 +1,6 @@
+language: SQL
+
+returns: BOOLEAN
+
+body: |-
+  SELECT TRUE
