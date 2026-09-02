@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.68.0] - 2026-09-02
+
+- Added `depends_on` for `FUNCTION` to guarantee correct creation order (thanks to @JefStat).
+
 ## [0.67.7] - 2026-08-22
 
 - Fixed `GRANT ... ON HYBRID TABLE` statements failing with `Unsupported feature 'UNKNOWN'`.
