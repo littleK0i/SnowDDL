@@ -226,7 +226,7 @@ class ForeignKeyBlueprint(SchemaObjectBlueprint):
     ref_columns: List[Ident]
 
 
-class FunctionBlueprint(SchemaObjectBlueprint):
+class FunctionBlueprint(SchemaObjectBlueprint, DependsOnMixin):
     full_name: SchemaObjectIdentWithArgs
     language: str
     body: Optional[str] = None
