@@ -188,6 +188,9 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
 
         # Remove remaining policy references which no longer exist in blueprint
         for existing_ref in existing_policy_refs.values():
+            if not self.is_policy_ref_droppable(existing_ref):
+                continue
+
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {first_column:i} UNSET MASKING POLICY",
                 {
@@ -208,6 +211,9 @@ class MaskingPolicyResolver(AbstractSchemaObjectResolver):
         existing_policy_refs = self._get_existing_policy_refs(policy_name)
 
         for existing_ref in existing_policy_refs.values():
+            if not self.is_policy_ref_droppable(existing_ref):
+                continue
+
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} MODIFY COLUMN {first_column:i} UNSET MASKING POLICY",
                 {
