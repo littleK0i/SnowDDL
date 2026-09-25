@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added `max_query_performance_level` and `query_throughput_multiplier` for `WAREHOUSE`, to configure Adaptive warehouses (`type: ADAPTIVE`). `size` is now optional for this warehouse type, since `WAREHOUSE_SIZE` is not a valid property for it (thanks to @JefStat).
+
 ## [0.68.0] - 2026-09-02
 
 - Added `depends_on` for `FUNCTION` to guarantee correct creation order (thanks to @JefStat).
