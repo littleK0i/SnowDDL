@@ -86,3 +86,7 @@ wh005_wh1:
   type: ADAPTIVE
   max_query_performance_level: SMALL
   query_throughput_multiplier: 0
+
+wh006_wh1:
+  size: XSMALL
+  type: STANDARD

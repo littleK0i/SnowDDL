@@ -74,11 +74,6 @@ class WarehouseParser(AbstractParser):
         warehouse_type = warehouse_params.get("type", "STANDARD").upper()
         warehouse_generation = warehouse_params.get("generation")
 
-        # WAREHOUSE_SIZE is not a valid property for ADAPTIVE warehouses, so size is
-        # optional for that type only; every other type still requires it.
-        if warehouse_type != "ADAPTIVE" and "size" not in warehouse_params:
-            raise ValueError(f"Missing required parameter [size] for warehouse [{warehouse_name}]")
-
         # Warehouse generation type is string, despite values being integers
         if warehouse_generation is not None:
             warehouse_generation = str(warehouse_generation).upper()
