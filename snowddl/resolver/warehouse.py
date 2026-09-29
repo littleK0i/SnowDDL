@@ -37,7 +37,7 @@ class WarehouseResolver(AbstractResolver):
                 "enable_query_acceleration": r.get("enable_query_acceleration") == "true",
                 "query_acceleration_max_scale_factor": r.get("query_acceleration_max_scale_factor"),
                 "max_query_performance_level": r.get("max_query_performance_level"),
-                "query_throughput_multiplier": int(r["query_throughput_multiplier"]) if r.get("query_throughput_multiplier") else None,
+                "query_throughput_multiplier": r.get("query_throughput_multiplier"),
                 "resource_constraint": r.get("resource_constraint"),
                 "comment": r["comment"] if r["comment"] else None,
             }

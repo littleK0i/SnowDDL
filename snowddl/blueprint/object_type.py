@@ -123,6 +123,13 @@ class ObjectType(Enum):
         "blueprint_cls": "ExternalTableBlueprint",
     }
 
+    # Technical object type, used for GRANTs only
+    # There is no blueprint
+    EXTERNAL_VOLUME = {
+        "singular": "VOLUME",
+        "plural": "VOLUMES",
+    }
+
     FILE_FORMAT = {
         "singular": "FILE FORMAT",
         "plural": "FILE FORMATS",
@@ -319,13 +326,6 @@ class ObjectType(Enum):
         "plural": "VIEWS",
         "is_future_grant_supported": True,
         "blueprint_cls": "ViewBlueprint",
-    }
-
-    # Technical object type, used for GRANTs only
-    # There is no blueprint
-    VOLUME = {
-        "singular": "VOLUME",
-        "plural": "VOLUMES",
     }
 
     USER = {

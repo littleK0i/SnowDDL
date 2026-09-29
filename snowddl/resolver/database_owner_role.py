@@ -64,7 +64,7 @@ class DatabaseOwnerRoleResolver(AbstractRoleResolver):
             grants.append(
                 Grant(
                     privilege="USAGE",
-                    on=ObjectType.VOLUME,
+                    on=ObjectType.EXTERNAL_VOLUME,
                     name=database_bp.external_volume,
                 )
             )
