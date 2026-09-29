@@ -41,6 +41,12 @@ warehouse_json_schema = {
             "query_acceleration_max_scale_factor": {
                 "type": "integer"
             },
+            "max_query_performance_level": {
+                "type": "string"
+            },
+            "query_throughput_multiplier": {
+                "type": "integer"
+            },
             "warehouse_params": {
                 "type": "object",
                 "additionalProperties": {
@@ -54,7 +60,6 @@ warehouse_json_schema = {
                 "type": "string"
             }
         },
-        "required": ["size"],
         "additionalProperties": False
     }
 }
@@ -89,7 +94,7 @@ class WarehouseParser(AbstractParser):
         bp = WarehouseBlueprint(
             full_name=AccountObjectIdent(self.env_prefix, warehouse_name),
             type=warehouse_type,
-            size=warehouse_params["size"],
+            size=warehouse_params.get("size"),
             generation=warehouse_generation,
             auto_suspend=warehouse_params.get("auto_suspend", 60),
             min_cluster_count=warehouse_params.get("min_cluster_count", 1),
@@ -98,6 +103,10 @@ class WarehouseParser(AbstractParser):
             resource_monitor=resource_monitor,
             enable_query_acceleration=warehouse_params.get("enable_query_acceleration", False),
             query_acceleration_max_scale_factor=warehouse_params.get("query_acceleration_max_scale_factor", 8),
+            max_query_performance_level=(
+                warehouse_params["max_query_performance_level"].upper() if warehouse_params.get("max_query_performance_level") else None
+            ),
+            query_throughput_multiplier=warehouse_params.get("query_throughput_multiplier"),
             warehouse_params=self.normalise_params_dict(warehouse_params.get("warehouse_params", {})),
             resource_constraint=resource_constraint,
             comment=warehouse_params.get("comment"),

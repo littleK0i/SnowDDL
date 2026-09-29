@@ -77,3 +77,12 @@ wh003_wh1:
 wh004_wh1:
   size: XSMALL
   generation: 1
+
+wh005_wh1:
+  type: ADAPTIVE
+  max_query_performance_level: LARGE
+  query_throughput_multiplier: 2
+
+wh006_wh1:
+  type: ADAPTIVE
+  max_query_performance_level: SMALL

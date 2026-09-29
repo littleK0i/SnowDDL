@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Added `max_query_performance_level` and `query_throughput_multiplier` for `WAREHOUSE`, to configure Adaptive warehouses (`type: ADAPTIVE`). `size` is now optional for this warehouse type, since `WAREHOUSE_SIZE` is not a valid property for it (thanks to @JefStat).
+- Moved `WAREHOUSE` parameter validation (`size` required, `max_query_performance_level` / `query_throughput_multiplier` only valid for `ADAPTIVE`) from the YAML parser to `WarehouseValidator`, so it also catches blueprints built programmatically (thanks to @JefStat).
+
 ## [0.68.0] - 2026-09-02
 
 - Added `depends_on` for `FUNCTION` to guarantee correct creation order (thanks to @JefStat).

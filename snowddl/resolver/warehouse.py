@@ -34,6 +34,8 @@ class WarehouseResolver(AbstractResolver):
                 "resource_monitor": r["resource_monitor"] if r["resource_monitor"] != "null" else None,
                 "enable_query_acceleration": r.get("enable_query_acceleration") == "true",
                 "query_acceleration_max_scale_factor": r.get("query_acceleration_max_scale_factor"),
+                "max_query_performance_level": r.get("max_query_performance_level"),
+                "query_throughput_multiplier": int(r["query_throughput_multiplier"]) if r.get("query_throughput_multiplier") else None,
                 "resource_constraint": r.get("resource_constraint"),
                 "comment": r["comment"] if r["comment"] else None,
             }
@@ -54,7 +56,12 @@ class WarehouseResolver(AbstractResolver):
         )
 
         query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
-        query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
+
+        # WAREHOUSE_SIZE is not a valid property for ADAPTIVE warehouses;
+        # their compute envelope is set entirely by MAX_QUERY_PERFORMANCE_LEVEL.
+        if bp.type != "ADAPTIVE":
+            query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
+
         query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
         query.append_nl("AUTO_RESUME = TRUE")
         query.append_nl("INITIALLY_SUSPENDED = TRUE")
@@ -79,6 +86,19 @@ class WarehouseResolver(AbstractResolver):
                 "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
                 {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
             )
+
+        if bp.type == "ADAPTIVE":
+            if bp.max_query_performance_level:
+                query.append_nl(
+                    "MAX_QUERY_PERFORMANCE_LEVEL = {max_query_performance_level}",
+                    {"max_query_performance_level": bp.max_query_performance_level},
+                )
+
+            if bp.query_throughput_multiplier is not None:
+                query.append_nl(
+                    "QUERY_THROUGHPUT_MULTIPLIER = {query_throughput_multiplier:d}",
+                    {"query_throughput_multiplier": bp.query_throughput_multiplier},
+                )
 
         query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
         query.append_nl(self._build_common_parameters(bp))
@@ -134,7 +154,7 @@ class WarehouseResolver(AbstractResolver):
         if bp.type != row["type"]:
             query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
 
-        if self._normalise_warehouse_size(bp.size) != self._normalise_warehouse_size(row["size"]):
+        if bp.type != "ADAPTIVE" and self._normalise_warehouse_size(bp.size) != self._normalise_warehouse_size(row["size"]):
             query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
 
         if bp.generation != row["generation"]:
@@ -166,6 +186,21 @@ class WarehouseResolver(AbstractResolver):
                 query.append_nl(
                     "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
                     {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
+                )
+
+        if bp.type == "ADAPTIVE":
+            existing_max_query_performance_level = (row["max_query_performance_level"] or "").upper()
+
+            if bp.max_query_performance_level and bp.max_query_performance_level != existing_max_query_performance_level:
+                query.append_nl(
+                    "MAX_QUERY_PERFORMANCE_LEVEL = {max_query_performance_level}",
+                    {"max_query_performance_level": bp.max_query_performance_level},
+                )
+
+            if bp.query_throughput_multiplier is not None and bp.query_throughput_multiplier != row["query_throughput_multiplier"]:
+                query.append_nl(
+                    "QUERY_THROUGHPUT_MULTIPLIER = {query_throughput_multiplier:d}",
+                    {"query_throughput_multiplier": bp.query_throughput_multiplier},
                 )
 
         if bp.comment != row["comment"]:

@@ -520,7 +520,7 @@ class ViewBlueprint(SchemaObjectBlueprint, DependsOnMixin):
 class WarehouseBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     type: str
-    size: str
+    size: Optional[str] = None
     generation: Optional[str] = None
     auto_suspend: int = 60
     min_cluster_count: int = 1
@@ -529,6 +529,8 @@ class WarehouseBlueprint(AbstractBlueprint):
     resource_monitor: Optional[Union[Ident, AccountObjectIdent]] = None
     enable_query_acceleration: bool = False
     query_acceleration_max_scale_factor: int = 8
+    max_query_performance_level: Optional[str] = None
+    query_throughput_multiplier: Optional[int] = None
     warehouse_params: Dict[str, Union[bool, float, int, str]] = {}
     resource_constraint: Optional[str] = None
 
