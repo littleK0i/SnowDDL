@@ -103,9 +103,7 @@ class WarehouseParser(AbstractParser):
             resource_monitor=resource_monitor,
             enable_query_acceleration=warehouse_params.get("enable_query_acceleration", False),
             query_acceleration_max_scale_factor=warehouse_params.get("query_acceleration_max_scale_factor", 8),
-            max_query_performance_level=(
-                warehouse_params["max_query_performance_level"].upper() if warehouse_params.get("max_query_performance_level") else None
-            ),
+            max_query_performance_level=warehouse_params.get("max_query_performance_level"),
             query_throughput_multiplier=warehouse_params.get("query_throughput_multiplier"),
             warehouse_params=self.normalise_params_dict(warehouse_params.get("warehouse_params", {})),
             resource_constraint=resource_constraint,

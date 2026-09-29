@@ -2,6 +2,8 @@ from snowddl.blueprint import WarehouseBlueprint
 from snowddl.resolver.abc_resolver import AbstractResolver, ResolveResult, ObjectType, Edition
 from snowddl.resolver._utils import compare_dynamic_param_value
 
+from typing import Optional
+
 
 class WarehouseResolver(AbstractResolver):
     def get_object_type(self) -> ObjectType:
@@ -57,47 +59,41 @@ class WarehouseResolver(AbstractResolver):
 
         query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
 
-        # WAREHOUSE_SIZE is not a valid property for ADAPTIVE warehouses;
-        # their compute envelope is set entirely by MAX_QUERY_PERFORMANCE_LEVEL.
-        if bp.type != "ADAPTIVE":
-            query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
-
-        query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
-        query.append_nl("AUTO_RESUME = TRUE")
-        query.append_nl("INITIALLY_SUSPENDED = TRUE")
-
-        if bp.generation:
-            query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
-
-        if bp.resource_constraint:
-            query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
-
-        if self.engine.context.edition >= Edition.ENTERPRISE:
-            query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
-            query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
-            query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
-
-            query.append_nl(
-                "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
-                {"enable_query_acceleration": bp.enable_query_acceleration},
-            )
-
-            query.append_nl(
-                "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
-                {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
-            )
-
         if bp.type == "ADAPTIVE":
-            if bp.max_query_performance_level:
+            query.append_nl(
+                "MAX_QUERY_PERFORMANCE_LEVEL = {max_query_performance_level}",
+                {"max_query_performance_level": self._normalise_warehouse_size(bp.max_query_performance_level)},
+            )
+
+            query.append_nl(
+                "QUERY_THROUGHPUT_MULTIPLIER = {query_throughput_multiplier:d}",
+                {"query_throughput_multiplier": bp.query_throughput_multiplier},
+            )
+        else:
+            query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
+            query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
+            query.append_nl("AUTO_RESUME = TRUE")
+            query.append_nl("INITIALLY_SUSPENDED = TRUE")
+
+            if bp.generation:
+                query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
+
+            if bp.resource_constraint:
+                query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
+
+            if self.engine.context.edition >= Edition.ENTERPRISE:
+                query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
+                query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
+                query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
+
                 query.append_nl(
-                    "MAX_QUERY_PERFORMANCE_LEVEL = {max_query_performance_level}",
-                    {"max_query_performance_level": bp.max_query_performance_level},
+                    "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
+                    {"enable_query_acceleration": bp.enable_query_acceleration},
                 )
 
-            if bp.query_throughput_multiplier is not None:
                 query.append_nl(
-                    "QUERY_THROUGHPUT_MULTIPLIER = {query_throughput_multiplier:d}",
-                    {"query_throughput_multiplier": bp.query_throughput_multiplier},
+                    "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
+                    {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
                 )
 
         query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
@@ -154,54 +150,52 @@ class WarehouseResolver(AbstractResolver):
         if bp.type != row["type"]:
             query.append_nl("WAREHOUSE_TYPE = {type}", {"type": bp.type})
 
-        if bp.type != "ADAPTIVE" and self._normalise_warehouse_size(bp.size) != self._normalise_warehouse_size(row["size"]):
-            query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
-
-        if bp.generation != row["generation"]:
-            query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
-
-        if bp.auto_suspend != row["auto_suspend"]:
-            query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
-
-        if self._compare_resource_constraint(bp, row):
-            query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
-
-        if self.engine.context.edition >= Edition.ENTERPRISE:
-            if bp.min_cluster_count != row["min_cluster_count"]:
-                query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
-
-            if bp.max_cluster_count != row["max_cluster_count"]:
-                query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
-
-            if bp.scaling_policy != row["scaling_policy"]:
-                query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
-
-            if bp.enable_query_acceleration != row["enable_query_acceleration"]:
-                query.append_nl(
-                    "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
-                    {"enable_query_acceleration": bp.enable_query_acceleration},
-                )
-
-            if bp.query_acceleration_max_scale_factor != row["query_acceleration_max_scale_factor"]:
-                query.append_nl(
-                    "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
-                    {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
-                )
-
         if bp.type == "ADAPTIVE":
-            existing_max_query_performance_level = (row["max_query_performance_level"] or "").upper()
-
-            if bp.max_query_performance_level and bp.max_query_performance_level != existing_max_query_performance_level:
+            if self._normalise_warehouse_size(bp.max_query_performance_level) != self._normalise_warehouse_size(row["max_query_performance_level"]):
                 query.append_nl(
                     "MAX_QUERY_PERFORMANCE_LEVEL = {max_query_performance_level}",
                     {"max_query_performance_level": bp.max_query_performance_level},
                 )
 
-            if bp.query_throughput_multiplier is not None and bp.query_throughput_multiplier != row["query_throughput_multiplier"]:
+            if bp.query_throughput_multiplier != row["query_throughput_multiplier"]:
                 query.append_nl(
                     "QUERY_THROUGHPUT_MULTIPLIER = {query_throughput_multiplier:d}",
                     {"query_throughput_multiplier": bp.query_throughput_multiplier},
                 )
+        else:
+            if self._normalise_warehouse_size(bp.size) != self._normalise_warehouse_size(row["size"]):
+                query.append_nl("WAREHOUSE_SIZE = {size}", {"size": self._normalise_warehouse_size(bp.size)})
+
+            if bp.generation != row["generation"]:
+                query.append_nl("GENERATION = {generation}", {"generation": bp.generation})
+
+            if bp.auto_suspend != row["auto_suspend"]:
+                query.append_nl("AUTO_SUSPEND = {auto_suspend:d}", {"auto_suspend": bp.auto_suspend})
+
+            if self._compare_resource_constraint(bp, row):
+                query.append_nl("RESOURCE_CONSTRAINT = {resource_constraint}", {"resource_constraint": bp.resource_constraint})
+
+            if self.engine.context.edition >= Edition.ENTERPRISE:
+                if bp.min_cluster_count != row["min_cluster_count"]:
+                    query.append_nl("MIN_CLUSTER_COUNT = {min_cluster_count:d}", {"min_cluster_count": bp.min_cluster_count})
+
+                if bp.max_cluster_count != row["max_cluster_count"]:
+                    query.append_nl("MAX_CLUSTER_COUNT = {max_cluster_count:d}", {"max_cluster_count": bp.max_cluster_count})
+
+                if bp.scaling_policy != row["scaling_policy"]:
+                    query.append_nl("SCALING_POLICY = {scaling_policy}", {"scaling_policy": bp.scaling_policy})
+
+                if bp.enable_query_acceleration != row["enable_query_acceleration"]:
+                    query.append_nl(
+                        "ENABLE_QUERY_ACCELERATION = {enable_query_acceleration:b}",
+                        {"enable_query_acceleration": bp.enable_query_acceleration},
+                    )
+
+                if bp.query_acceleration_max_scale_factor != row["query_acceleration_max_scale_factor"]:
+                    query.append_nl(
+                        "QUERY_ACCELERATION_MAX_SCALE_FACTOR = {query_acceleration_max_scale_factor:d}",
+                        {"query_acceleration_max_scale_factor": bp.query_acceleration_max_scale_factor},
+                    )
 
         if bp.comment != row["comment"]:
             query.append_nl("COMMENT = {comment}", {"comment": bp.comment})
@@ -308,7 +302,10 @@ class WarehouseResolver(AbstractResolver):
 
         return existing_params
 
-    def _normalise_warehouse_size(self, size: str):
+    def _normalise_warehouse_size(self, size: Optional[str]):
+        if size is None:
+            return None
+
         return size.upper().replace("-", "")
 
     def _compare_resource_constraint(self, bp: WarehouseBlueprint, row: dict):

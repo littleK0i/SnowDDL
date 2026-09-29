@@ -19,7 +19,7 @@ def test_step2(helper):
     refs_2 = helper.get_policy_refs("db1", "sc1", "aup001_aup2")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[SAML, PASSWORD]"
-    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY"  # orig: OPTIONAL
+    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_PASSWORD_ONLY"  # orig: OPTIONAL
     assert params["CLIENT_TYPES"]["value"] == "[SNOWFLAKE_UI, SNOWSQL]"
     assert params["SECURITY_INTEGRATIONS"]["value"] == "[ALL]"
     assert str(params["COMMENT"]["value"]).startswith("cde #")
@@ -38,7 +38,7 @@ def test_step3(helper):
     refs = helper.get_policy_refs("db1", "sc1", "aup001_aup1")
 
     assert params["AUTHENTICATION_METHODS"]["value"] == "[ALL]"
-    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY"  # orig: OPTIONAL
+    assert params["MFA_ENROLLMENT"]["value"] == "REQUIRED_PASSWORD_ONLY"  # orig: OPTIONAL
     assert params["CLIENT_TYPES"]["value"] == "[ALL]"
     assert params["SECURITY_INTEGRATIONS"]["value"] == "[ALL]"
     assert str(params["COMMENT"]["value"]).startswith("#")
