@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.69.1] - 2026-10-07
+
+- Prevented transfer of OWNERSHIP for `WORKSPACE` objects.
+
 ## [0.69.0] - 2026-09-29
 
 - Added `max_query_performance_level` and `query_throughput_multiplier` for `WAREHOUSE`, to configure Adaptive warehouses (`type: ADAPTIVE`). `size` is now optional for this warehouse type, since `WAREHOUSE_SIZE` is not a valid property for it (thanks to @JefStat).

@@ -298,7 +298,7 @@ class AbstractRoleResolver(AbstractResolver):
             # Changing ownership of notebooks and shares is not supported by Snowflake
             # https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-limitations
             # https://docs.snowflake.com/en/sql-reference/sql/grant-ownership#usage-notes
-            if grant.on in (ObjectType.NOTEBOOK, ObjectType.SHARE):
+            if grant.on in (ObjectType.NOTEBOOK, ObjectType.SHARE, ObjectType.WORKSPACE):
                 return
 
             self.engine.execute_safe_ddl(
