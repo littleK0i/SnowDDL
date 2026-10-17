@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.70.0] - 2026-10-17
+
+- Added policy reference support for `MATERIALIZED_VIEW` object type.
+
 ## [0.69.1] - 2026-10-07
 
 - Prevented transfer of OWNERSHIP for `WORKSPACE` objects.

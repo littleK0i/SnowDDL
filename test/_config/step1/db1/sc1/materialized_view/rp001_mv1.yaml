@@ -1,0 +1,6 @@
+text: |-
+  SELECT * FROM rp001_tb2
+
+row_access_policy:
+  policy_name: rp001_rp1
+  columns: [name]

@@ -1,4 +1,21 @@
-from snowddl.blueprint import MaterializedViewBlueprint, ViewColumn, Ident, SchemaObjectIdent
+from snowddl.blueprint import (
+    MaterializedViewBlueprint,
+    ViewColumn,
+    Ident,
+    SchemaObjectIdent,
+    ObjectType,
+    AggregationPolicyBlueprint,
+    AggregationPolicyReference,
+    JoinPolicyBlueprint,
+    JoinPolicyReference,
+    MaskingPolicyBlueprint,
+    MaskingPolicyReference,
+    ProjectionPolicyBlueprint,
+    ProjectionPolicyReference,
+    RowAccessPolicyBlueprint,
+    RowAccessPolicyReference,
+    build_schema_object_ident,
+)
 from snowddl.parser.abc_parser import AbstractParser, ParsedFile
 
 
@@ -27,7 +44,96 @@ materialized_view_json_schema = {
         },
         "comment": {
             "type": "string"
-        }
+        },
+        "aggregation_policy": {
+            "type": "object",
+            "properties": {
+                "policy_name": {
+                    "type": "string"
+                },
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": ["policy_name"],
+            "additionalProperties": False
+        },
+        "join_policy": {
+            "type": "object",
+            "properties": {
+                "policy_name": {
+                    "type": "string"
+                },
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
+            },
+            "required": ["policy_name"],
+            "additionalProperties": False
+        },
+        "masking_policies": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "policy_name": {
+                        "type": "string"
+                    },
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": ["policy_name", "columns"],
+                "additionalProperties": False
+            },
+            "minItems": 1
+        },
+        "projection_policies": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "policy_name": {
+                        "type": "string"
+                    },
+                    "column": {
+                        "type": "string",
+                    }
+                },
+                "required": ["policy_name", "column"],
+                "additionalProperties": False
+            },
+            "minItems": 1
+        },
+        "row_access_policy": {
+            "type": "object",
+            "properties": {
+                "policy_name": {
+                    "type": "string"
+                },
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
+            },
+            "required": ["policy_name", "columns"],
+            "additionalProperties": False
+        },
     },
     "required": ["text"],
     "additionalProperties": False
@@ -60,3 +166,66 @@ class MaterializedViewParser(AbstractParser):
         )
 
         self.config.add_blueprint(bp)
+
+        # Policies
+
+        if f.params.get("aggregation_policy"):
+            policy_name = build_schema_object_ident(
+                self.env_prefix, f.params["aggregation_policy"]["policy_name"], f.database, f.schema
+            )
+
+            ref = AggregationPolicyReference(
+                object_type=ObjectType.MATERIALIZED_VIEW,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in f.params["aggregation_policy"].get("columns", [])],
+            )
+
+            self.config.add_policy_reference(AggregationPolicyBlueprint, policy_name, ref)
+
+        if f.params.get("join_policy"):
+            policy_name = build_schema_object_ident(
+                self.env_prefix, f.params["join_policy"]["policy_name"], f.database, f.schema
+            )
+
+            ref = JoinPolicyReference(
+                object_type=ObjectType.MATERIALIZED_VIEW,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in f.params["join_policy"]["columns"]] if f.params["join_policy"].get("columns") else None,
+            )
+
+            self.config.add_policy_reference(JoinPolicyBlueprint, policy_name, ref)
+
+        for mp in f.params.get("masking_policies", []):
+            policy_name = build_schema_object_ident(self.env_prefix, mp["policy_name"], f.database, f.schema)
+
+            ref = MaskingPolicyReference(
+                object_type=ObjectType.MATERIALIZED_VIEW,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in mp["columns"]],
+            )
+
+            self.config.add_policy_reference(MaskingPolicyBlueprint, policy_name, ref)
+
+        for pp in f.params.get("projection_policies", []):
+            policy_name = build_schema_object_ident(self.env_prefix, pp["policy_name"], f.database, f.schema)
+
+            ref = ProjectionPolicyReference(
+                object_type=ObjectType.MATERIALIZED_VIEW,
+                object_name=bp.full_name,
+                column=Ident(pp["column"]),
+            )
+
+            self.config.add_policy_reference(ProjectionPolicyBlueprint, policy_name, ref)
+
+        if f.params.get("row_access_policy"):
+            policy_name = build_schema_object_ident(
+                self.env_prefix, f.params["row_access_policy"]["policy_name"], f.database, f.schema
+            )
+
+            ref = RowAccessPolicyReference(
+                object_type=ObjectType.MATERIALIZED_VIEW,
+                object_name=bp.full_name,
+                columns=[Ident(c) for c in f.params["row_access_policy"]["columns"]],
+            )
+
+            self.config.add_policy_reference(RowAccessPolicyBlueprint, policy_name, ref)
