@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.70.1] - 2026-10-24
+
+- Added explicit skip for recovered databases of deleted users (starting with `DROPPED_USER$`).
+
 ## [0.70.0] - 2026-10-17
 
 - Added policy reference support for `MATERIALIZED_VIEW` object type.

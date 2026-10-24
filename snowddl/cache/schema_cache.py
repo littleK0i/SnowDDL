@@ -41,6 +41,10 @@ class SchemaCache:
             if r["kind"] != "STANDARD":
                 continue
 
+            # Skip recovered databases of dropped users
+            if str(r["name"]).startswith("DROPPED_USER$"):
+                continue
+
             # Skip databases not listed in settings explicitly
             if self.engine.settings.include_databases and Ident(r["name"]) not in self.engine.settings.include_databases:
                 continue
