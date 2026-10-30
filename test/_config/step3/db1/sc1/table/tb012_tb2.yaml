@@ -1,0 +1,5 @@
+columns:
+  id: NUMBER(10,2)
+  name: VARCHAR(255)
+
+error_logging: true
