@@ -447,6 +447,7 @@ class TableBlueprint(SchemaObjectBlueprint):
     retention_time: Optional[int] = None
     change_tracking: bool = False
     search_optimization: Union[bool, List[SearchOptimizationItem]] = False
+    error_logging: Optional[bool] = None
 
 
 class TagBlueprint(SchemaObjectBlueprint):

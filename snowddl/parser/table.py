@@ -81,6 +81,9 @@ table_json_schema = {
         "change_tracking": {
             "type": "boolean"
         },
+        "error_logging": {
+            "type": "boolean"
+        },
         "search_optimization": {
             "anyOf": [
                 {
@@ -305,6 +308,7 @@ class TableParser(AbstractParser):
             retention_time=f.params.get("retention_time", combined_params[f.database][f.schema].get("retention_time", None)),
             change_tracking=f.params.get("change_tracking", False),
             search_optimization=self.get_search_optimization(f.params.get("search_optimization", False)),
+            error_logging=f.params.get("error_logging"),
             comment=f.params.get("comment"),
         )
 
