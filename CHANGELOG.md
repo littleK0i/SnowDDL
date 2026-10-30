@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.71.0] - 2026-10-30
+
+- Added `ERROR_LOGGING` property for `TABLE` (thanks to @shogo-soracom).
+
 ## [0.70.1] - 2026-10-24
 
 - Added explicit skip for recovered databases of deleted users (starting with `DROPPED_USER$`).
