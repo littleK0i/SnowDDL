@@ -1,4 +1,29 @@
-from typing import Union
+from typing import Optional, Union
+
+SHOW_PAGE_SIZE = 10000
+
+
+def iter_show_rows(engine, sql: str, params: Optional[dict] = None, page_size: int = SHOW_PAGE_SIZE):
+    # SHOW commands are capped by ROWS_PER_RESULTSET, so results are retrieved in pages
+    # using LIMIT ... FROM cursor supported by all SHOW commands returning "name" column
+    from_name = None
+
+    while True:
+        page_sql = f"{sql} LIMIT {{__page_size:d}}"
+        page_params = {**(params or {}), "__page_size": page_size}
+
+        if from_name is not None:
+            page_sql += " FROM {__from_name}"
+            page_params["__from_name"] = from_name
+
+        rows = list(engine.execute_meta(page_sql, page_params))
+
+        yield from rows
+
+        if len(rows) < page_size:
+            return
+
+        from_name = rows[-1]["name"]
 
 
 def coalesce(val, default=None):
