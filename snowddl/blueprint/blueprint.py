@@ -134,6 +134,7 @@ class DatabaseBlueprint(AbstractBlueprint):
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
     catalog_sync: Optional[Ident] = None
+    iceberg_version_default: Optional[int] = None
     log_level: Optional[str] = None
     log_event_level: Optional[str] = None
     metric_level: Optional[str] = None
@@ -371,6 +372,7 @@ class SchemaBlueprint(AbstractBlueprint):
     external_volume: Optional[Ident] = None
     catalog: Optional[Ident] = None
     catalog_sync: Optional[Ident] = None
+    iceberg_version_default: Optional[int] = None
     log_level: Optional[str] = None
     log_event_level: Optional[str] = None
     metric_level: Optional[str] = None

@@ -35,6 +35,9 @@ schema_json_schema = {
         "catalog_sync": {
             "type": "string",
         },
+        "iceberg_version_default": {
+            "type": "integer"
+        },
         "log_level": {
             "type": "string",
             "enum": ["OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]
@@ -136,6 +139,7 @@ class SchemaParser(AbstractParser):
                     "external_volume": schema_params.get("external_volume", database_params.get("external_volume")),
                     "catalog": schema_params.get("catalog", database_params.get("catalog")),
                     "catalog_sync": schema_params.get("catalog_sync", database_params.get("catalog_sync")),
+                    "iceberg_version_default": schema_params.get("iceberg_version_default", database_params.get("iceberg_version_default")),
                     "log_level": schema_params.get("log_level", database_params.get("log_level")),
                     "log_event_level": schema_params.get("log_event_level", database_params.get("log_event_level")),
                     "metric_level": schema_params.get("metric_level", database_params.get("metric_level")),
@@ -153,6 +157,7 @@ class SchemaParser(AbstractParser):
                     external_volume=Ident(combined_params.get("external_volume")) if combined_params.get("external_volume") else None,
                     catalog=Ident(combined_params.get("catalog")) if combined_params.get("catalog") else None,
                     catalog_sync=Ident(combined_params.get("catalog_sync")) if combined_params.get("catalog_sync") else None,
+                    iceberg_version_default=combined_params.get("iceberg_version_default", None),
                     log_level=combined_params.get("log_level", None),
                     log_event_level=combined_params.get("log_event_level", None),
                     metric_level=combined_params.get("metric_level", None),

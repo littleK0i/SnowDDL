@@ -1,3 +1,4 @@
+
 from snowddl.blueprint import (
     AccountGrant,
     AccountObjectIdent,
@@ -32,6 +33,9 @@ database_json_schema = {
         },
         "catalog_sync": {
             "type": "string",
+        },
+        "iceberg_version_default": {
+            "type": "integer"
         },
         "log_level": {
             "type": "string",
@@ -138,6 +142,7 @@ class DatabaseParser(AbstractParser):
                 external_volume=Ident(database_params.get("external_volume")) if database_params.get("external_volume") else None,
                 catalog=Ident(database_params.get("catalog")) if database_params.get("catalog") else None,
                 catalog_sync=Ident(database_params.get("catalog_sync")) if database_params.get("catalog_sync") else None,
+                iceberg_version_default=database_params.get("iceberg_version_default", None),
                 log_level=database_params.get("log_level", None),
                 log_event_level=database_params.get("log_event_level", None),
                 metric_level=database_params.get("metric_level", None),

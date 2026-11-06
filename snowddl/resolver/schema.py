@@ -36,6 +36,9 @@ class SchemaResolver(AbstractResolver):
         if bp.catalog_sync:
             query.append_nl("CATALOG_SYNC = {catalog_sync:i}", {"catalog_sync": bp.catalog_sync})
 
+        if bp.iceberg_version_default:
+            query.append_nl("ICEBERG_VERSION_DEFAULT = {iceberg_version_default:d}", {"iceberg_version_default": bp.iceberg_version_default})
+
         if bp.log_level:
             query.append_nl("LOG_LEVEL = {log_level}", {"log_level": bp.log_level})
 
@@ -139,6 +142,25 @@ class SchemaResolver(AbstractResolver):
             else:
                 self.engine.execute_unsafe_ddl(
                     "ALTER SCHEMA {full_name:i} UNSET CATALOG_SYNC",
+                    {
+                        "full_name": bp.full_name,
+                    }
+                )
+
+            result = ResolveResult.ALTER
+
+        if bp.iceberg_version_default != schema_params.get("ICEBERG_VERSION_DEFAULT"):
+            if bp.iceberg_version_default:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} SET ICEBERG_VERSION_DEFAULT = {iceberg_version_default:d}",
+                    {
+                        "full_name": bp.full_name,
+                        "iceberg_version_default": bp.iceberg_version_default,
+                    }
+                )
+            else:
+                self.engine.execute_unsafe_ddl(
+                    "ALTER SCHEMA {full_name:i} UNSET ICEBERG_VERSION_DEFAULT",
                     {
                         "full_name": bp.full_name,
                     }

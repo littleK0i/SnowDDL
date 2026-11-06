@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.72.0] - 2026-11-06
+
+- Added `ICEBERG_VERSION_DEFAULT` property for `DATABASE` and `SCHEMA`.
+
 ## [0.71.0] - 2026-10-30
 
 - Added `ERROR_LOGGING` property for `TABLE` (thanks to @shogo-soracom).
