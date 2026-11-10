@@ -51,6 +51,9 @@ class SecretResolver(AbstractSchemaObjectResolver):
         return ResolveResult.CREATE
 
     def compare_object(self, bp: SecretBlueprint, row: dict):
+        if bp.type == "WORKLOAD_IDENTITY_FEDERATION" and bp.type == row["secret_type"]:
+            return self._compare_workload_identity_federation(bp, row)
+
         is_replace_required = False
 
         # We cannot compare other parameters due to lack of data returned by SHOW and DESC commands for secrets
@@ -77,6 +80,31 @@ class SecretResolver(AbstractSchemaObjectResolver):
         self.engine.execute_safe_ddl(replace_query)
 
         return ResolveResult.REPLACE
+
+    def _compare_workload_identity_federation(self, bp: SecretBlueprint, row: dict):
+        # Snowflake generates a unique subject identifier for each WORKLOAD_IDENTITY_FEDERATION secret,
+        # and external services trust that exact subject. Replacing the secret would generate a new subject
+        # and break the trust, so these secrets are never replaced or refreshed, and the comment is altered in place.
+        if bp.comment == row["comment"]:
+            return ResolveResult.NOCHANGE
+
+        if bp.comment:
+            self.engine.execute_safe_ddl(
+                "ALTER SECRET {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
+        else:
+            self.engine.execute_safe_ddl(
+                "ALTER SECRET {full_name:i} UNSET COMMENT",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
+
+        return ResolveResult.ALTER
 
     def drop_object(self, row: dict):
         self.engine.execute_safe_ddl(
