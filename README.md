@@ -36,6 +36,7 @@ You may find SnowDDL useful if:
 - [Role hierarchy](https://docs.snowddl.com/guides/role-hierarchy)
 - [CLI interface](https://docs.snowddl.com/basic/cli)
 - [YAML configs](https://docs.snowddl.com/basic/yaml-configs)
+- [MCP server configuration](docs/mcp-server.md)
 - [Changelog](/CHANGELOG.md)
 
 ## Introduction videos

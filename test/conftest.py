@@ -70,6 +70,17 @@ class Helper:
 
         return {r["name"]: r for r in cur}
 
+    def desc_mcp_server(self, database, schema, name):
+        cur = self.execute("DESC MCP SERVER {name:i}", {"name": SchemaObjectIdent(self.env_prefix, database, schema, name)})
+        return cur.fetchone()
+
+    def show_mcp_server(self, database, schema, name):
+        cur = self.execute(
+            "SHOW MCP SERVERS LIKE {name:lf} IN SCHEMA {schema:i}",
+            {"name": Ident(name), "schema": SchemaIdent(self.env_prefix, database, schema)},
+        )
+        return cur.fetchone()
+
     def desc_external_access_integration(self, name):
         cur = self.execute("DESC EXTERNAL ACCESS INTEGRATION {name:i}", {"name": AccountObjectIdent(self.env_prefix, name)})
 

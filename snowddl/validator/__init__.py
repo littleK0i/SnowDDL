@@ -3,6 +3,7 @@ from .business_role import BusinessRoleValidator
 from .database import DatabaseValidator
 from .dynamic_table import DynamicTableValidator
 from .hybrid_table import HybridTableValidator
+from .mcp_server import McpServerValidator
 from .schema import SchemaValidator
 from .stream import StreamValidator
 from .task import TaskValidator
@@ -16,6 +17,7 @@ default_validate_sequence = [
     WarehouseValidator,
     DatabaseValidator,
     SchemaValidator,
+    McpServerValidator,
     DynamicTableValidator,
     HybridTableValidator,
     TaskValidator,

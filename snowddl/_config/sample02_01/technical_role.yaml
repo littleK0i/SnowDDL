@@ -1,0 +1,4 @@
+mcp_access:
+  grants:
+    MCP_SERVER:USAGE:
+      - test_db.test_schema.test_mcp_server
