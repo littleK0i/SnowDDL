@@ -54,29 +54,41 @@ class SecretResolver(AbstractSchemaObjectResolver):
         is_replace_required = False
 
         # We cannot compare other parameters due to lack of data returned by SHOW and DESC commands for secrets
-        if bp.type != row["secret_type"] or bp.comment != row["comment"]:
+        if bp.type != row["secret_type"]:
             is_replace_required = True
 
-        if self.engine.settings.refresh_secrets:
+        if self.engine.settings.refresh_secrets and bp.type not in ("SYMMETRIC_KEY", "WORKLOAD_IDENTITY_FEDERATION"):
             is_replace_required = True
 
-        if not is_replace_required:
-            return ResolveResult.NOCHANGE
+        if is_replace_required:
+            common_query = self._build_common_secret_sql(bp)
+            replace_query = self.engine.query_builder()
 
-        common_query = self._build_common_secret_sql(bp)
-        replace_query = self.engine.query_builder()
+            replace_query.append(
+                "CREATE OR REPLACE SECRET {full_name:i}",
+                {
+                    "full_name": bp.full_name,
+                },
+            )
 
-        replace_query.append(
-            "CREATE OR REPLACE SECRET {full_name:i}",
-            {
-                "full_name": bp.full_name,
-            },
-        )
+            replace_query.append(common_query)
+            self.engine.execute_safe_ddl(replace_query)
 
-        replace_query.append(common_query)
-        self.engine.execute_safe_ddl(replace_query)
+            return ResolveResult.REPLACE
 
-        return ResolveResult.REPLACE
+        if bp.comment != row["comment"]:
+            # UNSET COMMENT does not work with SECRET, must be set to NULL instead
+            self.engine.execute_safe_ddl(
+                "ALTER SECRET {full_name:i} SET COMMENT = {comment}",
+                {
+                    "full_name": bp.full_name,
+                    "comment": bp.comment,
+                },
+            )
+
+            return ResolveResult.ALTER
+
+        return ResolveResult.NOCHANGE
 
     def drop_object(self, row: dict):
         self.engine.execute_safe_ddl(

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.73.0] - 2026-11-11
+
+- Removed automatic `CREATE OR REPLACE` for existing secrets with types `SYMMETRIC_KEY` and `WORKLOAD_IDENTITY_FEDERATION` when running SnowDDL with CLI option `--refresh-secrets` (thanks to @jbylina).
+- Fixed `relationship_identifier` in `SEMANTIC_VIEW` being defined as `str` instead of `Ident` (thanks to @nigel-gott).
+
 ## [0.72.0] - 2026-11-06
 
 - Added `ICEBERG_VERSION_DEFAULT` property for `DATABASE` and `SCHEMA`.
