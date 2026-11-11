@@ -166,6 +166,9 @@ class AggregationPolicyResolver(AbstractSchemaObjectResolver):
 
         # Remove remaining policy references which no longer exist in blueprint
         for existing_ref in existing_policy_refs.values():
+            if not self.is_policy_ref_droppable(existing_ref):
+                continue
+
             # TODO: consider use case when object switches to another aggregation policy resolved in parallel
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} UNSET AGGREGATION POLICY",
@@ -186,6 +189,9 @@ class AggregationPolicyResolver(AbstractSchemaObjectResolver):
         existing_policy_refs = self._get_existing_policy_refs(policy_name)
 
         for existing_ref in existing_policy_refs.values():
+            if not self.is_policy_ref_droppable(existing_ref):
+                continue
+
             # TODO: consider use case when object switches to another aggregation policy resolved in parallel
             self.engine.execute_unsafe_ddl(
                 "ALTER {object_type:r} {database:i}.{schema:i}.{name:i} UNSET AGGREGATION POLICY",
