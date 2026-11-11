@@ -217,7 +217,7 @@ class SemanticViewParser(AbstractParser):
 
     def build_semantic_view_relationship(self, rel_def: dict):
         return SemanticViewRelationship(
-            relationship_identifier=rel_def.get("relationship_identifier"),
+            relationship_identifier=Ident(rel_def["relationship_identifier"]) if rel_def.get("relationship_identifier") else None,
             table_alias=Ident(rel_def.get("table_alias")),
             columns=[Ident(c) for c in rel_def.get("columns")],
             ref_table_alias=Ident(rel_def.get("ref_table_alias")),
