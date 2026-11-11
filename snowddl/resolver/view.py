@@ -1,7 +1,7 @@
 from snowddl.blueprint import ViewBlueprint
-
 from snowddl.error import SnowDDLExecuteError
-from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ResolveResult, ObjectType
+from snowddl.resolver._utils import iter_show_rows
+from snowddl.resolver.abc_schema_object_resolver import AbstractSchemaObjectResolver, ObjectType, ResolveResult
 
 
 class ViewResolver(AbstractSchemaObjectResolver):
@@ -11,15 +11,14 @@ class ViewResolver(AbstractSchemaObjectResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta(
+        for r in iter_show_rows(
+            self.engine,
             "SHOW VIEWS IN SCHEMA {database:i}.{schema:i}",
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
             },
-        )
-
-        for r in cur:
+        ):
             if r["is_materialized"] == "true":
                 continue
 
