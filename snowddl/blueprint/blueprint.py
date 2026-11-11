@@ -29,6 +29,7 @@ from .ident import (
     TableConstraintIdent,
 )
 from .ident_pattern import IdentPattern
+from .mcp_server import McpServerTool
 from .object_type import ObjectType
 from .reference import (
     AggregationPolicyReference,
@@ -275,6 +276,10 @@ class MaterializedViewBlueprint(SchemaObjectBlueprint):
     columns: Optional[List[ViewColumn]] = None
     is_secure: bool = False
     cluster_by: Optional[List[str]] = None
+
+
+class McpServerBlueprint(SchemaObjectBlueprint):
+    tools: List[McpServerTool]
 
 
 class MaskingPolicyBlueprint(SchemaObjectBlueprint):

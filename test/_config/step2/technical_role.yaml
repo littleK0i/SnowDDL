@@ -4,3 +4,8 @@ pm001_tr2:
       - pm001*
     SCHEMA:USAGE:
       - pm001*.*
+
+mcp001_tr1:
+  grants:
+    MCP_SERVER:USAGE:
+      - db1.sc1.mcp001_mcp1

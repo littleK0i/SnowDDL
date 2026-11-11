@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Added schema-level `mcp_server.yaml` collections and MCP server usage grants through technical roles.
+- Fixed placeholder substitution inside mappings nested in YAML lists.
+
 ## [0.72.0] - 2026-11-06
 
 - Added `ICEBERG_VERSION_DEFAULT` property for `DATABASE` and `SCHEMA`.

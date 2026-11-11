@@ -1,0 +1,6 @@
+mcp001_mcp1:
+  tools:
+    - name: sql_exec_tool
+      type: SYSTEM_EXECUTE_SQL
+      title: SQL Execution
+      description: Updated SQL execution tool.

@@ -24,6 +24,7 @@ from .blueprint import (
     IcebergTableBlueprint,
     JoinPolicyBlueprint,
     MaterializedViewBlueprint,
+    McpServerBlueprint,
     MaskingPolicyBlueprint,
     NetworkPolicyBlueprint,
     NetworkRuleBlueprint,
@@ -94,6 +95,7 @@ from .ident_builder import (
 from .ident_pattern import IdentPattern
 
 from .object_type import ObjectType
+from .mcp_server import McpServerTool
 from .permission_model import PermissionModel, PermissionModelCreateGrant, PermissionModelFutureGrant, PermissionModelRuleset
 from .reference import (
     AbstractPolicyReference,
