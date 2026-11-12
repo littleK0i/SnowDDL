@@ -285,6 +285,10 @@ class MaskingPolicyBlueprint(SchemaObjectBlueprint):
     references: List[MaskingPolicyReference] = []
 
 
+class McpServerBlueprint(SchemaObjectBlueprint):
+    specification: Dict
+
+
 class NetworkPolicyBlueprint(AbstractBlueprint):
     full_name: AccountObjectIdent
     allowed_network_rule_list: List[SchemaObjectIdent] = []

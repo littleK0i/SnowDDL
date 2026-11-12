@@ -1,0 +1,28 @@
+specification:
+  tools:
+    - title: SQL Execution Tool
+      name: sql_exec_tool
+      type: SYSTEM_EXECUTE_SQL
+      description: A tool to execute SQL queries against the connected Snowflake database
+
+    - title: xxHash Function Tool
+      name: xx_hash_tool
+      type: GENERIC
+      description: A tool to calculate xxHash
+      identifier: test_db.test_schema.test1_xx_hash
+      annotations:
+        readOnlyHint: true
+        destructiveHint: false
+        idempotentHint: true
+        openWorldHint: false
+      config:
+        type: function
+        warehouse: mcp_wh
+        input_schema:
+          type: OBJECT
+          properties:
+            x:
+              description: Input value for xxHash calculation
+              type: string
+
+comment: My test MCP server

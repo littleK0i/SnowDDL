@@ -25,6 +25,7 @@ from .blueprint import (
     JoinPolicyBlueprint,
     MaterializedViewBlueprint,
     MaskingPolicyBlueprint,
+    McpServerBlueprint,
     NetworkPolicyBlueprint,
     NetworkRuleBlueprint,
     OutboundShareBlueprint,

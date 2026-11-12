@@ -28,6 +28,7 @@ from .iceberg_table import IcebergTableResolver
 from .join_policy import JoinPolicyResolver
 from .masking_policy import MaskingPolicyResolver
 from .materialized_view import MaterializedViewResolver
+from .mcp_server import McpServerResolver
 from .network_policy import NetworkPolicyResolver
 from .network_rule import NetworkRuleResolver
 from .outbound_share import OutboundShareResolver
@@ -102,6 +103,7 @@ default_resolve_sequence = [
     StreamResolver,
     TaskResolver,
     AlertResolver,
+    McpServerResolver,
     # --
     DatabaseRoleResolver,
     OutboundShareResolver,
@@ -182,6 +184,7 @@ singledb_resolve_sequence = [
     StreamResolver,
     TaskResolver,
     AlertResolver,
+    McpServerResolver,
     # --
     DatabaseRoleResolver,
     AggregationPolicyResolver,

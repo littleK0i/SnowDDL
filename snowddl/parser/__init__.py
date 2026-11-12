@@ -23,6 +23,7 @@ from .iceberg_table import IcebergTableParser
 from .join_policy import JoinPolicyParser
 from .materialized_view import MaterializedViewParser
 from .masking_policy import MaskingPolicyParser
+from .mcp_server import McpServerParser
 from .network_policy import NetworkPolicyParser
 from .network_rule import NetworkRuleParser
 from .outbound_share import OutboundShareParser
@@ -87,6 +88,7 @@ default_parse_sequence = [
     StreamParser,
     TaskParser,
     AlertParser,
+    McpServerParser,
     # --
     DatabaseRoleParser,
     OutboundShareParser,
@@ -128,6 +130,7 @@ singledb_parse_sequence = [
     StreamParser,
     TaskParser,
     AlertParser,
+    McpServerParser,
     # --
     DatabaseRoleParser,
 ]

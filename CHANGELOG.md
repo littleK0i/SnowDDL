@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.74.0] - 2026-11-12
+
+- Introduced initial version of `MCP_SERVER` object type implementation. Likely not ready for production yet, use with care.
+
 ## [0.73.0] - 2026-11-11
 
 - Removed automatic `CREATE OR REPLACE` for existing secrets with types `SYMMETRIC_KEY` and `WORKLOAD_IDENTITY_FEDERATION` when running SnowDDL with CLI option `--refresh-secrets` (thanks to @jbylina).

@@ -6,6 +6,10 @@ fivetran_wh:
   size: XSMALL
   auto_suspend: 60
 
+mcp_wh:
+  size: XSMALL
+  auto_suspend: 60
+
 task_wh:
   size: XSMALL
   auto_suspend: 60
