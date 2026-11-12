@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.74.1] - 2026-11-12
+
+- Added workaround for Snowflake bug related to incorrect object type naming in `MCP_SERVER` grants.
+
 ## [0.74.0] - 2026-11-12
 
 - Introduced initial version of `MCP_SERVER` object type implementation. Likely not ready for production yet, use with care.

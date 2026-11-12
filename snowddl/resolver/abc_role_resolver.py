@@ -89,6 +89,10 @@ class AbstractRoleResolver(AbstractResolver):
         )
 
         for r in sorted(cur, key=self.sort_existing_grants):
+            # Snowflake bug: incorrect and misleading grant object type for MCP servers
+            if r["granted_on"] == "CORTEX_AGENT_SERVER":
+                r["granted_on"] = "MCP_SERVER"
+
             # Skip grants on unknown object types
             try:
                 object_type = ObjectType[r["granted_on"]]
@@ -134,6 +138,10 @@ class AbstractRoleResolver(AbstractResolver):
         )
 
         for r in sorted(cur, key=self.sort_existing_grants):
+            # Snowflake bug: incorrect and misleading grant object type for MCP servers
+            if r["grant_on"] == "CORTEX_AGENT_SERVER":
+                r["grant_on"] = "MCP_SERVER"
+
             try:
                 object_type = ObjectType[r["grant_on"]]
             except KeyError:
