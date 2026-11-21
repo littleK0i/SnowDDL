@@ -20,6 +20,47 @@ class AbstractSchemaObjectResolver(AbstractResolver):
     def get_existing_objects_in_schema(self, schema: dict):
         pass
 
+    def is_policy_ref_droppable(self, existing_ref: dict):
+        # POLICY_REFERENCES reports references from every session, including session-scoped temporary
+        # objects belonging to other sessions. Those objects are not durable, are not managed by SnowDDL,
+        # and cannot be altered from here at all — the ALTER fails with "does not exist or not authorized".
+        #
+        # SHOW OBJECTS is session-scoped, so a temporary object of another session is simply absent from
+        # the output, while a temporary object of the current session is reported with a TEMP kind.
+        cur = self.engine.execute_meta(
+            "SHOW OBJECTS LIKE {name:lf} IN SCHEMA {database:i}.{schema:i}",
+            {
+                "name": existing_ref["name"],
+                "database": existing_ref["database"],
+                "schema": existing_ref["schema"],
+            },
+        )
+
+        for r in cur:
+            if r["name"] != existing_ref["name"]:
+                continue
+
+            if "TEMP" in str(r["kind"]):
+                self.engine.logger.debug(
+                    f"Skipped policy reference on temporary object "
+                    f"[{existing_ref['database']}.{existing_ref['schema']}.{existing_ref['name']}]"
+                )
+
+                return False
+
+            return True
+
+        # Not visible in this session: a temporary object of another session, or an object which was
+        # dropped while its reference lingers. Warned rather than skipped silently, since the same
+        # outcome would hide a real reference on an object type missing from SHOW OBJECTS output.
+        self.engine.logger.warning(
+            f"Skipped policy reference on object "
+            f"[{existing_ref['database']}.{existing_ref['schema']}.{existing_ref['name']}], "
+            f"which does not exist in the current session"
+        )
+
+        return False
+
     def _resolve_drop(self):
         tasks = {}
 
