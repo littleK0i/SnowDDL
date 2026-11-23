@@ -38,9 +38,6 @@ class FutureGrant(BaseModelWithConfig):
     name: Union[DatabaseIdent, SchemaIdent]
 
     def is_matching_grant(self, grant: Grant):
-        if not grant.on.is_future_grant_supported:
-            return False
-
         if self.privilege != grant.privilege:
             return False
 
