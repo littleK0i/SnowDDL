@@ -7,10 +7,11 @@ except ImportError:
     TokenType = None
 
 from snowddl.blueprint import ObjectType
+from snowddl.converter._yaml import YamlIncludeStr, YamlLiteralStr
 from snowddl.converter.abc_converter import ConvertResult
 from snowddl.converter.abc_schema_object_converter import AbstractSchemaObjectConverter
-from snowddl.converter._yaml import YamlLiteralStr, YamlIncludeStr
 from snowddl.parser.view import view_json_schema
+from snowddl.resolver._utils import iter_show_rows
 
 
 class ViewConverter(AbstractSchemaObjectConverter):
@@ -20,15 +21,14 @@ class ViewConverter(AbstractSchemaObjectConverter):
     def get_existing_objects_in_schema(self, schema: dict):
         existing_objects = {}
 
-        cur = self.engine.execute_meta(
+        for r in iter_show_rows(
+            self.engine,
             "SHOW VIEWS IN SCHEMA {database:i}.{schema:i}",
             {
                 "database": schema["database"],
                 "schema": schema["schema"],
             },
-        )
-
-        for r in cur:
+        ):
             if r["is_materialized"] == "true":
                 continue
 
