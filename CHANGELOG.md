@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.74.2] - 2026-11-25
+
+- Added `CORTEX_AGENT` object type for grants.
+
 ## [0.74.1] - 2026-11-12
 
 - Added workaround for Snowflake bug related to incorrect object type naming in `MCP_SERVER` grants.

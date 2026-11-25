@@ -7,6 +7,7 @@ fivetran:
     - TABLE
     - VIEW
     - NOTEBOOK
+    - CORTEX_AGENT
     - CORTEX_SEARCH_SERVICE
     - WORKSPACE
 
@@ -15,6 +16,7 @@ fivetran:
     STAGE: [OWNERSHIP]
     TABLE: [OWNERSHIP]
     VIEW: [OWNERSHIP]
+    CORTEX_AGENT: [OWNERSHIP]
     CORTEX_SEARCH_SERVICE: [OWNERSHIP]
 
   read_future_grants:

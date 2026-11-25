@@ -59,6 +59,12 @@ class ObjectType(Enum):
         "blueprint_cls": "TableBlueprint",
     }
 
+    CORTEX_AGENT = {
+        "singular": "AGENT",
+        "plural": "AGENTS",
+        "is_future_grant_supported": True,
+    }
+
     CORTEX_SEARCH_SERVICE = {
         "singular": "CORTEX SEARCH SERVICE",
         "plural": "CORTEX SEARCH SERVICES",
